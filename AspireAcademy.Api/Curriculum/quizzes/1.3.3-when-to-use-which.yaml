@@ -65,12 +65,12 @@ questions:
         text: "Using AddProject<Projects.Api>(\"api\") with generated types"
         isCorrect: false
       - id: b
-        text: "Using AddProject(\"api\", \"./src/Api/Api.csproj\") with a string path"
+        text: "Using AddCSharpApp(\"api\", \"./src/Api/Api.csproj\") with a string path"
         isCorrect: true
       - id: c
         text: "Using AddContainer(\"api\", \"api-image\")"
         isCorrect: false
       - id: d
-        text: "Using a #:project directive only — no code needed"
+        text: "Using a #:package directive that references the project"
         isCorrect: false
-    explanation: "Single-file AppHosts don't have .csproj ProjectReferences, so there are no generated Projects.* types. Instead, you use the string-path overload: AddProject(\"api\", \"./path/to/project.csproj\")."
+    explanation: "Single-file AppHosts don't have .csproj ProjectReferences, so there are no generated Projects.* types. Instead, you use AddCSharpApp(\"api\", \"./path/to/project.csproj\") to reference projects by path."

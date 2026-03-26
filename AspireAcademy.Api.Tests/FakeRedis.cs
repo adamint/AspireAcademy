@@ -50,6 +50,14 @@ public class FakeRedisDatabaseProxy : DispatchProxy
                 => Task.FromResult(0.0),
             "SortedSetAddAsync"
                 => Task.FromResult(true),
+            "SortedSetRangeByRankWithScoresAsync"
+                => Task.FromResult(Array.Empty<SortedSetEntry>()),
+            "SortedSetRankAsync"
+                => Task.FromResult((long?)null),
+            "SortedSetScoreAsync"
+                => Task.FromResult((double?)null),
+            "SortedSetLengthAsync"
+                => Task.FromResult(0L),
             _ => DefaultReturn(targetMethod.ReturnType)
         };
     }
@@ -113,6 +121,7 @@ public class FakeRedisMultiplexerProxy : DispatchProxy
         return targetMethod.Name switch
         {
             "GetDatabase" => _database,
+            "GetServers" => Array.Empty<IServer>(),
             "get_IsConnected" => true,
             "get_IsConnecting" => false,
             "get_Configuration" => "fake:6379",

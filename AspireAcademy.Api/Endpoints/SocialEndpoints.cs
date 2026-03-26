@@ -361,6 +361,11 @@ public static class SocialEndpoints
 
         var sortedEntries = await redisDb.SortedSetRangeByRankWithScoresAsync(key, 0, maxLimit - 1, Order.Descending);
 
+        if (sortedEntries is null || sortedEntries.Length == 0)
+        {
+            return Results.Ok(new LeaderboardResponse([], 0, null, scope, 0));
+        }
+
         var userIds = sortedEntries
             .Select(e => Guid.TryParse(e.Element.ToString(), out var id) ? id : (Guid?)null)
             .Where(id => id.HasValue)
