@@ -60,17 +60,14 @@ public static class QuizEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        if (!Guid.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
-        {
-            return Results.Unauthorized();
-        }
+        var userId = EndpointHelpers.GetUserId(user);
 
         var question = await db.QuizQuestions
             .FirstOrDefaultAsync(q => q.Id == request.QuestionId && q.LessonId == lessonId);
 
         if (question is null)
         {
-            return Results.NotFound(new { error = "Question not found" });
+            return Results.NotFound(new ErrorResponse("Question not found"));
         }
 
         // Determine the answer based on what the frontend sends
@@ -134,11 +131,11 @@ public static class QuizEndpoints
         GamificationService gamification,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
 
         if (request.Answers is null or { Count: 0 })
         {
-            return Results.BadRequest(new { error = "Answers are required" });
+            return Results.BadRequest(new ErrorResponse("Answers are required"));
         }
 
         // Validate lesson exists and has quiz questions
@@ -148,16 +145,16 @@ public static class QuizEndpoints
 
         if (lesson is null)
         {
-            return Results.NotFound(new { error = "Lesson not found" });
+            return Results.NotFound(new ErrorResponse("Lesson not found"));
         }
 
         if (lesson.QuizQuestions.Count == 0)
         {
-            return Results.BadRequest(new { error = "This lesson has no quiz questions" });
+            return Results.BadRequest(new ErrorResponse("This lesson has no quiz questions"));
         }
 
         // Check if lesson is unlocked
-        if (!await IsLessonUnlockedAsync(db, userId, lesson))
+        if (!await EndpointHelpers.IsLessonUnlockedAsync(db, userId, lesson))
         {
             return Results.Forbid();
         }
@@ -166,9 +163,9 @@ public static class QuizEndpoints
         var existingProgress = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lessonId);
 
-        if (existingProgress?.Status == "perfect")
+        if (existingProgress?.Status == ProgressStatuses.Perfect)
         {
-            return Results.BadRequest(new { error = "Already completed with perfect score" });
+            return Results.BadRequest(new ErrorResponse("Already completed with perfect score"));
         }
 
         // Score the quiz
@@ -217,7 +214,7 @@ public static class QuizEndpoints
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 LessonId = lessonId,
-                Status = "in-progress",
+                Status = ProgressStatuses.InProgress,
                 StartedAt = DateTime.UtcNow
             };
             db.UserProgress.Add(existingProgress);
@@ -227,9 +224,9 @@ public static class QuizEndpoints
         existingProgress.Score = percentage;
         existingProgress.MaxScore = 100;
 
-        if (passed && existingProgress.Status is "not-started" or "in-progress")
+        if (passed && existingProgress.Status is ProgressStatuses.NotStarted or ProgressStatuses.InProgress)
         {
-            existingProgress.Status = isPerfect ? "perfect" : "completed";
+            existingProgress.Status = isPerfect ? ProgressStatuses.Perfect : ProgressStatuses.Completed;
             existingProgress.CompletedAt = DateTime.UtcNow;
 
             // Award base XP
@@ -247,10 +244,10 @@ public static class QuizEndpoints
 
             existingProgress.XpEarned = xpEarned + bonusXpEarned;
         }
-        else if (passed && existingProgress.Status == "completed" && isPerfect)
+        else if (passed && existingProgress.Status == ProgressStatuses.Completed && isPerfect)
         {
             // Upgrading from completed to perfect
-            existingProgress.Status = "perfect";
+            existingProgress.Status = ProgressStatuses.Perfect;
 
             if (lesson.BonusXp > 0)
             {
@@ -343,29 +340,4 @@ public static class QuizEndpoints
                 && string.Equals(element.GetString(), "true", StringComparison.OrdinalIgnoreCase));
     }
 
-    private static async Task<bool> IsLessonUnlockedAsync(AcademyDbContext db, Guid userId, Lesson lesson)
-    {
-        if (lesson.UnlockAfterLessonId is null)
-        {
-            return true;
-        }
-
-        var prereqProgress = await db.UserProgress
-            .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
-
-        return prereqProgress?.Status is "completed" or "perfect" or "skipped";
-    }
-
-    private static Guid GetUserId(ClaimsPrincipal user)
-    {
-        var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? user.FindFirst("sub")?.Value;
-
-        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
-        {
-            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
-        }
-
-        return userId;
-    }
 }

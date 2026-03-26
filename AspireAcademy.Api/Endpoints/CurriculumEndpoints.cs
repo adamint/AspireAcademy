@@ -9,8 +9,8 @@ namespace AspireAcademy.Api.Endpoints;
 public static class CurriculumEndpoints
 {
     private const int PassingScorePercent = 70;
-    private static readonly string[] CompletedStatuses = ["completed", "perfect"];
-    private static readonly string[] DoneStatuses = ["completed", "perfect", "skipped"];
+    private static readonly string[] CompletedStatuses = [ProgressStatuses.Completed, ProgressStatuses.Perfect];
+    private static readonly string[] DoneStatuses = [ProgressStatuses.Completed, ProgressStatuses.Perfect, ProgressStatuses.Skipped];
     private static ILogger s_logger = null!;
 
     public static WebApplication MapCurriculumEndpoints(this WebApplication app)
@@ -31,7 +31,7 @@ public static class CurriculumEndpoints
         ClaimsPrincipal principal,
         AcademyDbContext db)
     {
-        var userId = GetUserId(principal);
+        var userId = EndpointHelpers.GetUserId(principal);
 
         var worlds = await db.Worlds.OrderBy(w => w.SortOrder).ToListAsync();
 
@@ -53,7 +53,7 @@ public static class CurriculumEndpoints
             .ToHashSet();
 
         var skippedLessonIds = userProgress
-            .Where(p => p.Status == "skipped")
+            .Where(p => p.Status == ProgressStatuses.Skipped)
             .Select(p => p.LessonId)
             .ToHashSet();
 
@@ -117,7 +117,7 @@ public static class CurriculumEndpoints
             return Results.NotFound(new ErrorResponse("World not found."));
         }
 
-        var userId = GetUserId(principal);
+        var userId = EndpointHelpers.GetUserId(principal);
 
         var modules = await db.Modules
             .Where(m => m.WorldId == worldId)
@@ -148,7 +148,7 @@ public static class CurriculumEndpoints
             .ToHashSet();
 
         var skippedLessonIds = userProgress
-            .Where(p => p.Status == "skipped")
+            .Where(p => p.Status == ProgressStatuses.Skipped)
             .Select(p => p.LessonId)
             .ToHashSet();
 
@@ -192,7 +192,7 @@ public static class CurriculumEndpoints
             return Results.NotFound(new ErrorResponse("Module not found."));
         }
 
-        var userId = GetUserId(principal);
+        var userId = EndpointHelpers.GetUserId(principal);
 
         var lessons = await db.Lessons
             .Where(l => l.ModuleId == moduleId)
@@ -230,7 +230,7 @@ public static class CurriculumEndpoints
                 lesson.BonusXp,
                 lesson.EstimatedMinutes,
                 lesson.IsBoss,
-                Status: progress?.Status ?? "not-started",
+                Status: progress?.Status ?? ProgressStatuses.NotStarted,
                 Score: progress?.Score,
                 IsUnlocked: IsLessonUnlocked(lesson, doneLessonIds));
         }).ToList();
@@ -250,7 +250,7 @@ public static class CurriculumEndpoints
             return Results.NotFound(new ErrorResponse("Lesson not found."));
         }
 
-        var userId = GetUserId(principal);
+        var userId = EndpointHelpers.GetUserId(principal);
 
         // Check if lesson is unlocked before returning content
         UserProgress? prereqProgress = null;
@@ -260,7 +260,7 @@ public static class CurriculumEndpoints
                 .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
         }
 
-        var isUnlocked = lesson.UnlockAfterLessonId is null || prereqProgress?.Status is "completed" or "perfect" or "skipped";
+        var isUnlocked = lesson.UnlockAfterLessonId is null || prereqProgress?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect or ProgressStatuses.Skipped;
         s_logger.LogInformation("GET /lessons/{LessonId} — type={LessonType}, unlocked={IsUnlocked}, userId={UserId}",
             lessonId, lesson.Type, isUnlocked, userId);
 
@@ -289,12 +289,12 @@ public static class CurriculumEndpoints
             ? siblingLessons[currentIndex + 1]
             : null;
 
-        var isCompleted = progress?.Status is "completed" or "perfect";
+        var isCompleted = progress?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect;
 
         QuizDto? quizDto = null;
         List<ChallengeDto>? challengeSteps = null;
 
-        if (lesson.Type is "quiz" or "boss-battle")
+        if (lesson.Type is LessonTypes.Quiz or LessonTypes.BossBattle)
         {
             var questions = await db.QuizQuestions
                 .Where(q => q.LessonId == lessonId)
@@ -321,7 +321,7 @@ public static class CurriculumEndpoints
             }
         }
 
-        if (lesson.Type is "challenge" or "build-project" or "boss-battle")
+        if (lesson.Type is LessonTypes.Challenge or LessonTypes.BuildProject or LessonTypes.BossBattle)
         {
             var challenges = await db.CodeChallenges
                 .Where(c => c.LessonId == lessonId)
@@ -353,7 +353,7 @@ public static class CurriculumEndpoints
             lesson.EstimatedMinutes,
             lesson.IsBoss,
             lesson.SortOrder,
-            Status: progress?.Status ?? "not-started",
+            Status: progress?.Status ?? ProgressStatuses.NotStarted,
             Score: progress?.Score,
             ModuleName: module?.Name,
             WorldId: module?.WorldId,
@@ -421,16 +421,6 @@ public static class CurriculumEndpoints
                completedLessonIds.Contains(lesson.UnlockAfterLessonId);
     }
 
-    private static Guid GetUserId(ClaimsPrincipal principal)
-    {
-        var idClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
-        {
-            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
-        }
-
-        return userId;
-    }
 }
 
 // --- DTOs ---

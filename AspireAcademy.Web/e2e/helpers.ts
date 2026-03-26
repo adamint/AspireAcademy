@@ -1,5 +1,12 @@
 import { Page, expect } from '@playwright/test';
 
+/**
+ * ⚠️ DEPRECATED: These TypeScript Playwright tests are being migrated to C# using Microsoft.Playwright
+ * in the unified .NET test project at AspireAcademy.Api.Tests/E2E/.
+ * See: AspireAcademy.Api.Tests/E2E/E2EHelpers.cs and the *Tests.cs files.
+ * Run `dotnet test AspireAcademy.Api.Tests/` to execute the migrated tests.
+ */
+
 /* ---------- identity helpers ---------- */
 
 export function uniqueUser(prefix = 'e2e'): string {

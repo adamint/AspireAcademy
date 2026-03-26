@@ -24,7 +24,7 @@ public static class AiTutorEndpoints
 
         group.MapPost("/chat", async (AiChatRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user, HttpContext httpContext) =>
         {
-            var userId = GetUserId(user);
+            var userId = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("AI chat for UserId={UserId}, lessonId={LessonId}",
                 userId, request.Context?.CurrentLessonId);
             var currentUser = await db.Users.FindAsync(userId);
@@ -32,7 +32,7 @@ public static class AiTutorEndpoints
             if (currentUser is null)
             {
                 httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await httpContext.Response.WriteAsJsonAsync(new { error = "User not found." }, s_jsonOptions);
+                await httpContext.Response.WriteAsJsonAsync(new ErrorResponse("User not found."), s_jsonOptions);
                 return;
             }
 
@@ -67,18 +67,18 @@ public static class AiTutorEndpoints
 
         group.MapPost("/hint", async (AiHintRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user) =>
         {
-            _ = GetUserId(user);
+            _ = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("AI hint level={HintLevel} for ChallengeId={ChallengeId}", request.HintLevel, request.ChallengeId);
 
             if (request.HintLevel is < 1 or > 3)
             {
-                return Results.BadRequest(new { error = "Hint level must be between 1 and 3." });
+                return Results.BadRequest(new ErrorResponse("Hint level must be between 1 and 3."));
             }
 
             var challenge = await db.CodeChallenges.FindAsync(request.ChallengeId);
             if (challenge is null)
             {
-                return Results.NotFound(new { error = "Challenge not found." });
+                return Results.NotFound(new ErrorResponse("Challenge not found."));
             }
 
             var hints = challenge.Hints.Deserialize<List<string>>(s_jsonOptions);
@@ -90,12 +90,12 @@ public static class AiTutorEndpoints
 
         group.MapPost("/review", async (AiReviewRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user) =>
         {
-            _ = GetUserId(user);
+            _ = EndpointHelpers.GetUserId(user);
 
             var challenge = await db.CodeChallenges.FindAsync(request.ChallengeId);
             if (challenge is null)
             {
-                return Results.NotFound(new { error = "Challenge not found." });
+                return Results.NotFound(new ErrorResponse("Challenge not found."));
             }
 
             var review = await aiService.ReviewCodeAsync(challenge.InstructionsMarkdown, request.Code);
@@ -106,16 +106,6 @@ public static class AiTutorEndpoints
         return app;
     }
 
-    private static Guid GetUserId(ClaimsPrincipal user)
-    {
-        var idClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
-        {
-            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
-        }
-
-        return userId;
-    }
 }
 
 // Request / response DTOs

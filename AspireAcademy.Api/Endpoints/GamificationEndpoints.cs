@@ -73,19 +73,19 @@ public static class GamificationEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
 
         var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
         var dbUser = await db.Users.FindAsync(userId);
 
         if (dbUser is null)
         {
-            return Results.NotFound(new { error = "User not found" });
+            return Results.NotFound(new ErrorResponse("User not found"));
         }
 
         var totalXp = userXp?.TotalXp ?? 0;
         var currentLevel = userXp?.CurrentLevel ?? 1;
-        var currentRank = userXp?.CurrentRank ?? "aspire-intern";
+        var currentRank = userXp?.CurrentRank ?? Ranks.AspireIntern;
         var weeklyXp = userXp?.WeeklyXp ?? 0;
 
         var xpToNextLevel = GamificationService.GetXpForNextLevel(totalXp);
@@ -115,18 +115,18 @@ public static class GamificationEndpoints
         GamificationService gamification,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
         s_logger.LogInformation("Complete lesson request for LessonId={LessonId}, UserId={UserId}", request.LessonId, userId);
 
         var lesson = await db.Lessons.FindAsync(request.LessonId);
         if (lesson is null)
         {
-            return Results.NotFound(new { error = "Lesson not found" });
+            return Results.NotFound(new ErrorResponse("Lesson not found"));
         }
 
-        if (lesson.Type is not "learn")
+        if (lesson.Type is not LessonTypes.Learn)
         {
-            return Results.BadRequest(new { error = "Only 'learn' type lessons can be completed via this endpoint" });
+            return Results.BadRequest(new ErrorResponse("Only 'learn' type lessons can be completed via this endpoint"));
         }
 
         // Check unlock status
@@ -135,7 +135,7 @@ public static class GamificationEndpoints
             var prereq = await db.UserProgress
                 .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
 
-            if (prereq?.Status is not ("completed" or "perfect" or "skipped"))
+            if (prereq?.Status is not (ProgressStatuses.Completed or ProgressStatuses.Perfect or ProgressStatuses.Skipped))
             {
                 return Results.Forbid();
             }
@@ -145,9 +145,7 @@ public static class GamificationEndpoints
         var existing = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == request.LessonId);
 
-        if (existing?.Status is "completed" or "perfect")
-        {
-            return Results.BadRequest(new { error = "Lesson already completed" });
+        if (existing?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect)
         }
 
         // Create or update progress
@@ -163,11 +161,7 @@ public static class GamificationEndpoints
             db.UserProgress.Add(existing);
         }
 
-        existing.Status = "completed";
-        existing.CompletedAt = DateTime.UtcNow;
-        existing.Attempts = 1;
-
-        // Award XP — use execution strategy to support Npgsql retry with transactions
+        existing.Status = ProgressStatuses.Completed;
         var strategy = db.Database.CreateExecutionStrategy();
         var xpEarned = lesson.XpReward;
         XpAwardResult result = null!;
@@ -214,24 +208,24 @@ public static class GamificationEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
         s_logger.LogInformation("Skip lesson request for LessonId={LessonId}, UserId={UserId}", request.LessonId, userId);
 
         var lesson = await db.Lessons.FindAsync(request.LessonId);
         if (lesson is null)
         {
-            return Results.NotFound(new { error = "Lesson not found" });
+            return Results.NotFound(new ErrorResponse("Lesson not found"));
         }
 
         var existing = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == request.LessonId);
 
-        if (existing?.Status is "completed" or "perfect")
+        if (existing?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect)
         {
-            return Results.BadRequest(new { error = "Cannot skip an already completed lesson" });
+            return Results.BadRequest(new ErrorResponse("Cannot skip an already completed lesson"));
         }
 
-        if (existing?.Status is "skipped")
+        if (existing?.Status is ProgressStatuses.Skipped)
         {
             return Results.Ok(new SkipResponse(Skipped: true, LessonId: request.LessonId));
         }
@@ -248,7 +242,7 @@ public static class GamificationEndpoints
             db.UserProgress.Add(existing);
         }
 
-        existing.Status = "skipped";
+        existing.Status = ProgressStatuses.Skipped;
         existing.XpEarned = 0;
         existing.CompletedAt = DateTime.UtcNow;
 
@@ -262,15 +256,15 @@ public static class GamificationEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
         s_logger.LogInformation("Unskip lesson request for LessonId={LessonId}, UserId={UserId}", request.LessonId, userId);
 
         var existing = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == request.LessonId);
 
-        if (existing is null || existing.Status is not "skipped")
+        if (existing is null || existing.Status is not ProgressStatuses.Skipped)
         {
-            return Results.BadRequest(new { error = "Lesson is not skipped" });
+            return Results.BadRequest(new ErrorResponse("Lesson is not skipped"));
         }
 
         db.UserProgress.Remove(existing);
@@ -283,7 +277,7 @@ public static class GamificationEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
 
         var allAchievements = await db.Achievements
             .OrderBy(a => a.SortOrder)
@@ -316,12 +310,12 @@ public static class GamificationEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
 
         var dbUser = await db.Users.FindAsync(userId);
         if (dbUser is null)
         {
-            return Results.NotFound(new { error = "User not found" });
+            return Results.NotFound(new ErrorResponse("User not found"));
         }
 
         dbUser.AvatarSeed = Guid.NewGuid().ToString("N");
@@ -335,12 +329,12 @@ public static class GamificationEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
 
         var dbUser = await db.Users.FindAsync(userId);
         if (dbUser is null)
         {
-            return Results.NotFound(new { error = "User not found" });
+            return Results.NotFound(new ErrorResponse("User not found"));
         }
 
         dbUser.AvatarSeed = null;
@@ -350,16 +344,4 @@ public static class GamificationEndpoints
         return Results.Ok(new AvatarRandomizeResponse(avatarUrl));
     }
 
-    private static Guid GetUserId(ClaimsPrincipal user)
-    {
-        var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? user.FindFirst("sub")?.Value;
-
-        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
-        {
-            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
-        }
-
-        return userId;
-    }
 }

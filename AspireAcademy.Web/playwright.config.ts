@@ -1,5 +1,14 @@
 import { defineConfig, devices } from '@playwright/test'
 
+/**
+ * ⚠️ DEPRECATED: These TypeScript Playwright tests are being migrated to C# using Microsoft.Playwright
+ * in the unified .NET test project at AspireAcademy.Api.Tests/E2E/.
+ *
+ * The C# tests run via: dotnet test AspireAcademy.Api.Tests/ --filter "Category=E2E"
+ *
+ * This TS config is kept for reference only. Do not add new tests here.
+ */
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,

@@ -5,7 +5,7 @@ public class UserProgress
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public string LessonId { get; set; } = null!;
-    public string Status { get; set; } = "not-started";
+    public string Status { get; set; } = ProgressStatuses.NotStarted;
     public int? Score { get; set; }
     public int? MaxScore { get; set; }
     public int Attempts { get; set; }

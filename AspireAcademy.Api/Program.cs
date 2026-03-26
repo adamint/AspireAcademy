@@ -29,6 +29,15 @@ builder.Services.AddHttpClient("coderunner", client =>
 var jwtSecret = builder.Configuration["Jwt:Key"] ?? "dev-secret-key-change-in-production-min-32-chars!!";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "AspireAcademy";
 
+// Fail fast if the default dev key is used in production
+if (!builder.Environment.IsDevelopment() && builder.Environment.EnvironmentName != "Testing" &&
+    jwtSecret == "dev-secret-key-change-in-production-min-32-chars!!")
+{
+    throw new InvalidOperationException(
+        "SECURITY: The default development JWT signing key must not be used in production. " +
+        "Set the 'Jwt:Key' configuration value to a unique, random string of at least 32 characters.");
+}
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -79,8 +88,11 @@ builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
+    // Only allow test-client bypass in Testing/Development environments
+    var isDev = builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Testing";
+
     options.AddPolicy("register", httpContext =>
-        httpContext.Request.Headers.ContainsKey("X-Test-Client")
+        isDev && httpContext.Request.Headers.ContainsKey("X-Test-Client")
             ? RateLimitPartition.GetNoLimiter(string.Empty)
             : RateLimitPartition.GetFixedWindowLimiter(
                 httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
@@ -91,7 +103,7 @@ builder.Services.AddRateLimiter(options =>
                 }));
 
     options.AddPolicy("login", httpContext =>
-        httpContext.Request.Headers.ContainsKey("X-Test-Client")
+        isDev && httpContext.Request.Headers.ContainsKey("X-Test-Client")
             ? RateLimitPartition.GetNoLimiter(string.Empty)
             : RateLimitPartition.GetFixedWindowLimiter(
                 httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
@@ -193,7 +205,7 @@ app.Use(async (context, next) =>
                 if (string.IsNullOrEmpty(origin) || origin == "null")
                 {
                     context.Response.StatusCode = 403;
-                    await context.Response.WriteAsJsonAsync(new { error = "Direct API access to auth endpoints is not allowed." });
+                    await context.Response.WriteAsJsonAsync(new ErrorResponse("Direct API access to auth endpoints is not allowed."));
                     return;
                 }
             }

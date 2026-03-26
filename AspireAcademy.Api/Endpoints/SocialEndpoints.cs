@@ -18,7 +18,7 @@ public static class SocialEndpoints
 
         group.MapGet("/friends", async (AcademyDbContext db, ClaimsPrincipal user) =>
         {
-            var userId = GetUserId(user);
+            var userId = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("GET /friends for UserId={UserId}", userId);
 
             // Accepted friends where current user is the requester
@@ -90,18 +90,18 @@ public static class SocialEndpoints
 
         group.MapPost("/friends/request", async (FriendRequestDto request, AcademyDbContext db, ClaimsPrincipal user) =>
         {
-            var userId = GetUserId(user);
+            var userId = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("Friend request from UserId={UserId} to Username={Username}", userId, request.Username);
 
             var targetUser = await db.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
             if (targetUser is null)
             {
-                return Results.NotFound(new { error = "User not found." });
+                return Results.NotFound(new ErrorResponse("User not found."));
             }
 
             if (targetUser.Id == userId)
             {
-                return Results.BadRequest(new { error = "You cannot send a friend request to yourself." });
+                return Results.BadRequest(new ErrorResponse("You cannot send a friend request to yourself."));
             }
 
             var existingFriendship = await db.Friendships.FirstOrDefaultAsync(f =>
@@ -113,7 +113,7 @@ public static class SocialEndpoints
                 var message = existingFriendship.Status == "accepted"
                     ? "Already friends."
                     : "Friend request already pending.";
-                return Results.Conflict(new { error = message });
+                return Results.Conflict(new ErrorResponse(message));
             }
 
             var friendship = new Friendship
@@ -136,22 +136,22 @@ public static class SocialEndpoints
 
         group.MapPost("/friends/{friendshipId:guid}/accept", async (Guid friendshipId, AcademyDbContext db, ClaimsPrincipal user) =>
         {
-            var userId = GetUserId(user);
+            var userId = EndpointHelpers.GetUserId(user);
 
             var friendship = await db.Friendships.FindAsync(friendshipId);
             if (friendship is null)
             {
-                return Results.NotFound(new { error = "Friendship not found." });
+                return Results.NotFound(new ErrorResponse("Friendship not found."));
             }
 
             if (friendship.AddresseeId != userId)
             {
-                return Results.BadRequest(new { error = "Only the addressee can accept a friend request." });
+                return Results.BadRequest(new ErrorResponse("Only the addressee can accept a friend request."));
             }
 
             if (friendship.Status != "pending")
             {
-                return Results.BadRequest(new { error = "Friend request is not pending." });
+                return Results.BadRequest(new ErrorResponse("Friend request is not pending."));
             }
 
             friendship.Status = "accepted";
@@ -164,12 +164,12 @@ public static class SocialEndpoints
 
         group.MapDelete("/friends/{friendshipId:guid}", async (Guid friendshipId, AcademyDbContext db, ClaimsPrincipal user) =>
         {
-            var userId = GetUserId(user);
+            var userId = EndpointHelpers.GetUserId(user);
 
             var friendship = await db.Friendships.FindAsync(friendshipId);
             if (friendship is null)
             {
-                return Results.NotFound(new { error = "Friendship not found." });
+                return Results.NotFound(new ErrorResponse("Friendship not found."));
             }
 
             if (friendship.RequesterId != userId && friendship.AddresseeId != userId)
@@ -185,23 +185,23 @@ public static class SocialEndpoints
 
         group.MapPut("/users/me", async (UpdateProfileRequest request, AcademyDbContext db, ClaimsPrincipal user) =>
         {
-            var userId = GetUserId(user);
+            var userId = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("PUT /users/me for UserId={UserId}", userId);
 
             if (request.DisplayName is not null && request.DisplayName.Trim().Length > 50)
             {
-                return Results.BadRequest(new { error = "Display name must be 50 characters or fewer." });
+                return Results.BadRequest(new ErrorResponse("Display name must be 50 characters or fewer."));
             }
 
             if (request.Bio is not null && request.Bio.Trim().Length > 500)
             {
-                return Results.BadRequest(new { error = "Bio must be 500 characters or fewer." });
+                return Results.BadRequest(new ErrorResponse("Bio must be 500 characters or fewer."));
             }
 
             var dbUser = await db.Users.FindAsync(userId);
             if (dbUser is null)
             {
-                return Results.NotFound(new { error = "User not found." });
+                return Results.NotFound(new ErrorResponse("User not found."));
             }
 
             if (!string.IsNullOrWhiteSpace(request.DisplayName))
@@ -226,10 +226,10 @@ public static class SocialEndpoints
         {
             if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
             {
-                return Results.BadRequest(new { error = "Search query must be at least 2 characters." });
+                return Results.BadRequest(new ErrorResponse("Search query must be at least 2 characters."));
             }
 
-            var userId = GetUserId(user);
+            var userId = EndpointHelpers.GetUserId(user);
             var pattern = $"%{q}%";
 
             var matchedUsers = await db.Users
@@ -268,12 +268,12 @@ public static class SocialEndpoints
 
         group.MapGet("/users/{userId:guid}/profile", async (Guid userId, AcademyDbContext db, ClaimsPrincipal user) =>
         {
-            var currentUserId = GetUserId(user);
+            var currentUserId = EndpointHelpers.GetUserId(user);
 
             var profileUser = await db.Users.FindAsync(userId);
             if (profileUser is null)
             {
-                return Results.NotFound(new { error = "User not found." });
+                return Results.NotFound(new ErrorResponse("User not found."));
             }
 
             var achievementCount = await db.UserAchievements.CountAsync(ua => ua.UserId == userId);
@@ -310,7 +310,7 @@ public static class SocialEndpoints
 
         group.MapGet("/leaderboard", async (string? scope, int? limit, AcademyDbContext db, IConnectionMultiplexer redis, ClaimsPrincipal user) =>
         {
-            var userId = GetUserId(user);
+            var userId = EndpointHelpers.GetUserId(user);
             scope ??= "weekly";
             var maxLimit = Math.Clamp(limit ?? 50, 1, 50);
 
@@ -424,16 +424,6 @@ public static class SocialEndpoints
             (int)totalEntries));
     }
 
-    private static Guid GetUserId(ClaimsPrincipal user)
-    {
-        var idClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
-        {
-            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
-        }
-
-        return userId;
-    }
 }
 
 // Request / response DTOs

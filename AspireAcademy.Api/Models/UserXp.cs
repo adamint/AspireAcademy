@@ -5,7 +5,7 @@ public class UserXp
     public Guid UserId { get; set; }
     public int TotalXp { get; set; }
     public int CurrentLevel { get; set; } = 1;
-    public string CurrentRank { get; set; } = "aspire-intern";
+    public string CurrentRank { get; set; } = Ranks.AspireIntern;
     public int WeeklyXp { get; set; }
     public DateOnly WeekStart { get; set; }
 

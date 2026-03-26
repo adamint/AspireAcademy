@@ -66,7 +66,7 @@ public static class ChallengeEndpoints
         IConnectionMultiplexer redis,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
         s_logger.LogInformation("Code run for LessonId={LessonId}, UserId={UserId}", lessonId, userId);
 
         // Rate limiting
@@ -82,10 +82,10 @@ public static class ChallengeEndpoints
 
         if (lesson is null)
         {
-            return Results.NotFound(new { error = "Lesson not found" });
+            return Results.NotFound(new ErrorResponse("Lesson not found"));
         }
 
-        if (!await IsLessonUnlockedAsync(db, userId, lesson))
+        if (!await EndpointHelpers.IsLessonUnlockedAsync(db, userId, lesson))
         {
             return Results.Forbid();
         }
@@ -93,7 +93,7 @@ public static class ChallengeEndpoints
         var challenge = lesson.CodeChallenges.ElementAtOrDefault(request.StepIndex);
         if (challenge is null)
         {
-            return Results.BadRequest(new { error = "Invalid step index" });
+            return Results.BadRequest(new ErrorResponse("Invalid step index"));
         }
 
         // Forward to CodeRunner
@@ -118,7 +118,7 @@ public static class ChallengeEndpoints
         GamificationService gamification,
         ClaimsPrincipal user)
     {
-        var userId = GetUserId(user);
+        var userId = EndpointHelpers.GetUserId(user);
         s_logger.LogInformation("Code submit for LessonId={LessonId}, UserId={UserId}", lessonId, userId);
         AcademyMetrics.ChallengesSubmitted.Add(1);
 
@@ -129,10 +129,10 @@ public static class ChallengeEndpoints
 
         if (lesson is null)
         {
-            return Results.NotFound(new { error = "Lesson not found" });
+            return Results.NotFound(new ErrorResponse("Lesson not found"));
         }
 
-        if (!await IsLessonUnlockedAsync(db, userId, lesson))
+        if (!await EndpointHelpers.IsLessonUnlockedAsync(db, userId, lesson))
         {
             return Results.Forbid();
         }
@@ -140,7 +140,7 @@ public static class ChallengeEndpoints
         var challenge = lesson.CodeChallenges.ElementAtOrDefault(request.StepIndex);
         if (challenge is null)
         {
-            return Results.BadRequest(new { error = "Invalid step index" });
+            return Results.BadRequest(new ErrorResponse("Invalid step index"));
         }
 
         // Execute code
@@ -190,7 +190,7 @@ public static class ChallengeEndpoints
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 LessonId = lessonId,
-                Status = "in-progress",
+                Status = ProgressStatuses.InProgress,
                 StartedAt = DateTime.UtcNow
             };
             db.UserProgress.Add(existingProgress);
@@ -198,9 +198,9 @@ public static class ChallengeEndpoints
 
         existingProgress.Attempts++;
 
-        if (allPassed && existingProgress.Status is "not-started" or "in-progress")
+        if (allPassed && existingProgress.Status is ProgressStatuses.NotStarted or ProgressStatuses.InProgress)
         {
-            existingProgress.Status = "completed";
+            existingProgress.Status = ProgressStatuses.Completed;
             existingProgress.CompletedAt = DateTime.UtcNow;
 
             // Award base XP
@@ -335,29 +335,4 @@ public static class ChallengeEndpoints
         return count <= MaxRunsPerMinute;
     }
 
-    private static async Task<bool> IsLessonUnlockedAsync(AcademyDbContext db, Guid userId, Lesson lesson)
-    {
-        if (lesson.UnlockAfterLessonId is null)
-        {
-            return true;
-        }
-
-        var prereqProgress = await db.UserProgress
-            .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
-
-        return prereqProgress?.Status is "completed" or "perfect" or "skipped";
-    }
-
-    private static Guid GetUserId(ClaimsPrincipal user)
-    {
-        var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? user.FindFirst("sub")?.Value;
-
-        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
-        {
-            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
-        }
-
-        return userId;
-    }
 }

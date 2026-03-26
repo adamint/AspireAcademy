@@ -89,7 +89,7 @@ public static partial class AuthEndpoints
             TotalXp = 0,
             WeeklyXp = 0,
             CurrentLevel = 1,
-            CurrentRank = "aspire-intern",
+            CurrentRank = Ranks.AspireIntern,
             WeekStart = DateOnly.FromDateTime(DateTime.UtcNow)
         };
 
@@ -176,7 +176,7 @@ public static partial class AuthEndpoints
         ClaimsPrincipal principal,
         AcademyDbContext db)
     {
-        var userId = GetUserId(principal);
+        var userId = EndpointHelpers.GetUserId(principal);
         s_logger.LogInformation("GET /me for UserId={UserId}", userId);
 
         var user = await db.Users.FindAsync(userId);
@@ -258,7 +258,7 @@ public static partial class AuthEndpoints
 
         try
         {
-            return handler.ValidateToken(token, new TokenValidationParameters
+            var principal = handler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -267,23 +267,22 @@ public static partial class AuthEndpoints
                 ValidateAudience = true,
                 ValidAudience = config["Jwt:Audience"],
                 ValidateLifetime = false, // allow expired tokens for refresh
-            }, out _);
+            }, out var validatedToken);
+
+            // Reject tokens that expired more than 7 days ago to prevent
+            // indefinite reuse of very old tokens.
+            if (validatedToken is JwtSecurityToken jwt &&
+                jwt.ValidTo < DateTime.UtcNow.AddDays(-7))
+            {
+                return null;
+            }
+
+            return principal;
         }
         catch
         {
             return null;
         }
-    }
-
-    internal static Guid GetUserId(ClaimsPrincipal principal)
-    {
-        var idClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
-        {
-            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
-        }
-
-        return userId;
     }
 
     [GeneratedRegex(@"^[a-zA-Z0-9_]{3,30}$")]

@@ -133,7 +133,7 @@ internal static class E2EHelpers
         }
 
         var lesson = await lessonResp.JsonAsync();
-        if (!lesson?.TryGetProperty("quiz", out var quiz) == true)
+        if (lesson is null || !lesson.Value.TryGetProperty("quiz", out var quiz))
         {
             return;
         }

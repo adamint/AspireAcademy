@@ -12,7 +12,8 @@ public static class AdminEndpoints
     public static WebApplication MapAdminEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/api/admin")
-            .WithTags("Admin");
+            .WithTags("Admin")
+            .RequireAuthorization();
 
         group.MapGet("/stats", GetStats);
         group.MapPost("/reload-curriculum", ReloadCurriculum);
@@ -22,6 +23,15 @@ public static class AdminEndpoints
         group.MapDelete("/users/{userId:guid}", DeleteUser);
         group.MapPost("/seed-test-data", SeedTestData);
         group.MapGet("/seeded-credentials", GetSeededCredentials);
+
+        // AppHost internal commands bypass JWT auth but require a shared secret
+        var internalGroup = app.MapGroup("/api/admin")
+            .WithTags("Admin-Internal")
+            .AllowAnonymous();
+
+        internalGroup.MapPost("/reload-curriculum-internal", ReloadCurriculum);
+        internalGroup.MapPost("/seed-test-data-internal", SeedTestData);
+        internalGroup.MapPost("/flush-db-internal", FlushDatabase);
 
         return app;
     }
@@ -54,11 +64,21 @@ public static class AdminEndpoints
             return true;
         }
 
-        // Internal AppHost command bypass (for Aspire Dashboard commands)
-        return string.Equals(
-            request.Headers["X-Aspire-Admin"].FirstOrDefault(),
-            "aspire-internal",
-            StringComparison.Ordinal);
+        // Internal AppHost command bypass — requires a secret that is not guessable.
+        // The AppHost sets this via PrepareRequest; external callers cannot know the value.
+        var expectedSecret = request.HttpContext.RequestServices
+            .GetRequiredService<IConfiguration>()["Admin:InternalSecret"];
+
+        if (!string.IsNullOrEmpty(expectedSecret) &&
+            string.Equals(
+                request.Headers["X-Aspire-Admin"].FirstOrDefault(),
+                expectedSecret,
+                StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private static async Task<IResult> GetStats(

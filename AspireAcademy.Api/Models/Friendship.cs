@@ -5,7 +5,7 @@ public class Friendship
     public Guid Id { get; set; }
     public Guid RequesterId { get; set; }
     public Guid AddresseeId { get; set; }
-    public string Status { get; set; } = "pending";
+    public string Status { get; set; } = FriendshipStatuses.Pending;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? AcceptedAt { get; set; }
 

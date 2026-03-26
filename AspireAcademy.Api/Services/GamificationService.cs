@@ -43,7 +43,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
                 UserId = userId,
                 TotalXp = 0,
                 CurrentLevel = 1,
-                CurrentRank = "aspire-intern",
+                CurrentRank = Ranks.AspireIntern,
                 WeeklyXp = 0,
                 WeekStart = GetCurrentWeekStart()
             };
@@ -113,14 +113,14 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
         var rank = level switch
         {
-            <= 5 => "aspire-intern",
-            <= 12 => "aspire-developer",
-            <= 17 => "aspire-engineer",
-            <= 28 => "aspire-specialist",
-            <= 36 => "aspire-expert",
-            <= 41 => "aspire-master",
-            42 => "aspire-architect",
-            _ => "aspire-intern"
+            <= 5 => Ranks.AspireIntern,
+            <= 12 => Ranks.AspireDeveloper,
+            <= 17 => Ranks.AspireEngineer,
+            <= 28 => Ranks.AspireSpecialist,
+            <= 36 => Ranks.AspireExpert,
+            <= 41 => Ranks.AspireMaster,
+            42 => Ranks.AspireArchitect,
+            _ => Ranks.AspireIntern
         };
 
         return (level, rank);
