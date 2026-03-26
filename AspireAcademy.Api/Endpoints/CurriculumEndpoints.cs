@@ -242,6 +242,27 @@ public static class CurriculumEndpoints
         var progress = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lessonId);
 
+        // Fetch module and world for navigation context
+        var module = await db.Modules.FirstOrDefaultAsync(m => m.Id == lesson.ModuleId);
+        var world = module is not null
+            ? await db.Worlds.FirstOrDefaultAsync(w => w.Id == module.WorldId)
+            : null;
+
+        // Find previous/next lessons in the same module by sort order
+        var siblingLessons = await db.Lessons
+            .Where(l => l.ModuleId == lesson.ModuleId)
+            .OrderBy(l => l.SortOrder)
+            .Select(l => new { l.Id, l.Title, l.Type, l.SortOrder })
+            .ToListAsync();
+
+        var currentIndex = siblingLessons.FindIndex(l => l.Id == lessonId);
+        var previousLesson = currentIndex > 0 ? siblingLessons[currentIndex - 1] : null;
+        var nextLesson = currentIndex >= 0 && currentIndex < siblingLessons.Count - 1
+            ? siblingLessons[currentIndex + 1]
+            : null;
+
+        var isCompleted = progress?.Status is "completed" or "perfect";
+
         QuizDto? quizDto = null;
         List<ChallengeDto>? challengeSteps = null;
 
@@ -303,8 +324,19 @@ public static class CurriculumEndpoints
             lesson.BonusXp,
             lesson.EstimatedMinutes,
             lesson.IsBoss,
+            lesson.SortOrder,
             Status: progress?.Status ?? "not-started",
             Score: progress?.Score,
+            ModuleName: module?.Name,
+            WorldId: module?.WorldId,
+            WorldName: world?.Name,
+            IsCompleted: isCompleted,
+            PreviousLessonId: previousLesson?.Id,
+            NextLessonId: nextLesson?.Id,
+            PreviousLessonTitle: previousLesson?.Title,
+            NextLessonTitle: nextLesson?.Title,
+            PreviousLessonType: previousLesson?.Type,
+            NextLessonType: nextLesson?.Type,
             quizDto,
             challengeSteps));
     }

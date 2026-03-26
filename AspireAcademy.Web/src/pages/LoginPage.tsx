@@ -108,7 +108,7 @@ export default function LoginPage() {
               <Input
                 id="login-user"
                 value={usernameOrEmail}
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                onChange={(e) => { setUsernameOrEmail(e.target.value); if (error) setError(''); }}
                 placeholder="hero@aspire.dev"
                 autoComplete="username"
                 required
@@ -130,7 +130,7 @@ export default function LoginPage() {
                 id="login-pass"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); if (error) setError(''); }}
                 placeholder="••••••••"
                 autoComplete="current-password"
                 required

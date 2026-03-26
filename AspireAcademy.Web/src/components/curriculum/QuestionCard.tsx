@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Box, Text, VStack, Input, RadioGroup, Checkbox } from '@chakra-ui/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import type { QuizQuestion } from '../../pages/QuizPage';
 import { retroCardProps } from '../../theme/aspireTheme';
+import MarkdownContent from '../common/MarkdownContent';
 
 interface QuestionCardProps {
   question: QuizQuestion;
@@ -29,9 +30,9 @@ export default function QuestionCard({
           color="dark.text"
           {...retroCardProps}
         >
-          <Text fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
-            {question.text}
-          </Text>
+          <Box fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
+            <MarkdownContent>{question.text}</MarkdownContent>
+          </Box>
           <RadioGroup.Root
             value={(selectedAnswer as string) ?? ''}
             onValueChange={(e) => onAnswerChange(e.value)}
@@ -81,9 +82,9 @@ export default function QuestionCard({
           color="dark.text"
           {...retroCardProps}
         >
-          <Text fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
-            {question.text}
-          </Text>
+          <Box fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
+            <MarkdownContent>{question.text}</MarkdownContent>
+          </Box>
           {question.codeSnippet && (
             <Box
               mb={4}
@@ -92,7 +93,7 @@ export default function QuestionCard({
               border="2px solid"
               borderColor="game.pixelBorder"
             >
-              <SyntaxHighlighter language="csharp" style={vscDarkPlus}>
+              <SyntaxHighlighter language="csharp" style={oneDark}>
                 {question.codeSnippet}
               </SyntaxHighlighter>
             </Box>
@@ -140,9 +141,9 @@ export default function QuestionCard({
           color="dark.text"
           {...retroCardProps}
         >
-          <Text fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
-            {question.text}
-          </Text>
+          <Box fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
+            <MarkdownContent>{question.text}</MarkdownContent>
+          </Box>
           <Box maxW="400px">
             <Text fontSize="sm" color="dark.muted" mb={2}>
               Type your answer
@@ -195,9 +196,9 @@ function MultiSelectCard({
       color="dark.text"
       {...retroCardProps}
     >
-      <Text fontSize="md" lineHeight="tall" mb={2} fontWeight="medium">
-        {question.text}
-      </Text>
+      <Box fontSize="md" lineHeight="tall" mb={2} fontWeight="medium">
+        <MarkdownContent>{question.text}</MarkdownContent>
+      </Box>
       <Text fontSize="xs" color="dark.muted" mb={4} fontStyle="italic">
         Select all that apply
       </Text>

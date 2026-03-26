@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { FiCheck, FiX } from 'react-icons/fi';
 import { retroCardProps, pixelFontProps } from '../../theme/aspireTheme';
+import MarkdownContent from '../common/MarkdownContent';
 
 interface QuestionFeedbackProps {
   isCorrect: boolean;
@@ -60,9 +61,9 @@ export default function QuestionFeedback({
         </Text>
       )}
 
-      <Text color="dark.text" fontSize="sm" lineHeight="tall">
-        {explanation}
-      </Text>
+      <Box color="dark.text" fontSize="sm" lineHeight="tall">
+        <MarkdownContent>{explanation}</MarkdownContent>
+      </Box>
     </Box>
   );
 }

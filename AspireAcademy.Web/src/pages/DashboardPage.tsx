@@ -199,11 +199,18 @@ export default function DashboardPage() {
       <Heading as="h2" size="lg" color="dark.text">
         🌍 Your Worlds
       </Heading>
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap="4">
-        {worlds?.map((world) => (
-          <WorldCard key={world.id} world={world} />
-        ))}
-      </SimpleGrid>
+      {(!worlds || worlds.length === 0) ? (
+        <Box textAlign="center" py={12} {...retroCardProps}>
+          <Text {...pixelFontProps} fontSize="sm">No worlds available yet</Text>
+          <Text fontSize="sm" color="dark.muted" mt={2}>Check back soon — new content is on the way!</Text>
+        </Box>
+      ) : (
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap="4">
+          {worlds.map((world) => (
+            <WorldCard key={world.id} world={world} />
+          ))}
+        </SimpleGrid>
+      )}
 
       {/* Recent Activity */}
       {xpData?.recentEvents && xpData.recentEvents.length > 0 && (

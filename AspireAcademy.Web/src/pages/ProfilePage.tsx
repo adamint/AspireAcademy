@@ -36,7 +36,7 @@ export default function ProfilePage() {
   const [editOpen, setEditOpen] = useState(false);
   const [editDisplayName, setEditDisplayName] = useState('');
   const [editBio, setEditBio] = useState('');
-
+  const [mutationError, setMutationError] = useState<string | null>(null);
   const isOwnProfile = !userId || userId === currentUser?.id;
   const profileId = isOwnProfile ? currentUser?.id : userId;
 
@@ -64,9 +64,16 @@ export default function ProfilePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] });
+      setMutationError(null);
     },
     onError: (err) => {
       console.error('[ProfilePage] Friend action failed:', err);
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
+      setMutationError(
+        axiosErr?.response?.data?.error ??
+        axiosErr?.response?.data?.message ??
+        'Action failed. Please try again.'
+      );
     },
   });
 
@@ -79,9 +86,16 @@ export default function ProfilePage() {
       updateUser(data);
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] });
       setEditOpen(false);
+      setMutationError(null);
     },
     onError: (err) => {
       console.error('[ProfilePage] Edit profile failed:', err);
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
+      setMutationError(
+        axiosErr?.response?.data?.error ??
+        axiosErr?.response?.data?.message ??
+        'Failed to save profile. Please try again.'
+      );
     },
   });
 
@@ -93,6 +107,11 @@ export default function ProfilePage() {
     onSuccess: (data) => {
       updateUser({ avatarUrl: data.avatarUrl });
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] });
+      setMutationError(null);
+    },
+    onError: (err) => {
+      console.error('[ProfilePage] Randomize avatar failed:', err);
+      setMutationError('Failed to randomize avatar. Please try again.');
     },
   });
 
@@ -104,6 +123,11 @@ export default function ProfilePage() {
     onSuccess: (data) => {
       updateUser({ avatarUrl: data.avatarUrl });
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] });
+      setMutationError(null);
+    },
+    onError: (err) => {
+      console.error('[ProfilePage] Reset avatar failed:', err);
+      setMutationError('Failed to reset avatar. Please try again.');
     },
   });
 
@@ -148,6 +172,13 @@ export default function ProfilePage() {
 
   return (
     <VStack maxW="800px" mx="auto" p={6} gap={6} align="stretch">
+      {/* Mutation error feedback */}
+      {mutationError && (
+        <Box bg="rgba(209, 52, 56, 0.15)" border="2px solid" borderColor="game.error" borderRadius="sm" px="3" py="2">
+          <Text color="game.error" fontSize="sm">{mutationError}</Text>
+        </Box>
+      )}
+
       {/* Profile Header */}
       <Flex gap={6} align="flex-start" flexWrap="wrap">
         <AvatarDisplay

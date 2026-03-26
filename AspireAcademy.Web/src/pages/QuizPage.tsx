@@ -79,6 +79,7 @@ export default function QuizPage() {
   const [runningScore, setRunningScore] = useState(0);
   const [questionResults, setQuestionResults] = useState<QuestionResult[]>([]);
   const [quizResult, setQuizResult] = useState<QuizSubmitResponse | null>(null);
+  const [finalizingQuiz, setFinalizingQuiz] = useState(false);
 
   // Fetch quiz data on mount
   const fetched = useState(false);
@@ -165,9 +166,10 @@ export default function QuizPage() {
   }, [quiz, currentQuestion, selectedAnswer]);
 
   const handleNext = useCallback(async () => {
-    if (!quiz) return;
+    if (!quiz || finalizingQuiz) return;
 
     if (isLastQuestion) {
+      setFinalizingQuiz(true);
       try {
         const res = await api.post<QuizSubmitResponse>(
           `/quizzes/${lessonId}/submit`,
@@ -199,7 +201,7 @@ export default function QuizPage() {
       setSelectedAnswer(null);
       setFeedback(null);
     }
-  }, [quiz, lessonId, isLastQuestion, questionResults, runningScore, maxScore, syncFromServer]);
+  }, [quiz, lessonId, isLastQuestion, questionResults, runningScore, maxScore, syncFromServer, finalizingQuiz]);
 
   // ── Loading ──────────────────────────────────────
 
@@ -349,8 +351,9 @@ export default function QuizPage() {
             color="white"
             _hover={{ bg: 'aspire.500' }}
             onClick={handleNext}
+            disabled={finalizingQuiz}
           >
-            {isLastQuestion ? 'See Results' : 'Next Question'}
+            {finalizingQuiz ? 'Finishing…' : isLastQuestion ? 'See Results' : 'Next Question'}
             <FiArrowRight />
           </Button>
         )}

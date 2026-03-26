@@ -30,6 +30,7 @@ import { useGamificationStore } from '../store/gamificationStore';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import CodeEditor from '../components/curriculum/CodeEditor';
 import OutputPanel from '../components/curriculum/OutputPanel';
+import MarkdownContent from '../components/common/MarkdownContent';
 
 // ── Types ────────────────────────────────────────────
 
@@ -125,7 +126,7 @@ export default function ChallengePage() {
         setLoading(false);
       })
       .catch(() => {
-        console.error('[ChallengePage] Failed to load challenge:', challengeId);
+        console.error('[ChallengePage] Failed to load challenge:', lessonId);
         setError('Failed to load challenge. Please try again.');
         setLoading(false);
       });
@@ -134,7 +135,7 @@ export default function ChallengePage() {
   // ── Handlers ─────────────────────────────────────
 
   const handleRun = useCallback(async () => {
-    if (!challenge) return;
+    if (!challenge || running || submitting) return;
     setRunning(true);
     setOutput('');
     setErrors('');
@@ -146,15 +147,19 @@ export default function ChallengePage() {
       setOutput(res.data.output);
       setErrors(res.data.errors);
     } catch {
-      console.error('[ChallengePage] Failed to execute code for challenge:', challengeId);
+      console.error('[ChallengePage] Failed to execute code for challenge:', lessonId);
       setErrors('Failed to execute code. Please try again.');
     } finally {
       setRunning(false);
     }
-  }, [challenge, code]);
+  }, [challenge, code, running, submitting, lessonId]);
 
   const handleSubmit = useCallback(async () => {
-    if (!challenge) return;
+    if (!challenge || running || submitting || showSuccess) return;
+    if (!code.trim()) {
+      setErrors('Please write some code before submitting.');
+      return;
+    }
     setSubmitting(true);
     setOutput('');
     setErrors('');
@@ -190,12 +195,12 @@ export default function ChallengePage() {
         }
       }
     } catch {
-      console.error('[ChallengePage] Failed to submit challenge:', challengeId);
+      console.error('[ChallengePage] Failed to submit challenge:', lessonId);
       setErrors('Submission failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
-  }, [challenge, code, syncFromServer]);
+  }, [challenge, code, syncFromServer, running, submitting, showSuccess, lessonId]);
 
   const handleRevealHint = useCallback(() => {
     setRevealedHints((n) => n + 1);
@@ -220,7 +225,7 @@ export default function ChallengePage() {
         { role: 'assistant', content: res.data.reply },
       ]);
     } catch {
-      console.error('[ChallengePage] Failed to get AI hint for challenge:', challengeId);
+      console.error('[ChallengePage] Failed to get AI hint for challenge:', lessonId);
       setAiMessages((prev) => [
         ...prev,
         { role: 'assistant', content: 'Sorry, I could not process your request right now.' },
@@ -228,7 +233,7 @@ export default function ChallengePage() {
     } finally {
       setAiLoading(false);
     }
-  }, [aiInput, challenge, code]);
+  }, [aiInput, challenge, code, lessonId]);
 
   // ── Loading ──────────────────────────────────────
 
@@ -402,7 +407,7 @@ export default function ChallengePage() {
               '& a': { color: '#9185D1' },
             }}
           >
-            <ReactMarkdown>{challenge.instructions}</ReactMarkdown>
+            <MarkdownContent>{challenge.instructions}</MarkdownContent>
           </Box>
 
           {/* Test cases */}
@@ -517,7 +522,7 @@ export default function ChallengePage() {
               color="#d4d4d4"
               _hover={{ bg: 'whiteAlpha.100' }}
               onClick={handleRun}
-              disabled={running || submitting}
+              disabled={running || submitting || showSuccess}
             >
               <FiPlay />
               {running ? 'Running...' : 'Run'}
@@ -528,7 +533,7 @@ export default function ChallengePage() {
               color="white"
               _hover={{ bg: 'aspire.500' }}
               onClick={handleSubmit}
-              disabled={running || submitting}
+              disabled={running || submitting || showSuccess || !code.trim()}
             >
               <FiUpload />
               {submitting ? 'Submitting...' : 'Submit'}

@@ -43,11 +43,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// Build the list of allowed CORS origins: Vite dev server + any AppHost-injected frontend URLs
+var corsOrigins = new List<string> { "http://localhost:3000", "http://localhost:5173" };
+foreach (var kvp in builder.Configuration.AsEnumerable())
+{
+    if (kvp.Key.StartsWith("services__web__", StringComparison.OrdinalIgnoreCase) &&
+        kvp.Value is { Length: > 0 } url)
+    {
+        corsOrigins.Add(url.TrimEnd('/'));
+    }
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactDev", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
+        policy.WithOrigins(corsOrigins.Distinct().ToArray())
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -120,6 +131,40 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("ReactDev");
+
+// Auth-endpoint guard: reject non-browser requests to /api/auth/register and /api/auth/login
+// unless they carry the test-client header. Health, OpenAPI, and admin-header requests pass through.
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
+    if (path is not null &&
+        (path.StartsWith("/api/auth/register", StringComparison.OrdinalIgnoreCase) ||
+         path.StartsWith("/api/auth/login", StringComparison.OrdinalIgnoreCase)))
+    {
+        // Allow test clients (WebApplicationFactory / Aspire.Hosting.Testing)
+        if (!context.Request.Headers.ContainsKey("X-Test-Client"))
+        {
+            // Allow Aspire Dashboard admin commands
+            if (!string.Equals(
+                    context.Request.Headers["X-Aspire-Admin"].FirstOrDefault(),
+                    "aspire-internal",
+                    StringComparison.Ordinal))
+            {
+                // Require an Origin header (browsers always send one for non-GET)
+                var origin = context.Request.Headers.Origin.FirstOrDefault();
+                if (string.IsNullOrEmpty(origin) || origin == "null")
+                {
+                    context.Response.StatusCode = 403;
+                    await context.Response.WriteAsJsonAsync(new { error = "Direct API access to auth endpoints is not allowed." });
+                    return;
+                }
+            }
+        }
+    }
+
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 

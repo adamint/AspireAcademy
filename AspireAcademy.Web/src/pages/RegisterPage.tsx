@@ -37,6 +37,16 @@ export default function RegisterPage() {
   const [fieldErrors, setFieldErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
 
+  const clearFieldError = (field: keyof FormErrors) => {
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
   const validate = (): boolean => {
     const errors: FormErrors = {};
 
@@ -166,7 +176,7 @@ export default function RegisterPage() {
               <Input
                 id="reg-user"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => { setUsername(e.target.value); clearFieldError('username'); }}
                 placeholder="hero_dev"
                 autoComplete="username"
                 size="md"
@@ -184,7 +194,7 @@ export default function RegisterPage() {
                 id="reg-email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); }}
                 placeholder="hero@aspire.dev"
                 autoComplete="email"
                 size="md"
@@ -217,7 +227,7 @@ export default function RegisterPage() {
                 id="reg-pass"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); clearFieldError('password'); }}
                 placeholder="••••••••"
                 autoComplete="new-password"
                 size="md"
@@ -235,7 +245,7 @@ export default function RegisterPage() {
                 id="reg-confirm"
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) => { setConfirmPassword(e.target.value); clearFieldError('confirmPassword'); }}
                 placeholder="••••••••"
                 autoComplete="new-password"
                 size="md"

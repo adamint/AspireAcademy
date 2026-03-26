@@ -21,6 +21,7 @@ import api from '../services/apiClient';
 import { useGamificationStore } from '../store/gamificationStore';
 import type { LessonDetail, CompleteResponse } from '../types/curriculum';
 import type { Components } from 'react-markdown';
+import MarkdownContent from '../components/common/MarkdownContent';
 
 const lessonTypeLabel: Record<string, { emoji: string; label: string }> = {
   learn: { emoji: '📖', label: 'Learn' },
@@ -304,9 +305,7 @@ export default function LessonPage() {
             },
           }}
         >
-          <ReactMarkdown components={markdownComponents}>
-            {lesson.contentMarkdown}
-          </ReactMarkdown>
+          <MarkdownContent>{lesson.contentMarkdown}</MarkdownContent>
         </Card.Body>
       </Card.Root>
 
@@ -315,10 +314,11 @@ export default function LessonPage() {
         <Button
           colorPalette={lesson.isCompleted ? 'green' : 'purple'}
           size="lg"
-          disabled={lesson.isCompleted || completeMutation.isPending}
+          disabled={lesson.isCompleted || completeMutation.isPending || completeMutation.isSuccess}
           onClick={handleComplete}
+          data-testid="mark-complete-btn"
         >
-          {lesson.isCompleted
+          {lesson.isCompleted || completeMutation.isSuccess
             ? '✅ Completed'
             : completeMutation.isPending
               ? 'Completing…'

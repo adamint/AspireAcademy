@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { FiSearch, FiUserPlus, FiX, FiCheck } from 'react-icons/fi';
 import api from '../services/apiClient';
+import { useAuthStore } from '../store/authStore';
 import FriendCard, { type FriendCardUser } from '../components/social/FriendCard';
 import { pixelFontProps } from '../theme/aspireTheme';
 
@@ -22,9 +23,11 @@ interface FriendsData {
 
 export default function FriendsPage() {
   const queryClient = useQueryClient();
+  const currentUser = useAuthStore((s) => s.user);
   const [tab, setTab] = useState<string>('friends');
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [actionError, setActionError] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const handleSearchChange = useCallback((value: string) => {
@@ -87,9 +90,16 @@ export default function FriendsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['friends'] });
       queryClient.invalidateQueries({ queryKey: ['userSearch'] });
+      setActionError(null);
     },
     onError: (err) => {
       console.error('[FriendsPage] Friend action failed:', err);
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
+      setActionError(
+        axiosErr?.response?.data?.error ??
+        axiosErr?.response?.data?.message ??
+        'Action failed. Please try again.'
+      );
     },
   });
 
@@ -104,6 +114,13 @@ export default function FriendsPage() {
       <Text {...pixelFontProps} fontSize="xl" fontWeight="bold">
         👥 Friends
       </Text>
+
+      {/* Error feedback */}
+      {actionError && (
+        <Box bg="rgba(209, 52, 56, 0.15)" border="2px solid" borderColor="game.error" borderRadius="sm" px="3" py="2">
+          <Text color="game.error" fontSize="sm">{actionError}</Text>
+        </Box>
+      )}
 
       {/* Search */}
       <Flex align="center" gap={2} maxW="400px">
@@ -130,22 +147,29 @@ export default function FriendsPage() {
           {!searchLoading && searchResults && searchResults.length === 0 && (
             <Text color="dark.muted" fontSize="sm">No users found.</Text>
           )}
-          {!searchLoading && searchResults?.map((user) => (
-            <FriendCard
-              key={user.id}
-              user={user}
-              actions={
-                <Button
-                  colorPalette="purple"
-                  size="sm"
-                  onClick={() => friendActionMutation.mutate({ action: 'add', userId: user.id })}
-                  disabled={friendActionMutation.isPending}
-                >
-                  <FiUserPlus /> Add
-                </Button>
-              }
-            />
-          ))}
+          {!searchLoading && searchResults?.map((user) => {
+            const isSelf = user.id === currentUser?.id;
+            return (
+              <FriendCard
+                key={user.id}
+                user={user}
+                actions={
+                  isSelf ? (
+                    <Text fontSize="xs" color="dark.muted" fontStyle="italic">You</Text>
+                  ) : (
+                    <Button
+                      colorPalette="purple"
+                      size="sm"
+                      onClick={() => friendActionMutation.mutate({ action: 'add', userId: user.id })}
+                      disabled={friendActionMutation.isPending}
+                    >
+                      <FiUserPlus /> Add
+                    </Button>
+                  )
+                }
+              />
+            );
+          })}
         </VStack>
       )}
 
