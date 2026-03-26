@@ -117,8 +117,8 @@ test('complete first-session user journey', async ({ page }) => {
 
   // ─── Step 9: See first module with lessons listed ─────────────────
   await test.step('9. First module with lessons visible', async () => {
-    // Module name should be visible
-    await expect(page.getByText('What is Aspire?')).toBeVisible({ timeout: 10_000 });
+    // Module name should be visible (first module in "Aspire Foundations")
+    await expect(page.getByText('Why Aspire?')).toBeVisible({ timeout: 10_000 });
     // Lessons should be listed (role="button" items with XP badges)
     const lessonItems = page.locator('[role="button"]').filter({ hasText: /XP/ });
     await expect(lessonItems.first()).toBeVisible({ timeout: 10_000 });
@@ -203,60 +203,29 @@ test('complete first-session user journey', async ({ page }) => {
 
   // ─── Step 16: Click Next → navigate to second lesson ──────────────
   await test.step('16. Click Next → second lesson', async () => {
-    // The Next button is the one on the right side with an arrow
-    const nextBtn = page.locator('button').filter({ has: page.locator('svg') }).last();
-    // More precise: the button at the bottom right that's not disabled and points right
-    const nextLesson = page.getByRole('button').filter({ hasText: /^(?!.*Back).*/ }).last();
-    // Actually, let's use the navigation section at the bottom
-    const navSection = page.locator('div').filter({ has: page.locator('button') }).filter({ hasText: /Previous|Next/ });
+    // The LessonPage renders prev/next buttons at the bottom separated by a border-top
+    // The Next button is on the right and shows the next lesson's title
+    // It's NOT disabled when there is a next lesson
+    const lessonResponse = page.waitForResponse(
+      (resp) => resp.url().includes('/api/lessons/') && resp.request().method() === 'GET',
+      { timeout: 10_000 },
+    );
 
-    // The next button is the right-side button in the prev/next nav
-    // Let's find all ghost buttons in the bottom navigation
-    const rightBtn = page.locator('button:has(svg)').last();
+    // Find all enabled buttons with SVG icons (prev/next buttons have arrow icons)
+    // The "next" button is the last non-disabled button with an SVG that isn't the
+    // mark-complete or skip button
+    const prevNextButtons = page.locator('button:has(svg)').filter({
+      hasNotText: /mark complete|skip|completed|back to/i,
+    });
+    // The next button is the last one (right side)
+    const nextBtn = prevNextButtons.last();
+    await expect(nextBtn).toBeEnabled({ timeout: 5_000 });
+    await nextBtn.click();
 
-    // Safer: look for button that has the next lesson title text (not "Previous")
-    // The LessonPage renders next/prev buttons with lesson titles
-    // Let's just look for a button that is NOT disabled and is after "Previous"
-    const allNavButtons = page.locator('[style*="border-top"] button, div:has(> button:nth-child(2)) button');
-
-    // Simplest approach: find the second button in the prev/next flex container
-    // The container has borderTop style
-    const prevNextContainer = page.locator('div').filter({ has: page.locator('button') });
-
-    // Let's use a direct approach - the rightmost non-disabled button at the page bottom
-    // We know the next button is enabled (there IS a second lesson)
-    const lessonPageButtons = page.locator('button').filter({ hasNotText: /mark complete|skip|completed/i });
-    const enabledNavBtns = lessonPageButtons.filter({ has: page.locator('svg') });
-
-    // Most reliable: the page has exactly 2 navigation buttons at the bottom
-    // Previous (may be disabled) and Next
-    // Let's find them by their position - they're the last buttons on the page
-    // The Next button is NOT disabled for lesson 1.1.1 (since 1.1.2 exists)
-    await page.waitForTimeout(500);
-
-    // Best approach: click the next button by finding it with its title text
-    // The LessonPage shows lesson.nextLessonTitle in the button
-    const allButtons = await page.locator('button').all();
-    let nextFound = false;
-    for (const btn of allButtons.reverse()) {
-      const text = await btn.textContent();
-      const isDisabled = await btn.isDisabled();
-      if (!isDisabled && text && !text.match(/mark complete|skip|completed|back to/i) && (await btn.locator('svg').count()) > 0) {
-        // This is likely the Next button
-        const lessonResponse = page.waitForResponse(
-          (resp) => resp.url().includes('/api/lessons/') && resp.request().method() === 'GET',
-          { timeout: 10_000 },
-        );
-        await btn.click();
-        await page.waitForURL(/\/lessons\//, { timeout: 10_000 });
-        const resp = await lessonResponse;
-        expect(resp.status()).toBeGreaterThanOrEqual(200);
-        expect(resp.status()).toBeLessThan(300);
-        nextFound = true;
-        break;
-      }
-    }
-    expect(nextFound).toBe(true);
+    await page.waitForURL(/\/lessons\//, { timeout: 10_000 });
+    const resp = await lessonResponse;
+    expect(resp.status()).toBeGreaterThanOrEqual(200);
+    expect(resp.status()).toBeLessThan(300);
     await assertNoFatalError(page);
   });
 
@@ -280,12 +249,12 @@ test('complete first-session user journey', async ({ page }) => {
 
   // ─── Step 19: First lesson shows ✅ completed icon ─────────────────
   await test.step('19. First lesson shows completed ✅ icon', async () => {
-    // Wait for lessons to load
+    // Wait for lessons to load and data to refresh
     const lessonItems = page.locator('[role="button"]').filter({ hasText: /XP/ });
     await expect(lessonItems.first()).toBeVisible({ timeout: 10_000 });
-    // The first lesson should now show ✅
+    // The first lesson should now show ✅ (may need time for refetch)
     const completedLesson = page.locator('[role="button"]').filter({ hasText: '✅' }).first();
-    await expect(completedLesson).toBeVisible({ timeout: 5_000 });
+    await expect(completedLesson).toBeVisible({ timeout: 10_000 });
   });
 
   // ─── Step 20: Navigate to quiz lesson (complete prerequisites) ────
@@ -430,8 +399,8 @@ test('complete first-session user journey', async ({ page }) => {
     await expect(page.getByText(/— Results/)).toBeVisible({ timeout: 10_000 });
     // Should show PASSED or FAILED badge
     await expect(page.getByText(/PASSED|FAILED/)).toBeVisible({ timeout: 5_000 });
-    // Should show score fraction like "3/4 (75%)"
-    await expect(page.getByText(/\d+\/\d+/)).toBeVisible({ timeout: 5_000 });
+    // Should show score fraction with percentage like "3/4 (75%)"
+    await expect(page.getByText(/\d+\/\d+ \(\d+%\)/)).toBeVisible({ timeout: 5_000 });
     // Should show per-question result tiles (Q1, Q2, etc.)
     await expect(page.getByText('Q1')).toBeVisible({ timeout: 5_000 });
     await assertNoFatalError(page);
@@ -496,7 +465,7 @@ test('complete first-session user journey', async ({ page }) => {
     await sidebar.getByText('Aspire Foundations').click();
 
     // Should show module names underneath
-    await expect(sidebar.getByText('What is Aspire?')).toBeVisible({ timeout: 5_000 });
+    await expect(sidebar.getByText('Why Aspire?')).toBeVisible({ timeout: 5_000 });
   });
 
   // ─── Step 30: Theme toggle → switches theme ───────────────────────

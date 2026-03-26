@@ -82,6 +82,7 @@ export default function LessonPage() {
 
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       queryClient.invalidateQueries({ queryKey: ['worlds'] });
+      queryClient.invalidateQueries({ queryKey: ['world'] });
       queryClient.invalidateQueries({ queryKey: ['xp'] });
     },
     onError: (err) => {
@@ -95,6 +96,7 @@ export default function LessonPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       queryClient.invalidateQueries({ queryKey: ['worlds'] });
+      queryClient.invalidateQueries({ queryKey: ['world'] });
     },
     onError: (err) => {
       console.error('[LessonPage] Failed to skip lesson:', err);
@@ -107,6 +109,7 @@ export default function LessonPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       queryClient.invalidateQueries({ queryKey: ['worlds'] });
+      queryClient.invalidateQueries({ queryKey: ['world'] });
     },
     onError: (err) => {
       console.error('[LessonPage] Failed to unskip lesson:', err);

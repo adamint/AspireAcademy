@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Flex, Spinner, Text } from '@chakra-ui/react';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
+import { AdminRoute } from './components/layout/AdminRoute';
 import { AppShell } from './components/layout/AppShell';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -51,7 +52,7 @@ export default function App() {
             <Route path="/friends" element={<FriendsPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />
