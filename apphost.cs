@@ -22,9 +22,7 @@ var codeRunner = builder.AddDockerfile("coderunner", "./AspireAcademy.CodeRunner
     .WithHttpEndpoint(targetPort: 8080)
     .WithContainerRuntimeArgs("--memory=512m")
     .WithContainerRuntimeArgs("--pids-limit=50")
-    .WithContainerRuntimeArgs("--cpus=1.0")
-    .WithContainerRuntimeArgs("--read-only")
-    .WithContainerRuntimeArgs("--tmpfs=/tmp:rw,size=100m");
+    .WithContainerRuntimeArgs("--cpus=1.0");
 
 // API backend
 var api = builder.AddCSharpApp("api", "./AspireAcademy.Api/")

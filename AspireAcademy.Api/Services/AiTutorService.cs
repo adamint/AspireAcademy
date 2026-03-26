@@ -16,21 +16,34 @@ public sealed class AiTutorService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    private readonly ChatClient _chatClient;
+    private readonly ChatClient? _chatClient;
+    private readonly string? _configError;
 
     public AiTutorService(IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("openai")
-            ?? throw new InvalidOperationException("OpenAI connection string 'openai' is not configured.");
+        var connectionString = configuration.GetConnectionString("openai");
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            _configError = "OpenAI connection string 'openai' is not configured. Set it via: aspire secret set ConnectionStrings:openai \"Key=sk-...\"";
+            return;
+        }
 
-        var (endpoint, apiKey) = ParseConnectionString(connectionString);
-
-        var client = endpoint is not null
-            ? new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) })
-            : new OpenAIClient(apiKey);
-
-        _chatClient = client.GetChatClient("gpt-4o");
+        try
+        {
+            var (endpoint, apiKey) = ParseConnectionString(connectionString);
+            var client = endpoint is not null
+                ? new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) })
+                : new OpenAIClient(apiKey);
+            _chatClient = client.GetChatClient("gpt-4o");
+        }
+        catch (Exception ex)
+        {
+            _configError = $"Failed to initialize OpenAI client: {ex.Message}";
+        }
     }
+
+    private ChatClient GetClientOrThrow() =>
+        _chatClient ?? throw new InvalidOperationException(_configError ?? "AI tutor is not configured.");
 
     /// <summary>
     /// Streams a chat response from OpenAI given a user message, conversation history, and lesson context.
@@ -65,7 +78,7 @@ public sealed class AiTutorService
 
         messages.Add(ChatMessage.CreateUserMessage(message));
 
-        var updates = _chatClient.CompleteChatStreamingAsync(messages, cancellationToken: cancellationToken);
+        var updates = GetClientOrThrow().CompleteChatStreamingAsync(messages, cancellationToken: cancellationToken);
 
         await foreach (var update in updates)
         {
@@ -104,7 +117,7 @@ public sealed class AiTutorService
                 $"Challenge instructions:\n{challenge.Instructions}\n\nStudent's current code:\n```csharp\n{currentCode}\n```\n\nProvide a helpful hint.")
         };
 
-        var result = await _chatClient.CompleteChatAsync(messages);
+        var result = await GetClientOrThrow().CompleteChatAsync(messages);
 
         return result.Value.Content[0].Text;
     }
@@ -134,7 +147,7 @@ public sealed class AiTutorService
                 $"Challenge:\n{challengeInstructions}\n\nStudent's code:\n```csharp\n{code}\n```")
         };
 
-        var result = await _chatClient.CompleteChatAsync(messages);
+        var result = await GetClientOrThrow().CompleteChatAsync(messages);
         var responseText = result.Value.Content[0].Text;
 
         try
