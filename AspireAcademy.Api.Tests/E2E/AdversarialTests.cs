@@ -36,7 +36,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(completeBtn).ToBeDisabledAsync(new() { Timeout = 5_000 });
             await Assertions.Expect(completeBtn).ToHaveTextAsync(new Regex("completed", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(submitBtn).ToBeDisabledAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByText(new Regex("valid email", RegexOptions.IgnoreCase))).ToBeVisibleAsync();
             await Assertions.Expect(page.GetByText(new Regex("password must be", RegexOptions.IgnoreCase))).ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             await page.Locator("#reg-user").FillAsync("valid_username");
             await Assertions.Expect(page.GetByText(new Regex("username must be", RegexOptions.IgnoreCase))).Not.ToBeVisibleAsync(new() { Timeout = 3_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("create account", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("passwords do not match", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page).Not.ToHaveURLAsync(new Regex("login"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("login"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -159,7 +159,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             Assert.True(hasError || bodyNotEmpty);
             await Assertions.Expect(page.Locator("body")).Not.ToHaveTextAsync("");
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -186,7 +186,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             await backBtn.ClickAsync();
             await page.WaitForURLAsync("**/worlds/**", new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -203,6 +203,6 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture)
             var sidebar = page.Locator("nav");
             await Assertions.Expect(sidebar).ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

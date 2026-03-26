@@ -19,7 +19,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Navigation).GetByText("Home").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(dashboard|$)"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Navigation).GetByText("Dashboard").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Navigation).GetByText("Profile").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/profile"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Navigation).GetByText("Friends").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/friends"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Navigation).GetByText("Leaderboard").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/leaderboard"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Navigation).GetByText("Achievements").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/achievements"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await main.GetByText("Aspire Foundations").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GetByText("Back to Dashboard").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByText("404")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("page not found", RegexOptions.IgnoreCase))).ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(worldUrl);
             await Assertions.Expect(page.GetByText(new Regex("back to dashboard", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -178,6 +178,6 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             await page.GoBackAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/profile"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

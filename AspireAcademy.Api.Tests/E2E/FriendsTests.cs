@@ -20,7 +20,7 @@ public class FriendsTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("friends", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("pending", RegexOptions.IgnoreCase) })).ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class FriendsTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("friends", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("no friends yet", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class FriendsTests(AppHostPlaywrightFixture fixture)
             await page.WaitForTimeoutAsync(500);
             await Assertions.Expect(page.GetByText("Search Results")).Not.ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class FriendsTests(AppHostPlaywrightFixture fixture)
 
             var page2 = await fixture.NewPageAsync();
             await RegisterUser(page2, user2);
-            await page2.CloseAsync();
+            await fixture.ClosePageAsync(page2);
 
             await page.GotoAsync(fixture.WebBaseUrl + "/friends");
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("friends", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 10_000 });
@@ -79,7 +79,7 @@ public class FriendsTests(AppHostPlaywrightFixture fixture)
             await searchInput.FillAsync(user2);
             await Assertions.Expect(page.GetByText("Search Results")).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class FriendsTests(AppHostPlaywrightFixture fixture)
             await RegisterUser(page, user1);
             var page2 = await fixture.NewPageAsync();
             await RegisterUser(page2, user2);
-            await page2.CloseAsync();
+            await fixture.ClosePageAsync(page2);
 
             await page.GotoAsync(fixture.WebBaseUrl + "/friends");
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("friends", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 10_000 });
@@ -111,6 +111,6 @@ public class FriendsTests(AppHostPlaywrightFixture fixture)
                 await Assertions.Expect(page.GetByText(new Regex("action failed", RegexOptions.IgnoreCase))).Not.ToBeVisibleAsync();
             }
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

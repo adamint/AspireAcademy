@@ -18,7 +18,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await RegisterUser(page, username);
             await ExpectDashboard(page);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("username must be 3", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("valid email", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex(@"password must be 8\+", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("passwords do not match", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -109,9 +109,9 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
                 await page2.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
                 await Assertions.Expect(page2.GetByText(new Regex("already taken|already exists|duplicate", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
             }
-            finally { await page2.CloseAsync(); }
+            finally { await fixture.ClosePageAsync(page2); }
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -126,7 +126,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await LoginUser(page, username);
             await ExpectDashboard(page);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("log in", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("invalid|incorrect|failed|wrong", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -158,7 +158,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("log in", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("invalid|not found|failed|credentials", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -171,7 +171,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("log in", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await LogoutUser(page);
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -200,7 +200,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.ReloadAsync();
             await ExpectDashboard(page);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -214,7 +214,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -228,6 +228,6 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/register");
             await Assertions.Expect(page.GetByRole(AriaRole.Button, new() { Name = "Create Account" })).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

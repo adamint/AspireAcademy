@@ -24,7 +24,7 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(btn).ToBeEnabledAsync();
             await Assertions.Expect(btn).ToHaveTextAsync(new Regex("mark complete", RegexOptions.IgnoreCase));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(btn).ToHaveTextAsync(new Regex("completed", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
             await Assertions.Expect(btn).ToBeDisabledAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -87,10 +87,10 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture)
 
             await btn.ClickAsync();
             await Assertions.Expect(btn).ToBeDisabledAsync(new() { Timeout = 5_000 });
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("complet", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("failed to mark complete", RegexOptions.IgnoreCase))).Not.ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -110,6 +110,6 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture)
             var text = await btn.TextContentAsync();
             Assert.Matches(new Regex("mark complete|completed|completing", RegexOptions.IgnoreCase), text!);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

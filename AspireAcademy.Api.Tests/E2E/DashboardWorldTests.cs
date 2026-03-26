@@ -19,7 +19,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 15_000 });
             await Assertions.Expect(page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("level|xp", RegexOptions.IgnoreCase)).First).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             var lessonItems = page.Locator("[role='button']").Filter(new() { HasText = "XP" });
             Assert.True(await lessonItems.CountAsync() >= 1);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             await page.GetByText("Back to Dashboard").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             var learnLessons = page.Locator("[role='button']").Filter(new() { HasText = "📖" });
             Assert.True(await learnLessons.CountAsync() >= 1);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             await learnLesson.First.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             await firstQuiz.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -166,6 +166,6 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture)
             await challengeLesson.First.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/challenges/"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

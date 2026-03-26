@@ -44,7 +44,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(submitBtn).ToBeDisabledAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture)
                 await Assertions.Expect(submitBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
             }
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("next question|see results", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -126,6 +126,6 @@ public class QuizTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/nonexistent-quiz-id");
             await Assertions.Expect(page.GetByText(new Regex("not found|error|failed to load", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

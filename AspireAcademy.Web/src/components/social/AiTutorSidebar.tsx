@@ -93,7 +93,7 @@ export default function AiTutorSidebar() {
         const updated = [...prev];
         updated[updated.length - 1] = {
           role: 'assistant',
-          content: 'Sorry, I encountered an error. Please try again.',
+          content: 'AI tutor is not available. Make sure an OpenAI API key is configured in the Dashboard (click the "openai" resource → "Set parameter value").',
         };
         return updated;
       });

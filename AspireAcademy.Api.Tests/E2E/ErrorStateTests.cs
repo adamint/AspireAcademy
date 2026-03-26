@@ -20,7 +20,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByText("404")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("page not found", RegexOptions.IgnoreCase))).ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("dashboard", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/lessons/nonexistent-lesson-id-12345");
             await Assertions.Expect(page.GetByText(new Regex("lesson not found|not found|error", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/nonexistent-quiz-id-12345");
             await Assertions.Expect(page.GetByText(new Regex("not found|error|failed to load", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/challenges/nonexistent-challenge-id-12345");
             await Assertions.Expect(page.GetByText(new Regex("not found|error|failed", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/worlds/nonexistent-world-id-12345");
             await Assertions.Expect(page.GetByText(new Regex("world not found|not found", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -105,12 +105,12 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await RegisterUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/users/00000000-0000-0000-0000-000000000000");
             await page.WaitForTimeoutAsync(3_000);
-            var hasError = await page.GetByText(new Regex("failed to load profile|user not found|not found|error", RegexOptions.IgnoreCase)).IsVisibleAsync();
+            var hasError = await page.GetByText(new Regex("failed to load profile|user not found|not found|error", RegexOptions.IgnoreCase)).First.IsVisibleAsync();
             var hasRedirect = page.Url.Contains("/login") || page.Url.Contains("/dashboard");
             var bodyNotEmpty = (await page.Locator("body").TextContentAsync())?.Length > 0;
             Assert.True(hasError || hasRedirect || bodyNotEmpty);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/profile");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/friends");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -158,7 +158,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/leaderboard");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -170,7 +170,7 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/achievements");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -182,6 +182,6 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/lessons/some-fake-id");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

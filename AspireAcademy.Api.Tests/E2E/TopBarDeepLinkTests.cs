@@ -24,7 +24,7 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             var logOutBtn = page.Locator("button").Filter(new() { HasText = "Log Out" });
             await Assertions.Expect(logOutBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             await profileBtn.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/profile"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             await page.Locator("button").Filter(new() { HasText = "Log Out" }).ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             var xpBar = page.Locator(".xp-bar-track");
             await Assertions.Expect(xpBar).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(worldUrl);
             await Assertions.Expect(page.GetByText(new Regex("back to dashboard", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(lessonUrl);
             await Assertions.Expect(page.GetByText(new Regex("back to", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -134,6 +134,6 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             await page.GoBackAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/profile"));
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

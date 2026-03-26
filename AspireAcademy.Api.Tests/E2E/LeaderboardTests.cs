@@ -22,7 +22,7 @@ public class LeaderboardTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("all-time", RegexOptions.IgnoreCase) })).ToBeVisibleAsync();
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("friends", RegexOptions.IgnoreCase) })).ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class LeaderboardTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("weekly", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("resets monday", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class LeaderboardTests(AppHostPlaywrightFixture fixture)
             await page.WaitForTimeoutAsync(1_000);
             await Assertions.Expect(page.Locator("body")).Not.ToHaveTextAsync("");
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -77,6 +77,6 @@ public class LeaderboardTests(AppHostPlaywrightFixture fixture)
             var bodyNotEmpty = (await page.Locator("main, [role='main']").TextContentAsync())?.Length > 10;
             Assert.True(bodyNotEmpty);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

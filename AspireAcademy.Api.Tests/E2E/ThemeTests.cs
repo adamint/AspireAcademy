@@ -19,7 +19,7 @@ public class ThemeTests(AppHostPlaywrightFixture fixture)
             var themeBtn = page.GetByLabel("Toggle color mode");
             await Assertions.Expect(themeBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class ThemeTests(AppHostPlaywrightFixture fixture)
             var newBg = await page.EvaluateAsync<string>("() => getComputedStyle(document.body).backgroundColor");
             Assert.NotEqual(initialBg, newBg);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -64,6 +64,6 @@ public class ThemeTests(AppHostPlaywrightFixture fixture)
             var refreshBg = await page.EvaluateAsync<string>("() => getComputedStyle(document.body).backgroundColor");
             Assert.Equal(afterBg, refreshBg);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

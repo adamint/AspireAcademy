@@ -73,7 +73,7 @@ public class LoadingStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
             await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 15_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -94,6 +94,6 @@ public class LoadingStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/leaderboard");
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("weekly", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

@@ -249,7 +249,7 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
         }
         finally
         {
-            await page.CloseAsync();
+            await fixture.ClosePageAsync(page);
         }
     }
 

@@ -19,7 +19,7 @@ public class ProfileTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/profile");
             await Assertions.Expect(page.GetByText(username)).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class ProfileTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(dialog.GetByText("Display Name")).ToBeVisibleAsync();
             await Assertions.Expect(dialog.GetByText("Bio")).ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class ProfileTests(AppHostPlaywrightFixture fixture)
             await dialog.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("cancel", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(dialog).Not.ToBeVisibleAsync(new() { Timeout = 3_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -83,6 +83,6 @@ public class ProfileTests(AppHostPlaywrightFixture fixture)
             await page.WaitForTimeoutAsync(2_000);
             await Assertions.Expect(page.GetByText(new Regex("failed to randomize", RegexOptions.IgnoreCase))).Not.ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

@@ -21,7 +21,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
             await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });
             await Assertions.Expect(page.Locator(".monaco-editor")).ToContainTextAsync("CreateBuilder", new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });
             await Assertions.Expect(page.GetByRole(AriaRole.Heading, new() { Name = "First App Challenge", Exact = true })).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture)
             var pendingIcons = page.Locator("text=☐");
             Assert.True(await pendingIcons.CountAsync() >= 2);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -99,6 +99,6 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture)
             await hint1Btn.ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex(@"AddRedis.*cache", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

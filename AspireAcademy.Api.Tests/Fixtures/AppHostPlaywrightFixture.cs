@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.Playwright;
 
 namespace AspireAcademy.Api.Tests.Fixtures;
@@ -13,7 +14,17 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
 
     public async Task<IPage> NewPageAsync()
     {
+        // browser.NewPageAsync() creates a context + page pair;
+        // closing the page automatically disposes the context.
         return await _browser!.NewPageAsync();
+    }
+
+    /// <summary>
+    /// Closes the browser context that owns the given page, releasing resources.
+    /// </summary>
+    public async Task ClosePageAsync(IPage page)
+    {
+        await page.CloseAsync();
     }
 
     public async Task InitializeAsync()
@@ -26,6 +37,10 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
         ApiClient.DefaultRequestHeaders.Add("X-Test-Client", "true");
         WebBaseUrl = webUrl;
         ApiBaseUrl = apiUrl;
+
+        // Share base URLs with static helpers
+        E2E.E2EHelpers.WebBaseUrl = webUrl;
+        E2E.E2EHelpers.ApiBaseUrl = apiUrl;
 
         // Wait for API to be healthy (up to 30 seconds)
         for (var i = 0; i < 30; i++)

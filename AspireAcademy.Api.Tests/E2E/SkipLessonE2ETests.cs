@@ -23,7 +23,7 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(skipBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(skipBtn).ToBeEnabledAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByText(new Regex("skipped", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByTestId("undo-skip-btn")).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture)
             var learnLessons = page.Locator("[role='button']").Filter(new() { HasText = "📖" });
             Assert.True(await learnLessons.CountAsync() >= 1);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture)
             var token = await GetAuthToken(page);
 
             // Unskip
-            var unskipRes = await page.APIRequest.PostAsync("/api/progress/unskip", new()
+            var unskipRes = await page.APIRequest.PostAsync(E2EHelpers.ApiBaseUrl + "/api/progress/unskip", new()
             {
                 Headers = new Dictionary<string, string> { ["Authorization"] = $"Bearer {token}" },
                 DataObject = new { lessonId = "1.1.1" },
@@ -97,7 +97,7 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture)
             Assert.True(unskipRes.Ok);
 
             // Complete for XP
-            var completeRes = await page.APIRequest.PostAsync("/api/progress/complete", new()
+            var completeRes = await page.APIRequest.PostAsync(E2EHelpers.ApiBaseUrl + "/api/progress/complete", new()
             {
                 Headers = new Dictionary<string, string> { ["Authorization"] = $"Bearer {token}" },
                 DataObject = new { lessonId = "1.1.1" },
@@ -107,6 +107,6 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture)
             var body = await completeRes.JsonAsync();
             Assert.True(body?.GetProperty("xpEarned").GetInt32() > 0);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

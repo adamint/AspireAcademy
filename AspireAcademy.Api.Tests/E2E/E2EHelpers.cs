@@ -7,6 +7,12 @@ namespace AspireAcademy.Api.Tests.E2E;
 /// </summary>
 internal static class E2EHelpers
 {
+    /// <summary>Base URL for the web frontend, set by the fixture.</summary>
+    public static string WebBaseUrl { get; set; } = "";
+
+    /// <summary>Base URL for the API server, set by the fixture.</summary>
+    public static string ApiBaseUrl { get; set; } = "";
+
     public static string UniqueUser(string prefix = "e2e")
     {
         return $"{prefix}_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}_{Guid.NewGuid().ToString("N")[..6]}";
@@ -14,23 +20,23 @@ internal static class E2EHelpers
 
     public static async Task RegisterUser(IPage page, string username, string password = "TestPassword1!")
     {
-        await page.GotoAsync("/register");
+        await page.GotoAsync(WebBaseUrl + "/register");
         await page.Locator("#reg-user").FillAsync(username);
         await page.Locator("#reg-email").FillAsync($"{username}@test.com");
         await page.Locator("#reg-display").FillAsync(username);
         await page.Locator("#reg-pass").FillAsync(password);
         await page.Locator("#reg-confirm").FillAsync(password);
         await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
-        await page.WaitForURLAsync("**/{dashboard,}", new() { Timeout = 15_000 });
+        await page.WaitForURLAsync("**/dashboard**", new() { Timeout = 15_000 });
     }
 
     public static async Task LoginUser(IPage page, string username, string password = "TestPassword1!")
     {
-        await page.GotoAsync("/login");
+        await page.GotoAsync(WebBaseUrl + "/login");
         await page.Locator("#login-user").FillAsync(username);
         await page.Locator("#login-pass").FillAsync(password);
         await page.GetByRole(AriaRole.Button, new() { NameRegex = new("log in", RegexOptions.IgnoreCase) }).ClickAsync();
-        await page.WaitForURLAsync("**/{dashboard,}", new() { Timeout = 15_000 });
+        await page.WaitForURLAsync("**/dashboard**", new() { Timeout = 15_000 });
     }
 
     public static async Task LogoutUser(IPage page)
@@ -98,7 +104,7 @@ internal static class E2EHelpers
         var token = await GetAuthToken(page);
         foreach (var lessonId in lessonIds)
         {
-            await page.APIRequest.PostAsync("/api/progress/complete", new()
+            await page.APIRequest.PostAsync(ApiBaseUrl + "/api/progress/complete", new()
             {
                 Headers = new Dictionary<string, string> { ["Authorization"] = $"Bearer {token}" },
                 DataObject = new { lessonId },
@@ -122,7 +128,7 @@ internal static class E2EHelpers
 
     private static async Task SubmitQuizViaApi(IPage page, string token, string lessonId)
     {
-        var lessonResp = await page.APIRequest.GetAsync($"/api/lessons/{lessonId}", new()
+        var lessonResp = await page.APIRequest.GetAsync(ApiBaseUrl + $"/api/lessons/{lessonId}", new()
         {
             Headers = new Dictionary<string, string> { ["Authorization"] = $"Bearer {token}" },
         });
@@ -151,7 +157,7 @@ internal static class E2EHelpers
             answers.Add(new { questionId = qId, selectedOptionIds = new[] { "b" } });
         }
 
-        await page.APIRequest.PostAsync($"/api/quizzes/{lessonId}/submit", new()
+        await page.APIRequest.PostAsync(ApiBaseUrl + $"/api/quizzes/{lessonId}/submit", new()
         {
             Headers = new Dictionary<string, string> { ["Authorization"] = $"Bearer {token}" },
             DataObject = new { answers },

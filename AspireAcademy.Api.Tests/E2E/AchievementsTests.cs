@@ -26,7 +26,7 @@ public class AchievementsTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("perfection", RegexOptions.IgnoreCase) })).ToBeVisibleAsync();
             await Assertions.Expect(page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("completion", RegexOptions.IgnoreCase) })).ToBeVisibleAsync();
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class AchievementsTests(AppHostPlaywrightFixture fixture)
             await page.WaitForTimeoutAsync(1_000);
             await Assertions.Expect(page.Locator("body")).Not.ToHaveTextAsync("");
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -62,6 +62,6 @@ public class AchievementsTests(AppHostPlaywrightFixture fixture)
             var hasAchievementContent = await page.GetByText(new Regex("achievements|complete lessons|keep learning", RegexOptions.IgnoreCase)).First.IsVisibleAsync();
             Assert.True(hasAchievementContent);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

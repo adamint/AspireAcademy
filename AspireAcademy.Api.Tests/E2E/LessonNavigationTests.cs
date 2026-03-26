@@ -26,7 +26,7 @@ public class LessonNavigationTests(AppHostPlaywrightFixture fixture)
             var mainButtons = page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button);
             Assert.True(await mainButtons.CountAsync() >= 3);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class LessonNavigationTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 10_000 });
             Assert.NotEqual(firstUrl, page.Url);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class LessonNavigationTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 10_000 });
             Assert.NotEqual(secondUrl, page.Url);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class LessonNavigationTests(AppHostPlaywrightFixture fixture)
             await backBtn.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(worlds|dashboard)"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -139,6 +139,6 @@ public class LessonNavigationTests(AppHostPlaywrightFixture fixture)
             var text = await backBtn.TextContentAsync();
             Assert.Matches(new Regex("back to", RegexOptions.IgnoreCase), text!);
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }

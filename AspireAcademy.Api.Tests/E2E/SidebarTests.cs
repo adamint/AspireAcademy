@@ -20,7 +20,7 @@ public class SidebarTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(sidebar.GetByText("Worlds")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -34,9 +34,9 @@ public class SidebarTests(AppHostPlaywrightFixture fixture)
             var sidebar = page.GetByRole(AriaRole.Navigation);
             await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("What is Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -51,12 +51,12 @@ public class SidebarTests(AppHostPlaywrightFixture fixture)
             await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("What is Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
             await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("What is Aspire?")).Not.ToBeVisibleAsync(new() { Timeout = 3_000 });
+            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).Not.ToBeVisibleAsync(new() { Timeout = 3_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
@@ -70,10 +70,10 @@ public class SidebarTests(AppHostPlaywrightFixture fixture)
             var sidebar = page.GetByRole(AriaRole.Navigation);
             await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("What is Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
-            await sidebar.GetByText("What is Aspire?").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await sidebar.GetByText("Why Aspire?").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
         }
-        finally { await page.CloseAsync(); }
+        finally { await fixture.ClosePageAsync(page); }
     }
 }
