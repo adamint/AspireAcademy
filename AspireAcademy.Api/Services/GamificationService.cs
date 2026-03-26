@@ -13,6 +13,17 @@ public record XpAwardResult(int XpAwarded, int TotalXp, int CurrentLevel, string
 
 public class GamificationService(AcademyDbContext db, IConnectionMultiplexer redis, ILogger<GamificationService> logger)
 {
+    /// <summary>
+    /// Safely reads an int from a JsonElement that may be stored as a number or a string.
+    /// Handles YAML-deserialized values where numbers become strings in JSON.
+    /// </summary>
+    private static int GetJsonInt(JsonElement element, string propertyName)
+    {
+        var prop = element.GetProperty(propertyName);
+        return prop.ValueKind == JsonValueKind.Number
+            ? prop.GetInt32()
+            : int.Parse(prop.GetString() ?? "0");
+    }
     public async Task<XpAwardResult> AwardXpAsync(Guid userId, int amount, string sourceType, string? sourceId)
     {
         using var activity = AcademyTracing.Source.StartActivity("GamificationService.AwardXp");
@@ -256,7 +267,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
     private async Task<bool> CheckLessonCountAsync(Guid userId, JsonDocument config)
     {
-        var count = config.RootElement.GetProperty("count").GetInt32();
+        var count = GetJsonInt(config.RootElement, "count");
 
         var completed = await db.UserProgress
             .CountAsync(p => p.UserId == userId && (p.Status == "completed" || p.Status == "perfect"));
@@ -266,7 +277,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
     private async Task<bool> CheckQuizPassCountAsync(Guid userId, JsonDocument config)
     {
-        var count = config.RootElement.GetProperty("count").GetInt32();
+        var count = GetJsonInt(config.RootElement, "count");
 
         var passed = await db.UserProgress
             .CountAsync(p => p.UserId == userId
@@ -278,7 +289,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
     private async Task<bool> CheckChallengeTagAsync(Guid userId, JsonDocument config)
     {
-        var count = config.RootElement.GetProperty("count").GetInt32();
+        var count = GetJsonInt(config.RootElement, "count");
 
         // Count completed challenges
         var completed = await db.UserProgress
@@ -351,7 +362,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
     private async Task<bool> CheckStreakAsync(Guid userId, JsonDocument config)
     {
-        var days = config.RootElement.GetProperty("days").GetInt32();
+        var days = GetJsonInt(config.RootElement, "days");
         var user = await db.Users.FindAsync(userId);
 
         return user is not null && user.LoginStreakDays >= days;
@@ -359,7 +370,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
     private async Task<bool> CheckLessonsTodayAsync(Guid userId, JsonDocument config)
     {
-        var count = config.RootElement.GetProperty("count").GetInt32();
+        var count = GetJsonInt(config.RootElement, "count");
         var todayStart = DateTime.UtcNow.Date;
 
         var completedToday = await db.UserProgress
@@ -372,7 +383,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
     private async Task<bool> CheckPerfectQuizCountAsync(Guid userId, JsonDocument config)
     {
-        var count = config.RootElement.GetProperty("count").GetInt32();
+        var count = GetJsonInt(config.RootElement, "count");
 
         var perfects = await db.UserProgress
             .CountAsync(p => p.UserId == userId
@@ -384,7 +395,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
     private async Task<bool> CheckFirstTryChallengeCountAsync(Guid userId, JsonDocument config)
     {
-        var count = config.RootElement.GetProperty("count").GetInt32();
+        var count = GetJsonInt(config.RootElement, "count");
 
         var firstTryPasses = await db.UserProgress
             .CountAsync(p => p.UserId == userId

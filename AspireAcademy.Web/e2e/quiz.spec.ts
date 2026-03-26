@@ -114,7 +114,7 @@ test.describe.serial('Quiz functionality', () => {
       // Check if results are showing (score summary or results heading)
       if (await page.getByText(/your score|quiz results|📊/i).isVisible().catch(() => false)) break;
 
-      // Click "Next Question" or "See Results" if visible
+      // Click "Next Question" or "See Results" if visible (appears after answering)
       const nextBtn = page.getByRole('button', { name: /next question|see results/i });
       if (await nextBtn.isVisible().catch(() => false)) {
         await nextBtn.click();
@@ -136,11 +136,14 @@ test.describe.serial('Quiz functionality', () => {
         }
       }
 
-      // Submit answer
+      // Wait for submit button to become enabled after answer selection, then click
       const submitBtn = page.getByRole('button', { name: /submit answer/i });
-      if (await submitBtn.isEnabled().catch(() => false)) {
+      try {
+        await expect(submitBtn).toBeEnabled({ timeout: 2_000 });
         await submitBtn.click();
         await page.waitForTimeout(500);
+      } catch {
+        // Submit button didn't become enabled, try next iteration
       }
     }
 
