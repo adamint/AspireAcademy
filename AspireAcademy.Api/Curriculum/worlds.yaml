@@ -936,8 +936,8 @@ worlds:
             unlockAfterLesson: "4.1.4"
             contentFile: world-4/4.1.5-oracle-hosting.md
           - id: "4.1.6"
-            title: "Seeding with Init Bind Mounts"
-            description: "Use WithInitBindMount to run SQL scripts on container startup."
+            title: "Seeding with Init Files"
+            description: "Use WithInitFiles to run SQL scripts on container startup."
             type: learn
             sortOrder: 6
             xpReward: 150

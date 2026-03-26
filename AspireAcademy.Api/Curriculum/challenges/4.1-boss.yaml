@@ -8,7 +8,7 @@ instructions: |
   - **MongoDB** for user sessions
 
   **What to do:**
-  1. Add a PostgreSQL server named `"pg"` with `WithInitBindMount("./pg-scripts")` and `WithDataVolume()`
+  1. Add a PostgreSQL server named `"pg"` with `WithInitFiles("./pg-scripts")` and `WithDataVolume()`
   2. Add a database `"catalog"` on the PostgreSQL server
   3. Add a SQL Server named `"sql"` with `WithDataVolume()`
   4. Add a database `"orders"` on the SQL Server
@@ -32,7 +32,7 @@ solutionCode: |
   var builder = DistributedApplication.CreateBuilder(args);
 
   var pg = builder.AddPostgres("pg")
-      .WithInitBindMount("./pg-scripts")
+      .WithInitFiles("./pg-scripts")
       .WithDataVolume();
   var catalogDb = pg.AddDatabase("catalog");
 
@@ -63,8 +63,8 @@ testCases:
   - id: tc3
     name: "PostgreSQL has init bind mount"
     type: code-contains
-    expected: "WithInitBindMount"
-    description: "PostgreSQL must have init scripts configured with WithInitBindMount"
+    expected: "WithInitFiles"
+    description: "PostgreSQL must have init scripts configured with WithInitFiles"
   - id: tc4
     name: "Adds SQL Server"
     type: code-contains
@@ -97,7 +97,7 @@ testCases:
     description: "Code must use WithReference to wire database connections to the webapi project"
 hints:
   - "Use AddPostgres(\"pg\").AddDatabase(\"catalog\") — the database is a child of the server"
-  - "WithInitBindMount takes a relative path to a directory containing .sql files"
+  - "WithInitFiles takes a relative path to a directory containing .sql files"
   - "Each WithReference(db) injects a connection string named after the database resource"
   - "MongoDB: AddMongoDB(\"mongo\").AddDatabase(\"sessions\") follows the same pattern as PostgreSQL"
 requiredPackages:
