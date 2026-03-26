@@ -253,3 +253,13 @@ var api = builder.AddProject<Projects.AspireAcademy_Api>("api")
 3. **Check endpoints** — Hit `/health` on each service to verify it's responding.
 4. **Check environment variables** — Aspire injects connection strings and service URLs via environment variables. Log `Environment.GetEnvironmentVariables()` at startup if unsure.
 5. **Rebuild and restart** — When in doubt, stop the AppHost, rebuild with `dotnet build`, and restart.
+
+## IMPORTANT: Do NOT delete the PostgreSQL data volume
+
+**NEVER run `docker volume rm aspire-academy-pgdata` unless:**
+1. The database schema has changed AND migrations won't work
+2. The user explicitly asks to reset their data
+
+User progress, accounts, and achievements are stored in this volume. Deleting it destroys all user data. The app should handle stale/old schemas gracefully via EnsureCreated or migrations — not by wiping the database.
+
+When restarting the app, just use `aspire run` without touching the volume.
