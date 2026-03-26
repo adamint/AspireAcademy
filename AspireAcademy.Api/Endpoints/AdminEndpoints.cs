@@ -74,11 +74,7 @@ public static class AdminEndpoints
             return string.Equals(headerValue, expectedSecret, StringComparison.Ordinal);
         }
 
-        // Fallback: accept the well-known value when no secret is configured
-        return string.Equals(
-            request.Headers["X-Aspire-Admin"].FirstOrDefault(),
-            "aspire-internal",
-            StringComparison.Ordinal);
+        return false;
     }
 
     private static async Task<IResult> GetStats(

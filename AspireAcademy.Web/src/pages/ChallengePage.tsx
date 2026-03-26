@@ -23,7 +23,6 @@ import {
   FiArrowLeft,
   FiArrowRight,
 } from 'react-icons/fi';
-import ReactMarkdown from 'react-markdown';
 import Confetti from 'react-confetti';
 import api from '../services/apiClient';
 import { useGamificationStore } from '../store/gamificationStore';
