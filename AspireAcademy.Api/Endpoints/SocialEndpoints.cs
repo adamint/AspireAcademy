@@ -183,6 +183,35 @@ public static class SocialEndpoints
             return Results.NoContent();
         });
 
+        group.MapPut("/users/me", async (UpdateProfileRequest request, AcademyDbContext db, ClaimsPrincipal user) =>
+        {
+            var userId = GetUserId(user);
+            s_logger.LogInformation("PUT /users/me for UserId={UserId}", userId);
+
+            var dbUser = await db.Users.FindAsync(userId);
+            if (dbUser is null)
+            {
+                return Results.NotFound(new { error = "User not found." });
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.DisplayName))
+            {
+                dbUser.DisplayName = request.DisplayName.Trim();
+            }
+
+            dbUser.Bio = request.Bio?.Trim();
+
+            await db.SaveChangesAsync();
+
+            var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
+            var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email);
+
+            return Results.Ok(new MeResponse(
+                dbUser.Id, dbUser.Username, dbUser.DisplayName, dbUser.Email,
+                avatarUrl, userXp?.CurrentLevel ?? 1, userXp?.CurrentRank ?? "aspire-intern", userXp?.TotalXp ?? 0,
+                dbUser.Bio, dbUser.LoginStreakDays, dbUser.CreatedAt));
+        });
+
         group.MapGet("/users/search", async (string? q, AcademyDbContext db, ClaimsPrincipal user) =>
         {
             if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
@@ -396,6 +425,8 @@ file record PendingFriendDto(Guid FriendshipId, FriendUserDto User, DateTime Sen
 file record FriendUserDto(Guid Id, string Username, string DisplayName, string AvatarUrl, int CurrentLevel);
 
 file record FriendRequestDto(string Username);
+
+file record UpdateProfileRequest(string? DisplayName, string? Bio);
 
 file record UserSearchResult(
     Guid Id, string Username, string DisplayName, string AvatarUrl,
