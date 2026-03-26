@@ -124,7 +124,8 @@ public class QuizEndpointsTests : TestFixture
         using var authClient = CreateAuthenticatedClient(TestUserId);
 
         // lesson-locked-quiz requires lesson-challenge-1 which is NOT completed → Forbid
-        var request = new QuizSubmitRequest([new QuizAnswer("locked-q1", ["a"])]);
+        var lockedQuestionId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        var request = new QuizSubmitRequest([new QuizAnswer(lockedQuestionId, ["a"], null)]);
 
         var response = await authClient.PostAsJsonAsync("/api/quizzes/lesson-locked-quiz/submit", request);
 
