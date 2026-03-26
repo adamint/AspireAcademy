@@ -1,0 +1,274 @@
+# Aspire Academy — Achievement Definitions (25 total)
+# Loaded by CurriculumLoader alongside worlds.yaml
+
+achievements:
+
+  # ── Milestone Achievements ──
+  - id: first-lesson
+    name: First Steps
+    description: Complete your very first lesson
+    icon: "👣"
+    category: milestone
+    triggerType: lesson-complete
+    triggerConfig: { "count": 1 }
+    xpReward: 25
+    rarity: common
+    sortOrder: 1
+
+  - id: first-resource
+    name: First Resource
+    description: Pass your first challenge that adds an Aspire resource
+    icon: "🎯"
+    category: milestone
+    triggerType: challenge-pass-tag
+    triggerConfig: { "tag": "adds-resource", "count": 1 }
+    xpReward: 50
+    rarity: common
+    sortOrder: 2
+
+  - id: first-quiz-pass
+    name: Quiz Whiz
+    description: Pass your first quiz
+    icon: "📝"
+    category: milestone
+    triggerType: quiz-pass
+    triggerConfig: { "count": 1 }
+    xpReward: 25
+    rarity: common
+    sortOrder: 3
+
+  - id: ten-lessons
+    name: Dedicated Learner
+    description: Complete 10 lessons
+    icon: "📚"
+    category: milestone
+    triggerType: lesson-complete
+    triggerConfig: { "count": 10 }
+    xpReward: 100
+    rarity: common
+    sortOrder: 4
+
+  - id: fifty-lessons
+    name: Knowledge Seeker
+    description: Complete 50 lessons
+    icon: "🎓"
+    category: milestone
+    triggerType: lesson-complete
+    triggerConfig: { "count": 50 }
+    xpReward: 250
+    rarity: uncommon
+    sortOrder: 5
+
+  - id: hundred-lessons
+    name: Scholar
+    description: Complete 100 lessons
+    icon: "🏫"
+    category: milestone
+    triggerType: lesson-complete
+    triggerConfig: { "count": 100 }
+    xpReward: 500
+    rarity: rare
+    sortOrder: 6
+
+  # ── Mastery Achievements ──
+  - id: container-captain
+    name: Container Captain
+    description: Complete the containers module
+    icon: "🐳"
+    category: mastery
+    triggerType: module-complete
+    triggerConfig: { "moduleId": "2.2" }
+    xpReward: 200
+    rarity: uncommon
+    sortOrder: 7
+
+  - id: connection-master
+    name: Connection Master
+    description: Complete the entire connections world
+    icon: "🔗"
+    category: mastery
+    triggerType: world-complete
+    triggerConfig: { "worldId": "world-3" }
+    xpReward: 500
+    rarity: rare
+    sortOrder: 8
+
+  - id: database-wizard
+    name: Database Wizard
+    description: Master all database modules
+    icon: "🗄️"
+    category: mastery
+    triggerType: modules-complete
+    triggerConfig: { "moduleIds": ["4.1", "5.2"] }
+    xpReward: 400
+    rarity: rare
+    sortOrder: 9
+
+  - id: observability-guru
+    name: Observability Guru
+    description: Master all observability modules
+    icon: "📊"
+    category: mastery
+    triggerType: modules-complete
+    triggerConfig: { "moduleIds": ["5.4", "5.5"] }
+    xpReward: 400
+    rarity: rare
+    sortOrder: 10
+
+  - id: message-broker-pro
+    name: Message Broker Pro
+    description: Master all messaging modules
+    icon: "📨"
+    category: mastery
+    triggerType: modules-complete
+    triggerConfig: { "moduleIds": ["4.3", "5.3"] }
+    xpReward: 300
+    rarity: uncommon
+    sortOrder: 11
+
+  - id: polyglot-pioneer
+    name: Polyglot Pioneer
+    description: Complete the polyglot module
+    icon: "🌐"
+    category: mastery
+    triggerType: module-complete
+    triggerConfig: { "moduleId": "4.5" }
+    xpReward: 300
+    rarity: uncommon
+    sortOrder: 12
+
+  - id: testing-expert
+    name: Testing Expert
+    description: Complete the testing module
+    icon: "🧪"
+    category: mastery
+    triggerType: module-complete
+    triggerConfig: { "moduleId": "6.4" }
+    xpReward: 300
+    rarity: rare
+    sortOrder: 13
+
+  # ── Streak Achievements ──
+  - id: on-fire
+    name: On Fire
+    description: Maintain a 7-day login streak
+    icon: "🔥"
+    category: streak
+    triggerType: streak
+    triggerConfig: { "days": 7 }
+    xpReward: 200
+    rarity: uncommon
+    sortOrder: 14
+
+  - id: unstoppable
+    name: Unstoppable
+    description: Maintain a 14-day login streak
+    icon: "⚡"
+    category: streak
+    triggerType: streak
+    triggerConfig: { "days": 14 }
+    xpReward: 500
+    rarity: rare
+    sortOrder: 15
+
+  - id: legendary-streak
+    name: Legendary Streak
+    description: Maintain a 30-day login streak
+    icon: "🌟"
+    category: streak
+    triggerType: streak
+    triggerConfig: { "days": 30 }
+    xpReward: 1000
+    rarity: epic
+    sortOrder: 16
+
+  # ── Speed Achievements ──
+  - id: speed-runner
+    name: Speed Runner
+    description: Complete a module in under 30 minutes
+    icon: "⚡"
+    category: speed
+    triggerType: module-complete-time
+    triggerConfig: { "maxMinutes": 30 }
+    xpReward: 200
+    rarity: rare
+    sortOrder: 17
+
+  - id: blitz-learner
+    name: Blitz Learner
+    description: Complete 10 lessons in a single day
+    icon: "💨"
+    category: speed
+    triggerType: lessons-in-day
+    triggerConfig: { "count": 10 }
+    xpReward: 150
+    rarity: uncommon
+    sortOrder: 18
+
+  # ── Perfection Achievements ──
+  - id: perfectionist
+    name: Perfectionist
+    description: Score 100% on 10 quizzes
+    icon: "💯"
+    category: perfection
+    triggerType: perfect-quizzes
+    triggerConfig: { "count": 10 }
+    xpReward: 300
+    rarity: rare
+    sortOrder: 19
+
+  - id: first-try-master
+    name: First Try Master
+    description: Pass 10 code challenges on the first attempt
+    icon: "🎯"
+    category: perfection
+    triggerType: first-try-challenges
+    triggerConfig: { "count": 10 }
+    xpReward: 300
+    rarity: rare
+    sortOrder: 20
+
+  # ── Completion Achievements ──
+  - id: boss-slayer
+    name: Boss Slayer
+    description: Defeat all boss battles
+    icon: "🎮"
+    category: completion
+    triggerType: boss-complete-all
+    triggerConfig: {}
+    xpReward: 500
+    rarity: epic
+    sortOrder: 21
+
+  - id: master-builder
+    name: Master Builder
+    description: Complete all build projects
+    icon: "🏗️"
+    category: completion
+    triggerType: build-projects-all
+    triggerConfig: {}
+    xpReward: 500
+    rarity: epic
+    sortOrder: 22
+
+  - id: world-conqueror
+    name: World Conqueror
+    description: Complete any world in its entirety
+    icon: "🌍"
+    category: completion
+    triggerType: world-complete-any
+    triggerConfig: {}
+    xpReward: 300
+    rarity: uncommon
+    sortOrder: 23
+
+  - id: aspire-architect
+    name: Aspire Architect
+    description: Complete every world — you are the ultimate Aspire master
+    icon: "👑"
+    category: completion
+    triggerType: all-worlds-complete
+    triggerConfig: {}
+    xpReward: 2000
+    rarity: legendary
+    sortOrder: 24

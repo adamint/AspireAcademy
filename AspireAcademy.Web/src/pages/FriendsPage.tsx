@@ -1,0 +1,250 @@
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Box, Flex, Text, Input, Button, Skeleton, SimpleGrid, VStack, Tabs,
+} from '@chakra-ui/react';
+import { FiSearch, FiUserPlus, FiX, FiCheck } from 'react-icons/fi';
+import api from '../services/apiClient';
+import FriendCard, { type FriendCardUser } from '../components/social/FriendCard';
+import { pixelFontProps } from '../theme/aspireTheme';
+
+interface FriendRequest {
+  id: string;
+  direction: 'sent' | 'received';
+  user: FriendCardUser;
+  createdAt: string;
+}
+
+interface FriendsData {
+  friends: FriendCardUser[];
+  pending: FriendRequest[];
+}
+
+export default function FriendsPage() {
+  const queryClient = useQueryClient();
+  const [tab, setTab] = useState<string>('friends');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setDebouncedQuery(value), 300);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
+
+  const { data: friendsData, isLoading } = useQuery<FriendsData>({
+    queryKey: ['friends'],
+    queryFn: async () => {
+      const { data } = await api.get('/friends');
+      return data;
+    },
+  });
+
+  const { data: searchResults, isFetching: searchLoading } = useQuery<FriendCardUser[]>({
+    queryKey: ['userSearch', debouncedQuery],
+    queryFn: async () => {
+      const { data } = await api.get(`/users/search?q=${encodeURIComponent(debouncedQuery)}`);
+      return data;
+    },
+    enabled: debouncedQuery.length >= 2,
+  });
+
+  const friendActionMutation = useMutation({
+    mutationFn: async ({ action, userId, requestId }: { action: 'accept' | 'decline' | 'cancel' | 'add' | 'remove'; userId?: string; requestId?: string }) => {
+      switch (action) {
+        case 'accept':
+          await api.post(`/friends/requests/${requestId}/accept`);
+          break;
+        case 'decline':
+          await api.post(`/friends/requests/${requestId}/decline`);
+          break;
+        case 'cancel':
+          await api.delete(`/friends/requests/${requestId}`);
+          break;
+        case 'add':
+          await api.post('/friends/request', { targetUserId: userId });
+          break;
+        case 'remove':
+          await api.delete(`/friends/${userId}`);
+          break;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['friends'] });
+      queryClient.invalidateQueries({ queryKey: ['userSearch'] });
+    },
+  });
+
+  const friends = friendsData?.friends ?? [];
+  const pending = friendsData?.pending ?? [];
+  const received = pending.filter((r) => r.direction === 'received');
+  const sent = pending.filter((r) => r.direction === 'sent');
+  const isSearching = debouncedQuery.length >= 2;
+
+  return (
+    <VStack maxW="800px" mx="auto" p={6} gap={5} align="stretch">
+      <Text {...pixelFontProps} fontSize="xl" fontWeight="bold">
+        👥 Friends
+      </Text>
+
+      {/* Search */}
+      <Flex align="center" gap={2} maxW="400px">
+        <Box color="gray.400"><FiSearch /></Box>
+        <Input
+          placeholder="Search users..."
+          value={searchQuery}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          flex={1}
+        />
+      </Flex>
+
+      {/* Search Results */}
+      {isSearching && (
+        <VStack gap={3} align="stretch">
+          <Text fontWeight="semibold">Search Results</Text>
+          {searchLoading && Array.from({ length: 3 }, (_, i) => (
+            <Skeleton key={i} h="72px" borderRadius="sm" />
+          ))}
+          {!searchLoading && searchResults && searchResults.length === 0 && (
+            <Text color="gray.500" fontSize="sm">No users found.</Text>
+          )}
+          {!searchLoading && searchResults?.map((user) => (
+            <FriendCard
+              key={user.id}
+              user={user}
+              actions={
+                <Button
+                  colorPalette="purple"
+                  size="sm"
+                  onClick={() => friendActionMutation.mutate({ action: 'add', userId: user.id })}
+                  disabled={friendActionMutation.isPending}
+                >
+                  <FiUserPlus /> Add
+                </Button>
+              }
+            />
+          ))}
+        </VStack>
+      )}
+
+      {/* Tabs */}
+      {!isSearching && (
+        <>
+          <Tabs.Root value={tab} onValueChange={(d) => setTab(d.value)}>
+            <Tabs.List>
+              <Tabs.Trigger value="friends">Friends ({friends.length})</Tabs.Trigger>
+              <Tabs.Trigger value="pending">Pending ({pending.length})</Tabs.Trigger>
+            </Tabs.List>
+          </Tabs.Root>
+
+          {isLoading && (
+            <VStack gap={3}>
+              {Array.from({ length: 3 }, (_, i) => (
+                <Skeleton key={i} h="72px" borderRadius="sm" />
+              ))}
+            </VStack>
+          )}
+
+          {/* Friends Tab */}
+          {tab === 'friends' && !isLoading && (
+            <>
+              {friends.length === 0 ? (
+                <Box textAlign="center" py={12}>
+                  <Text {...pixelFontProps} fontSize="sm">No friends yet</Text>
+                  <Text fontSize="sm" color="gray.500" mt={2}>Search for friends to compete with!</Text>
+                </Box>
+              ) : (
+                <SimpleGrid columns={{ base: 1, md: 2 }} gap={3}>
+                  {friends.map((friend) => (
+                    <FriendCard
+                      key={friend.id}
+                      user={friend}
+                      actions={
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => friendActionMutation.mutate({ action: 'remove', userId: friend.id })}
+                          disabled={friendActionMutation.isPending}
+                        >
+                          <FiX /> Remove
+                        </Button>
+                      }
+                    />
+                  ))}
+                </SimpleGrid>
+              )}
+            </>
+          )}
+
+          {/* Pending Tab */}
+          {tab === 'pending' && !isLoading && (
+            <VStack gap={4} align="stretch">
+              {received.length > 0 && (
+                <>
+                  <Text fontWeight="semibold">Received</Text>
+                  {received.map((req) => (
+                    <FriendCard
+                      key={req.id}
+                      user={req.user}
+                      actions={
+                        <Flex gap={2}>
+                          <Button
+                            colorPalette="green"
+                            size="sm"
+                            onClick={() => friendActionMutation.mutate({ action: 'accept', requestId: req.id })}
+                            disabled={friendActionMutation.isPending}
+                          >
+                            <FiCheck /> Accept
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => friendActionMutation.mutate({ action: 'decline', requestId: req.id })}
+                            disabled={friendActionMutation.isPending}
+                          >
+                            <FiX /> Decline
+                          </Button>
+                        </Flex>
+                      }
+                    />
+                  ))}
+                </>
+              )}
+              {sent.length > 0 && (
+                <>
+                  <Text fontWeight="semibold">Sent</Text>
+                  {sent.map((req) => (
+                    <FriendCard
+                      key={req.id}
+                      user={req.user}
+                      actions={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => friendActionMutation.mutate({ action: 'cancel', requestId: req.id })}
+                          disabled={friendActionMutation.isPending}
+                        >
+                          <FiX /> Cancel
+                        </Button>
+                      }
+                    />
+                  ))}
+                </>
+              )}
+              {pending.length === 0 && (
+                <Box textAlign="center" py={8}>
+                  <Text fontSize="sm" color="gray.500">No pending requests.</Text>
+                </Box>
+              )}
+            </VStack>
+          )}
+        </>
+      )}
+    </VStack>
+  );
+}

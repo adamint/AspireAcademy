@@ -1,0 +1,296 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Text.RegularExpressions;
+using AspireAcademy.Api.Data;
+using AspireAcademy.Api.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+
+namespace AspireAcademy.Api.Endpoints;
+
+public static partial class AuthEndpoints
+{
+    public static WebApplication MapAuthEndpoints(this WebApplication app)
+    {
+        var group = app.MapGroup("/api/auth").WithTags("Auth");
+
+        group.MapPost("/register", Register).AllowAnonymous();
+        group.MapPost("/login", Login).AllowAnonymous();
+        group.MapGet("/me", GetMe).RequireAuthorization();
+        group.MapPost("/refresh", RefreshToken).AllowAnonymous();
+
+        return app;
+    }
+
+    private static async Task<IResult> Register(
+        RegisterRequest request,
+        AcademyDbContext db,
+        IConfiguration config)
+    {
+        if (!UsernameRegex().IsMatch(request.Username ?? ""))
+        {
+            return Results.BadRequest(new ErrorResponse("Username must be 3-30 characters (letters, digits, underscore)."));
+        }
+
+        if (!EmailRegex().IsMatch(request.Email ?? ""))
+        {
+            return Results.BadRequest(new ErrorResponse("Invalid email address."));
+        }
+
+        if (!PasswordRegex().IsMatch(request.Password ?? ""))
+        {
+            return Results.BadRequest(new ErrorResponse("Password must be 8+ characters with at least 1 uppercase letter and 1 digit."));
+        }
+
+        var usernameLower = request.Username!.ToLowerInvariant();
+        var emailLower = request.Email!.ToLowerInvariant();
+
+        if (await db.Users.AnyAsync(u => u.Username.ToLower() == usernameLower))
+        {
+            return Results.Conflict(new ErrorResponse("Username is already taken."));
+        }
+
+        if (await db.Users.AnyAsync(u => u.Email.ToLower() == emailLower))
+        {
+            return Results.Conflict(new ErrorResponse("Email is already taken."));
+        }
+
+        var now = DateTime.UtcNow;
+
+        var user = new User
+        {
+            Id = Guid.CreateVersion7(),
+            Username = request.Username!,
+            Email = request.Email!,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            DisplayName = string.IsNullOrWhiteSpace(request.DisplayName)
+                ? request.Username!
+                : request.DisplayName,
+            AvatarBase = "developer",
+            LoginStreakDays = 0,
+            CreatedAt = now
+        };
+
+        var userXp = new UserXp
+        {
+            UserId = user.Id,
+            TotalXp = 0,
+            WeeklyXp = 0,
+            CurrentLevel = 1,
+            CurrentRank = "aspire-intern"
+        };
+
+        db.Users.Add(user);
+        db.UserXp.Add(userXp);
+        await db.SaveChangesAsync();
+
+        var token = GenerateJwtToken(user, config);
+
+        return Results.Created("/api/auth/me", new AuthResponse(
+            token,
+            new AuthUserDto(
+                user.Id, user.Username, user.DisplayName, user.Email,
+                user.AvatarBase, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp)));
+    }
+
+    private static async Task<IResult> Login(
+        LoginRequest request,
+        AcademyDbContext db,
+        IConfiguration config)
+    {
+        if (string.IsNullOrWhiteSpace(request.UsernameOrEmail) ||
+            string.IsNullOrWhiteSpace(request.Password))
+        {
+            return Results.BadRequest(new ErrorResponse("Username/email and password are required."));
+        }
+
+        var input = request.UsernameOrEmail.ToLowerInvariant();
+
+        var user = await db.Users.FirstOrDefaultAsync(u =>
+            u.Username.ToLower() == input || u.Email.ToLower() == input);
+
+        if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        {
+            return Results.Json(new ErrorResponse("Invalid credentials."), statusCode: 401);
+        }
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        if (user.LastLoginAt.HasValue)
+        {
+            var lastLogin = DateOnly.FromDateTime(user.LastLoginAt.Value);
+            user.LoginStreakDays = lastLogin switch
+            {
+                _ when lastLogin == today.AddDays(-1) => user.LoginStreakDays + 1,
+                _ when lastLogin < today.AddDays(-1) => 1,
+                _ => user.LoginStreakDays // same day — no change
+            };
+        }
+        else
+        {
+            user.LoginStreakDays = 1;
+        }
+
+        user.LastLoginAt = DateTime.UtcNow;
+
+        var userXp = await db.UserXp.FirstAsync(x => x.UserId == user.Id);
+        await db.SaveChangesAsync();
+
+        var token = GenerateJwtToken(user, config);
+
+        return Results.Ok(new AuthResponse(
+            token,
+            new AuthUserDto(
+                user.Id, user.Username, user.DisplayName, user.Email,
+                user.AvatarBase, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp)));
+    }
+
+    private static async Task<IResult> GetMe(
+        ClaimsPrincipal principal,
+        AcademyDbContext db)
+    {
+        var userId = GetUserId(principal);
+
+        var user = await db.Users.FindAsync(userId);
+        if (user is null)
+        {
+            return Results.NotFound(new ErrorResponse("User not found."));
+        }
+
+        var userXp = await db.UserXp.FirstAsync(x => x.UserId == userId);
+
+        return Results.Ok(new MeResponse(
+            user.Id, user.Username, user.DisplayName, user.Email,
+            user.AvatarBase, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp,
+            user.Bio, user.LoginStreakDays, user.CreatedAt));
+    }
+
+    private static async Task<IResult> RefreshToken(
+        RefreshRequest request,
+        AcademyDbContext db,
+        IConfiguration config)
+    {
+        var principal = ValidateExpiredToken(request.Token, config);
+        if (principal is null)
+        {
+            return Results.Json(new ErrorResponse("Invalid or expired token."), statusCode: 401);
+        }
+
+        var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Results.Json(new ErrorResponse("Invalid token claims."), statusCode: 401);
+        }
+
+        var user = await db.Users.FindAsync(userId);
+        if (user is null)
+        {
+            return Results.Json(new ErrorResponse("User not found."), statusCode: 401);
+        }
+
+        var newToken = GenerateJwtToken(user, config);
+        return Results.Ok(new RefreshResponse(newToken));
+    }
+
+    // --- Helpers ---
+
+    internal static string GenerateJwtToken(User user, IConfiguration config)
+    {
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+
+        Claim[] claims =
+        [
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
+        ];
+
+        var token = new JwtSecurityToken(
+            issuer: config["Jwt:Issuer"],
+            audience: config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(24),
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private static ClaimsPrincipal? ValidateExpiredToken(string? token, IConfiguration config)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return null;
+        }
+
+        var key = Encoding.UTF8.GetBytes(config["Jwt:Key"]!);
+        var handler = new JwtSecurityTokenHandler();
+
+        try
+        {
+            return handler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = config["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = config["Jwt:Audience"],
+                ValidateLifetime = false, // allow expired tokens for refresh
+            }, out _);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    internal static Guid GetUserId(ClaimsPrincipal principal) =>
+        Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    [GeneratedRegex(@"^[a-zA-Z0-9_]{3,30}$")]
+    private static partial Regex UsernameRegex();
+
+    [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
+    private static partial Regex EmailRegex();
+
+    [GeneratedRegex(@"^(?=.*[A-Z])(?=.*\d).{8,}$")]
+    private static partial Regex PasswordRegex();
+}
+
+// --- DTOs ---
+
+public record RegisterRequest(string? Username, string? Email, string? Password, string? DisplayName);
+
+public record LoginRequest(string? UsernameOrEmail, string? Password);
+
+public record RefreshRequest(string? Token);
+
+public record AuthResponse(string Token, AuthUserDto User);
+
+public record RefreshResponse(string Token);
+
+public record AuthUserDto(
+    Guid Id,
+    string Username,
+    string DisplayName,
+    string Email,
+    string AvatarBase,
+    int CurrentLevel,
+    string CurrentRank,
+    int TotalXp);
+
+public record MeResponse(
+    Guid Id,
+    string Username,
+    string DisplayName,
+    string Email,
+    string AvatarBase,
+    int CurrentLevel,
+    string CurrentRank,
+    int TotalXp,
+    string? Bio,
+    int LoginStreakDays,
+    DateTime CreatedAt);
+
+public record ErrorResponse(string Error, string? Details = null);

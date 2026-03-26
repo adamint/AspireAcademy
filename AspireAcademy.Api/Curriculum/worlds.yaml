@@ -1,0 +1,1430 @@
+worlds:
+  - id: world-1
+    name: Aspire Foundations
+    description: "Learn the core concepts of .NET Aspire: the app model, resource orchestration, ServiceDefaults, and the Dashboard."
+    icon: "🌍"
+    sortOrder: 1
+    levelRangeStart: 1
+    levelRangeEnd: 5
+    unlockAfterWorld: null
+    modules:
+      - id: "1.1"
+        name: What is Aspire?
+        description: "Understand the distributed app problem and how Aspire solves it with orchestration and observability."
+        sortOrder: 1
+        unlockAfterModule: null
+        lessons:
+          - id: "1.1.1"
+            title: Why Distributed Apps Are Hard
+            description: "The challenges of building, configuring, and observing multi-service applications."
+            type: learn
+            sortOrder: 1
+            xpReward: 50
+            estimatedMinutes: 8
+            contentFile: world-1/1.1.1-why-distributed-apps-are-hard.md
+          - id: "1.1.2"
+            title: "Aspire's Solution: Orchestration + Observability"
+            description: "How Aspire provides a unified app model with built-in service discovery, health checks, and telemetry."
+            type: learn
+            sortOrder: 2
+            xpReward: 50
+            estimatedMinutes: 10
+            contentFile: world-1/1.1.2-aspires-solution.md
+          - id: "1.1.3"
+            title: "The Three-Project Model"
+            description: "AppHost, ServiceDefaults, and your service projects — the three pillars of every Aspire application."
+            type: learn
+            sortOrder: 3
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "1.1.2"
+            contentFile: world-1/1.1.3-three-project-model.md
+          - id: "1.1.4"
+            title: Aspire vs Docker Compose and Kubernetes
+            description: "What makes Aspire different from other orchestration tools and when to use each."
+            type: quiz
+            sortOrder: 4
+            xpReward: 100
+            estimatedMinutes: 8
+            unlockAfterLesson: "1.1.3"
+            contentFile: world-1/1.1.4-aspire-vs-alternatives.md
+            quizFile: 1.1.4-aspire-vs-alternatives.yaml
+          - id: "1.1-boss"
+            title: "Boss: Identify the Architecture"
+            description: "Given a system diagram, identify which components are AppHost, ServiceDefaults, and service projects."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 15
+            isBoss: true
+            unlockAfterLesson: "1.1.4"
+            quizFile: 1.1-boss.yaml
+
+      - id: "1.2"
+        name: Your First Aspire App
+        description: "Create, explore, and run your first Aspire application from scratch."
+        sortOrder: 2
+        unlockAfterModule: "1.1"
+        lessons:
+          - id: "1.2.1"
+            title: "Creating a Project with aspire new"
+            description: "Use the Aspire CLI to scaffold a new project and explore the generated file structure."
+            type: learn
+            sortOrder: 1
+            xpReward: 50
+            estimatedMinutes: 10
+            contentFile: world-1/1.2.1-aspire-new.md
+          - id: "1.2.2"
+            title: "DistributedApplication.CreateBuilder()"
+            description: "The entry point of every AppHost — what CreateBuilder sets up and returns."
+            type: learn
+            sortOrder: 2
+            xpReward: 50
+            estimatedMinutes: 8
+            unlockAfterLesson: "1.2.1"
+            contentFile: world-1/1.2.2-create-builder.md
+          - id: "1.2.3"
+            title: "Adding Your First Project Resource"
+            description: "Use AddProject<T>() to add a .NET service to your AppHost."
+            type: challenge
+            sortOrder: 3
+            xpReward: 150
+            bonusXp: 75
+            estimatedMinutes: 12
+            unlockAfterLesson: "1.2.2"
+            contentFile: world-1/1.2.3-add-first-resource.md
+            challengeFile: 1.2.3-add-first-resource.yaml
+          - id: "1.2.4"
+            title: "Build().Run() and the Dashboard"
+            description: "What happens when you call Build().Run() — DCP starts, the Dashboard launches, resources are orchestrated."
+            type: learn
+            sortOrder: 4
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "1.2.3"
+            contentFile: world-1/1.2.4-build-run-dashboard.md
+          - id: "1.2.5"
+            title: "Exploring the Aspire Dashboard"
+            description: "Navigate the Dashboard's Resources, Logs, Traces, and Metrics views."
+            type: learn
+            sortOrder: 5
+            xpReward: 50
+            estimatedMinutes: 12
+            unlockAfterLesson: "1.2.4"
+            contentFile: world-1/1.2.5-exploring-dashboard.md
+          - id: "1.2-boss"
+            title: "Boss: Build a Two-Service App"
+            description: "Create an Aspire app with an API and a Web frontend, wired together with WithReference."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 20
+            isBoss: true
+            unlockAfterLesson: "1.2.5"
+            contentFile: world-1/1.2-boss.md
+            challengeFile: 1.2-boss.yaml
+
+      - id: "1.3"
+        name: The Resource Model
+        description: "Understand how Aspire models everything as resources with annotations and builder patterns."
+        sortOrder: 3
+        unlockAfterModule: "1.2"
+        lessons:
+          - id: "1.3.1"
+            title: "IResource — Everything Is a Resource"
+            description: "The base interface for all Aspire resources: Name and Annotations."
+            type: learn
+            sortOrder: 1
+            xpReward: 50
+            estimatedMinutes: 8
+            contentFile: world-1/1.3.1-iresource.md
+          - id: "1.3.2"
+            title: "Resource Type Hierarchy"
+            description: "Resource, ContainerResource, ProjectResource, ExecutableResource, ParameterResource — the class tree."
+            type: learn
+            sortOrder: 2
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "1.3.1"
+            contentFile: world-1/1.3.2-resource-hierarchy.md
+          - id: "1.3.3"
+            title: "Annotations: Behavior Without Inheritance"
+            description: "How IResourceAnnotation attaches capabilities to resources without deep class hierarchies."
+            type: learn
+            sortOrder: 3
+            xpReward: 50
+            estimatedMinutes: 12
+            unlockAfterLesson: "1.3.2"
+            contentFile: world-1/1.3.3-annotations.md
+          - id: "1.3.4"
+            title: "The IResourceBuilder<T> Pattern"
+            description: "How the fluent builder pattern enables chained configuration with extension methods."
+            type: challenge
+            sortOrder: 4
+            xpReward: 150
+            bonusXp: 75
+            estimatedMinutes: 12
+            unlockAfterLesson: "1.3.3"
+            challengeFile: 1.3.4-resource-builder.yaml
+          - id: "1.3.5"
+            title: "Resource States and Lifecycle"
+            description: "Starting, Running, Finished, Exiting, FailedToStart — CustomResourceSnapshot and ResourceNotificationService."
+            type: quiz
+            sortOrder: 5
+            xpReward: 100
+            estimatedMinutes: 8
+            unlockAfterLesson: "1.3.4"
+            contentFile: world-1/1.3.5-resource-states.md
+            quizFile: 1.3.5-resource-states.yaml
+          - id: "1.3-boss"
+            title: "Boss: Create a Custom Resource"
+            description: "Define a custom resource class, add annotations, and register it in the AppHost."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 20
+            isBoss: true
+            unlockAfterLesson: "1.3.5"
+            challengeFile: 1.3-boss.yaml
+
+      - id: "1.4"
+        name: ServiceDefaults Deep Dive
+        description: "Master the cross-cutting concerns that ServiceDefaults configures for every service."
+        sortOrder: 4
+        unlockAfterModule: "1.3"
+        lessons:
+          - id: "1.4.1"
+            title: "What AddServiceDefaults() Registers"
+            description: "The full picture: OpenTelemetry, health checks, service discovery, and HTTP resilience."
+            type: learn
+            sortOrder: 1
+            xpReward: 50
+            estimatedMinutes: 10
+            contentFile: world-1/1.4.1-service-defaults-overview.md
+          - id: "1.4.2"
+            title: "OpenTelemetry: Tracing with ActivitySource"
+            description: "How distributed tracing works with Activity, ActivitySource, and OTLP exporters."
+            type: learn
+            sortOrder: 2
+            xpReward: 50
+            estimatedMinutes: 12
+            unlockAfterLesson: "1.4.1"
+            contentFile: world-1/1.4.2-tracing.md
+          - id: "1.4.3"
+            title: "Structured Logging and Metrics"
+            description: "ILogger structured logging, custom metrics with IMeterFactory, and how they flow to the Dashboard."
+            type: learn
+            sortOrder: 3
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "1.4.2"
+            contentFile: world-1/1.4.3-logging-metrics.md
+          - id: "1.4.4"
+            title: "Health Checks: /health and /alive"
+            description: "How MapDefaultEndpoints() sets up health check endpoints and how Aspire monitors them."
+            type: challenge
+            sortOrder: 4
+            xpReward: 150
+            bonusXp: 75
+            estimatedMinutes: 12
+            unlockAfterLesson: "1.4.3"
+            challengeFile: 1.4.4-health-checks.yaml
+          - id: "1.4.5"
+            title: "HTTP Resilience with Polly"
+            description: "AddStandardResilienceHandler: retry, circuit breaker, timeout — how ConfigureHttpClientDefaults works."
+            type: learn
+            sortOrder: 5
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "1.4.4"
+            contentFile: world-1/1.4.5-resilience.md
+          - id: "1.4-boss"
+            title: "Boss: Custom ServiceDefaults"
+            description: "Configure ServiceDefaults with custom tracing, a custom health check, and tuned resilience policies."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "1.4.5"
+            challengeFile: 1.4-boss.yaml
+
+  - id: world-2
+    name: Resources & Orchestration
+    description: "Master all resource types: projects, containers, executables, endpoints, parameters, and environment variables."
+    icon: "🏗️"
+    sortOrder: 2
+    levelRangeStart: 6
+    levelRangeEnd: 12
+    unlockAfterWorld: world-1
+    modules: []  # TODO: populate from curriculum-world2.md
+
+  - id: world-3
+    name: Service Discovery & Communication
+    description: "Understand how Aspire services find and communicate with each other."
+    icon: "🔗"
+    sortOrder: 3
+    levelRangeStart: 13
+    levelRangeEnd: 17
+    unlockAfterWorld: world-2
+    modules: []  # TODO: populate from curriculum-world3.md
+
+  - id: world-4
+    name: Hosting Integrations
+    description: "Master all hosting integrations: databases, caches, message brokers, and specialized services."
+    icon: "🔧"
+    sortOrder: 4
+    levelRangeStart: 18
+    levelRangeEnd: 28
+    unlockAfterWorld: world-3
+    modules:
+      - id: "4.1"
+        name: Database Hosting
+        description: "Add PostgreSQL, SQL Server, MySQL, MongoDB, and Oracle databases to your Aspire app model."
+        sortOrder: 1
+        unlockAfterModule: null
+        lessons:
+          - id: "4.1.1"
+            title: "PostgreSQL & the AddDatabase Pattern"
+            description: "Add a PostgreSQL server resource and create named databases with AddDatabase."
+            type: learn
+            sortOrder: 1
+            xpReward: 150
+            estimatedMinutes: 20
+            contentFile: world-4/4.1.1-postgresql-hosting.md
+          - id: "4.1.2"
+            title: "SQL Server & Password Parameters"
+            description: "Add a SQL Server resource with AddSqlServer and configure SA password parameters."
+            type: learn
+            sortOrder: 2
+            xpReward: 140
+            estimatedMinutes: 18
+            unlockAfterLesson: "4.1.1"
+            contentFile: world-4/4.1.2-sqlserver-hosting.md
+          - id: "4.1.3"
+            title: "MySQL & phpMyAdmin"
+            description: "Add MySQL server and database resources with AddMySql and attach phpMyAdmin."
+            type: learn
+            sortOrder: 3
+            xpReward: 120
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.1.2"
+            contentFile: world-4/4.1.3-mysql-hosting.md
+          - id: "4.1.4"
+            title: "MongoDB & MongoExpress"
+            description: "Add a MongoDB resource and named databases with AddMongoDB."
+            type: learn
+            sortOrder: 4
+            xpReward: 120
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.1.3"
+            contentFile: world-4/4.1.4-mongodb-hosting.md
+          - id: "4.1.5"
+            title: "Oracle Database Hosting"
+            description: "Add an Oracle database resource with AddOracle and configure Oracle-specific settings."
+            type: learn
+            sortOrder: 5
+            xpReward: 120
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.1.4"
+            contentFile: world-4/4.1.5-oracle-hosting.md
+          - id: "4.1.6"
+            title: "Seeding with Init Bind Mounts"
+            description: "Use WithInitBindMount to run SQL scripts on container startup."
+            type: learn
+            sortOrder: 6
+            xpReward: 150
+            estimatedMinutes: 18
+            unlockAfterLesson: "4.1.5"
+            contentFile: world-4/4.1.6-init-scripts.md
+          - id: "4.1.7"
+            title: "WithDataVolume for Persistent Storage"
+            description: "Use WithDataVolume to persist database data across container restarts."
+            type: learn
+            sortOrder: 7
+            xpReward: 140
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.1.6"
+            contentFile: world-4/4.1.7-data-volumes.md
+          - id: "4.1-boss"
+            title: "Boss: Multi-Database E-Commerce Platform"
+            description: "Build an AppHost that configures a multi-database e-commerce backend."
+            type: boss-battle
+            sortOrder: 8
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 30
+            isBoss: true
+            unlockAfterLesson: "4.1.7"
+            contentFile: world-4/4.1-boss.md
+            challengeFile: 4.1-boss.yaml
+
+      - id: "4.2"
+        name: Cache & Key-Value
+        description: "Configure Redis, Garnet, and Valkey caching resources with persistence and admin UIs."
+        sortOrder: 2
+        unlockAfterModule: "4.1"
+        lessons:
+          - id: "4.2.1"
+            title: "Redis: Commander, Insight & Persistence"
+            description: "Add a Redis resource and configure admin UIs with WithRedisCommander and WithRedisInsight."
+            type: learn
+            sortOrder: 1
+            xpReward: 160
+            estimatedMinutes: 22
+            contentFile: world-4/4.2.1-redis-hosting.md
+          - id: "4.2.2"
+            title: "Garnet: High-Performance Cache"
+            description: "Add a Garnet resource with AddGarnet as a Redis-compatible cache."
+            type: learn
+            sortOrder: 2
+            xpReward: 120
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.2.1"
+            contentFile: world-4/4.2.2-garnet-hosting.md
+          - id: "4.2.3"
+            title: "Valkey: Community Redis Fork"
+            description: "Add a Valkey resource with AddValkey as a Redis-compatible store."
+            type: learn
+            sortOrder: 3
+            xpReward: 100
+            estimatedMinutes: 12
+            unlockAfterLesson: "4.2.2"
+            contentFile: world-4/4.2.3-valkey-hosting.md
+          - id: "4.2.4"
+            title: "Cache Hosting Mastery"
+            description: "Test your knowledge of Redis, Garnet, and Valkey hosting integrations."
+            type: quiz
+            sortOrder: 4
+            xpReward: 100
+            estimatedMinutes: 8
+            unlockAfterLesson: "4.2.3"
+            contentFile: world-4/4.2.4-cache-quiz.md
+            quizFile: 4.2.4-cache-quiz.yaml
+          - id: "4.2-boss"
+            title: "Boss: Multi-Tier Caching Architecture"
+            description: "Configure an AppHost with Redis and Garnet in a two-tier caching strategy."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 400
+            bonusXp: 200
+            estimatedMinutes: 20
+            isBoss: true
+            unlockAfterLesson: "4.2.4"
+            contentFile: world-4/4.2-boss.md
+            challengeFile: 4.2-boss.yaml
+
+      - id: "4.3"
+        name: Message Brokers
+        description: "Wire up RabbitMQ, Kafka, and NATS messaging resources with admin UIs and persistence."
+        sortOrder: 3
+        unlockAfterModule: "4.2"
+        lessons:
+          - id: "4.3.1"
+            title: "RabbitMQ & the Management Plugin"
+            description: "Add a RabbitMQ resource with AddRabbitMQ and enable the management UI."
+            type: learn
+            sortOrder: 1
+            xpReward: 150
+            estimatedMinutes: 18
+            contentFile: world-4/4.3.1-rabbitmq-hosting.md
+          - id: "4.3.2"
+            title: "Kafka & KafkaUI"
+            description: "Add a Kafka resource with AddKafka and visualize topics with WithKafkaUI."
+            type: learn
+            sortOrder: 2
+            xpReward: 150
+            estimatedMinutes: 18
+            unlockAfterLesson: "4.3.1"
+            contentFile: world-4/4.3.2-kafka-hosting.md
+          - id: "4.3.3"
+            title: "NATS & JetStream"
+            description: "Add a NATS server with AddNats and enable JetStream for persistent messaging."
+            type: learn
+            sortOrder: 3
+            xpReward: 130
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.3.2"
+            contentFile: world-4/4.3.3-nats-hosting.md
+          - id: "4.3.4"
+            title: "Broker Connection Strings Compared"
+            description: "Identify and compare connection string formats for AMQP, Kafka, and NATS."
+            type: learn
+            sortOrder: 4
+            xpReward: 100
+            estimatedMinutes: 12
+            unlockAfterLesson: "4.3.3"
+            contentFile: world-4/4.3.4-broker-connection-strings.md
+          - id: "4.3.5"
+            title: "Broker Hosting Knowledge Check"
+            description: "Test your knowledge of RabbitMQ, Kafka, and NATS hosting integrations."
+            type: quiz
+            sortOrder: 5
+            xpReward: 100
+            estimatedMinutes: 8
+            unlockAfterLesson: "4.3.4"
+            contentFile: world-4/4.3.5-broker-quiz.md
+            quizFile: 4.3.5-broker-quiz.yaml
+          - id: "4.3-boss"
+            title: "Boss: Event-Driven Order Pipeline"
+            description: "Build an AppHost for an event-driven order pipeline with RabbitMQ, Kafka, and NATS."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 450
+            bonusXp: 225
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "4.3.5"
+            contentFile: world-4/4.3-boss.md
+            challengeFile: 4.3-boss.yaml
+
+      - id: "4.4"
+        name: Specialized Services
+        description: "Host Seq logging, Keycloak identity, Qdrant/Milvus vector databases, and OpenAI connections."
+        sortOrder: 4
+        unlockAfterModule: "4.3"
+        lessons:
+          - id: "4.4.1"
+            title: "Structured Logging with Seq"
+            description: "Add a Seq resource with AddSeq for centralized structured logging."
+            type: learn
+            sortOrder: 1
+            xpReward: 120
+            estimatedMinutes: 15
+            contentFile: world-4/4.4.1-seq-hosting.md
+          - id: "4.4.2"
+            title: "Keycloak & Realm Management"
+            description: "Add a Keycloak resource with AddKeycloak for identity management."
+            type: learn
+            sortOrder: 2
+            xpReward: 160
+            estimatedMinutes: 20
+            unlockAfterLesson: "4.4.1"
+            contentFile: world-4/4.4.2-keycloak-hosting.md
+          - id: "4.4.3"
+            title: "Qdrant for Vector Search"
+            description: "Add a Qdrant resource with AddQdrant for vector similarity search."
+            type: learn
+            sortOrder: 3
+            xpReward: 130
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.4.2"
+            contentFile: world-4/4.4.3-qdrant-hosting.md
+          - id: "4.4.4"
+            title: "Milvus for AI Workloads"
+            description: "Add a Milvus resource with AddMilvus for large-scale vector storage."
+            type: learn
+            sortOrder: 4
+            xpReward: 130
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.4.3"
+            contentFile: world-4/4.4.4-milvus-hosting.md
+          - id: "4.4.5"
+            title: "OpenAI & Model Hosting"
+            description: "Add an OpenAI connection resource with AddOpenAI and register model deployments."
+            type: learn
+            sortOrder: 5
+            xpReward: 150
+            estimatedMinutes: 18
+            unlockAfterLesson: "4.4.4"
+            contentFile: world-4/4.4.5-openai-hosting.md
+          - id: "4.4-boss"
+            title: "Boss: AI-Powered Secure Application"
+            description: "Build an AppHost with Keycloak, Qdrant, OpenAI, and Seq wired to an AI API."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 450
+            bonusXp: 225
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "4.4.5"
+            contentFile: world-4/4.4-boss.md
+            challengeFile: 4.4-boss.yaml
+
+      - id: "4.5"
+        name: Advanced Hosting Patterns
+        description: "Orleans clustering, YARP reverse proxy, Python/Node.js apps, and polyglot architectures."
+        sortOrder: 5
+        unlockAfterModule: "4.4"
+        lessons:
+          - id: "4.5.1"
+            title: "Orleans Distributed Actors"
+            description: "Configure Orleans clustering in Aspire with AddOrleans and WithClustering."
+            type: learn
+            sortOrder: 1
+            xpReward: 160
+            estimatedMinutes: 22
+            contentFile: world-4/4.5.1-orleans-hosting.md
+          - id: "4.5.2"
+            title: "YARP Load Balancing & Routing"
+            description: "Add a YARP reverse proxy resource and configure routes to backend services."
+            type: learn
+            sortOrder: 2
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "4.5.1"
+            contentFile: world-4/4.5.2-yarp-hosting.md
+          - id: "4.5.3"
+            title: "Python Apps in the Aspire Model"
+            description: "Add a Python application with AddPythonApp including virtual environment setup."
+            type: learn
+            sortOrder: 3
+            xpReward: 140
+            estimatedMinutes: 18
+            unlockAfterLesson: "4.5.2"
+            contentFile: world-4/4.5.3-python-hosting.md
+          - id: "4.5.4"
+            title: "Node.js & JavaScript Apps"
+            description: "Add JavaScript apps with AddJavaScriptApp and Node.js apps with AddNodeApp."
+            type: learn
+            sortOrder: 4
+            xpReward: 140
+            estimatedMinutes: 18
+            unlockAfterLesson: "4.5.3"
+            contentFile: world-4/4.5.4-javascript-hosting.md
+          - id: "4.5.5"
+            title: "Polyglot Architecture Patterns"
+            description: "Design polyglot architectures mixing .NET, Python, and JavaScript in a single AppHost."
+            type: learn
+            sortOrder: 5
+            xpReward: 130
+            estimatedMinutes: 15
+            unlockAfterLesson: "4.5.4"
+            contentFile: world-4/4.5.5-polyglot-patterns.md
+          - id: "4.5-boss"
+            title: "Boss: Polyglot Microservices Platform"
+            description: "Build an AppHost with .NET, Python, JavaScript services, Redis, PostgreSQL, and YARP."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 30
+            isBoss: true
+            unlockAfterLesson: "4.5.5"
+            contentFile: world-4/4.5-boss.md
+            challengeFile: 4.5-boss.yaml
+
+  - id: world-5
+    name: Client Integrations & Observability
+    description: "Connect services to infrastructure with client integrations and master observability."
+    icon: "📊"
+    sortOrder: 5
+    levelRangeStart: 29
+    levelRangeEnd: 36
+    unlockAfterWorld: world-4
+    modules:
+      - id: "5.1"
+        name: Client Integration Pattern
+        description: "How the consumer side of Aspire integrations works — registration, settings, and configuration hierarchy."
+        sortOrder: 1
+        unlockAfterModule: null
+        lessons:
+          - id: "5.1.1"
+            title: What Are Client Integrations?
+            description: "Distinguish client integrations from hosting integrations and understand DI registration."
+            type: learn
+            sortOrder: 1
+            xpReward: 50
+            estimatedMinutes: 10
+            contentFile: world-5/5.1.1-what-are-client-integrations.md
+          - id: "5.1.2"
+            title: Add and AddKeyed Registration
+            description: "Use Add and AddKeyed methods for singleton and named client instances."
+            type: learn
+            sortOrder: 2
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.1.1"
+            contentFile: world-5/5.1.2-add-and-addkeyed.md
+          - id: "5.1.3"
+            title: Settings Classes and Defaults
+            description: "Override defaults via settings classes and the configureSettings delegate."
+            type: learn
+            sortOrder: 3
+            xpReward: 60
+            estimatedMinutes: 12
+            unlockAfterLesson: "5.1.2"
+            contentFile: world-5/5.1.3-settings-classes.md
+          - id: "5.1.4"
+            title: Configuration Hierarchy
+            description: "The five-layer configuration precedence for client integrations."
+            type: learn
+            sortOrder: 4
+            xpReward: 60
+            estimatedMinutes: 12
+            unlockAfterLesson: "5.1.3"
+            contentFile: world-5/5.1.4-configuration-hierarchy.md
+          - id: "5.1-boss"
+            title: "Boss: Client Integration Pattern"
+            description: "Prove your understanding of client integration registration and configuration."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 100
+            estimatedMinutes: 8
+            isBoss: true
+            unlockAfterLesson: "5.1.4"
+            quizFile: 5.1-boss.yaml
+
+      - id: "5.2"
+        name: Database Client Integrations
+        description: "Wire up real database clients — PostgreSQL, SQL Server, MySQL, MongoDB, and the Enrich pattern."
+        sortOrder: 2
+        unlockAfterModule: "5.1"
+        lessons:
+          - id: "5.2.1"
+            title: Npgsql DataSource Integration
+            description: "Register NpgsqlDataSource via AddNpgsqlDataSource() for PostgreSQL access."
+            type: learn
+            sortOrder: 1
+            xpReward: 75
+            estimatedMinutes: 15
+            contentFile: world-5/5.2.1-npgsql-datasource.md
+          - id: "5.2.2"
+            title: EF Core + PostgreSQL Integration
+            description: "Register a DbContext with AddNpgsqlDbContext and connection pooling."
+            type: learn
+            sortOrder: 2
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.2.1"
+            contentFile: world-5/5.2.2-efcore-npgsql.md
+          - id: "5.2.3"
+            title: SQL Server Client Integration
+            description: "Register SqlConnection factory via AddSqlServerClient()."
+            type: learn
+            sortOrder: 3
+            xpReward: 60
+            estimatedMinutes: 12
+            unlockAfterLesson: "5.2.2"
+            contentFile: world-5/5.2.3-sqlserver-client.md
+          - id: "5.2.4"
+            title: MySQL Client Integration
+            description: "Register MySqlDataSource via AddMySqlDataSource() with MySqlConnector."
+            type: learn
+            sortOrder: 4
+            xpReward: 60
+            estimatedMinutes: 12
+            unlockAfterLesson: "5.2.3"
+            contentFile: world-5/5.2.4-mysql-client.md
+          - id: "5.2.5"
+            title: MongoDB Client Integration
+            description: "Register IMongoClient via AddMongoDBClient() for document database access."
+            type: learn
+            sortOrder: 5
+            xpReward: 60
+            estimatedMinutes: 12
+            unlockAfterLesson: "5.2.4"
+            contentFile: world-5/5.2.5-mongodb-client.md
+          - id: "5.2.6"
+            title: The Enrich Pattern
+            description: "Apply Aspire observability to manually-registered DbContext instances."
+            type: learn
+            sortOrder: 6
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.2.5"
+            contentFile: world-5/5.2.6-enrich-pattern.md
+          - id: "5.2-boss"
+            title: "Boss: Multi-Database Service"
+            description: "Build a service connecting to both PostgreSQL and MongoDB."
+            type: boss-battle
+            sortOrder: 7
+            xpReward: 150
+            bonusXp: 75
+            estimatedMinutes: 20
+            isBoss: true
+            unlockAfterLesson: "5.2.6"
+            contentFile: world-5/5.2-boss.md
+            challengeFile: 5.2-boss.yaml
+
+      - id: "5.3"
+        name: Cache & Messaging Clients
+        description: "Connect to Redis, RabbitMQ, Kafka, and NATS from your service projects."
+        sortOrder: 3
+        unlockAfterModule: "5.2"
+        lessons:
+          - id: "5.3.1"
+            title: Redis Client Integrations
+            description: "Differentiate AddRedisClient, AddRedisDistributedCache, and AddRedisOutputCache."
+            type: learn
+            sortOrder: 1
+            xpReward: 75
+            estimatedMinutes: 15
+            contentFile: world-5/5.3.1-redis-clients.md
+          - id: "5.3.2"
+            title: RabbitMQ Client
+            description: "Register IConnection via AddRabbitMQClient() for message queuing."
+            type: learn
+            sortOrder: 2
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.3.1"
+            contentFile: world-5/5.3.2-rabbitmq-client.md
+          - id: "5.3.3"
+            title: Kafka Consumer and Producer
+            description: "Register typed Kafka producers and consumers with Aspire."
+            type: learn
+            sortOrder: 3
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.3.2"
+            contentFile: world-5/5.3.3-kafka-client.md
+          - id: "5.3.4"
+            title: NATS Client Integration
+            description: "Register INatsConnection for pub/sub and JetStream messaging."
+            type: learn
+            sortOrder: 4
+            xpReward: 60
+            estimatedMinutes: 12
+            unlockAfterLesson: "5.3.3"
+            contentFile: world-5/5.3.4-nats-client.md
+          - id: "5.3.5"
+            title: Choosing the Right Messaging Integration
+            description: "Compare RabbitMQ, Kafka, and NATS for different messaging use cases."
+            type: learn
+            sortOrder: 5
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "5.3.4"
+            contentFile: world-5/5.3.5-choosing-messaging.md
+          - id: "5.3-boss"
+            title: "Boss: Cached API with Message Bus"
+            description: "Build an API with Redis caching and RabbitMQ event publishing."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 150
+            bonusXp: 75
+            estimatedMinutes: 20
+            isBoss: true
+            unlockAfterLesson: "5.3.5"
+            contentFile: world-5/5.3-boss.md
+            challengeFile: 5.3-boss.yaml
+
+      - id: "5.4"
+        name: Observability Deep Dive
+        description: "Master distributed tracing, structured logging, custom metrics, and health checks."
+        sortOrder: 4
+        unlockAfterModule: "5.3"
+        lessons:
+          - id: "5.4.1"
+            title: OTLP Flow in Aspire
+            description: "Trace the path of telemetry from application to dashboard via OTLP."
+            type: learn
+            sortOrder: 1
+            xpReward: 60
+            estimatedMinutes: 12
+            contentFile: world-5/5.4.1-otlp-flow.md
+          - id: "5.4.2"
+            title: Distributed Tracing with Activity
+            description: "Create spans with ActivitySource, propagate trace context, add tags and events."
+            type: learn
+            sortOrder: 2
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.4.1"
+            contentFile: world-5/5.4.2-distributed-tracing.md
+          - id: "5.4.3"
+            title: Structured Logging for Aspire
+            description: "Write structured logs with ILogger and correlate them with distributed traces."
+            type: learn
+            sortOrder: 3
+            xpReward: 60
+            estimatedMinutes: 12
+            unlockAfterLesson: "5.4.2"
+            contentFile: world-5/5.4.3-structured-logging.md
+          - id: "5.4.4"
+            title: Custom Metrics with Counter and Histogram
+            description: "Create custom metrics instruments and view them in the dashboard."
+            type: learn
+            sortOrder: 4
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.4.3"
+            contentFile: world-5/5.4.4-custom-metrics.md
+          - id: "5.4.5"
+            title: Health Checks and Readiness
+            description: "Implement custom IHealthCheck for liveness and readiness monitoring."
+            type: learn
+            sortOrder: 5
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.4.4"
+            contentFile: world-5/5.4.5-health-checks.md
+          - id: "5.4.6"
+            title: Building a Custom Instrumentation Library
+            description: "Create a reusable ActivitySource with semantic conventions for shared libraries."
+            type: learn
+            sortOrder: 6
+            xpReward: 75
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.4.5"
+            contentFile: world-5/5.4.6-custom-instrumentation.md
+          - id: "5.4-boss"
+            title: "Boss: Observable Order Service"
+            description: "Instrument a service with custom tracing, metrics, and health checks."
+            type: boss-battle
+            sortOrder: 7
+            xpReward: 175
+            bonusXp: 75
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "5.4.6"
+            contentFile: world-5/5.4-boss.md
+            challengeFile: 5.4-boss.yaml
+
+      - id: "5.5"
+        name: The Aspire Dashboard
+        description: "Explore the dashboard architecture and master each view for debugging distributed apps."
+        sortOrder: 5
+        unlockAfterModule: "5.4"
+        lessons:
+          - id: "5.5.1"
+            title: Dashboard Architecture
+            description: "The dashboard tech stack — Blazor Server + gRPC + OTLP receivers."
+            type: learn
+            sortOrder: 1
+            xpReward: 60
+            estimatedMinutes: 12
+            contentFile: world-5/5.5.1-dashboard-architecture.md
+          - id: "5.5.2"
+            title: Resources View
+            description: "Read resource status, endpoints, and use Start/Stop/Restart commands."
+            type: learn
+            sortOrder: 2
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "5.5.1"
+            contentFile: world-5/5.5.2-resources-view.md
+          - id: "5.5.3"
+            title: Structured Logs View
+            description: "Filter logs by resource and level, inspect properties, navigate to traces."
+            type: learn
+            sortOrder: 3
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "5.5.2"
+            contentFile: world-5/5.5.3-structured-logs-view.md
+          - id: "5.5.4"
+            title: Traces View
+            description: "Read distributed trace waterfalls and identify latency bottlenecks."
+            type: learn
+            sortOrder: 4
+            xpReward: 60
+            estimatedMinutes: 12
+            unlockAfterLesson: "5.5.3"
+            contentFile: world-5/5.5.4-traces-view.md
+          - id: "5.5.5"
+            title: Metrics View
+            description: "Browse counter, histogram, and gauge charts for performance monitoring."
+            type: learn
+            sortOrder: 5
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "5.5.4"
+            contentFile: world-5/5.5.5-metrics-view.md
+          - id: "5.5.6"
+            title: Console Logs and Resource Graph
+            description: "View raw stdout/stderr and navigate resource dependency graphs."
+            type: learn
+            sortOrder: 6
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "5.5.5"
+            contentFile: world-5/5.5.6-console-logs-graph.md
+          - id: "5.5-boss"
+            title: "Boss: The Aspire Dashboard"
+            description: "Prove your mastery of dashboard views and debugging workflows."
+            type: boss-battle
+            sortOrder: 7
+            xpReward: 100
+            estimatedMinutes: 8
+            isBoss: true
+            unlockAfterLesson: "5.5.6"
+            quizFile: 5.5-boss.yaml
+
+  - id: world-6
+    name: Advanced Aspire & Mastery
+    description: "Eventing, custom resources, publishing, testing, CLI mastery, and Aspire source code internals."
+    icon: "👑"
+    sortOrder: 6
+    levelRangeStart: 37
+    levelRangeEnd: 42
+    unlockAfterWorld: world-5
+    modules:
+      - id: "6.1"
+        name: Eventing System
+        description: "Master Aspire's eventing pipeline — intercept lifecycle moments and react to resource state changes."
+        sortOrder: 1
+        unlockAfterModule: null
+        lessons:
+          - id: "6.1.1"
+            title: The Event-Driven App Model
+            description: "Introduction to IDistributedApplicationEventing and the Subscribe pattern."
+            type: learn
+            sortOrder: 1
+            xpReward: 150
+            estimatedMinutes: 20
+            contentFile: world-6/6.1.1-eventing-intro.md
+          - id: "6.1.2"
+            title: Global Lifecycle Events
+            description: "BeforeStartEvent, AfterResourcesCreatedEvent, and IDistributedApplicationLifecycleHook."
+            type: learn
+            sortOrder: 2
+            xpReward: 175
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.1.1"
+            contentFile: world-6/6.1.2-global-events.md
+          - id: "6.1.3"
+            title: Resource-Scoped Events
+            description: "BeforeResourceStartedEvent, ResourceReadyEvent, and per-resource filtering."
+            type: learn
+            sortOrder: 3
+            xpReward: 175
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.1.2"
+            contentFile: world-6/6.1.3-resource-events.md
+          - id: "6.1.4"
+            title: Controlling Event Dispatch Order
+            description: "EventDispatchBehavior — BlockingSequential, BlockingConcurrent, and more."
+            type: learn
+            sortOrder: 4
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.1.3"
+            contentFile: world-6/6.1.4-dispatch-behavior.md
+          - id: "6.1.5"
+            title: Convenience Methods & Patterns
+            description: "OnBeforeResourceStarted, OnResourceReady, and real-world eventing patterns."
+            type: learn
+            sortOrder: 5
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.1.4"
+            contentFile: world-6/6.1.5-convenience-methods.md
+          - id: "6.1-boss"
+            title: "Boss: Event Orchestrator"
+            description: "Prove your understanding of the Aspire eventing system."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 400
+            estimatedMinutes: 12
+            isBoss: true
+            unlockAfterLesson: "6.1.5"
+            quizFile: 6.1-boss.yaml
+
+      - id: "6.2"
+        name: Custom Resources & Extensibility
+        description: "Build your own Aspire resources — define types, annotations, commands, and dashboard integration."
+        sortOrder: 2
+        unlockAfterModule: "6.1"
+        lessons:
+          - id: "6.2.1"
+            title: Inheriting from Resource
+            description: "Create custom resource classes with ContainerResource, ExecutableResource, or Resource base classes."
+            type: learn
+            sortOrder: 1
+            xpReward: 175
+            estimatedMinutes: 25
+            contentFile: world-6/6.2.1-custom-resource-classes.md
+          - id: "6.2.2"
+            title: IResourceAnnotation Deep Dive
+            description: "Implement custom annotations and query them with TryGetAnnotationsOfType."
+            type: learn
+            sortOrder: 2
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.2.1"
+            contentFile: world-6/6.2.2-custom-annotations.md
+          - id: "6.2.3"
+            title: Resource Commands & Dashboard Integration
+            description: "Add interactive commands to resources via ResourceCommandAnnotation."
+            type: learn
+            sortOrder: 3
+            xpReward: 175
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.2.2"
+            contentFile: world-6/6.2.3-resource-commands.md
+          - id: "6.2.4"
+            title: Health Checks & Resource Icons
+            description: "Attach health checks and customize dashboard appearance with ResourceIconAnnotation."
+            type: learn
+            sortOrder: 4
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.2.3"
+            contentFile: world-6/6.2.4-health-icons.md
+          - id: "6.2.5"
+            title: Resource Notifications & Snapshots
+            description: "Publish custom state with ResourceNotificationService and CustomResourceSnapshot."
+            type: learn
+            sortOrder: 5
+            xpReward: 200
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.2.4"
+            contentFile: world-6/6.2.5-resource-notifications.md
+          - id: "6.2.6"
+            title: Building a Complete Hosting Integration
+            description: "Design Add, With, and RunAs extension methods following Aspire conventions."
+            type: learn
+            sortOrder: 6
+            xpReward: 200
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.2.5"
+            contentFile: world-6/6.2.6-hosting-integration.md
+          - id: "6.2-boss"
+            title: "Boss: Resource Engineer"
+            description: "Build a complete custom hosting integration for a FeatureFlagService."
+            type: boss-battle
+            sortOrder: 7
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 30
+            isBoss: true
+            unlockAfterLesson: "6.2.6"
+            contentFile: world-6/6.2-boss.md
+            challengeFile: 6.2-boss.yaml
+
+      - id: "6.3"
+        name: Publishing & Deployment
+        description: "Generate manifests, understand the publish pipeline, and target Docker & Kubernetes."
+        sortOrder: 3
+        unlockAfterModule: "6.2"
+        lessons:
+          - id: "6.3.1"
+            title: Understanding aspire publish
+            description: "Run aspire publish and explore the aspire-manifest.json structure."
+            type: learn
+            sortOrder: 1
+            xpReward: 175
+            estimatedMinutes: 25
+            contentFile: world-6/6.3.1-aspire-publish.md
+          - id: "6.3.2"
+            title: Anatomy of aspire-manifest.json
+            description: "Parse resource types, bindings, env vars, and connection strings in the manifest."
+            type: learn
+            sortOrder: 2
+            xpReward: 175
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.3.1"
+            contentFile: world-6/6.3.2-manifest-structure.md
+          - id: "6.3.3"
+            title: Customizing the Publish Pipeline
+            description: "ManifestPublishingContext, IManifestExpressionProvider, and IsPublishMode."
+            type: learn
+            sortOrder: 3
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.3.2"
+            contentFile: world-6/6.3.3-publish-pipeline.md
+          - id: "6.3.4"
+            title: Targeting Container Orchestrators
+            description: "Generate Docker Compose and Kubernetes resources from Aspire manifests."
+            type: learn
+            sortOrder: 4
+            xpReward: 175
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.3.3"
+            contentFile: world-6/6.3.4-docker-k8s.md
+          - id: "6.3-boss"
+            title: "Boss: Deployment Strategist"
+            description: "Prove your understanding of the Aspire publish pipeline and manifest format."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 350
+            estimatedMinutes: 10
+            isBoss: true
+            unlockAfterLesson: "6.3.4"
+            quizFile: 6.3-boss.yaml
+
+      - id: "6.4"
+        name: Testing
+        description: "Write integration tests for Aspire apps with DistributedApplicationTestingBuilder."
+        sortOrder: 4
+        unlockAfterModule: "6.3"
+        lessons:
+          - id: "6.4.1"
+            title: Spinning Up AppHosts in Tests
+            description: "Use DistributedApplicationTestingBuilder.CreateAsync to create testable app instances."
+            type: learn
+            sortOrder: 1
+            xpReward: 200
+            estimatedMinutes: 25
+            contentFile: world-6/6.4.1-testing-builder.md
+          - id: "6.4.2"
+            title: Accessing Resources in Tests
+            description: "Retrieve endpoints and connection strings from running test resources."
+            type: learn
+            sortOrder: 2
+            xpReward: 175
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.4.1"
+            contentFile: world-6/6.4.2-accessing-resources.md
+          - id: "6.4.3"
+            title: End-to-End HTTP Testing
+            description: "Create pre-configured HttpClient instances with CreateHttpClient()."
+            type: learn
+            sortOrder: 3
+            xpReward: 175
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.4.2"
+            contentFile: world-6/6.4.3-http-testing.md
+          - id: "6.4.4"
+            title: Best Practices for Aspire Tests
+            description: "Test isolation, fixtures, database rollback, and parallel execution strategies."
+            type: learn
+            sortOrder: 4
+            xpReward: 200
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.4.3"
+            contentFile: world-6/6.4.4-testing-patterns.md
+          - id: "6.4-boss"
+            title: "Boss: Test Architect"
+            description: "Write integration tests for an AppHost with API and PostgreSQL."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 450
+            bonusXp: 200
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "6.4.4"
+            contentFile: world-6/6.4-boss.md
+            challengeFile: 6.4-boss.yaml
+
+      - id: "6.5"
+        name: The Aspire CLI
+        description: "Master the command-line interface — create projects, manage secrets, and integrate with AI agents."
+        sortOrder: 5
+        unlockAfterModule: "6.4"
+        lessons:
+          - id: "6.5.1"
+            title: How the Aspire CLI Works
+            description: "CLI architecture, AppHost discovery, and the command hierarchy."
+            type: learn
+            sortOrder: 1
+            xpReward: 125
+            estimatedMinutes: 15
+            contentFile: world-6/6.5.1-cli-architecture.md
+          - id: "6.5.2"
+            title: Scaffolding Aspire Projects
+            description: "Use aspire new to create solutions from starter, test, and empty templates."
+            type: learn
+            sortOrder: 2
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.5.1"
+            contentFile: world-6/6.5.2-aspire-new.md
+          - id: "6.5.3"
+            title: Running & Extending Applications
+            description: "aspire run for launching and aspire add for adding hosting integrations."
+            type: learn
+            sortOrder: 3
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.5.2"
+            contentFile: world-6/6.5.3-aspire-run-add.md
+          - id: "6.5.4"
+            title: Configuration & Secrets Management
+            description: "aspire config and aspire secret for managing app configuration."
+            type: learn
+            sortOrder: 4
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.5.3"
+            contentFile: world-6/6.5.4-config-secrets.md
+          - id: "6.5.5"
+            title: AI-Powered Development with Aspire
+            description: "The Aspire MCP server and AI agent integration for debugging."
+            type: learn
+            sortOrder: 5
+            xpReward: 175
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.5.4"
+            contentFile: world-6/6.5.5-agent-mcp.md
+          - id: "6.5-boss"
+            title: "Boss: CLI Commander"
+            description: "Prove your mastery of the Aspire CLI and its capabilities."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 350
+            estimatedMinutes: 10
+            isBoss: true
+            unlockAfterLesson: "6.5.5"
+            quizFile: 6.5-boss.yaml
+
+      - id: "6.6"
+        name: "Final Boss: Aspire Architect"
+        description: "Build CloudMarket — a complete multi-service e-commerce platform using every Aspire concept."
+        sortOrder: 6
+        unlockAfterModule: "6.5"
+        lessons:
+          - id: "6.6-final"
+            title: "Final Boss: Aspire Architect Certification"
+            description: "The ultimate challenge — build a production-grade distributed application from scratch."
+            type: boss-battle
+            sortOrder: 1
+            xpReward: 2000
+            bonusXp: 1000
+            estimatedMinutes: 120
+            isBoss: true
+            contentFile: world-6/6.6-final-boss.md
+            challengeFile: 6.6-final-boss.yaml
+
+      - id: "6.7"
+        name: "DCP & Orchestration Internals"
+        description: "Dive into Aspire source code — DcpHost, DcpExecutor, expression resolution, and ResourceNotificationService."
+        sortOrder: 7
+        unlockAfterModule: "6.6"
+        lessons:
+          - id: "6.7.1"
+            title: How DcpHost Bootstraps the Orchestrator
+            description: "Trace startup from Build().Run() through DcpHost.StartAsync() and container runtime detection."
+            type: learn
+            sortOrder: 1
+            xpReward: 150
+            estimatedMinutes: 25
+            contentFile: world-6/6.7.1-dcphost.md
+          - id: "6.7.2"
+            title: How DcpExecutor Creates and Manages Resources
+            description: "DcpExecutor translates the app model into Container, Executable, and Service specs."
+            type: learn
+            sortOrder: 2
+            xpReward: 150
+            estimatedMinutes: 30
+            unlockAfterLesson: "6.7.1"
+            contentFile: world-6/6.7.2-dcpexecutor.md
+          - id: "6.7.3"
+            title: How Reference Expressions Are Resolved
+            description: "ReferenceExpression, EndpointReference, ExpressionResolver, and IValueProvider."
+            type: learn
+            sortOrder: 3
+            xpReward: 200
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.7.2"
+            contentFile: world-6/6.7.3-expression-resolution.md
+          - id: "6.7.4"
+            title: How Resource State Flows to the Dashboard
+            description: "ResourceNotificationService, CustomResourceSnapshot, and Channel-based pub/sub."
+            type: learn
+            sortOrder: 4
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.7.3"
+            contentFile: world-6/6.7.4-resource-notifications.md
+          - id: "6.7-boss"
+            title: "Boss: Trace AddPostgres End-to-End"
+            description: "Answer detailed questions about the execution flow from code to running container."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 500
+            estimatedMinutes: 15
+            isBoss: true
+            unlockAfterLesson: "6.7.4"
+            quizFile: 6.7-boss.yaml
+
+      - id: "6.8"
+        name: Dashboard Internals
+        description: "DashboardWebApplication, TelemetryRepository, OTLP data pipeline, and Blazor rendering."
+        sortOrder: 8
+        unlockAfterModule: "6.7"
+        lessons:
+          - id: "6.8.1"
+            title: Inside DashboardWebApplication
+            description: "Blazor + gRPC + OTLP registration in DashboardWebApplication.cs."
+            type: learn
+            sortOrder: 1
+            xpReward: 150
+            estimatedMinutes: 25
+            contentFile: world-6/6.8.1-dashboard-webapp.md
+          - id: "6.8.2"
+            title: TelemetryRepository — In-Memory OTLP Storage
+            description: "CircularBuffer storage, subscription debouncing, and WatchSpansAsync streaming."
+            type: learn
+            sortOrder: 2
+            xpReward: 150
+            estimatedMinutes: 20
+            unlockAfterLesson: "6.8.1"
+            contentFile: world-6/6.8.2-telemetry-repository.md
+          - id: "6.8.3"
+            title: OTLP Data Import Pipeline
+            description: "Trace a span from app code through OTLP export to dashboard visualization."
+            type: learn
+            sortOrder: 3
+            xpReward: 200
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.8.2"
+            contentFile: world-6/6.8.3-otlp-pipeline.md
+          - id: "6.8-boss"
+            title: "Boss: Dashboard Deep Dive"
+            description: "Prove your understanding of dashboard architecture and telemetry flow."
+            type: boss-battle
+            sortOrder: 4
+            xpReward: 500
+            estimatedMinutes: 12
+            isBoss: true
+            unlockAfterLesson: "6.8.3"
+            quizFile: 6.8-boss.yaml
+
+      - id: "6.9"
+        name: "Polyglot & Container Runtime"
+        description: "IContainerRuntime abstraction, container networking, and manifest publishing pipeline."
+        sortOrder: 9
+        unlockAfterModule: "6.8"
+        lessons:
+          - id: "6.9.1"
+            title: "Docker vs Podman — IContainerRuntime"
+            description: "The container runtime abstraction and Docker/Podman implementations."
+            type: learn
+            sortOrder: 1
+            xpReward: 150
+            estimatedMinutes: 20
+            contentFile: world-6/6.9.1-container-runtime.md
+          - id: "6.9.2"
+            title: Polyglot Support & Code Generation
+            description: "How Aspire supports non-.NET languages through code generation SDKs."
+            type: learn
+            sortOrder: 2
+            xpReward: 150
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.9.1"
+            contentFile: world-6/6.9.2-polyglot-codegen.md
+          - id: "6.9.3"
+            title: Manifest Publishing Pipeline
+            description: "From app model to aspire-manifest.json to Kubernetes YAML."
+            type: learn
+            sortOrder: 3
+            xpReward: 200
+            estimatedMinutes: 25
+            unlockAfterLesson: "6.9.2"
+            contentFile: world-6/6.9.3-manifest-pipeline.md
+          - id: "6.9-boss"
+            title: "Boss: Aspire Source Code Mastery"
+            description: "Combined quiz and challenge testing deep understanding of Aspire internals."
+            type: boss-battle
+            sortOrder: 4
+            xpReward: 500
+            estimatedMinutes: 15
+            isBoss: true
+            unlockAfterLesson: "6.9.3"
+            quizFile: 6.9-boss.yaml
+
+      - id: "6.10"
+        name: "Final Boss: Aspire Architect (Internals)"
+        description: "The ultimate internals challenge — prove you understand how Aspire works under the hood."
+        sortOrder: 10
+        unlockAfterModule: "6.9"
+        lessons:
+          - id: "6.10-final"
+            title: "Final Boss: Aspire Architect — Internals Edition"
+            description: "Diagnose a broken custom hosting integration using knowledge of DcpExecutor and annotations."
+            type: boss-battle
+            sortOrder: 1
+            xpReward: 2000
+            bonusXp: 1000
+            estimatedMinutes: 45
+            isBoss: true
+            contentFile: world-6/6.10-final-boss.md
+            challengeFile: 6.10-final-boss.yaml

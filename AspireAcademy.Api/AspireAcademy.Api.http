@@ -1,0 +1,13 @@
+@AspireAcademy.Api_HostAddress = http://localhost:5187
+
+#if (EnableOpenAPI)
+GET {{AspireAcademy.Api_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
+#endif
+
+GET {{AspireAcademy.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
