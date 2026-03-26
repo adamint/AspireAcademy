@@ -85,7 +85,7 @@ export default function QuizResults({
             py={3}
             px={4}
             mb={4}
-            bg="whiteAlpha.100"
+            bg="content.subtle"
             borderRadius="sm"
             border="2px solid"
             borderColor="game.xpGold"
@@ -108,7 +108,7 @@ export default function QuizResults({
           </Box>
         )}
 
-        <Separator borderColor="whiteAlpha.200" mb={4} />
+        <Separator borderColor="dark.border" mb={4} />
 
         {/* Per-question result icons */}
         <Flex gap={2} wrap="wrap" mb={6}>
@@ -141,7 +141,7 @@ export default function QuizResults({
               variant="outline"
               borderColor="game.pixelBorder"
               color="dark.text"
-              _hover={{ bg: 'whiteAlpha.100' }}
+              _hover={{ bg: 'content.hover' }}
               onClick={onReview}
             >
               <FiRotateCcw />

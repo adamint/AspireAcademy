@@ -21,8 +21,25 @@ public static class AdminEndpoints
         group.MapGet("/users", GetUsers);
         group.MapDelete("/users/{userId:guid}", DeleteUser);
         group.MapPost("/seed-test-data", SeedTestData);
+        group.MapGet("/seeded-credentials", GetSeededCredentials);
 
         return app;
+    }
+
+    // Well-known test credentials — displayed for convenience
+    private static readonly List<SeededUserInfo> s_seededCredentials =
+    [
+        new("testuser", "TestPass1", "test@aspireacademy.dev", "Pre-seeded test learner with sample progress"),
+        new("admin", "AdminPass1!", "admin@aspireacademy.dev", "Admin user with full access to /admin panel"),
+    ];
+
+    private static IResult GetSeededCredentials(ClaimsPrincipal principal, HttpRequest request)
+    {
+        if (!IsAdmin(principal, request))
+        {
+            return Forbidden();
+        }
+        return Results.Ok(s_seededCredentials);
     }
 
     private static IResult Forbidden() =>
@@ -295,7 +312,37 @@ public static class AdminEndpoints
         await db.SaveChangesAsync();
 
         logger.LogInformation("Admin action: Test data seeded — user 'testuser' created with {LessonCount} completed lessons", firstLessons.Count);
-        return Results.Ok(new AdminActionResponse($"Test user 'testuser' created with {firstLessons.Count} completed lessons. Password: TestPass1"));
+
+        // Also create admin user if it doesn't exist
+        var adminExists = await db.Users.AnyAsync(u => u.Username == "admin");
+        if (!adminExists)
+        {
+            var adminUser = new User
+            {
+                Id = Guid.CreateVersion7(),
+                Username = "admin",
+                Email = "admin@aspireacademy.dev",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("AdminPass1!"),
+                DisplayName = "Admin",
+                CreatedAt = now
+            };
+            db.Users.Add(adminUser);
+            db.UserXp.Add(new UserXp
+            {
+                UserId = adminUser.Id,
+                TotalXp = 0,
+                CurrentLevel = 1,
+                CurrentRank = "aspire-intern",
+                WeekStart = DateOnly.FromDateTime(now)
+            });
+            await db.SaveChangesAsync();
+            logger.LogInformation("Admin action: Admin user created (username=admin, password=AdminPass1!)");
+        }
+
+        return Results.Ok(new AdminActionResponse(
+            $"Test user 'testuser' created (password: TestPass1) with {firstLessons.Count} completed lessons. " +
+            "Admin user 'admin' available (password: AdminPass1!). " +
+            "View all credentials at GET /api/admin/seeded-credentials"));
     }
 }
 
@@ -327,3 +374,5 @@ public record AdminUsersResponse(
     int TotalCount,
     int Page,
     int PageSize);
+
+record SeededUserInfo(string Username, string Password, string Email, string Description);

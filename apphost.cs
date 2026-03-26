@@ -12,9 +12,11 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 // Infrastructure
 var postgresServer = builder.AddPostgres("postgres")
-    .WithDataVolume("aspire-academy-pgdata");
+    .WithDataVolume("aspire-academy-pgdata")
+    .WithPgAdmin();
 var postgres = postgresServer.AddDatabase("academydb");
-var redis = builder.AddRedis("cache");
+var redis = builder.AddRedis("cache")
+    .WithRedisCommander();
 var openai = builder.AddConnectionString("openai");
 
 // Code execution service (Docker container for sandboxing + polyglot SDK support)

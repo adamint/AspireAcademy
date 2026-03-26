@@ -180,7 +180,7 @@ export default function ProfilePage() {
           <Flex gap={3} mt={2}>
             {isOwnProfile ? (
               <>
-                <Button variant="outline" size="sm" borderColor="game.pixelBorder" color="dark.text" _hover={{ bg: 'whiteAlpha.100' }} onClick={openEditDialog}>
+                <Button variant="outline" size="sm" borderColor="game.pixelBorder" color="dark.text" _hover={{ bg: 'content.hover' }} onClick={openEditDialog}>
                   <FiEdit2 /> Edit Profile
                 </Button>
                 <Button
@@ -188,7 +188,7 @@ export default function ProfilePage() {
                   size="sm"
                   borderColor="game.pixelBorder"
                   color="dark.text"
-                  _hover={{ bg: 'whiteAlpha.100' }}
+                  _hover={{ bg: 'content.hover' }}
                   onClick={() => randomizeMutation.mutate()}
                   disabled={randomizeMutation.isPending}
                 >
@@ -199,7 +199,7 @@ export default function ProfilePage() {
                   size="sm"
                   borderColor="game.pixelBorder"
                   color="dark.text"
-                  _hover={{ bg: 'whiteAlpha.100' }}
+                  _hover={{ bg: 'content.hover' }}
                   onClick={() => resetAvatarMutation.mutate()}
                   disabled={resetAvatarMutation.isPending}
                 >
@@ -224,7 +224,7 @@ export default function ProfilePage() {
                     size="sm"
                     borderColor="game.pixelBorder"
                     color="dark.text"
-                    _hover={{ bg: 'whiteAlpha.100' }}
+                    _hover={{ bg: 'content.hover' }}
                     onClick={() => friendMutation.mutate('remove')}
                     disabled={friendMutation.isPending}
                   >

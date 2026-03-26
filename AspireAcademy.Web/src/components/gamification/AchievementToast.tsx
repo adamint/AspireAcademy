@@ -77,7 +77,7 @@ export default function AchievementToast() {
             >
               <Text fontSize="2xl" lineHeight="1">{current.icon}</Text>
               <Box>
-                <Text {...pixelFontProps} fontSize="10px" color="white" lineHeight="1.4">
+                <Text {...pixelFontProps} fontSize="10px" color="dark.text" lineHeight="1.4">
                   {current.name}
                 </Text>
                 <Text {...pixelFontProps} fontSize="10px" color="game.xpGold" lineHeight="1.4">

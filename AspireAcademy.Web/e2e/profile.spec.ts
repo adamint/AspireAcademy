@@ -46,8 +46,7 @@ test.describe.serial('Profile and social features', () => {
     await expect(
       main.getByText(/your rank/i)
         .or(main.getByText(/no data/i))
-        .or(main.getByText(/no entries/i))
-        .or(main.getByText(/xp/i)),
+        .or(main.getByText(/no entries/i)),
     ).toBeVisible({ timeout: 10_000 });
   });
 

@@ -85,9 +85,36 @@ export default function QuizPage() {
   if (!fetched[0]) {
     fetched[1](true);
     api
-      .get<QuizData>(`/lessons/${lessonId}`)
+      .get(`/lessons/${lessonId}`)
       .then((res) => {
-        setQuiz(res.data);
+        const lesson = res.data as Record<string, unknown>;
+        const quizData = lesson.quiz as Record<string, unknown> | undefined;
+        const rawQuestions = (quizData?.questions ?? []) as Record<string, unknown>[];
+
+        // Map API question shape to frontend QuizQuestion shape
+        const questions: QuizQuestion[] = rawQuestions.map((q) => ({
+          id: q.id as string,
+          text: (q.questionText ?? q.text) as string,
+          questionType: ((q.questionType as string) ?? '').replace(/_/g, '-') as QuizQuestion['questionType'],
+          options: Array.isArray(q.options)
+            ? q.options.map((o: unknown) =>
+                typeof o === 'object' && o !== null && 'text' in o
+                  ? (o as Record<string, string>).text
+                  : String(o),
+              )
+            : undefined,
+          codeSnippet: q.codeSnippet as string | undefined,
+          points: (q.points ?? 0) as number,
+        }));
+
+        setQuiz({
+          id: lesson.id as string,
+          title: lesson.title as string,
+          lessonId: lessonId!,
+          questions,
+          passingScore: (quizData?.passingScore ?? quizData?.passingScorePercent ?? 70) as number,
+          nextLessonId: (lesson.nextLessonId as string) ?? null,
+        });
         setLoading(false);
       })
       .catch(() => {
@@ -209,7 +236,7 @@ export default function QuizPage() {
               variant="outline"
               borderColor="game.pixelBorder"
               color="dark.text"
-              _hover={{ bg: 'whiteAlpha.100' }}
+              _hover={{ bg: 'content.hover' }}
               onClick={() => navigate(-1)}
             >
               <FiArrowLeft />

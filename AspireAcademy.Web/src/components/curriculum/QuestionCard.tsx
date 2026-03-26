@@ -47,8 +47,8 @@ export default function QuestionCard({
                   borderRadius="sm"
                   border="2px solid"
                   borderColor="game.pixelBorder"
-                  bg="whiteAlpha.50"
-                  _hover={{ bg: 'whiteAlpha.100' }}
+                  bg="content.subtle"
+                  _hover={{ bg: 'content.hover' }}
                   _checked={{ bg: 'aspire.800', borderColor: 'aspire.500' }}
                 >
                   <RadioGroup.ItemHiddenInput />
@@ -115,8 +115,8 @@ export default function QuestionCard({
                   borderRadius="sm"
                   border="2px solid"
                   borderColor="game.pixelBorder"
-                  bg="whiteAlpha.50"
-                  _hover={{ bg: 'whiteAlpha.100' }}
+                  bg="content.subtle"
+                  _hover={{ bg: 'content.hover' }}
                   _checked={{ bg: 'aspire.800', borderColor: 'aspire.500' }}
                   fontFamily="mono"
                 >
@@ -156,7 +156,7 @@ export default function QuestionCard({
               border="2px solid"
               borderColor="game.pixelBorder"
               color="dark.text"
-              _placeholder={{ color: 'gray.500' }}
+              _placeholder={{ color: 'dark.muted' }}
               _focus={{ borderColor: 'aspire.500', boxShadow: '0 0 0 1px var(--chakra-colors-aspire-500)' }}
             />
           </Box>
@@ -219,7 +219,7 @@ function MultiSelectCard({
               border="2px solid"
               borderColor={selected.includes(opt) ? 'aspire.500' : 'game.pixelBorder'}
               bg={selected.includes(opt) ? 'aspire.800' : 'whiteAlpha.50'}
-              _hover={{ bg: 'whiteAlpha.100' }}
+              _hover={{ bg: 'content.hover' }}
             >
               <Checkbox.HiddenInput />
               <Checkbox.Control>

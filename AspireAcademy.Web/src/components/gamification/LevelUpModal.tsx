@@ -76,7 +76,7 @@ export default function LevelUpModal() {
           <VStack gap={1} w="100%">
             <Text {...pixelFontProps} fontSize="xs" color="game.xpGold">Unlocked:</Text>
             {unlockedItems.map((item, i) => (
-              <Text key={i} fontSize="sm" color="white">
+              <Text key={i} fontSize="sm" color="dark.text">
                 ✨ {item.name} ({item.type})
               </Text>
             ))}

@@ -235,10 +235,10 @@ export default function AdminPage() {
               placeholder="Search users…"
               size="sm"
               maxW="250px"
-              bg="whiteAlpha.100"
-              color="white"
-              borderColor="whiteAlpha.500"
-              _placeholder={{ color: 'whiteAlpha.700' }}
+              bg="dark.surface"
+              color="dark.text"
+              borderColor="dark.border"
+              _placeholder={{ color: 'dark.muted' }}
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -268,11 +268,11 @@ export default function AdminPage() {
                   </Table.Header>
                   <Table.Body>
                     {usersData?.users.map((user) => (
-                      <Table.Row key={user.id} _hover={{ bg: 'whiteAlpha.50' }}>
-                        <Table.Cell color="white" fontSize="sm" fontWeight="600">
+                      <Table.Row key={user.id} _hover={{ bg: 'content.hover' }}>
+                        <Table.Cell color="dark.text" fontSize="sm" fontWeight="600">
                           {user.username}
                         </Table.Cell>
-                        <Table.Cell color="whiteAlpha.700" fontSize="xs">
+                        <Table.Cell color="dark.muted" fontSize="xs">
                           {user.email}
                         </Table.Cell>
                         <Table.Cell>
@@ -285,10 +285,10 @@ export default function AdminPage() {
                             {user.totalXp.toLocaleString()} XP
                           </Text>
                         </Table.Cell>
-                        <Table.Cell color="whiteAlpha.600" fontSize="xs">
+                        <Table.Cell color="dark.muted" fontSize="xs">
                           {formatDate(user.lastLoginAt)}
                         </Table.Cell>
-                        <Table.Cell color="whiteAlpha.600" fontSize="xs">
+                        <Table.Cell color="dark.muted" fontSize="xs">
                           {formatDate(user.createdAt)}
                         </Table.Cell>
                         <Table.Cell>
@@ -311,7 +311,7 @@ export default function AdminPage() {
                     {usersData?.users.length === 0 && (
                       <Table.Row>
                         <Table.Cell colSpan={7}>
-                          <Text textAlign="center" color="whiteAlpha.700" py="4" fontSize="sm">
+                          <Text textAlign="center" color="dark.muted" py="4" fontSize="sm">
                             No users found.
                           </Text>
                         </Table.Cell>
@@ -327,19 +327,19 @@ export default function AdminPage() {
                   <Button
                     size="xs"
                     variant="ghost"
-                    color="whiteAlpha.700"
+                    color="dark.muted"
                     disabled={page <= 1}
                     onClick={() => setPage((p) => p - 1)}
                   >
                     ← Prev
                   </Button>
-                  <Text fontSize="xs" color="whiteAlpha.600" alignSelf="center">
+                  <Text fontSize="xs" color="dark.muted" alignSelf="center">
                     Page {page} of {totalPages}
                   </Text>
                   <Button
                     size="xs"
                     variant="ghost"
-                    color="whiteAlpha.700"
+                    color="dark.muted"
                     disabled={page >= totalPages}
                     onClick={() => setPage((p) => p + 1)}
                   >

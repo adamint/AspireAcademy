@@ -107,7 +107,7 @@ export default function FriendsPage() {
 
       {/* Search */}
       <Flex align="center" gap={2} maxW="400px">
-        <Box color="gray.400"><FiSearch /></Box>
+        <Box color="dark.muted"><FiSearch /></Box>
         <Input
           placeholder="Search users..."
           value={searchQuery}

@@ -150,16 +150,16 @@ export default function AiTutorSidebar() {
         <Drawer.Positioner>
           <Drawer.Content maxW="400px" w="100%" bg="dark.card" color="dark.text">
             {/* Header */}
-            <Drawer.Header bg="game.retroBg" py={3} px={4}>
+            <Drawer.Header bg="dark.sidebar" py={3} px={4}>
               <Flex align="center" justify="space-between" w="100%">
-                <Text {...pixelFontProps} fontSize="10px" color="white">
+                <Text {...pixelFontProps} fontSize="10px" color="whiteAlpha.900">
                   🤖 AI Tutor
                 </Text>
                 <IconButton
                   aria-label="Close"
                   variant="ghost"
                   size="sm"
-                  color="white"
+                  color="whiteAlpha.900"
                   _hover={{ bg: 'whiteAlpha.200' }}
                   onClick={() => setOpen(false)}
                 >
@@ -171,7 +171,7 @@ export default function AiTutorSidebar() {
             {/* Messages */}
             <Drawer.Body p={4} display="flex" flexDirection="column" gap={3} overflowY="auto">
               {messages.length === 0 && (
-                <Text textAlign="center" color="gray.400" mt={8} fontSize="sm">
+                <Text textAlign="center" color="dark.muted" mt={8} fontSize="sm">
                   Ask me anything about .NET Aspire! I&apos;m here to help you learn.
                 </Text>
               )}
@@ -179,8 +179,8 @@ export default function AiTutorSidebar() {
                 <Box
                   key={i}
                   alignSelf={msg.role === 'user' ? 'flex-end' : 'flex-start'}
-                  bg={msg.role === 'user' ? 'aspire.600' : 'gray.800'}
-                  color="white"
+                  bg={msg.role === 'user' ? 'aspire.600' : 'dark.surface'}
+                  color="dark.text"
                   px={3}
                   py={2}
                   borderRadius={msg.role === 'user' ? '12px 12px 4px 12px' : '12px 12px 12px 4px'}
