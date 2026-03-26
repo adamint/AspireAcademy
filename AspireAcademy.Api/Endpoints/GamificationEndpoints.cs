@@ -31,6 +31,10 @@ public record ProgressCompleteResponse(
     LevelUpInfo? LevelUp,
     List<AchievementUnlocked> AchievementsUnlocked);
 
+public record SkipRequest(string LessonId);
+public record SkipResponse(bool Skipped, string LessonId);
+public record UnskipResponse(bool Unskipped, string LessonId);
+
 public record AchievementDto(
     string Id,
     string Name,
@@ -56,6 +60,8 @@ public static class GamificationEndpoints
 
         group.MapGet("/xp", GetXpStatsAsync);
         group.MapPost("/progress/complete", CompleteLessonAsync);
+        group.MapPost("/progress/skip", SkipLessonAsync);
+        group.MapPost("/progress/unskip", UnskipLessonAsync);
         group.MapGet("/achievements", GetAchievementsAsync);
         group.MapPost("/avatar/randomize", RandomizeAvatarAsync);
         group.MapDelete("/avatar", ClearAvatarAsync);
@@ -129,7 +135,7 @@ public static class GamificationEndpoints
             var prereq = await db.UserProgress
                 .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
 
-            if (prereq?.Status is not ("completed" or "perfect"))
+            if (prereq?.Status is not ("completed" or "perfect" or "skipped"))
             {
                 return Results.Forbid();
             }
@@ -201,6 +207,76 @@ public static class GamificationEndpoints
             LevelUp: result.LevelUp,
             AchievementsUnlocked: achievements.Select(a =>
                 new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));
+    }
+
+    private static async Task<IResult> SkipLessonAsync(
+        SkipRequest request,
+        AcademyDbContext db,
+        ClaimsPrincipal user)
+    {
+        var userId = GetUserId(user);
+        s_logger.LogInformation("Skip lesson request for LessonId={LessonId}, UserId={UserId}", request.LessonId, userId);
+
+        var lesson = await db.Lessons.FindAsync(request.LessonId);
+        if (lesson is null)
+        {
+            return Results.NotFound(new { error = "Lesson not found" });
+        }
+
+        var existing = await db.UserProgress
+            .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == request.LessonId);
+
+        if (existing?.Status is "completed" or "perfect")
+        {
+            return Results.BadRequest(new { error = "Cannot skip an already completed lesson" });
+        }
+
+        if (existing?.Status is "skipped")
+        {
+            return Results.Ok(new SkipResponse(Skipped: true, LessonId: request.LessonId));
+        }
+
+        if (existing is null)
+        {
+            existing = new UserProgress
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                LessonId = request.LessonId,
+                StartedAt = DateTime.UtcNow
+            };
+            db.UserProgress.Add(existing);
+        }
+
+        existing.Status = "skipped";
+        existing.XpEarned = 0;
+        existing.CompletedAt = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+
+        return Results.Ok(new SkipResponse(Skipped: true, LessonId: request.LessonId));
+    }
+
+    private static async Task<IResult> UnskipLessonAsync(
+        SkipRequest request,
+        AcademyDbContext db,
+        ClaimsPrincipal user)
+    {
+        var userId = GetUserId(user);
+        s_logger.LogInformation("Unskip lesson request for LessonId={LessonId}, UserId={UserId}", request.LessonId, userId);
+
+        var existing = await db.UserProgress
+            .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == request.LessonId);
+
+        if (existing is null || existing.Status is not "skipped")
+        {
+            return Results.BadRequest(new { error = "Lesson is not skipped" });
+        }
+
+        db.UserProgress.Remove(existing);
+        await db.SaveChangesAsync();
+
+        return Results.Ok(new UnskipResponse(Unskipped: true, LessonId: request.LessonId));
     }
 
     private static async Task<IResult> GetAchievementsAsync(

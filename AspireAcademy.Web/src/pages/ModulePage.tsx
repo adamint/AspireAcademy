@@ -40,6 +40,7 @@ export default function ModulePage() {
             sortOrder: mod.sortOrder,
             isLocked: !mod.isUnlocked,
             completedLessons: mod.completedLessonCount ?? 0,
+            skippedLessons: mod.skippedLessonCount ?? 0,
             totalLessons: mod.lessonCount ?? 0,
             lessons: lessonsRes.data.map((l: Record<string, unknown>) => ({
               id: l.id,
@@ -49,11 +50,13 @@ export default function ModulePage() {
               estimatedMinutes: l.estimatedMinutes,
               xpReward: l.xpReward,
               score: l.score ?? undefined,
-              status: !l.isUnlocked
-                ? 'locked'
-                : l.status === 'not-started'
-                  ? 'available'
-                  : l.status,
+              status: l.status === 'skipped'
+                ? 'skipped'
+                : !l.isUnlocked
+                  ? 'locked'
+                  : l.status === 'not-started'
+                    ? 'available'
+                    : l.status,
             })),
           };
         }),
@@ -68,6 +71,7 @@ export default function ModulePage() {
         isLocked: !worldDto.isUnlocked,
         modules,
         completedLessons: worldDto.completedLessons ?? 0,
+        skippedLessons: worldDto.skippedLessons ?? 0,
         totalLessons: worldDto.totalLessons ?? 0,
         completionPercentage: worldDto.completionPercentage ?? 0,
       } as World;
@@ -156,6 +160,7 @@ export default function ModulePage() {
 
         <Text fontSize="xs" color="aspire.400" mt="2">
           {world.completedLessons} / {world.totalLessons} lessons complete
+          {world.skippedLessons > 0 && `, ${world.skippedLessons} skipped`}
         </Text>
       </Box>
 

@@ -50,6 +50,7 @@ interface ChallengeData {
   testCases: TestCase[];
   hints: string[];
   nextLessonId?: string | null;
+  isLocked: boolean;
 }
 
 // ── API response types (match backend DTOs) ─────────
@@ -69,6 +70,7 @@ interface LessonDetailResponse {
   title: string;
   type: string;
   nextLessonId?: string | null;
+  isLocked?: boolean;
   challengeSteps?: ChallengeStepDto[];
 }
 
@@ -166,6 +168,7 @@ export default function ChallengePage() {
           })),
           hints: step.hints,
           nextLessonId: data.nextLessonId,
+          isLocked: data.isLocked ?? false,
         };
         setChallenge(mapped);
         setCode(mapped.starterCode);
@@ -338,8 +341,25 @@ export default function ChallengePage() {
 
   // ── Main render ──────────────────────────────────
 
+  const isLocked = challenge.isLocked;
+
   return (
     <Flex direction="column" h="100%" minH="100vh">
+      {/* Locked banner */}
+      {isLocked && (
+        <Box
+          bg="rgba(255, 165, 0, 0.15)"
+          border="1px solid"
+          borderColor="orange.400"
+          px="5"
+          py="3"
+          textAlign="center"
+        >
+          <Text fontSize="sm" color="orange.300">
+            🔒 Unlock to attempt this challenge — complete prerequisites first
+          </Text>
+        </Box>
+      )}
       {/* Celebration overlay */}
       {showSuccess && (
         <Flex
@@ -569,7 +589,7 @@ export default function ChallengePage() {
               color="#d4d4d4"
               _hover={{ bg: 'whiteAlpha.100' }}
               onClick={handleRun}
-              disabled={running || submitting || showSuccess}
+              disabled={running || submitting || showSuccess || isLocked}
             >
               <FiPlay />
               {running ? 'Running...' : 'Run'}
@@ -580,7 +600,7 @@ export default function ChallengePage() {
               color="white"
               _hover={{ bg: 'aspire.500' }}
               onClick={handleSubmit}
-              disabled={running || submitting || showSuccess || !code.trim()}
+              disabled={running || submitting || showSuccess || !code.trim() || isLocked}
             >
               <FiUpload />
               {submitting ? 'Submitting...' : 'Submit'}

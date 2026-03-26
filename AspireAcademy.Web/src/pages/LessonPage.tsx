@@ -11,7 +11,7 @@ import {
   Heading,
   Skeleton,
 } from '@chakra-ui/react';
-import { FiArrowLeft, FiArrowRight, FiClock } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight, FiClock, FiSkipForward } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -89,6 +89,30 @@ export default function LessonPage() {
     },
   });
 
+  const skipMutation = useMutation({
+    mutationFn: () =>
+      api.post('/progress/skip', { lessonId }).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
+      queryClient.invalidateQueries({ queryKey: ['worlds'] });
+    },
+    onError: (err) => {
+      console.error('[LessonPage] Failed to skip lesson:', err);
+    },
+  });
+
+  const unskipMutation = useMutation({
+    mutationFn: () =>
+      api.post('/progress/unskip', { lessonId }).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
+      queryClient.invalidateQueries({ queryKey: ['worlds'] });
+    },
+    onError: (err) => {
+      console.error('[LessonPage] Failed to unskip lesson:', err);
+    },
+  });
+
   const handleComplete = useCallback(() => {
     if (!lesson?.isCompleted && !completeMutation.isPending) {
       completeMutation.mutate();
@@ -130,6 +154,8 @@ export default function LessonPage() {
   }
 
   const typeInfo = lessonTypeLabel[lesson.type] ?? lessonTypeLabel.learn;
+  const isSkipped = lesson.status === 'skipped';
+  const isLocked = lesson.isLocked;
 
   const markdownComponents: Partial<Components> = {
     code({ className, children, ...props }) {
@@ -287,6 +313,50 @@ export default function LessonPage() {
         {lesson.title}
       </Heading>
 
+      {/* Locked preview banner */}
+      {isLocked && (
+        <Box
+          bg="rgba(255, 165, 0, 0.15)"
+          border="1px solid"
+          borderColor="orange.400"
+          p="4"
+          borderRadius="sm"
+          textAlign="center"
+        >
+          <Text fontSize="sm" color="orange.300">
+            🔒 Preview Mode — complete prerequisites to unlock this lesson and earn XP
+          </Text>
+        </Box>
+      )}
+
+      {/* Skipped banner */}
+      {isSkipped && (
+        <Box
+          bg="rgba(100, 100, 200, 0.15)"
+          border="1px solid"
+          borderColor="aspire.400"
+          p="4"
+          borderRadius="sm"
+          textAlign="center"
+        >
+          <Flex align="center" justify="center" gap="3" flexWrap="wrap">
+            <Text fontSize="sm" color="aspire.300">
+              ⏭️ Skipped — you can come back later
+            </Text>
+            <Button
+              size="sm"
+              variant="outline"
+              colorPalette="purple"
+              onClick={() => unskipMutation.mutate()}
+              disabled={unskipMutation.isPending}
+              data-testid="undo-skip-btn"
+            >
+              {unskipMutation.isPending ? 'Reverting…' : 'Undo Skip'}
+            </Button>
+          </Flex>
+        </Box>
+      )}
+
       {/* Content */}
       <Card.Root bg="dark.card">
         <Card.Body
@@ -309,22 +379,37 @@ export default function LessonPage() {
         </Card.Body>
       </Card.Root>
 
-      {/* Mark Complete */}
-      <Flex justify="center" py="2">
-        <Button
-          colorPalette={lesson.isCompleted ? 'green' : 'purple'}
-          size="lg"
-          disabled={lesson.isCompleted || completeMutation.isPending || completeMutation.isSuccess}
-          onClick={handleComplete}
-          data-testid="mark-complete-btn"
-        >
-          {lesson.isCompleted || completeMutation.isSuccess
-            ? '✅ Completed'
-            : completeMutation.isPending
-              ? 'Completing…'
-              : `Mark Complete (+${lesson.xpReward} XP)`}
-        </Button>
-      </Flex>
+      {/* Mark Complete / Skip */}
+      {!isLocked && !isSkipped && (
+        <Flex justify="center" gap="3" py="2" flexWrap="wrap">
+          <Button
+            colorPalette={lesson.isCompleted ? 'green' : 'purple'}
+            size="lg"
+            disabled={lesson.isCompleted || completeMutation.isPending || completeMutation.isSuccess}
+            onClick={handleComplete}
+            data-testid="mark-complete-btn"
+          >
+            {lesson.isCompleted || completeMutation.isSuccess
+              ? '✅ Completed'
+              : completeMutation.isPending
+                ? 'Completing…'
+                : `Mark Complete (+${lesson.xpReward} XP)`}
+          </Button>
+          {!lesson.isCompleted && !completeMutation.isSuccess && (
+            <Button
+              variant="outline"
+              size="lg"
+              colorPalette="gray"
+              onClick={() => skipMutation.mutate()}
+              disabled={skipMutation.isPending}
+              data-testid="skip-lesson-btn"
+            >
+              <FiSkipForward />
+              {skipMutation.isPending ? 'Skipping…' : 'Skip Lesson'}
+            </Button>
+          )}
+        </Flex>
+      )}
 
       {completeMutation.isError && (
         <Box bg="rgba(209, 52, 56, 0.15)" color="game.error" p="3" borderRadius="sm" textAlign="center">

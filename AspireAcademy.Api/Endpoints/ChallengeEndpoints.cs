@@ -345,7 +345,7 @@ public static class ChallengeEndpoints
         var prereqProgress = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
 
-        return prereqProgress?.Status is "completed" or "perfect";
+        return prereqProgress?.Status is "completed" or "perfect" or "skipped";
     }
 
     private static Guid GetUserId(ClaimsPrincipal user)

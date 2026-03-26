@@ -47,7 +47,7 @@ export interface Lesson {
   status: LessonStatus;
 }
 
-export type LessonStatus = 'locked' | 'available' | 'in_progress' | 'completed' | 'perfect';
+export type LessonStatus = 'locked' | 'available' | 'in_progress' | 'completed' | 'perfect' | 'skipped';
 
 export interface Achievement {
   id: string;

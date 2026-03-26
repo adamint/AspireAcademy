@@ -37,6 +37,7 @@ interface QuizData {
   questions: QuizQuestion[];
   passingScore: number;
   nextLessonId?: string | null;
+  isLocked: boolean;
 }
 
 interface AnswerResponse {
@@ -115,6 +116,7 @@ export default function QuizPage() {
           questions,
           passingScore: (quizData?.passingScore ?? quizData?.passingScorePercent ?? 70) as number,
           nextLessonId: (lesson.nextLessonId as string) ?? null,
+          isLocked: (lesson.isLocked as boolean) ?? false,
         });
         setLoading(false);
       })
@@ -272,6 +274,25 @@ export default function QuizPage() {
 
   return (
     <Flex direction="column" align="center" p={{ base: 4, md: 8 }} minH="100%">
+      {/* Locked banner */}
+      {quiz.isLocked && (
+        <Box
+          w="100%"
+          maxW="720px"
+          mb={4}
+          bg="rgba(255, 165, 0, 0.15)"
+          border="1px solid"
+          borderColor="orange.400"
+          p="4"
+          borderRadius="sm"
+          textAlign="center"
+        >
+          <Text fontSize="sm" color="orange.300">
+            🔒 Unlock to submit answers — complete prerequisites first
+          </Text>
+        </Box>
+      )}
+
       {/* Header */}
       <Flex
         w="100%"
@@ -309,7 +330,7 @@ export default function QuizPage() {
           question={currentQuestion}
           selectedAnswer={selectedAnswer}
           onAnswerChange={setSelectedAnswer}
-          disabled={!!feedback}
+          disabled={!!feedback || quiz.isLocked}
         />
       )}
 
@@ -326,38 +347,40 @@ export default function QuizPage() {
       )}
 
       {/* Submit / Next */}
-      <Flex mt={5} w="100%" maxW="720px" justify="flex-end">
-        {!feedback ? (
-          <Button
-            bg="aspire.600"
-            color="white"
-            _hover={{ bg: 'aspire.500' }}
-            disabled={selectedAnswer === null || submitting}
-            onClick={handleSubmitAnswer}
-          >
-            {submitting ? (
-              <>
-                <Spinner size="sm" /> Submitting...
-              </>
-            ) : (
-              <>
-                <FiSend /> Submit Answer
-              </>
-            )}
-          </Button>
-        ) : (
-          <Button
-            bg="aspire.600"
-            color="white"
-            _hover={{ bg: 'aspire.500' }}
-            onClick={handleNext}
-            disabled={finalizingQuiz}
-          >
-            {finalizingQuiz ? 'Finishing…' : isLastQuestion ? 'See Results' : 'Next Question'}
-            <FiArrowRight />
-          </Button>
-        )}
-      </Flex>
+      {!quiz.isLocked && (
+        <Flex mt={5} w="100%" maxW="720px" justify="flex-end">
+          {!feedback ? (
+            <Button
+              bg="aspire.600"
+              color="white"
+              _hover={{ bg: 'aspire.500' }}
+              disabled={selectedAnswer === null || submitting}
+              onClick={handleSubmitAnswer}
+            >
+              {submitting ? (
+                <>
+                  <Spinner size="sm" /> Submitting...
+                </>
+              ) : (
+                <>
+                  <FiSend /> Submit Answer
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button
+              bg="aspire.600"
+              color="white"
+              _hover={{ bg: 'aspire.500' }}
+              onClick={handleNext}
+              disabled={finalizingQuiz}
+            >
+              {finalizingQuiz ? 'Finishing…' : isLastQuestion ? 'See Results' : 'Next Question'}
+              <FiArrowRight />
+            </Button>
+          )}
+        </Flex>
+      )}
     </Flex>
   );
 }

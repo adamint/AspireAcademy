@@ -298,7 +298,7 @@ public static class QuizEndpoints
                 .Select(e => e.GetString()!)
                 .ToList();
 
-            var caseSensitive = root.TryGetProperty("caseSensitive", out var cs) && cs.GetBoolean();
+            var caseSensitive = root.TryGetProperty("caseSensitive", out var cs) && GetJsonBool(cs);
             var userAnswer = answer.FreeTextAnswer?.Trim() ?? "";
 
             var isCorrect = caseSensitive
@@ -328,9 +328,19 @@ public static class QuizEndpoints
 
         return question.Options.RootElement
             .EnumerateArray()
-            .Where(o => o.TryGetProperty("isCorrect", out var ic) && ic.GetBoolean())
+            .Where(o => o.TryGetProperty("isCorrect", out var ic) && GetJsonBool(ic))
             .Select(o => o.GetProperty("id").GetString()!)
             .ToList();
+    }
+
+    /// <summary>
+    /// Safely reads a bool from a JsonElement that may be a boolean or a string "true"/"false".
+    /// </summary>
+    private static bool GetJsonBool(JsonElement element)
+    {
+        return element.ValueKind == JsonValueKind.True
+            || (element.ValueKind == JsonValueKind.String
+                && string.Equals(element.GetString(), "true", StringComparison.OrdinalIgnoreCase));
     }
 
     private static async Task<bool> IsLessonUnlockedAsync(AcademyDbContext db, Guid userId, Lesson lesson)
@@ -343,7 +353,7 @@ public static class QuizEndpoints
         var prereqProgress = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
 
-        return prereqProgress?.Status is "completed" or "perfect";
+        return prereqProgress?.Status is "completed" or "perfect" or "skipped";
     }
 
     private static Guid GetUserId(ClaimsPrincipal user)

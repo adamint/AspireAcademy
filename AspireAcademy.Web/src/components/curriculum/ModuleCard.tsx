@@ -24,7 +24,9 @@ export default function ModuleCard({ module }: ModuleCardProps) {
   };
 
   const allComplete =
-    module.completedLessons === module.totalLessons && module.totalLessons > 0;
+    module.completedLessons + (module.skippedLessons ?? 0) === module.totalLessons && module.totalLessons > 0;
+
+  const skippedCount = module.skippedLessons ?? 0;
 
   return (
     <Card.Root variant="outline" {...retroCardProps}>
@@ -58,6 +60,7 @@ export default function ModuleCard({ module }: ModuleCardProps) {
             variant="subtle"
           >
             {module.completedLessons}/{module.totalLessons}
+            {skippedCount > 0 && ` (${skippedCount} ⏭️)`}
           </Badge>
         </Flex>
 

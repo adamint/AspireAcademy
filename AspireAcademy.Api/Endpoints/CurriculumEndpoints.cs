@@ -10,6 +10,7 @@ public static class CurriculumEndpoints
 {
     private const int PassingScorePercent = 70;
     private static readonly string[] CompletedStatuses = ["completed", "perfect"];
+    private static readonly string[] DoneStatuses = ["completed", "perfect", "skipped"];
     private static ILogger s_logger = null!;
 
     public static WebApplication MapCurriculumEndpoints(this WebApplication app)
@@ -46,6 +47,16 @@ public static class CurriculumEndpoints
             .Select(p => p.LessonId)
             .ToHashSet();
 
+        var doneLessonIds = userProgress
+            .Where(p => DoneStatuses.Contains(p.Status))
+            .Select(p => p.LessonId)
+            .ToHashSet();
+
+        var skippedLessonIds = userProgress
+            .Where(p => p.Status == "skipped")
+            .Select(p => p.LessonId)
+            .ToHashSet();
+
         var modulesByWorld = modules
             .GroupBy(m => m.WorldId)
             .ToDictionary(g => g.Key, g => g.ToList());
@@ -63,12 +74,13 @@ public static class CurriculumEndpoints
 
             var totalLessons = worldLessons.Count;
             var completedLessons = worldLessons.Count(l => completedLessonIds.Contains(l.Id));
+            var skippedLessons = worldLessons.Count(l => skippedLessonIds.Contains(l.Id));
 
             var completedModuleCount = worldModules.Count(m =>
             {
                 var moduleLessons = lessonsByModule.GetValueOrDefault(m.Id, []);
                 return moduleLessons.Count > 0 &&
-                       moduleLessons.All(l => completedLessonIds.Contains(l.Id));
+                       moduleLessons.All(l => doneLessonIds.Contains(l.Id));
             });
 
             return new WorldDto(
@@ -79,11 +91,12 @@ public static class CurriculumEndpoints
                 world.SortOrder,
                 world.LevelRangeStart,
                 world.LevelRangeEnd,
-                IsUnlocked: IsWorldUnlocked(world, modulesByWorld, lessonsByModule, completedLessonIds),
+                IsUnlocked: IsWorldUnlocked(world, modulesByWorld, lessonsByModule, doneLessonIds),
                 ModuleCount: worldModules.Count,
                 CompletedModuleCount: completedModuleCount,
                 TotalLessons: totalLessons,
                 CompletedLessons: completedLessons,
+                SkippedLessons: skippedLessons,
                 CompletionPercentage: totalLessons > 0
                     ? (int)Math.Round(completedLessons * 100.0 / totalLessons)
                     : 0);
@@ -129,6 +142,16 @@ public static class CurriculumEndpoints
             .Select(p => p.LessonId)
             .ToHashSet();
 
+        var doneLessonIds = userProgress
+            .Where(p => DoneStatuses.Contains(p.Status))
+            .Select(p => p.LessonId)
+            .ToHashSet();
+
+        var skippedLessonIds = userProgress
+            .Where(p => p.Status == "skipped")
+            .Select(p => p.LessonId)
+            .ToHashSet();
+
         var lessonsByModule = lessons
             .GroupBy(l => l.ModuleId)
             .ToDictionary(g => g.Key, g => g.ToList());
@@ -138,6 +161,7 @@ public static class CurriculumEndpoints
             var moduleLessons = lessonsByModule.GetValueOrDefault(module.Id, []);
             var lessonCount = moduleLessons.Count;
             var completedCount = moduleLessons.Count(l => completedLessonIds.Contains(l.Id));
+            var skippedCount = moduleLessons.Count(l => skippedLessonIds.Contains(l.Id));
 
             return new ModuleDto(
                 module.Id,
@@ -145,9 +169,10 @@ public static class CurriculumEndpoints
                 module.Name,
                 module.Description,
                 module.SortOrder,
-                IsUnlocked: IsModuleUnlocked(module, lessonsByModule, completedLessonIds),
+                IsUnlocked: IsModuleUnlocked(module, lessonsByModule, doneLessonIds),
                 LessonCount: lessonCount,
                 CompletedLessonCount: completedCount,
+                SkippedLessonCount: skippedCount,
                 CompletionPercentage: lessonCount > 0
                     ? (int)Math.Round(completedCount * 100.0 / lessonCount)
                     : 0);
@@ -185,6 +210,11 @@ public static class CurriculumEndpoints
             .Select(p => p.LessonId)
             .ToHashSet();
 
+        var doneLessonIds = userProgress.Values
+            .Where(p => DoneStatuses.Contains(p.Status))
+            .Select(p => p.LessonId)
+            .ToHashSet();
+
         var result = lessons.Select(lesson =>
         {
             var progress = userProgress.GetValueOrDefault(lesson.Id);
@@ -202,7 +232,7 @@ public static class CurriculumEndpoints
                 lesson.IsBoss,
                 Status: progress?.Status ?? "not-started",
                 Score: progress?.Score,
-                IsUnlocked: IsLessonUnlocked(lesson, completedLessonIds));
+                IsUnlocked: IsLessonUnlocked(lesson, doneLessonIds));
         }).ToList();
 
         return Results.Ok(result);
@@ -230,14 +260,12 @@ public static class CurriculumEndpoints
                 .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
         }
 
-        var isUnlocked = lesson.UnlockAfterLessonId is null || prereqProgress?.Status is "completed" or "perfect";
+        var isUnlocked = lesson.UnlockAfterLessonId is null || prereqProgress?.Status is "completed" or "perfect" or "skipped";
         s_logger.LogInformation("GET /lessons/{LessonId} — type={LessonType}, unlocked={IsUnlocked}, userId={UserId}",
             lessonId, lesson.Type, isUnlocked, userId);
 
-        if (!isUnlocked)
-        {
-            return Results.Json(new ErrorResponse("Lesson is locked."), statusCode: 403);
-        }
+        // For locked lessons, we still return content for preview, but mark as locked
+        var isLocked = !isUnlocked;
 
         var progress = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lessonId);
@@ -331,14 +359,15 @@ public static class CurriculumEndpoints
             WorldId: module?.WorldId,
             WorldName: world?.Name,
             IsCompleted: isCompleted,
+            IsLocked: isLocked,
             PreviousLessonId: previousLesson?.Id,
             NextLessonId: nextLesson?.Id,
             PreviousLessonTitle: previousLesson?.Title,
             NextLessonTitle: nextLesson?.Title,
             PreviousLessonType: previousLesson?.Type,
             NextLessonType: nextLesson?.Type,
-            quizDto,
-            challengeSteps));
+            Quiz: quizDto,
+            ChallengeSteps: challengeSteps));
     }
 
     // --- Unlock Logic ---
@@ -419,6 +448,7 @@ public record WorldDto(
     int CompletedModuleCount,
     int TotalLessons,
     int CompletedLessons,
+    int SkippedLessons,
     int CompletionPercentage);
 
 public record ModuleDto(
@@ -430,6 +460,7 @@ public record ModuleDto(
     bool IsUnlocked,
     int LessonCount,
     int CompletedLessonCount,
+    int SkippedLessonCount,
     int CompletionPercentage);
 
 public record LessonListDto(
@@ -465,6 +496,7 @@ public record LessonDetailDto(
     string? WorldId,
     string? WorldName,
     bool IsCompleted,
+    bool IsLocked,
     string? PreviousLessonId,
     string? NextLessonId,
     string? PreviousLessonTitle,

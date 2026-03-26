@@ -1,5 +1,5 @@
 export type LessonType = 'learn' | 'quiz' | 'challenge' | 'build' | 'boss';
-export type LessonStatus = 'completed' | 'perfect' | 'in_progress' | 'available' | 'locked';
+export type LessonStatus = 'completed' | 'perfect' | 'in_progress' | 'available' | 'locked' | 'skipped';
 
 export interface Lesson {
   id: string;
@@ -21,6 +21,7 @@ export interface Module {
   isLocked: boolean;
   lessons: Lesson[];
   completedLessons: number;
+  skippedLessons: number;
   totalLessons: number;
 }
 
@@ -35,6 +36,7 @@ export interface World {
   prerequisiteWorldName?: string;
   modules: Module[];
   completedLessons: number;
+  skippedLessons: number;
   totalLessons: number;
   completionPercentage: number;
 }
@@ -97,4 +99,5 @@ export interface LessonDetail extends Lesson {
   previousLessonType?: LessonType;
   nextLessonType?: LessonType;
   isCompleted: boolean;
+  isLocked: boolean;
 }

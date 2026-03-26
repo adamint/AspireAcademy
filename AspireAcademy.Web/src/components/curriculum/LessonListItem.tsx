@@ -13,6 +13,7 @@ const statusIcons: Record<LessonStatus, string> = {
   in_progress: '🔵',
   available: '○',
   locked: '🔒',
+  skipped: '⏭️',
 };
 
 const typeIcons: Record<LessonType, string> = {
@@ -26,7 +27,8 @@ const typeIcons: Record<LessonType, string> = {
 export default function LessonListItem({ lesson }: LessonListItemProps) {
   const navigate = useNavigate();
 
-  const isClickable = lesson.status !== 'locked';
+  // All lessons are clickable now — locked ones navigate to preview
+  const isClickable = true;
 
   const handleClick = () => {
     if (!isClickable) return;
@@ -52,12 +54,17 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
         return 'game.perfect';
       case 'in_progress':
         return 'aspire.600';
+      case 'skipped':
+        return 'dark.muted';
       case 'locked':
         return 'game.locked';
       default:
         return 'aspire.400';
     }
   };
+
+  const isLocked = lesson.status === 'locked';
+  const isSkipped = lesson.status === 'skipped';
 
   return (
     <Flex
@@ -67,7 +74,7 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       py="2"
       borderRadius="sm"
       cursor={isClickable ? 'pointer' : 'default'}
-      opacity={isClickable ? 1 : 0.5}
+      opacity={isLocked ? 0.7 : isSkipped ? 0.75 : 1}
       _hover={isClickable ? { bg: 'content.hover' } : {}}
       onClick={handleClick}
       role="button"
@@ -85,6 +92,11 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       <Text fontSize="sm" flex="1" minW="0" truncate color={statusColor()}>
         {lesson.title}
       </Text>
+      {isLocked && (
+        <Badge fontSize="2xs" colorPalette="gray" variant="subtle">
+          👁️ preview
+        </Badge>
+      )}
       <Badge
         {...pixelFontProps}
         fontSize="2xs"
