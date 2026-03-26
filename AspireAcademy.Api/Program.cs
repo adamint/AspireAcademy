@@ -1,8 +1,10 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Endpoints;
 using AspireAcademy.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -43,15 +45,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// Build the list of allowed CORS origins: Vite dev server + any AppHost-injected frontend URLs
-var corsOrigins = new List<string> { "http://localhost:3000", "http://localhost:5173" };
+// Build the list of allowed CORS origins dynamically from Aspire-injected env vars
+var aspireOrigins = new List<string>();
 foreach (var kvp in builder.Configuration.AsEnumerable())
 {
     if (kvp.Key.StartsWith("services__web__", StringComparison.OrdinalIgnoreCase) &&
         kvp.Value is { Length: > 0 } url)
     {
-        corsOrigins.Add(url.TrimEnd('/'));
+        aspireOrigins.Add(url.TrimEnd('/'));
     }
+}
+
+var corsOrigins = new List<string>(aspireOrigins);
+if (builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Testing")
+{
+    // Keep localhost fallback only for local dev without Aspire
+    corsOrigins.Add("http://localhost:5173");
 }
 
 builder.Services.AddCors(options =>
@@ -63,6 +72,34 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials();
     });
+});
+
+// Rate limiting on auth endpoints
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy("register", httpContext =>
+        httpContext.Request.Headers.ContainsKey("X-Test-Client")
+            ? RateLimitPartition.GetNoLimiter(string.Empty)
+            : RateLimitPartition.GetFixedWindowLimiter(
+                httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 5,
+                    Window = TimeSpan.FromMinutes(1)
+                }));
+
+    options.AddPolicy("login", httpContext =>
+        httpContext.Request.Headers.ContainsKey("X-Test-Client")
+            ? RateLimitPartition.GetNoLimiter(string.Empty)
+            : RateLimitPartition.GetFixedWindowLimiter(
+                httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 10,
+                    Window = TimeSpan.FromMinutes(1)
+                }));
 });
 
 var app = builder.Build();
@@ -131,6 +168,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("ReactDev");
+app.UseRateLimiter();
 
 // Auth-endpoint guard: reject non-browser requests to /api/auth/register and /api/auth/login
 // unless they carry the test-client header. Health, OpenAPI, and admin-header requests pass through.

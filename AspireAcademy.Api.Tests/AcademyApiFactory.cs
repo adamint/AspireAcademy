@@ -126,6 +126,7 @@ public abstract class TestFixture : IAsyncLifetime, IDisposable
     {
         Factory = new AcademyApiFactory();
         Client = Factory.CreateClient();
+        Client.DefaultRequestHeaders.Add("X-Test-Client", "true");
     }
 
     public virtual async Task InitializeAsync()
@@ -151,6 +152,7 @@ public abstract class TestFixture : IAsyncLifetime, IDisposable
     protected HttpClient CreateAuthenticatedClient(Guid userId, string username = "testuser")
     {
         var client = Factory.CreateClient();
+        client.DefaultRequestHeaders.Add("X-Test-Client", "true");
         var token = GenerateTestJwt(userId, username);
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", token);

@@ -20,8 +20,8 @@ public static partial class AuthEndpoints
 
         var group = app.MapGroup("/api/auth").WithTags("Auth");
 
-        group.MapPost("/register", Register).AllowAnonymous();
-        group.MapPost("/login", Login).AllowAnonymous();
+        group.MapPost("/register", Register).AllowAnonymous().RequireRateLimiting("register");
+        group.MapPost("/login", Login).AllowAnonymous().RequireRateLimiting("login");
         group.MapGet("/me", GetMe).RequireAuthorization();
         group.MapPost("/refresh", RefreshToken).AllowAnonymous();
 
