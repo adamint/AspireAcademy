@@ -1,0 +1,95 @@
+questions:
+  - text: "What are the two TemplateRuntime values in the Aspire CLI?"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "Native and Managed"
+        isCorrect: false
+      - id: b
+        text: "DotNet and Cli"
+        isCorrect: true
+      - id: c
+        text: "SDK and Standalone"
+        isCorrect: false
+      - id: d
+        text: "Local and Remote"
+        isCorrect: false
+    explanation: "DotNet runtime uses dotnet new under the hood and requires the .NET SDK. Cli runtime uses embedded file trees with token replacement and doesn't need the SDK — it's used for TypeScript, Java, and empty AppHost templates."
+
+  - text: "Which KnownTemplateId creates a full TypeScript Aspire application with frontend and API?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "aspire-ts-empty"
+        isCorrect: false
+      - id: b
+        text: "aspire-ts-starter"
+        isCorrect: true
+      - id: c
+        text: "aspire-ts-cs-starter"
+        isCorrect: false
+      - id: d
+        text: "aspire-typescript"
+        isCorrect: false
+    explanation: "aspire-ts-starter (TypeScriptStarter) creates a full TypeScript app with AppHost, Express API, and React+Vite frontend. aspire-ts-empty creates only an empty TypeScript AppHost. aspire-ts-cs-starter is a hybrid C#/TypeScript template."
+
+  - text: "What determines whether a template appears in `aspire new --help`?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "All templates are always shown regardless of environment"
+        isCorrect: false
+      - id: b
+        text: "Runtime availability — templates are filtered by whether their required runtime is installed"
+        isCorrect: true
+      - id: c
+        text: "User preferences in aspire.config.json"
+        isCorrect: false
+      - id: d
+        text: "The --channel flag determines which templates are shown"
+        isCorrect: false
+    explanation: "ILanguageDiscovery checks for runtime availability (Node.js for TypeScript, Java for Java, .NET SDK for DotNet templates). Templates whose required runtime isn't detected are hidden from the user."
+
+  - text: "What token replacement placeholder represents the project name in CLI templates?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "$PROJECT_NAME"
+        isCorrect: false
+      - id: b
+        text: "{{projectName}}"
+        isCorrect: true
+      - id: c
+        text: "%ProjectName%"
+        isCorrect: false
+      - id: d
+        text: "<ProjectName>"
+        isCorrect: false
+    explanation: "CLI-native templates use double-curly-brace tokens: {{projectName}}, {{projectNameLower}}, {{aspireVersion}}, {{hostName}}, and generated port tokens. These are replaced with actual values during scaffolding."
+
+  - text: "What happens after aspire new successfully creates a project?"
+    type: multiple-choice
+    sortOrder: 5
+    points: 10
+    options:
+      - id: a
+        text: "The AppHost automatically starts running"
+        isCorrect: false
+      - id: b
+        text: "It offers to run aspire agent init for AI agent integration"
+        isCorrect: true
+      - id: c
+        text: "It opens the project in VS Code"
+        isCorrect: false
+      - id: d
+        text: "It runs dotnet build to verify the project"
+        isCorrect: false
+    explanation: "After successful scaffolding, NewCommand calls AgentInitCommand.PromptAndChainAsync() which asks if you'd like to set up AI agent integration. This ensures new projects can be agent-ready from the start."

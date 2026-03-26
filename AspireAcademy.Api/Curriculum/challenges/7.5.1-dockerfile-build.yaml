@@ -1,0 +1,83 @@
+instructions: |
+  # Build a Container from Dockerfile
+
+  Configure an AppHost with a Dockerfile-based frontend container and a .NET API project that also publishes as a Docker image.
+
+  **What to do:**
+  1. Add a Dockerfile-based container named `"frontend"` with build context `"../Frontend"` and a build argument `NODE_ENV` set to `"production"`
+  2. Add a secret parameter named `"npm-token"` and pass it as a build secret named `"npm_token"` to the frontend
+  3. Add a project named `"api"` and configure it to publish as a Docker file
+  4. Have the frontend reference the api
+
+  **Key concepts:**
+  - `AddDockerfile` creates a container resource built from a Dockerfile
+  - `WithBuildArg` passes build-time arguments
+  - `WithBuildSecret` passes secret values securely (not as build args)
+  - `PublishAsDockerFile` converts a project resource to build as a container
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add secret parameter "npm-token"
+  // TODO: Add Dockerfile frontend with build arg and build secret
+  // TODO: Add project "api" that publishes as Docker file
+  // TODO: Wire frontend to reference api
+
+  builder.Build().Run();
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var npmToken = builder.AddParameter("npm-token", secret: true);
+
+  var frontend = builder.AddDockerfile("frontend", "../Frontend")
+      .WithBuildArg("NODE_ENV", "production")
+      .WithBuildSecret("npm_token", npmToken);
+
+  var api = builder.AddProject<Projects.Api>("api")
+      .PublishAsDockerFile();
+
+  frontend.WithReference(api);
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: Compiles successfully
+    type: compiles
+    expected: null
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds secret parameter
+    type: code-contains
+    expected: AddParameter("npm-token"
+    description: Must add a secret parameter for npm-token
+  - id: tc3
+    name: Adds Dockerfile resource
+    type: code-contains
+    expected: AddDockerfile("frontend"
+    description: Must add a Dockerfile-based container named 'frontend'
+  - id: tc4
+    name: Sets build argument
+    type: code-contains
+    expected: WithBuildArg("NODE_ENV"
+    description: Must set NODE_ENV build argument
+  - id: tc5
+    name: Sets build secret
+    type: code-contains
+    expected: WithBuildSecret
+    description: Must use WithBuildSecret for the npm token (not WithBuildArg)
+  - id: tc6
+    name: Publishes API as Docker
+    type: code-contains
+    expected: PublishAsDockerFile
+    description: API project must be configured to publish as a Docker image
+hints:
+  - "Use builder.AddParameter(\"npm-token\", secret: true) for the secret parameter"
+  - "WithBuildSecret(\"npm_token\", npmToken) passes the secret securely via Docker build secrets"
+  - "Don't use WithBuildArg for secret parameters — it will be rejected at runtime"
+requiredPackages:
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+sortOrder: 0

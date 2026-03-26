@@ -1,0 +1,79 @@
+instructions: |
+  # Set Up a Dev Tunnel
+
+  Configure an AppHost with a Dev Tunnel that exposes an API's HTTPS endpoint publicly, then wire a frontend to use the tunnel URL for API communication.
+
+  **What to do:**
+  1. Add a Dev Tunnel named `"tunnel"` with anonymous access enabled
+  2. Add a project named `"api"` with an HTTPS endpoint named `"https"` on port 5001
+  3. Expose the API's HTTPS endpoint through the tunnel
+  4. Add a project named `"frontend"` that references the API through the tunnel
+
+  **Key concepts:**
+  - `AddDevTunnel` creates a tunnel resource
+  - `WithAnonymousAccess` allows unauthenticated access
+  - `tunnel.WithReference(resource)` exposes all endpoints through the tunnel
+  - `WithReference(api, tunnel)` injects the tunnel URL instead of localhost
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add Dev Tunnel with anonymous access
+  // TODO: Add API project with HTTPS endpoint
+  // TODO: Expose API through the tunnel
+  // TODO: Add frontend that references API via tunnel
+
+  builder.Build().Run();
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var tunnel = builder.AddDevTunnel("tunnel")
+      .WithAnonymousAccess();
+
+  var api = builder.AddProject<Projects.Api>("api")
+      .WithHttpsEndpoint(port: 5001, name: "https");
+
+  tunnel.WithReference(api);
+
+  builder.AddProject<Projects.Frontend>("frontend")
+      .WithReference(api, tunnel);
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: Compiles successfully
+    type: compiles
+    expected: null
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds Dev Tunnel
+    type: code-contains
+    expected: AddDevTunnel
+    description: Must add a Dev Tunnel resource
+  - id: tc3
+    name: Enables anonymous access
+    type: code-contains
+    expected: WithAnonymousAccess
+    description: Must enable anonymous access on the tunnel
+  - id: tc4
+    name: Exposes API through tunnel
+    type: code-contains
+    expected: tunnel.WithReference
+    description: Must expose the API endpoint through the tunnel
+  - id: tc5
+    name: Frontend uses tunnel reference
+    type: code-pattern
+    expected: WithReference\(api.*tunnel\)
+    description: Frontend must reference the API through the tunnel
+hints:
+  - "Chain .WithAnonymousAccess() on the AddDevTunnel builder"
+  - "tunnel.WithReference(api) exposes all API endpoints through the tunnel"
+  - "Use .WithReference(api, tunnel) on the frontend to inject the public tunnel URL"
+requiredPackages:
+  - Aspire.Hosting
+  - Aspire.Hosting.DevTunnels
+  - Aspire.Hosting.AppHost
+sortOrder: 0

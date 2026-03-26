@@ -1,0 +1,95 @@
+questions:
+  - text: "What does AddDevTunnel create in an Aspire AppHost?"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "A Docker container running a reverse proxy"
+        isCorrect: false
+      - id: b
+        text: "An executable resource that runs the devtunnel host CLI command"
+        isCorrect: true
+      - id: c
+        text: "A Kubernetes Ingress resource"
+        isCorrect: false
+      - id: d
+        text: "An Azure Application Gateway"
+        isCorrect: false
+    explanation: "AddDevTunnel creates a DevTunnelResource — an executable resource that runs devtunnel host <id>. It handles login, tunnel creation, port forwarding, and URL rewriting automatically."
+
+  - text: "How does Aspire detect that it's running inside a GitHub Codespace?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "Checks for a .devcontainer.json file"
+        isCorrect: false
+      - id: b
+        text: "Checks the CODESPACES environment variable"
+        isCorrect: true
+      - id: c
+        text: "Queries the GitHub API"
+        isCorrect: false
+      - id: d
+        text: "Checks the hostname for 'codespace' prefix"
+        isCorrect: false
+    explanation: "ConfigureCodespacesOptions checks the CODESPACES environment variable. Similarly, devcontainers check REMOTE_CONTAINERS and SSH remotes check SSH_CONNECTION."
+
+  - text: "What URL format does CodespacesResourceUrlRewriterService produce?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "http://localhost:{port}"
+        isCorrect: false
+      - id: b
+        text: "https://{codespaceName}-{port}.{portForwardingDomain}"
+        isCorrect: true
+      - id: c
+        text: "https://{port}.codespaces.github.com"
+        isCorrect: false
+      - id: d
+        text: "http://codespace:{port}"
+        isCorrect: false
+    explanation: "Codespaces URLs follow the pattern https://{codespaceName}-{port}.{portForwardingDomain}{path}{query}. For example, a service on port 5000 becomes https://my-codespace-5000.app.github.dev."
+
+  - text: "What tunnel port and scheme do Dev Tunnel endpoints always use?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "Port 80 with HTTP"
+        isCorrect: false
+      - id: b
+        text: "Port 443 with HTTPS"
+        isCorrect: true
+      - id: c
+        text: "The same port as the local endpoint"
+        isCorrect: false
+      - id: d
+        text: "A random high port with HTTP"
+        isCorrect: false
+    explanation: "Tunnel endpoints are always allocated on port 443 with HTTPS, regardless of the local endpoint's port. The devtunnel service handles the port mapping from the public HTTPS endpoint to your local port."
+
+  - text: "What types of endpoints are NOT forwarded in GitHub Codespaces?"
+    type: multiple-choice
+    sortOrder: 5
+    points: 10
+    options:
+      - id: a
+        text: "HTTP endpoints"
+        isCorrect: false
+      - id: b
+        text: "HTTPS endpoints"
+        isCorrect: false
+      - id: c
+        text: "TCP-only endpoints (like raw database connections)"
+        isCorrect: true
+      - id: d
+        text: "All endpoint types are forwarded"
+        isCorrect: false
+    explanation: "DevcontainerPortForwardingLifecycleHook skips non-HTTP(S) endpoints in Codespaces. TCP-only endpoints (raw database connections, Redis, etc.) require alternative access methods like port-forwarding commands."

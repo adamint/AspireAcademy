@@ -1,0 +1,104 @@
+questions:
+  - text: "What is the execution model of Aspire's publish/deploy pipeline?"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "A linear sequence of steps executed one after another"
+        isCorrect: false
+      - id: b
+        text: "A directed acyclic graph (DAG) where steps with satisfied dependencies run concurrently"
+        isCorrect: true
+      - id: c
+        text: "A round-robin scheduler that cycles through steps"
+        isCorrect: false
+      - id: d
+        text: "A priority queue where higher-priority steps run first"
+        isCorrect: false
+    explanation: "The pipeline executes steps as a DAG — steps whose dependencies are satisfied run concurrently, maximizing parallelism. RequiredBy edges are normalized into DependsOn edges to create a single directional graph."
+
+  - text: "Which WellKnownPipelineSteps constant represents the barrier that all container image builds must complete before?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "BuildPrereq"
+        isCorrect: false
+      - id: b
+        text: "Build"
+        isCorrect: true
+      - id: c
+        text: "Push"
+        isCorrect: false
+      - id: d
+        text: "Deploy"
+        isCorrect: false
+    explanation: "The 'build' step is the barrier — all per-resource build steps (tagged 'build-compute') are required by 'build', meaning they must complete before the build barrier passes. 'build-prereq' runs before individual builds, not after."
+
+  - text: |
+      What does this pipeline configuration do?
+      ```csharp
+      pipeline.AddStep("validate", async ctx =>
+      {
+          // validation logic
+      },
+      dependsOn: WellKnownPipelineSteps.ProcessParameters,
+      requiredBy: WellKnownPipelineSteps.Build);
+      ```
+    type: code-prediction
+    sortOrder: 3
+    points: 15
+    options:
+      - id: a
+        text: "Adds a validation step that runs after parameters are processed but before any builds start"
+        isCorrect: true
+      - id: b
+        text: "Adds a validation step that runs after builds complete"
+        isCorrect: false
+      - id: c
+        text: "Replaces the Build step with a validation step"
+        isCorrect: false
+      - id: d
+        text: "Adds a validation step that runs in parallel with builds"
+        isCorrect: false
+    explanation: "dependsOn: ProcessParameters means the step waits for parameter processing to finish. requiredBy: Build means the Build barrier won't start until this step completes. So it runs between parameter processing and container builds."
+
+  - text: "What are the four WellKnownPipelineTags?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "build, push, publish, deploy"
+        isCorrect: false
+      - id: b
+        text: "provision-infra, build-compute, push-container-image, deploy-compute"
+        isCorrect: true
+      - id: c
+        text: "pre-build, build, post-build, deploy"
+        isCorrect: false
+      - id: d
+        text: "validate, build, test, deploy"
+        isCorrect: false
+    explanation: "WellKnownPipelineTags defines four tag constants: ProvisionInfrastructure ('provision-infra'), BuildCompute ('build-compute'), PushContainerImage ('push-container-image'), and DeployCompute ('deploy-compute'). Tags group steps by category rather than execution order."
+
+  - text: "How does a resource like AddPostgres inject its own steps into the pipeline?"
+    type: multiple-choice
+    sortOrder: 5
+    points: 10
+    options:
+      - id: a
+        text: "By calling pipeline.AddStep() directly in the extension method"
+        isCorrect: false
+      - id: b
+        text: "Through PipelineStepAnnotation attached to the resource"
+        isCorrect: true
+      - id: c
+        text: "By overriding a virtual method on the resource class"
+        isCorrect: false
+      - id: d
+        text: "Through configuration in appsettings.json"
+        isCorrect: false
+    explanation: "Resources inject pipeline steps via PipelineStepAnnotation. During pipeline execution, DistributedApplicationPipeline collects these annotations from all resources and adds their steps to the graph before execution begins."
