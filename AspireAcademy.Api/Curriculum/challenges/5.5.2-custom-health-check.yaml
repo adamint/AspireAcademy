@@ -1,0 +1,18 @@
+instructions: |
+  # Custom Health Checks
+  Create custom health checks and integrate them with the Aspire health monitoring system.
+starterCode: |
+  // TODO: Complete the challenge
+  Console.WriteLine("Hello Aspire!");
+solutionCode: |
+  Console.WriteLine("Hello Aspire!");
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile"
+hints:
+  - "Read the lesson content for guidance"
+requiredPackages: []
+sortOrder: 0

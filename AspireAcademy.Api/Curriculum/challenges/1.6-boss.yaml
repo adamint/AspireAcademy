@@ -1,0 +1,18 @@
+instructions: |
+  # Boss: Build a Single-File AppHost App
+  Build a 2-service app using a single-file AppHost with ServiceDefaults and the Dashboard.
+starterCode: |
+  // TODO: Complete the challenge
+  Console.WriteLine("Hello Aspire!");
+solutionCode: |
+  Console.WriteLine("Hello Aspire!");
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile"
+hints:
+  - "Read the lesson content for guidance"
+requiredPackages: []
+sortOrder: 0

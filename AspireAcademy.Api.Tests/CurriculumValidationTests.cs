@@ -54,10 +54,10 @@ public class CurriculumValidationTests
     }
 
     [Fact]
-    public void WorldsYaml_HasExactly6Worlds()
+    public void WorldsYaml_HasExactly8Worlds()
     {
         var root = LoadWorldsRoot();
-        root.Worlds.Should().HaveCount(6);
+        root.Worlds.Should().HaveCount(8);
     }
 
     [Fact]

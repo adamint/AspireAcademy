@@ -1,0 +1,13 @@
+questions:
+  - text: "Placeholder question for Resource States and Lifecycle"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "Option A"
+        isCorrect: true
+      - id: b
+        text: "Option B"
+        isCorrect: false
+    explanation: "This is a placeholder question."

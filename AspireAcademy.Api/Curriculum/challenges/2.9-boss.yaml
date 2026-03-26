@@ -1,0 +1,18 @@
+instructions: |
+  # Boss: Polyglot App
+  Build a polyglot app with .NET API + Vite frontend + Python worker, all wired with WaitFor and endpoints.
+starterCode: |
+  // TODO: Complete the challenge
+  Console.WriteLine("Hello Aspire!");
+solutionCode: |
+  Console.WriteLine("Hello Aspire!");
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile"
+hints:
+  - "Read the lesson content for guidance"
+requiredPackages: []
+sortOrder: 0

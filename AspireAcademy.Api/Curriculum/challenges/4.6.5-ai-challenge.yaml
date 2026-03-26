@@ -1,0 +1,18 @@
+instructions: |
+  # AI Integrations Challenge
+  Build an app with a GitHub Models resource and a Foundry deployment wired to an API service.
+starterCode: |
+  // TODO: Complete the challenge
+  Console.WriteLine("Hello Aspire!");
+solutionCode: |
+  Console.WriteLine("Hello Aspire!");
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile"
+hints:
+  - "Read the lesson content for guidance"
+requiredPackages: []
+sortOrder: 0

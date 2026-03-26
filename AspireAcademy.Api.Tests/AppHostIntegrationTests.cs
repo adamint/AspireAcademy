@@ -55,6 +55,7 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
         // Create an HTTP client that talks to the real API resource
         ApiClient = _aspireApp.CreateHttpClient("api");
         ApiClient.Timeout = TimeSpan.FromSeconds(60);
+        ApiClient.DefaultRequestHeaders.Add("X-Test-Client", "true");
 
         // Give the API time to initialize DB and load curriculum on first request
         await WaitForApiHealthy(startCts.Token);
