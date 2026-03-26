@@ -26,7 +26,7 @@ var openai = builder.AddConnectionString("openai");
 // filesystem isolation as partial mitigation.
 var codeRunner = builder.AddDockerfile("coderunner", "./AspireAcademy.CodeRunner")
     .WithHttpEndpoint(targetPort: 8080)
-    .WithContainerRuntimeArgs("--memory=512m")
+    .WithContainerRuntimeArgs("--memory=1g")
     .WithContainerRuntimeArgs("--pids-limit=50")
     .WithContainerRuntimeArgs("--cpus=1.0");
 

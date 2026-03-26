@@ -122,12 +122,12 @@ test.describe.serial('Quiz functionality', () => {
         continue;
       }
 
-      // Select first radio answer option (Chakra v3 RadioGroup uses role="radio")
-      const radios = page.getByRole('radio');
-      if ((await radios.count()) > 0) {
-        await radios.first().click();
+      // Select first answer option using Chakra v3 selectors
+      const radioItems = page.locator('[data-scope="radio-group"] [data-part="item-control"]');
+      if ((await radioItems.count()) > 0) {
+        await radioItems.first().click();
       } else {
-        const checkboxes = page.getByRole('checkbox');
+        const checkboxes = page.locator('[data-scope="checkbox"] [data-part="control"]');
         if ((await checkboxes.count()) > 0) {
           await checkboxes.first().click();
         } else {

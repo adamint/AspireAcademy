@@ -152,7 +152,7 @@ export default function QuestionCard({
               onChange={(e) => onAnswerChange(e.target.value)}
               disabled={disabled}
               placeholder="Your answer..."
-              bg="whiteAlpha.100"
+              bg="dark.surface"
               border="2px solid"
               borderColor="game.pixelBorder"
               color="dark.text"
@@ -218,7 +218,7 @@ function MultiSelectCard({
               borderRadius="sm"
               border="2px solid"
               borderColor={selected.includes(opt) ? 'aspire.500' : 'game.pixelBorder'}
-              bg={selected.includes(opt) ? 'aspire.800' : 'whiteAlpha.50'}
+              bg={selected.includes(opt) ? 'aspire.800' : 'content.subtle'}
               _hover={{ bg: 'content.hover' }}
             >
               <Checkbox.HiddenInput />

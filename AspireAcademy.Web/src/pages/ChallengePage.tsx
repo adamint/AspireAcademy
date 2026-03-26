@@ -273,7 +273,7 @@ export default function ChallengePage() {
             variant="outline"
             borderColor="game.pixelBorder"
             color="dark.text"
-            _hover={{ bg: 'whiteAlpha.100' }}
+            _hover={{ bg: 'content.hover' }}
             onClick={() => navigate(-1)}
           >
             <FiArrowLeft />
@@ -442,7 +442,7 @@ export default function ChallengePage() {
                 <Box
                   key={i}
                   p={2}
-                  bg="whiteAlpha.100"
+                  bg="content.subtle"
                   borderRadius="sm"
                   border="1px solid"
                   borderColor="game.pixelBorder"
@@ -458,7 +458,7 @@ export default function ChallengePage() {
                   variant="outline"
                   borderColor="game.pixelBorder"
                   color="dark.muted"
-                  _hover={{ bg: 'whiteAlpha.100', color: 'yellow.200' }}
+                  _hover={{ bg: 'content.hover', color: 'yellow.200' }}
                   onClick={i === revealedHints ? handleRevealHint : undefined}
                   disabled={i !== revealedHints}
                 >
