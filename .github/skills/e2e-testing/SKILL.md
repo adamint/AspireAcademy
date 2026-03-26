@@ -4,96 +4,158 @@
 
 Every user-facing scenario in the app MUST have an end-to-end test that:
 1. Starts the real app using `DistributedApplicationTestingBuilder`
-2. Seeds any required data (users, progress, curriculum)
-3. Uses Playwright to interact with the UI exactly as a real user would
-4. Asserts at every step that no errors occur (no 500s, no 404s, no blank pages, no "Something went wrong")
+2. Seeds any required data (users, progress, curriculum) via the C# `HttpClient`
+3. Tests API responses directly via `HttpClient` (verify status codes, response shapes, business logic)
+4. Uses **C# Playwright** (`Microsoft.Playwright`) to interact with the UI exactly as a real user would
+5. Asserts at every step that no errors occur (no 500s, no 404s, no blank pages, no "Something went wrong")
+
+All of this happens in a SINGLE xUnit test project — not separate test runners.
+
+## Architecture
+
+```
+AspireAcademy.Api.Tests/
+├── Fixtures/
+│   └── AppHostFixture.cs          # IAsyncLifetime: starts AppHost, installs Playwright
+├── ApiTests/
+│   ├── AuthApiTests.cs            # Direct HTTP tests against API
+│   ├── CurriculumApiTests.cs
+│   ├── QuizApiTests.cs
+│   └── ...
+├── E2ETests/
+│   ├── UserJourneyTests.cs        # Playwright browser tests
+│   ├── QuizE2ETests.cs
+│   └── ...
+└── CurriculumValidationTests.cs   # YAML schema tests (no app needed)
+```
+
+### Why C# Playwright (not TypeScript Playwright)
+
+The TypeScript `e2e/*.spec.ts` approach is WRONG because:
+- It runs in a separate process, can't share the AppHost lifecycle
+- It assumes hardcoded ports that change every run
+- It can't seed data programmatically — has to use raw HTTP
+- API tests and UI tests run independently, missing integration issues
+
+The C# approach (`Microsoft.Playwright` NuGet package) is correct because:
+- Same test project as API tests → shared `AppHostFixture`
+- Playwright browser connects to the REAL web URL from `app.GetEndpoint("web")`
+- Seed data via `app.CreateHttpClient("api")` in the same test
+- One test can verify BOTH the API response AND the browser UI
+- AppHost starts once, all tests share it via `IClassFixture<AppHostFixture>`
 
 ## Testing Methodology
 
 ### Layer 1: App Orchestration (Aspire.Hosting.Testing)
 
-Every test suite MUST start the real AppHost with real services:
+A shared fixture starts the real AppHost ONCE for all tests:
 
 ```csharp
-// In a shared fixture (IAsyncLifetime)
-var builder = await DistributedApplicationTestingBuilder.CreateAsync<Projects.AspireAcademy_TestAppHost>();
-await using var app = await builder.BuildAsync();
-await app.StartAsync();
+public class AppHostFixture : IAsyncLifetime
+{
+    public DistributedApplication App { get; private set; } = null!;
+    public HttpClient ApiClient { get; private set; } = null!;
+    public Uri WebUrl { get; private set; } = null!;
+    public IPage Browser { get; private set; } = null!;
 
-// Get real HTTP clients
-var apiClient = app.CreateHttpClient("api");
-var webUrl = app.GetEndpoint("web");
+    public async Task InitializeAsync()
+    {
+        // 1. Start real AppHost (Postgres + Redis + CodeRunner + API + Web)
+        var builder = await DistributedApplicationTestingBuilder
+            .CreateAsync<Projects.AspireAcademy_TestAppHost>();
+        App = await builder.BuildAsync();
+        await App.StartAsync();
 
-// Wait for healthy
-await apiClient.GetAsync("/health"); // must return 200
+        // 2. Get real clients
+        ApiClient = App.CreateHttpClient("api");
+        ApiClient.DefaultRequestHeaders.Add("X-Test-Client", "true");
+        WebUrl = App.GetEndpoint("web");
+
+        // 3. Wait for healthy
+        await WaitForHealthy();
+
+        // 4. Install and launch Playwright browser
+        Microsoft.Playwright.Program.Main(["install", "chromium"]);
+        var playwright = await Playwright.CreateAsync();
+        var browser = await playwright.Chromium.LaunchAsync();
+        Browser = await browser.NewPageAsync();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await App.StopAsync();
+        await App.DisposeAsync();
+    }
+}
 ```
 
-This ensures:
-- Real PostgreSQL (not SQLite in-memory)
-- Real Redis (not fake mocks)
-- Real CodeRunner (not stubbed HTTP handler)
-- Real curriculum loaded from YAML files
-- Real CORS, rate limiting, JWT validation
+### Layer 2: API Tests (HttpClient)
 
-### Layer 2: Data Seeding
-
-Before each test scenario, seed the required state via the API:
+Test every API endpoint directly — verify status codes, response shapes, business logic:
 
 ```csharp
-// Register a user
-var registerResponse = await apiClient.PostAsJsonAsync("/api/auth/register", new {
-    username = $"test_{Guid.NewGuid():N}",
-    email = $"test_{Guid.NewGuid():N}@test.com",
-    password = "Password1!",
-    displayName = "Test User"
-});
-var token = (await registerResponse.Content.ReadFromJsonAsync<JsonElement>())
-    .GetProperty("token").GetString();
+[Collection("AppHost")]
+public class AuthApiTests(AppHostFixture fixture)
+{
+    [Fact]
+    public async Task Register_ReturnsToken()
+    {
+        var response = await fixture.ApiClient.PostAsJsonAsync("/api/auth/register", new {
+            username = $"test_{Guid.NewGuid():N}",
+            email = $"test_{Guid.NewGuid():N}@test.com",
+            password = "Password1!",
+            displayName = "Test"
+        });
 
-// Complete prerequisites to unlock a quiz
-await apiClient.PostAsJsonAsync("/api/progress/complete",
-    new { lessonId = "1.1.1" },
-    headers: new { Authorization = $"Bearer {token}" });
-
-// Seed admin + test data
-await apiClient.PostAsync("/api/admin/seed-test-data",
-    null,
-    headers: new { ["X-Aspire-Admin"] = "aspire-internal" });
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(body.TryGetProperty("token", out _));
+    }
+}
 ```
 
-### Layer 3: Playwright Browser Tests
+### Layer 3: Browser E2E Tests (C# Playwright)
 
-After the app is running and data is seeded, use Playwright to simulate real user actions:
+Test the UI by navigating the REAL browser to the REAL web URL:
 
-```typescript
-test('complete user journey', async ({ page }) => {
-    // 1. Navigate to app
-    await page.goto('/');
-    await expect(page).toHaveURL(/login/);
+```csharp
+[Collection("AppHost")]
+public class UserJourneyTests(AppHostFixture fixture)
+{
+    [Fact]
+    public async Task FullUserJourney()
+    {
+        var page = fixture.Browser;
+        var baseUrl = fixture.WebUrl.ToString().TrimEnd('/');
 
-    // 2. Register
-    await page.fill('[name="username"]', `user_${Date.now()}`);
-    await page.fill('[name="email"]', `user_${Date.now()}@test.com`);
-    await page.fill('[name="password"]', 'Password1!');
-    await page.fill('[name="confirmPassword"]', 'Password1!');
-    await page.click('button[type="submit"]');
+        // 1. Go to app → see login page
+        await page.GotoAsync(baseUrl);
+        await Expect(page).ToHaveURLAsync(new Regex("login"));
 
-    // 3. Verify dashboard loaded (NOT blank, NOT error)
-    await expect(page).toHaveURL(/dashboard/);
-    await expect(page.getByText('Welcome')).toBeVisible();
+        // 2. Register
+        await page.FillAsync("[name='username']", $"user_{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
+        await page.FillAsync("[name='email']", $"e2e_{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}@test.com");
+        await page.FillAsync("[name='password']", "Password1!");
+        await page.FillAsync("[name='confirmPassword']", "Password1!");
+        await page.ClickAsync("button[type='submit']");
 
-    // 4. Verify API call succeeded (intercept network)
-    const worldsResponse = await page.waitForResponse(
-        resp => resp.url().includes('/api/worlds') && resp.status() === 200
-    );
+        // 3. Dashboard loads (NOT blank, NOT error)
+        await Expect(page).ToHaveURLAsync(new Regex("dashboard"));
+        await Expect(page.GetByText("Welcome")).ToBeVisibleAsync();
 
-    // 5. Click through UI elements
-    await page.click('[data-testid="world-card-world-1"]');
-    await expect(page.getByText('Module')).toBeVisible();
+        // 4. World cards visible
+        await Expect(page.Locator("[data-testid='world-card']").First).ToBeVisibleAsync();
 
-    // ... continue through entire flow
-});
+        // 5. Click first world → modules load
+        await page.Locator("[data-testid='world-card']").First.ClickAsync();
+        await Expect(page.GetByText("Module")).ToBeVisibleAsync();
+
+        // ... continue through entire flow
+    }
+}
 ```
+
+### Layer 4: Data Seeding (via API)
 
 ## Required Test Scenarios
 
