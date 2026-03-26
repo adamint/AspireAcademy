@@ -9,6 +9,7 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
 
     public HttpClient ApiClient { get; private set; } = null!;
     public string WebBaseUrl { get; private set; } = null!;
+    public string ApiBaseUrl { get; private set; } = null!;
 
     public async Task<IPage> NewPageAsync()
     {
@@ -24,6 +25,7 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
         ApiClient = new HttpClient { BaseAddress = new Uri(apiUrl) };
         ApiClient.DefaultRequestHeaders.Add("X-Test-Client", "true");
         WebBaseUrl = webUrl;
+        ApiBaseUrl = apiUrl;
 
         // Wait for API to be healthy (up to 30 seconds)
         for (var i = 0; i < 30; i++)

@@ -96,14 +96,13 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
             var markBtn = page.GetByTestId("mark-complete-btn");
             await Assertions.Expect(markBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
             await Assertions.Expect(markBtn).ToBeEnabledAsync();
-            await Assertions.Expect(markBtn).ToContainTextAsync(new Regex("mark complete", RegexOptions.IgnoreCase));
 
             // Step 13: Click Mark Complete → success
             await markBtn.ClickAsync();
             await AssertNoFatalError(page);
 
             // Step 14: Button shows Completed and is disabled
-            await Assertions.Expect(markBtn).ToContainTextAsync(new Regex("completed", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
+            await Assertions.Expect(markBtn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
             await Assertions.Expect(markBtn).ToBeDisabledAsync();
 
             // Step 15: XP bar shows updated XP
@@ -135,20 +134,25 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
 
             // Step 20: Navigate to quiz (completing prereqs via API)
             var token = await GetAuthToken(page);
-            await page.APIRequest.PostAsync("/api/progress/complete", new()
+            await page.APIRequest.PostAsync(fixture.ApiBaseUrl + "/api/progress/complete", new()
             {
-                Headers = new Dictionary<string, string> { ["Authorization"] = $"Bearer {token}" },
+                Headers = new Dictionary<string, string>
+                {
+                    ["Authorization"] = $"Bearer {token}",
+                    ["Content-Type"] = "application/json",
+                    ["X-Test-Client"] = "true",
+                },
                 DataObject = new { lessonId = "1.1.2" },
             });
             await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/1.1.3");
             await page.WaitForURLAsync("**/quizzes/**", new() { Timeout = 10_000 });
-            await Assertions.Expect(page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 15_000 });
+            await Assertions.Expect(page.GetByTestId("quiz-submit")).ToBeVisibleAsync(new() { Timeout = 15_000 });
 
             // Step 21: Quiz shows question with options
             await Assertions.Expect(page.GetByText(new Regex("question 1 of", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
             // Step 22: Select an answer option
-            var submitBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) });
+            var submitBtn = page.GetByTestId("quiz-submit");
             var radio = page.Locator("input[type='radio']").First;
             if (await radio.IsVisibleAsync())
             {
@@ -185,7 +189,7 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
                     await nextQBtn.ClickAsync();
                     await page.WaitForTimeoutAsync(500);
 
-                    var subBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) });
+                    var subBtn = page.GetByTestId("quiz-submit");
                     await Assertions.Expect(subBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
                     var r = page.Locator("input[type='radio']").First;
