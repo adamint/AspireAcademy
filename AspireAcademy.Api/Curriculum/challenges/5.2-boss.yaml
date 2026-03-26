@@ -13,6 +13,9 @@ instructions: |
   - `AddMongoDBClient(connectionName)` registers an `IMongoClient`
   - Both integrations automatically configure health checks and telemetry
 starterCode: |
+  using Microsoft.EntityFrameworkCore;
+  using MongoDB.Driver;
+
   var builder = WebApplication.CreateBuilder(args);
 
   // TODO: Register EF Core PostgreSQL DbContext for "catalogdb"
@@ -28,7 +31,22 @@ starterCode: |
   });
 
   app.Run();
+
+  public class Product
+  {
+      public int Id { get; set; }
+      public string Name { get; set; } = "";
+      public decimal Price { get; set; }
+  }
+
+  public class CatalogContext(DbContextOptions<CatalogContext> options) : DbContext(options)
+  {
+      public DbSet<Product> Products => Set<Product>();
+  }
 solutionCode: |
+  using Microsoft.EntityFrameworkCore;
+  using MongoDB.Driver;
+
   var builder = WebApplication.CreateBuilder(args);
 
   builder.AddNpgsqlDbContext<CatalogContext>("catalogdb");
@@ -45,6 +63,18 @@ solutionCode: |
   });
 
   app.Run();
+
+  public class Product
+  {
+      public int Id { get; set; }
+      public string Name { get; set; } = "";
+      public decimal Price { get; set; }
+  }
+
+  public class CatalogContext(DbContextOptions<CatalogContext> options) : DbContext(options)
+  {
+      public DbSet<Product> Products => Set<Product>();
+  }
 testCases:
   - id: tc1
     name: "Compiles successfully"
@@ -78,5 +108,6 @@ hints:
   - "Use await db.Products.ToListAsync() to read from PostgreSQL"
   - "Use await collection.InsertManyAsync(products) to write to MongoDB"
 requiredPackages:
-  - "Aspire.Hosting"
+  - "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"
+  - "Aspire.MongoDB.Driver"
 sortOrder: 0

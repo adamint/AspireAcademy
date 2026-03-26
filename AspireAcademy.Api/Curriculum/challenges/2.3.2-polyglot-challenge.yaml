@@ -56,4 +56,5 @@ hints:
   - Chain `.WithReference(pyapi)` on the frontend to wire it to the Python API.
 requiredPackages:
   - Aspire.Hosting
+  - Aspire.Hosting.AppHost
 sortOrder: 0

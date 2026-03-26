@@ -56,3 +56,22 @@ questions:
       - "IResourceAnnotation"
     correct_answer: "IDistributedApplicationLifecycleHook"
     explanation: "IDistributedApplicationLifecycleHook defines methods like BeforeStartAsync and AfterResourcesCreatedAsync. Implementations are registered via builder.Services.AddLifecycleHook<T>() for structured lifecycle participation."
+
+  - id: "6.1-q6"
+    question: |
+      What does this code do when the AppHost starts?
+      ```csharp
+      var db = builder.AddPostgres("pg").AddDatabase("mydb");
+      builder.Eventing.Subscribe<AfterResourcesCreatedEvent>(async (evt, ct) =>
+      {
+          Console.WriteLine("All resources created — seeding database...");
+      });
+      ```
+    type: code_prediction
+    options:
+      - "Prints the message before any containers are started"
+      - "Prints the message after all resources are created but before they fully start"
+      - "Prints the message after all resources are healthy"
+      - "Throws an exception because AfterResourcesCreatedEvent doesn't exist"
+    correct_answer: "Prints the message after all resources are created but before they fully start"
+    explanation: "AfterResourcesCreatedEvent fires after all resources have been instantiated and added to the app model. The handler runs at that lifecycle point — ideal for seeding data or performing setup before services begin accepting traffic."

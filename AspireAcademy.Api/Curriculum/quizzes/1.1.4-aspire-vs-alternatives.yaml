@@ -74,3 +74,30 @@ questions:
         text: "It automatically deploys to all major cloud providers"
         isCorrect: false
     explanation: "Aspire's unique strength is its code-first approach. Your application topology is defined in C#, giving you compile-time error detection, IntelliSense, refactoring tools, and the ability to use loops and conditionals — none of which are available with YAML-based tools."
+
+  - text: |
+      What does this AppHost code produce?
+      ```csharp
+      var builder = DistributedApplication.CreateBuilder(args);
+      var api = builder.AddProject<Projects.Api>("api");
+      builder.AddProject<Projects.Web>("web")
+          .WithReference(api);
+      builder.Build().Run();
+      ```
+    type: code-prediction
+    sortOrder: 5
+    points: 15
+    options:
+      - id: a
+        text: "Two projects where Web can discover Api via service discovery, and Api has no knowledge of Web"
+        isCorrect: true
+      - id: b
+        text: "Two projects that are completely independent with no connection"
+        isCorrect: false
+      - id: c
+        text: "A single project with two endpoints"
+        isCorrect: false
+      - id: d
+        text: "Two projects where Api depends on Web"
+        isCorrect: false
+    explanation: "WithReference(api) on the Web project injects Api's connection information (endpoints) into Web's configuration. This enables Web to call Api via service discovery. The dependency is one-directional — Api has no reference to Web."

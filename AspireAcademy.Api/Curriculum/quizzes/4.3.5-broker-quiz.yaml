@@ -93,3 +93,29 @@ questions:
         text: "Redis"
         isCorrect: false
     explanation: "Kafka uses a simple host:port format as its bootstrap server address. RabbitMQ uses amqp:// URI format, NATS uses nats:// URI format, and Redis uses host:port with optional password parameter."
+
+  - text: |
+      What infrastructure does this AppHost create?
+      ```csharp
+      var mq = builder.AddRabbitMQ("messaging")
+          .WithManagementPlugin();
+      builder.AddProject<Projects.Worker>("worker")
+          .WithReference(mq);
+      ```
+    type: code-prediction
+    sortOrder: 6
+    points: 15
+    options:
+      - id: a
+        text: "A RabbitMQ container with web management UI on port 15672, plus a Worker project with the AMQP connection string injected"
+        isCorrect: true
+      - id: b
+        text: "A RabbitMQ container and a separate monitoring container"
+        isCorrect: false
+      - id: c
+        text: "A RabbitMQ cluster with management plugin and a Worker that auto-discovers queues"
+        isCorrect: false
+      - id: d
+        text: "A Worker project that embeds RabbitMQ in-process"
+        isCorrect: false
+    explanation: "AddRabbitMQ creates a container resource. WithManagementPlugin() switches to the management image tag and exposes port 15672 for the web UI. WithReference(mq) injects the amqp:// connection string into the Worker project's configuration."

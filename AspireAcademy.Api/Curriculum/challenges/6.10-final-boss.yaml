@@ -108,4 +108,5 @@ hints:
   - "Add .WithHealthCheck('redis-health') to wire up health monitoring."
 requiredPackages:
   - "Aspire.Hosting"
+  - "Aspire.Hosting.AppHost"
 sortOrder: 0

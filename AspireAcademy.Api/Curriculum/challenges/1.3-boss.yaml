@@ -76,4 +76,5 @@ hints:
   - "Register with: builder.CreateResourceBuilder(new MailDevResource(\"maildev\")).WithEndpoint(port: 1025, name: \"smtp\");"
 requiredPackages:
   - "Aspire.Hosting"
+  - "Aspire.Hosting.AppHost"
 sortOrder: 0

@@ -60,4 +60,5 @@ hints:
   - "Chain the methods: builder.AddContainer(...).WithVolume(\"redis-data\", \"/data\").WithEnvironment(\"REDIS_PASSWORD\", \"supersecret\")"
 requiredPackages:
   - "Aspire.Hosting"
+  - "Aspire.Hosting.AppHost"
 sortOrder: 0

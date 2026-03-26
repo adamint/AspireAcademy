@@ -45,3 +45,18 @@ questions:
       - "It only works with Azure Key Vault"
     correctAnswer: 1
     explanation: "The `aspire secret` command wraps .NET's Secret Manager, storing sensitive values in the user's local secret store with Aspire-aware convenience."
+
+  - question: |
+      What does `aspire add` insert into your AppHost's Program.cs when you select PostgreSQL?
+      ```csharp
+      // Before: empty AppHost
+      var builder = DistributedApplication.CreateBuilder(args);
+      builder.Build().Run();
+      ```
+    options:
+      - "Adds a full PostgreSQL client library with connection pooling"
+      - "Inserts `builder.AddPostgres(\"postgres\")` and adds the Aspire.Hosting.PostgreSQL NuGet package"
+      - "Creates a docker-compose.yml with a Postgres service"
+      - "Generates a migration project for the database"
+    correctAnswer: 1
+    explanation: "The `aspire add` command adds the hosting NuGet package (Aspire.Hosting.PostgreSQL) to the AppHost project and inserts the corresponding `builder.AddPostgres()` call into Program.cs."

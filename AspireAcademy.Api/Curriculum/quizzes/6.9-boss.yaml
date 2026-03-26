@@ -56,3 +56,20 @@ questions:
       - "src/Aspire.Hosting/ContainerRuntime/"
     correctAnswer: "src/Aspire.Hosting/Publishing/"
     explanation: "IContainerRuntime is defined at src/Aspire.Hosting/Publishing/IContainerRuntime.cs, alongside ManifestPublisher and ManifestPublishingContext, as container operations are part of the publishing and deployment infrastructure."
+
+  - id: "6.9.6"
+    question: |
+      What does the `IsAspireHost` MSBuild property enable?
+      ```xml
+      <PropertyGroup>
+        <IsAspireHost>true</IsAspireHost>
+      </PropertyGroup>
+      ```
+    type: "code_prediction"
+    options:
+      - "Enables source generation for the `Projects` namespace from `ProjectReference` items"
+      - "Enables Docker integration for the project"
+      - "Marks the project as a production deployment target"
+      - "Enables hot reload for the Aspire dashboard"
+    correctAnswer: "Enables source generation for the `Projects` namespace from `ProjectReference` items"
+    explanation: "IsAspireHost=true triggers Aspire's source generator, which reads ProjectReference items and generates classes in the Projects namespace (e.g., Projects.ApiService). These classes implement IProjectMetadata and are used in AddProject<T>() calls."

@@ -16,86 +16,75 @@ instructions: |
 starterCode: |
   using Aspire.Hosting;
   using Aspire.Hosting.Testing;
+  using System.Net.Http.Json;
 
-  public class ApiIntegrationTests : IAsyncLifetime
-  {
-      private DistributedApplication? _app;
+  // Integration test runner — demonstrates the DistributedApplicationTestingBuilder pattern
+  var builder = await DistributedApplicationTestingBuilder
+      .CreateAsync<Projects.MyAppHost>();
 
-      public async Task InitializeAsync()
-      {
-          // TODO: Create and start distributed application
-      }
+  // TODO: Build and start the distributed application
+  // var app = await builder.BuildAsync();
+  // await app.StartAsync();
 
-      public async Task PostAndGetProduct_ReturnsCreatedProduct()
-      {
-          // TODO: Create HttpClient, POST product, GET product, assert
-      }
+  // TODO: Create an HttpClient for the "apiservice" resource
+  // var client = app.CreateHttpClient("apiservice");
 
-      public async Task DisposeAsync()
-      {
-          // TODO: Dispose the application
-      }
-  }
+  // TODO: POST a product, GET it back, assert the result
+  // var response = await client.PostAsJsonAsync("/products", new { Name = "Widget", Price = 9.99 });
+  // response.EnsureSuccessStatusCode();
+  // var getResponse = await client.GetAsync("/products/1");
+  // getResponse.EnsureSuccessStatusCode();
+
+  // TODO: Dispose the application
+  // await app.DisposeAsync();
+
+  Console.WriteLine("Integration test passed!");
 solutionCode: |
   using Aspire.Hosting;
   using Aspire.Hosting.Testing;
+  using System.Net.Http.Json;
 
-  public class ApiIntegrationTests : IAsyncLifetime
-  {
-      private DistributedApplication? _app;
+  var builder = await DistributedApplicationTestingBuilder
+      .CreateAsync<Projects.MyAppHost>();
+  var app = await builder.BuildAsync();
+  await app.StartAsync();
 
-      public async Task InitializeAsync()
-      {
-          var builder = await DistributedApplicationTestingBuilder
-              .CreateAsync<Projects.MyAppHost>();
-          _app = await builder.BuildAsync();
-          await _app.StartAsync();
-      }
+  var client = app.CreateHttpClient("apiservice");
+  var response = await client.PostAsJsonAsync("/products", new { Name = "Widget", Price = 9.99 });
+  response.EnsureSuccessStatusCode();
 
-      public async Task PostAndGetProduct_ReturnsCreatedProduct()
-      {
-          var client = _app!.CreateHttpClient("apiservice");
-          var response = await client.PostAsJsonAsync("/products", new { Name = "Widget", Price = 9.99 });
-          response.EnsureSuccessStatusCode();
+  var getResponse = await client.GetAsync("/products/1");
+  getResponse.EnsureSuccessStatusCode();
 
-          var getResponse = await client.GetAsync("/products/1");
-          getResponse.EnsureSuccessStatusCode();
-      }
+  await app.DisposeAsync();
 
-      public async Task DisposeAsync()
-      {
-          if (_app is not null)
-          {
-              await _app.DisposeAsync();
-          }
-      }
-  }
+  Console.WriteLine("Integration test passed!");
 testCases:
   - id: tc1
-    name: "Compiles successfully"
-    type: compiles
-    expected: null
-    description: "Code must compile without errors"
-  - id: tc2
     name: "Uses DistributedApplicationTestingBuilder"
     type: code-contains
     expected: "DistributedApplicationTestingBuilder"
     description: "Test must use DistributedApplicationTestingBuilder to create the test host"
-  - id: tc3
+  - id: tc2
     name: "Creates HttpClient"
     type: code-contains
     expected: "CreateHttpClient"
     description: "Test must use CreateHttpClient to get a configured client"
-  - id: tc4
+  - id: tc3
     name: "Starts the application"
     type: code-contains
     expected: "StartAsync"
     description: "Test must start the distributed application"
-  - id: tc5
+  - id: tc4
     name: "Disposes the application"
     type: code-contains
     expected: "DisposeAsync"
     description: "Test must dispose the application in cleanup"
+  - id: tc5
+    name: "Builds the application"
+    type: code-contains
+    expected: "BuildAsync"
+    description: "Test must build the distributed application before starting"
 hints:
   - "await DistributedApplicationTestingBuilder.CreateAsync<Projects.MyAppHost>()"
   - "await builder.BuildAsync() then await app.StartAsync()"

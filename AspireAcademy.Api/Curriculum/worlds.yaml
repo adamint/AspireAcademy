@@ -687,16 +687,25 @@ worlds:
             estimatedMinutes: 14
             unlockAfterLesson: "3.1.5"
             contentFile: world-3/3.1.6-injection-flags.md
+          - id: "3.1.7"
+            title: "Challenge: Wire a 3-Tier App with WithReference"
+            description: "Wire up infrastructure and service references so each project gets exactly the connections it needs."
+            type: challenge
+            sortOrder: 7
+            xpReward: 200
+            estimatedMinutes: 15
+            unlockAfterLesson: "3.1.6"
+            challengeFile: 3.1.7-withreference-challenge.yaml
           - id: "3.1-boss"
             title: "Boss: Predict the Environment Variables"
             description: "Given AppHost code, predict all environment variables injected into each service."
             type: boss-battle
-            sortOrder: 7
+            sortOrder: 8
             xpReward: 300
             bonusXp: 150
             estimatedMinutes: 20
             isBoss: true
-            unlockAfterLesson: "3.1.6"
+            unlockAfterLesson: "3.1.7"
             quizFile: 3.1-boss.yaml
 
       - id: "3.2"
@@ -1261,15 +1270,24 @@ worlds:
             estimatedMinutes: 12
             unlockAfterLesson: "5.1.3"
             contentFile: world-5/5.1.4-configuration-hierarchy.md
+          - id: "5.1.5"
+            title: "Challenge: Register a Client Integration"
+            description: "Register a PostgreSQL client integration and use it to query a database."
+            type: challenge
+            sortOrder: 5
+            xpReward: 200
+            estimatedMinutes: 15
+            unlockAfterLesson: "5.1.4"
+            challengeFile: 5.1.5-client-integration-challenge.yaml
           - id: "5.1-boss"
             title: "Boss: Client Integration Pattern"
             description: "Prove your understanding of client integration registration and configuration."
             type: boss-battle
-            sortOrder: 5
+            sortOrder: 6
             xpReward: 100
             estimatedMinutes: 8
             isBoss: true
-            unlockAfterLesson: "5.1.4"
+            unlockAfterLesson: "5.1.5"
             quizFile: 5.1-boss.yaml
 
       - id: "5.2"
@@ -1608,15 +1626,24 @@ worlds:
             estimatedMinutes: 20
             unlockAfterLesson: "6.1.4"
             contentFile: world-6/6.1.5-convenience-methods.md
+          - id: "6.1.6"
+            title: "Challenge: Subscribe to Resource Events"
+            description: "Write event subscriptions that customize resource behavior at startup."
+            type: challenge
+            sortOrder: 6
+            xpReward: 250
+            estimatedMinutes: 15
+            unlockAfterLesson: "6.1.5"
+            challengeFile: 6.1.6-eventing-challenge.yaml
           - id: "6.1-boss"
             title: "Boss: Event Orchestrator"
             description: "Prove your understanding of the Aspire eventing system."
             type: boss-battle
-            sortOrder: 6
+            sortOrder: 7
             xpReward: 400
             estimatedMinutes: 12
             isBoss: true
-            unlockAfterLesson: "6.1.5"
+            unlockAfterLesson: "6.1.6"
             quizFile: 6.1-boss.yaml
 
       - id: "6.2"

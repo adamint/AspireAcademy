@@ -1,0 +1,83 @@
+instructions: |
+  # WithReference in Action
+
+  Wire up a 3-tier application where each service gets exactly the infrastructure connections it needs.
+
+  **What to do:**
+  1. Add a PostgreSQL server with database `"appdb"`
+  2. Add a Redis cache named `"cache"`
+  3. Add an API project `"apiservice"` that references **both** the database and the cache
+  4. Add a web frontend `"webfrontend"` that references **only** the API service (for HTTP service discovery)
+  5. The web frontend should NOT reference the database or cache directly
+
+  **Key concepts:**
+  - `WithReference(resource)` injects connection information into a project's configuration
+  - Service-to-service references enable HTTP service discovery
+  - Each project should only get the connections it actually needs
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add PostgreSQL with database "appdb"
+
+  // TODO: Add Redis cache "cache"
+
+  // TODO: Add "apiservice" project referencing db and cache
+
+  // TODO: Add "webfrontend" project referencing only the API service
+
+  builder.Build().Run();
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var db = builder.AddPostgres("pg").AddDatabase("appdb");
+  var cache = builder.AddRedis("cache");
+
+  var api = builder.AddProject<Projects.ApiService>("apiservice")
+      .WithReference(db)
+      .WithReference(cache);
+
+  builder.AddProject<Projects.WebFrontend>("webfrontend")
+      .WithReference(api);
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: Code compiles
+    type: compiles
+    expected: null
+    description: The AppHost code must compile without errors.
+  - id: tc2
+    name: PostgreSQL database added
+    type: code-contains
+    expected: AddDatabase("appdb")
+    description: Should add a PostgreSQL database named "appdb".
+  - id: tc3
+    name: Redis cache added
+    type: code-contains
+    expected: AddRedis("cache")
+    description: Should add a Redis cache resource.
+  - id: tc4
+    name: API references database
+    type: code-contains
+    expected: WithReference(db)
+    description: The API service should reference the database.
+  - id: tc5
+    name: Web references API service
+    type: code-contains
+    expected: WithReference(api)
+    description: The web frontend should reference the API for service discovery.
+hints:
+  - '`AddPostgres("pg").AddDatabase("appdb")` creates a PostgreSQL server with a database.'
+  - '`AddRedis("cache")` creates a Redis cache resource.'
+  - Chain `.WithReference(db).WithReference(cache)` on the API service.
+  - The web frontend only needs `.WithReference(api)` — it calls the API via HTTP, not the database directly.
+requiredPackages:
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+  - Aspire.Hosting.PostgreSQL
+  - Aspire.Hosting.Redis
+sortOrder: 0

@@ -106,4 +106,5 @@ hints:
   - "Use .WithAnnotation(new ResourceIconAnnotation(\"Flag\", IconVariant.Filled)) for the icon"
 requiredPackages:
   - "Aspire.Hosting"
+  - "Aspire.Hosting.AppHost"
 sortOrder: 0

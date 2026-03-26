@@ -74,3 +74,29 @@ questions:
         text: "Configure a firewall rule"
         isCorrect: false
     explanation: "Endpoints default to internal. Set `IsExternal = true` on a specific endpoint via callback, or use `WithExternalHttpEndpoints()` to mark all HTTP endpoints as external."
+
+  - text: |
+      What URL can the web project use to call the API?
+      ```csharp
+      var api = builder.AddProject<Projects.Api>("apiservice")
+          .WithHttpEndpoint(port: 5001);
+      builder.AddProject<Projects.Web>("web")
+          .WithReference(api);
+      ```
+    type: code-prediction
+    sortOrder: 5
+    points: 15
+    options:
+      - id: a
+        text: "http://apiservice — Aspire service discovery resolves the name to the actual endpoint"
+        isCorrect: true
+      - id: b
+        text: "http://localhost:5001 — the fixed port is used directly"
+        isCorrect: false
+      - id: c
+        text: "http://api:5001 — using the variable name"
+        isCorrect: false
+      - id: d
+        text: "The URL is only available at runtime from an environment variable"
+        isCorrect: false
+    explanation: "WithReference(api) injects service discovery configuration into the web project. The web project can use the resource name 'http://apiservice' as the base URL — Aspire's service discovery resolves it to the actual host and port at runtime."

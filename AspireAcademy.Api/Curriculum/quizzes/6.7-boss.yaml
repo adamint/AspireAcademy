@@ -56,3 +56,24 @@ questions:
       - "DashboardClient via polling"
     correctAnswer: "ResourceNotificationService via PublishUpdateAsync"
     explanation: "ResourceNotificationService (src/Aspire.Hosting/ApplicationModel/ResourceNotificationService.cs) uses Channel<ResourceEvent> for pub/sub. PublishUpdateAsync() pushes immutable CustomResourceSnapshot updates that the dashboard receives via gRPC streaming."
+
+  - id: "6.7.6"
+    question: |
+      Why does this custom resource's connection string fail to resolve at runtime?
+      ```csharp
+      public class MyCache(string name) : ContainerResource(name), IResourceWithConnectionString
+      {
+          public ReferenceExpression ConnectionStringExpression =>
+              ReferenceExpression.Create($"{new EndpointReference(this, "redis").Property(EndpointProperty.Url)}");
+      }
+      // Registration: builder.AddResource(new MyCache("cache")).WithImage("redis", "7");
+      // Missing: .WithEndpoint("redis", ...)
+      ```
+    type: "code_prediction"
+    options:
+      - "The ReferenceExpression syntax is wrong"
+      - "No EndpointAnnotation named 'redis' exists — DcpExecutor has no port to allocate"
+      - "ContainerResource doesn't support connection strings"
+      - "The image tag is invalid"
+    correctAnswer: "No EndpointAnnotation named 'redis' exists — DcpExecutor has no port to allocate"
+    explanation: "ExpressionResolver resolves EndpointReference only if a matching EndpointAnnotation exists on the resource. Without .WithEndpoint('redis', ...), DcpExecutor has no EndpointAnnotation to allocate a port, so the EndpointReference can never be resolved."

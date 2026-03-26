@@ -93,3 +93,30 @@ questions:
         text: "`postgres.WaitFor(migrator)` then `api.WaitFor(postgres)`"
         isCorrect: false
     explanation: "The migrator must wait for the database to be healthy (`WaitFor`), then the API must wait for the migrator to complete (`WaitForCompletion`). This ensures: postgres → migrator runs migrations → api starts."
+
+  - text: |
+      What startup order does this code produce?
+      ```csharp
+      var db = builder.AddPostgres("pg").AddDatabase("mydb");
+      var migrator = builder.AddProject<Projects.Migrator>("migrator")
+          .WithReference(db).WaitFor(db);
+      var api = builder.AddProject<Projects.Api>("api")
+          .WithReference(db).WaitForCompletion(migrator);
+      ```
+    type: code-prediction
+    sortOrder: 6
+    points: 15
+    options:
+      - id: a
+        text: "PostgreSQL starts → Migrator runs and exits → API starts after migrator completes"
+        isCorrect: true
+      - id: b
+        text: "All three start simultaneously"
+        isCorrect: false
+      - id: c
+        text: "API starts first, then migrator, then database"
+        isCorrect: false
+      - id: d
+        text: "PostgreSQL and migrator start together, then API starts"
+        isCorrect: false
+    explanation: "WaitFor(db) holds the migrator until PostgreSQL is healthy. WaitForCompletion(migrator) holds the API until the migrator process exits successfully (exit code 0). This ensures migrations complete before the API begins serving requests."

@@ -74,3 +74,27 @@ questions:
         text: "`WithArgs(\"--urls\")`"
         isCorrect: false
     explanation: "`WithExternalHttpEndpoints()` marks all HTTP/HTTPS endpoints on the resource as externally accessible. They appear as clickable links in the dashboard."
+
+  - text: |
+      What does this code do?
+      ```csharp
+      var api = builder.AddProject<Projects.Api>("api")
+          .WithReplicas(3);
+      ```
+    type: code-prediction
+    sortOrder: 5
+    points: 15
+    options:
+      - id: a
+        text: "Launches 3 instances of the Api project with load-balanced endpoints"
+        isCorrect: true
+      - id: b
+        text: "Creates 3 copies of the project source code"
+        isCorrect: false
+      - id: c
+        text: "Retries the project startup 3 times if it fails"
+        isCorrect: false
+      - id: d
+        text: "Allocates 3 network ports for the project"
+        isCorrect: false
+    explanation: "WithReplicas(3) launches 3 concurrent process instances of the Api project. Aspire's reverse proxy distributes incoming requests across all replicas for load balancing."

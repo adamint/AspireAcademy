@@ -68,3 +68,29 @@ questions:
         text: "Network connections between containers"
     correctOptionId: c
     explanation: "Resource Graph edges represent the WithReference() relationships declared in the AppHost code. An edge from service A to resource B means the AppHost called .WithReference(B) on service A's builder, indicating a declared dependency."
+
+  - id: q6
+    text: |
+      When this code runs, what appears in the dashboard's Structured Logs view for the API?
+      ```csharp
+      app.MapGet("/products", (ILogger<Program> logger) =>
+      {
+          logger.LogInformation("Fetching products for {User}", "alice");
+          return Results.Ok(new[] { "Widget", "Gadget" });
+      });
+      ```
+    options:
+      - id: a
+        text: "A structured log entry with Level=Information, a formatted message, and a 'User' property set to 'alice'"
+        isCorrect: true
+      - id: b
+        text: "Nothing — logs only appear in the console"
+        isCorrect: false
+      - id: c
+        text: "A plain text line: 'Fetching products for alice'"
+        isCorrect: false
+      - id: d
+        text: "A trace span named 'Fetching products'"
+        isCorrect: false
+    correctOptionId: a
+    explanation: "Aspire's dashboard receives structured logs via OTLP. The LogInformation call produces a structured log with the template, properties (User=alice), and severity level. The dashboard renders these as filterable structured entries, not plain text."

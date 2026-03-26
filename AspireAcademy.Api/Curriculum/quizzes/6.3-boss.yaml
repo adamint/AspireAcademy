@@ -45,3 +45,20 @@ questions:
       - "@resource.bindings.http.url"
     correct_answer: "{resource.bindings.http.url}"
     explanation: "The Aspire manifest uses single-brace placeholder syntax like `{resource.bindings.http.url}`. Deployment tools resolve these placeholders to actual values when provisioning infrastructure."
+
+  - id: "6.3-q5"
+    question: |
+      What happens when `ExecutionContext.IsPublishMode` is true?
+      ```csharp
+      var db = builder.ExecutionContext.IsPublishMode
+          ? builder.AddAzurePostgresFlexibleServer("pg").AddDatabase("mydb")
+          : builder.AddPostgres("pg").AddDatabase("mydb");
+      ```
+    type: code_prediction
+    options:
+      - "Uses Azure Postgres Flexible Server for production, local container for development"
+      - "Always uses the Azure version regardless of mode"
+      - "Throws an exception because you can't branch on ExecutionContext"
+      - "Uses the local container for production and Azure for development"
+    correct_answer: "Uses Azure Postgres Flexible Server for production, local container for development"
+    explanation: "ExecutionContext.IsPublishMode is true during `aspire publish` (generating deployment manifests) and false during local `aspire run`. This pattern lets you use lightweight containers for development while targeting real cloud resources for production."

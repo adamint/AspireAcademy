@@ -68,3 +68,26 @@ questions:
         text: "OpenTelemetry tracing is also disabled"
     correctOptionId: b
     explanation: "Setting DisableHealthChecks to true prevents the integration from registering an IHealthCheck. The resource still functions normally — it simply won't appear in health check probes."
+
+  - id: q6
+    text: |
+      What does this service registration do?
+      ```csharp
+      builder.AddNpgsqlDbContext<OrderContext>("orderdb");
+      builder.AddRedisDistributedCache("cache");
+      ```
+    options:
+      - id: a
+        text: "Registers an EF Core DbContext connected to PostgreSQL and an IDistributedCache backed by Redis, with health checks and telemetry auto-configured for both"
+        isCorrect: true
+      - id: b
+        text: "Creates PostgreSQL and Redis containers in Docker"
+        isCorrect: false
+      - id: c
+        text: "Adds the resources to the AppHost app model"
+        isCorrect: false
+      - id: d
+        text: "Configures connection strings in appsettings.json"
+        isCorrect: false
+    correctOptionId: a
+    explanation: "These are client integration calls (used in service projects, not AppHost). AddNpgsqlDbContext registers an EF Core DbContext in DI using the 'orderdb' connection string. AddRedisDistributedCache registers IDistributedCache backed by Redis. Both automatically configure health checks, telemetry, and retries."

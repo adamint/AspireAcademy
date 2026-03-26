@@ -56,3 +56,19 @@ questions:
       - "TelemetryRepository joins traces by service.name"
     correctAnswer: "ResourceOutgoingPeerResolver matches peer attributes to known resources"
     explanation: "ResourceOutgoingPeerResolver examines outgoing span attributes (net.peer.name, db.system) and matches them against known Aspire resource endpoints. This is how uninstrumented services like databases appear in the trace dependency graph."
+
+  - id: "6.8.6"
+    question: |
+      What happens when TelemetryRepository's trace buffer is full and new spans arrive?
+      ```csharp
+      // TelemetryRepository uses CircularBuffer for trace storage
+      // Default capacity: 10,000 traces
+      ```
+    type: "code_prediction"
+    options:
+      - "New spans are dropped silently"
+      - "The oldest traces are evicted to make room for new ones"
+      - "An OutOfMemoryException is thrown"
+      - "The buffer doubles in size automatically"
+    correctAnswer: "The oldest traces are evicted to make room for new ones"
+    explanation: "CircularBuffer is a ring buffer — when capacity is reached, writing new entries overwrites the oldest entries automatically. This gives the dashboard O(1) writes with bounded memory, at the cost of losing old data."

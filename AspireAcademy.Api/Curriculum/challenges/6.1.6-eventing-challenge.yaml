@@ -1,0 +1,77 @@
+instructions: |
+  # Aspire Eventing — Database Seeding
+
+  Use the Aspire eventing system to seed a database before services start.
+
+  **What to do:**
+  1. Add a PostgreSQL server with database `"appdb"`
+  2. Add an API project that references the database
+  3. Subscribe to `BeforeResourceStartedEvent` for the API to run setup logic before it starts
+  4. Use `WaitFor` to ensure the API waits for the database
+
+  **Key concepts:**
+  - `builder.Eventing.Subscribe<BeforeResourceStartedEvent>(handler)` runs code before a resource starts
+  - Events fire at specific lifecycle points (BeforeStart, AfterResourcesCreated, etc.)
+  - Use eventing for database seeding, config validation, or pre-startup checks
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var db = builder.AddPostgres("pg").AddDatabase("appdb");
+
+  var api = builder.AddProject<Projects.ApiService>("api")
+      .WithReference(db)
+      .WaitFor(db);
+
+  // TODO: Subscribe to BeforeResourceStartedEvent to run setup before the API starts
+  // Hint: builder.Eventing.Subscribe<BeforeResourceStartedEvent>(api.Resource, async (evt, ct) => { ... });
+
+  builder.Build().Run();
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var db = builder.AddPostgres("pg").AddDatabase("appdb");
+
+  var api = builder.AddProject<Projects.ApiService>("api")
+      .WithReference(db)
+      .WaitFor(db);
+
+  builder.Eventing.Subscribe<BeforeResourceStartedEvent>(api.Resource, async (evt, ct) =>
+  {
+      Console.WriteLine("Seeding database before API starts...");
+  });
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: Code compiles
+    type: compiles
+    expected: null
+    description: The AppHost code must compile without errors.
+  - id: tc2
+    name: Subscribes to eventing
+    type: code-contains
+    expected: Eventing.Subscribe
+    description: Must subscribe to an Aspire lifecycle event.
+  - id: tc3
+    name: Uses BeforeResourceStartedEvent
+    type: code-contains
+    expected: BeforeResourceStartedEvent
+    description: Must use BeforeResourceStartedEvent to run logic before a resource starts.
+  - id: tc4
+    name: API waits for database
+    type: code-contains
+    expected: WaitFor(db)
+    description: The API must wait for the database to be healthy before starting.
+hints:
+  - 'Use `builder.Eventing.Subscribe<BeforeResourceStartedEvent>(api.Resource, async (evt, ct) => { ... })` to target a specific resource.'
+  - BeforeResourceStartedEvent fires after all resources are created but before the specific resource starts.
+  - This is ideal for database seeding, running migrations, or validating configuration.
+requiredPackages:
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+  - Aspire.Hosting.PostgreSQL
+sortOrder: 0

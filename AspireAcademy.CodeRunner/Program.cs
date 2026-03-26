@@ -85,10 +85,23 @@ sealed partial class CompilationService(ILogger logger)
         "Aspire.Hosting.JavaScript",
         "Aspire.Hosting.Docker",
         "Aspire.Hosting.Testing",
+        // Aspire client integration packages
+        "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL",
+        "Aspire.Npgsql",
+        "Aspire.MongoDB.Driver",
+        "Aspire.StackExchange.Redis",
+        "Aspire.StackExchange.Redis.DistributedCaching",
+        "Aspire.RabbitMQ.Client",
         // Common .NET packages
         "Microsoft.Extensions.Logging.Abstractions",
         "Microsoft.Extensions.DependencyInjection",
         "Microsoft.Extensions.Http.Resilience",
+        "Microsoft.Extensions.ServiceDiscovery",
+        // OpenTelemetry packages
+        "OpenTelemetry.Extensions.Hosting",
+        "OpenTelemetry.Instrumentation.AspNetCore",
+        "OpenTelemetry.Instrumentation.Http",
+        "OpenTelemetry.Instrumentation.Runtime",
     };
 
     public async Task<ExecuteResponse> ExecuteAsync(
@@ -231,9 +244,12 @@ sealed partial class CompilationService(ILogger logger)
 
     private static void WriteAppHostCsproj(string dir, List<string> packages, List<string> projectRefs)
     {
+        // Use Microsoft.NET.Sdk.Web to support both AppHost and service-level code.
+        // The Web SDK is a superset of the base SDK and provides ASP.NET Core types
+        // needed by service challenges (WebApplication, IDistributedCache, etc.).
         var sb = new StringBuilder();
         sb.AppendLine("""
-            <Project Sdk="Microsoft.NET.Sdk">
+            <Project Sdk="Microsoft.NET.Sdk.Web">
               <PropertyGroup>
                 <OutputType>Exe</OutputType>
                 <TargetFramework>net9.0</TargetFramework>

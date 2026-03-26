@@ -13,7 +13,11 @@ instructions: |
   - `AddRedisDistributedCache(connectionName)` registers `IDistributedCache`
   - `AddRabbitMQClient(connectionName)` registers RabbitMQ `IConnection`
   - Cache-aside pattern: check cache → fallback to data source → populate cache
+  - RabbitMQ.Client 7.x uses async API: `CreateChannelAsync()` and `BasicPublishAsync()`
 starterCode: |
+  using Microsoft.Extensions.Caching.Distributed;
+  using RabbitMQ.Client;
+
   var builder = WebApplication.CreateBuilder(args);
 
   // TODO: Register Redis distributed cache for "cache"
@@ -33,6 +37,9 @@ starterCode: |
 
   app.Run();
 solutionCode: |
+  using Microsoft.Extensions.Caching.Distributed;
+  using RabbitMQ.Client;
+
   var builder = WebApplication.CreateBuilder(args);
 
   builder.AddRedisDistributedCache("cache");
@@ -52,9 +59,9 @@ solutionCode: |
 
   app.MapPost("/products/{id}/restock", async (string id, int qty, IConnection rmq) =>
   {
-      using var channel = rmq.CreateModel();
+      using var channel = await rmq.CreateChannelAsync();
       var body = System.Text.Encoding.UTF8.GetBytes($"{{\"id\":\"{id}\",\"qty\":{qty}}}");
-      channel.BasicPublish("inventory.restocked", "", null, body);
+      await channel.BasicPublishAsync("inventory.restocked", "", body);
       return Results.Ok("Restocked");
   });
 
@@ -83,13 +90,14 @@ testCases:
   - id: tc5
     name: "Publishes to RabbitMQ"
     type: code-contains
-    expected: "BasicPublish"
-    description: "Code must publish events to RabbitMQ"
+    expected: "BasicPublishAsync"
+    description: "Code must publish events to RabbitMQ using BasicPublishAsync"
 hints:
   - "Use AddRedisDistributedCache(\"cache\")"
   - "Use AddRabbitMQClient(\"messaging\")"
-  - "Serialize with JsonSerializer for cache entries"
-  - "Create a channel from IConnection to publish messages"
+  - "Create a channel with `await rmq.CreateChannelAsync()` (RabbitMQ.Client 7.x uses async API)"
+  - "Publish with `await channel.BasicPublishAsync(exchange, routingKey, body)`"
 requiredPackages:
-  - "Aspire.Hosting"
+  - "Aspire.StackExchange.Redis.DistributedCaching"
+  - "Aspire.RabbitMQ.Client"
 sortOrder: 0

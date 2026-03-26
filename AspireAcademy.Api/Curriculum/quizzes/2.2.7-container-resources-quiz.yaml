@@ -93,3 +93,27 @@ questions:
         text: "Passing build arguments"
         isCorrect: false
     explanation: "Runtime args go to the container runtime (e.g., Docker) itself, controlling resource limits and security options — not to the application inside the container."
+
+  - text: |
+      What container lifetime does this configure?
+      ```csharp
+      builder.AddContainer("redis", "redis:7")
+          .WithLifetime(ContainerLifetime.Persistent);
+      ```
+    type: code-prediction
+    sortOrder: 6
+    points: 15
+    options:
+      - id: a
+        text: "The container survives AppHost restarts — it stays running between debug sessions"
+        isCorrect: true
+      - id: b
+        text: "The container is deleted after each request completes"
+        isCorrect: false
+      - id: c
+        text: "The container restarts automatically if it crashes"
+        isCorrect: false
+      - id: d
+        text: "The container is shared between multiple AppHost instances"
+        isCorrect: false
+    explanation: "ContainerLifetime.Persistent tells Aspire to keep the container running even when the AppHost stops. This avoids slow container startup on each debug cycle, preserving data in development."
