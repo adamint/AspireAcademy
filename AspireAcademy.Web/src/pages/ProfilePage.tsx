@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box, Flex, Text, Button, Badge, Skeleton, SimpleGrid, VStack,
-  Dialog, Input, Textarea, Tooltip, Field,
+  Dialog, Input, Textarea, Tooltip, Field, Spinner,
 } from '@chakra-ui/react';
 import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX } from 'react-icons/fi';
 import { useState } from 'react';
@@ -223,7 +223,7 @@ export default function ProfilePage() {
                   onClick={() => randomizeMutation.mutate()}
                   disabled={randomizeMutation.isPending}
                 >
-                  <FiRefreshCw /> Randomize Avatar
+                  {randomizeMutation.isPending ? <Spinner size="sm" /> : <><FiRefreshCw /> Randomize Avatar</>}
                 </Button>
                 <Button
                   variant="outline"
@@ -234,7 +234,7 @@ export default function ProfilePage() {
                   onClick={() => resetAvatarMutation.mutate()}
                   disabled={resetAvatarMutation.isPending}
                 >
-                  <FiX /> Reset to Gravatar
+                  {resetAvatarMutation.isPending ? <Spinner size="sm" /> : <><FiX /> Reset to Gravatar</>}
                 </Button>
               </>
             ) : (
@@ -246,7 +246,7 @@ export default function ProfilePage() {
                     onClick={() => friendMutation.mutate('add')}
                     disabled={friendMutation.isPending}
                   >
-                    <FiUserPlus /> Add Friend
+                    {friendMutation.isPending ? <Spinner size="sm" /> : <><FiUserPlus /> Add Friend</>}
                   </Button>
                 )}
                 {profile.isFriend && (
@@ -259,7 +259,7 @@ export default function ProfilePage() {
                     onClick={() => friendMutation.mutate('remove')}
                     disabled={friendMutation.isPending}
                   >
-                    <FiUserMinus /> Remove Friend
+                    {friendMutation.isPending ? <Spinner size="sm" /> : <><FiUserMinus /> Remove Friend</>}
                   </Button>
                 )}
               </>
@@ -362,7 +362,7 @@ export default function ProfilePage() {
                 onClick={() => editMutation.mutate({ displayName: editDisplayName, bio: editBio })}
                 disabled={editMutation.isPending}
               >
-                Save
+                {editMutation.isPending ? <><Spinner size="sm" /> Saving…</> : 'Save'}
               </Button>
             </Dialog.Footer>
           </Dialog.Content>

@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  Box, Flex, Text, Input, Button, Skeleton, SimpleGrid, VStack, Tabs,
+  Box, Flex, Text, Input, Button, Skeleton, SimpleGrid, VStack, Tabs, Spinner,
 } from '@chakra-ui/react';
 import { FiSearch, FiUserPlus, FiX, FiCheck } from 'react-icons/fi';
 import api from '../services/apiClient';
@@ -163,7 +163,7 @@ export default function FriendsPage() {
                       onClick={() => friendActionMutation.mutate({ action: 'add', userId: user.id })}
                       disabled={friendActionMutation.isPending}
                     >
-                      <FiUserPlus /> Add
+                      {friendActionMutation.isPending ? <Spinner size="sm" /> : <><FiUserPlus /> Add</>}
                     </Button>
                   )
                 }
@@ -212,7 +212,7 @@ export default function FriendsPage() {
                           onClick={() => friendActionMutation.mutate({ action: 'remove', userId: friend.id })}
                           disabled={friendActionMutation.isPending}
                         >
-                          <FiX /> Remove
+                          {friendActionMutation.isPending ? <Spinner size="sm" /> : <><FiX /> Remove</>}
                         </Button>
                       }
                     />
@@ -240,7 +240,7 @@ export default function FriendsPage() {
                             onClick={() => friendActionMutation.mutate({ action: 'accept', requestId: req.id })}
                             disabled={friendActionMutation.isPending}
                           >
-                            <FiCheck /> Accept
+                            {friendActionMutation.isPending ? <Spinner size="sm" /> : <><FiCheck /> Accept</>}
                           </Button>
                           <Button
                             variant="outline"
@@ -248,7 +248,7 @@ export default function FriendsPage() {
                             onClick={() => friendActionMutation.mutate({ action: 'decline', requestId: req.id })}
                             disabled={friendActionMutation.isPending}
                           >
-                            <FiX /> Decline
+                            {friendActionMutation.isPending ? <Spinner size="sm" /> : <><FiX /> Decline</>}
                           </Button>
                         </Flex>
                       }
@@ -270,7 +270,7 @@ export default function FriendsPage() {
                           onClick={() => friendActionMutation.mutate({ action: 'cancel', requestId: req.id })}
                           disabled={friendActionMutation.isPending}
                         >
-                          <FiX /> Cancel
+                          {friendActionMutation.isPending ? <Spinner size="sm" /> : <><FiX /> Cancel</>}
                         </Button>
                       }
                     />
