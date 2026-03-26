@@ -23,7 +23,7 @@ public static class SocialEndpoints
 
             // Accepted friends where current user is the requester
             var friendsAsRequester = (await db.Friendships
-                .Where(f => f.RequesterId == userId && f.Status == "accepted")
+                .Where(f => f.RequesterId == userId && f.Status == FriendshipStatuses.Accepted)
                 .Join(db.Users, f => f.AddresseeId, u => u.Id, (f, u) => new { f, u })
                 .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
                 {
@@ -38,7 +38,7 @@ public static class SocialEndpoints
 
             // Accepted friends where current user is the addressee
             var friendsAsAddressee = (await db.Friendships
-                .Where(f => f.AddresseeId == userId && f.Status == "accepted")
+                .Where(f => f.AddresseeId == userId && f.Status == FriendshipStatuses.Accepted)
                 .Join(db.Users, f => f.RequesterId, u => u.Id, (f, u) => new { f, u })
                 .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
                 {
@@ -55,7 +55,7 @@ public static class SocialEndpoints
 
             // Pending requests received
             var pendingReceived = (await db.Friendships
-                .Where(f => f.AddresseeId == userId && f.Status == "pending")
+                .Where(f => f.AddresseeId == userId && f.Status == FriendshipStatuses.Pending)
                 .Join(db.Users, f => f.RequesterId, u => u.Id, (f, u) => new { f, u })
                 .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
                 {
@@ -71,7 +71,7 @@ public static class SocialEndpoints
 
             // Pending requests sent
             var pendingSent = (await db.Friendships
-                .Where(f => f.RequesterId == userId && f.Status == "pending")
+                .Where(f => f.RequesterId == userId && f.Status == FriendshipStatuses.Pending)
                 .Join(db.Users, f => f.AddresseeId, u => u.Id, (f, u) => new { f, u })
                 .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
                 {
@@ -110,7 +110,7 @@ public static class SocialEndpoints
 
             if (existingFriendship is not null)
             {
-                var message = existingFriendship.Status == "accepted"
+                var message = existingFriendship.Status == FriendshipStatuses.Accepted
                     ? "Already friends."
                     : "Friend request already pending.";
                 return Results.Conflict(new ErrorResponse(message));
@@ -121,7 +121,7 @@ public static class SocialEndpoints
                 Id = Guid.NewGuid(),
                 RequesterId = userId,
                 AddresseeId = targetUser.Id,
-                Status = "pending",
+                Status = FriendshipStatuses.Pending,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -149,12 +149,12 @@ public static class SocialEndpoints
                 return Results.BadRequest(new ErrorResponse("Only the addressee can accept a friend request."));
             }
 
-            if (friendship.Status != "pending")
+            if (friendship.Status != FriendshipStatuses.Pending)
             {
                 return Results.BadRequest(new ErrorResponse("Friend request is not pending."));
             }
 
-            friendship.Status = "accepted";
+            friendship.Status = FriendshipStatuses.Accepted;
             await db.SaveChangesAsync();
 
             s_logger.LogInformation("Friend accepted: FriendshipId={FriendshipId}", friendshipId);
@@ -218,7 +218,7 @@ public static class SocialEndpoints
 
             return Results.Ok(new MeResponse(
                 dbUser.Id, dbUser.Username, dbUser.DisplayName, dbUser.Email,
-                avatarUrl, userXp?.CurrentLevel ?? 1, userXp?.CurrentRank ?? "aspire-intern", userXp?.TotalXp ?? 0,
+                avatarUrl, userXp?.CurrentLevel ?? 1, userXp?.CurrentRank ?? Ranks.AspireIntern, userXp?.TotalXp ?? 0,
                 dbUser.Bio, dbUser.LoginStreakDays, dbUser.CreatedAt));
         });
 
@@ -259,8 +259,8 @@ public static class SocialEndpoints
                 var xp = xpByUser.GetValueOrDefault(u.Id);
                 return new UserSearchResult(
                     u.Id, u.Username, u.DisplayName, AvatarHelper.GetAvatarUrl(u.AvatarSeed, u.Email), xp?.CurrentLevel ?? 1,
-                    friendship?.Status == "accepted",
-                    friendship?.Status == "pending");
+                    friendship?.Status == FriendshipStatuses.Accepted,
+                    friendship?.Status == FriendshipStatuses.Pending);
             }).ToList();
 
             return Results.Ok(results);
@@ -278,7 +278,7 @@ public static class SocialEndpoints
 
             var achievementCount = await db.UserAchievements.CountAsync(ua => ua.UserId == userId);
             var completedLessons = await db.UserProgress
-                .CountAsync(up => up.UserId == userId && (up.Status == "completed" || up.Status == "perfect"));
+                .CountAsync(up => up.UserId == userId && (up.Status == ProgressStatuses.Completed || up.Status == ProgressStatuses.Perfect));
             var totalLessons = await db.Lessons.CountAsync();
 
             var showcaseAchievements = await db.UserAchievements
@@ -294,14 +294,14 @@ public static class SocialEndpoints
             var friendship = await db.Friendships.FirstOrDefaultAsync(f =>
                 ((f.RequesterId == currentUserId && f.AddresseeId == userId) ||
                  (f.RequesterId == userId && f.AddresseeId == currentUserId)) &&
-                f.Status == "accepted");
+                f.Status == FriendshipStatuses.Accepted);
 
             var avatarUrl = AvatarHelper.GetAvatarUrl(profileUser.AvatarSeed, profileUser.Email);
 
             return Results.Ok(new UserProfileResponse(
                 profileUser.Id, profileUser.Username, profileUser.DisplayName, profileUser.Bio,
                 avatarUrl,
-                profileXp?.CurrentLevel ?? 1, profileXp?.CurrentRank ?? "aspire-intern", profileXp?.TotalXp ?? 0, profileUser.LoginStreakDays,
+                profileXp?.CurrentLevel ?? 1, profileXp?.CurrentRank ?? Ranks.AspireIntern, profileXp?.TotalXp ?? 0, profileUser.LoginStreakDays,
                 profileUser.CreatedAt, achievementCount, completedLessons, totalLessons,
                 showcaseAchievements,
                 friendship is not null,
@@ -328,7 +328,7 @@ public static class SocialEndpoints
     private static async Task<IResult> GetFriendsLeaderboard(Guid userId, int maxLimit, AcademyDbContext db)
     {
         var friendIds = await db.Friendships
-            .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) && f.Status == "accepted")
+            .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) && f.Status == FriendshipStatuses.Accepted)
             .Select(f => f.RequesterId == userId ? f.AddresseeId : f.RequesterId)
             .ToListAsync();
         friendIds.Add(userId);

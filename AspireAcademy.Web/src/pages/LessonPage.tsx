@@ -13,14 +13,10 @@ import {
 } from '@chakra-ui/react';
 import { FiArrowLeft, FiArrowRight, FiClock, FiSkipForward } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { pixelFontProps } from '../theme/aspireTheme';
 import api from '../services/apiClient';
 import { useGamificationStore } from '../store/gamificationStore';
 import type { LessonDetail, CompleteResponse } from '../types/curriculum';
-import type { Components } from 'react-markdown';
 import MarkdownContent from '../components/common/MarkdownContent';
 
 const lessonTypeLabel: Record<string, { emoji: string; label: string }> = {

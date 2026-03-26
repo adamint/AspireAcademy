@@ -56,16 +56,14 @@ public static partial class AuthEndpoints
         var usernameLower = request.Username!.ToLowerInvariant();
         var emailLower = request.Email!.ToLowerInvariant();
 
-        if (await db.Users.AnyAsync(u => u.Username.ToLower() == usernameLower))
-        {
-            s_logger.LogInformation("Register failed: username {Username} already taken", request.Username);
-            return Results.Conflict(new ErrorResponse("Username is already taken."));
-        }
+        // Use a single generic error to prevent username/email enumeration
+        var usernameTaken = await db.Users.AnyAsync(u => u.Username.ToLower() == usernameLower);
+        var emailTaken = await db.Users.AnyAsync(u => u.Email.ToLower() == emailLower);
 
-        if (await db.Users.AnyAsync(u => u.Email.ToLower() == emailLower))
+        if (usernameTaken || emailTaken)
         {
-            s_logger.LogInformation("Register failed: email {Email} already taken", request.Email);
-            return Results.Conflict(new ErrorResponse("Email is already taken."));
+            s_logger.LogInformation("Register failed: username or email already taken for {Username}/{Email}", request.Username, request.Email);
+            return Results.Conflict(new ErrorResponse("Username or email is already taken."));
         }
 
         var now = DateTime.UtcNow;

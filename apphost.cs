@@ -41,10 +41,16 @@ var api = builder.AddCSharpApp("api", "./AspireAcademy.Api/")
 
 // ── Custom Aspire Dashboard commands ──
 
+// Generate a random secret for internal admin commands (not guessable from outside)
+var adminSecret = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
+
+// Pass the secret to the API as configuration so IsAdmin can verify it
+api = api.WithEnvironment("Admin__InternalSecret", adminSecret);
+
 // Helper to add internal admin auth header to requests
-static Task AddAdminHeader(HttpCommandRequestContext ctx)
+Task AddAdminHeader(HttpCommandRequestContext ctx)
 {
-    ctx.Request.Headers.Add("X-Aspire-Admin", "aspire-internal");
+    ctx.Request.Headers.Add("X-Aspire-Admin", adminSecret);
     return Task.CompletedTask;
 }
 

@@ -96,7 +96,7 @@ public static class AdminEndpoints
 
         var totalUsers = await db.Users.CountAsync();
         var totalLessonsCompleted = await db.UserProgress
-            .CountAsync(p => p.Status == "completed" || p.Status == "perfect");
+            .CountAsync(p => p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect);
         var totalXpEarned = await db.UserXp.SumAsync(x => (long)x.TotalXp);
         var activeUsersSince = DateTime.UtcNow.AddDays(-7);
         var activeUsers = await db.Users.CountAsync(u => u.LastLoginAt != null && u.LastLoginAt >= activeUsersSince);
@@ -332,7 +332,7 @@ public static class AdminEndpoints
                 Id = Guid.CreateVersion7(),
                 UserId = testUser.Id,
                 LessonId = lesson.Id,
-                Status = "completed",
+                Status = ProgressStatuses.Completed,
                 Attempts = 1,
                 Score = 100,
                 MaxScore = 100,
@@ -374,7 +374,7 @@ public static class AdminEndpoints
             UserId = adminUser.Id,
             TotalXp = 0,
             CurrentLevel = 1,
-            CurrentRank = "aspire-intern",
+            CurrentRank = Ranks.AspireIntern,
             WeekStart = DateOnly.FromDateTime(now)
         });
         await db.SaveChangesAsync();

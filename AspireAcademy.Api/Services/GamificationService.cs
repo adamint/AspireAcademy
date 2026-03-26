@@ -270,7 +270,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
         var count = GetJsonInt(config.RootElement, "count");
 
         var completed = await db.UserProgress
-            .CountAsync(p => p.UserId == userId && (p.Status == "completed" || p.Status == "perfect"));
+            .CountAsync(p => p.UserId == userId && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect));
 
         return completed >= count;
     }
@@ -281,8 +281,8 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
         var passed = await db.UserProgress
             .CountAsync(p => p.UserId == userId
-                && (p.Status == "completed" || p.Status == "perfect")
-                && p.Lesson.Type == "quiz");
+                && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect)
+                && p.Lesson.Type == LessonTypes.Quiz);
 
         return passed >= count;
     }
@@ -294,8 +294,8 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
         // Count completed challenges
         var completed = await db.UserProgress
             .CountAsync(p => p.UserId == userId
-                && (p.Status == "completed" || p.Status == "perfect")
-                && p.Lesson.Type == "challenge");
+                && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect)
+                && p.Lesson.Type == LessonTypes.Challenge);
 
         return completed >= count;
     }
@@ -376,7 +376,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
         var completedToday = await db.UserProgress
             .CountAsync(p => p.UserId == userId
                 && p.CompletedAt >= todayStart
-                && (p.Status == "completed" || p.Status == "perfect"));
+                && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect));
 
         return completedToday >= count;
     }
@@ -387,8 +387,8 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
         var perfects = await db.UserProgress
             .CountAsync(p => p.UserId == userId
-                && p.Status == "perfect"
-                && p.Lesson.Type == "quiz");
+                && p.Status == ProgressStatuses.Perfect
+                && p.Lesson.Type == LessonTypes.Quiz);
 
         return perfects >= count;
     }
@@ -399,9 +399,9 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
         var firstTryPasses = await db.UserProgress
             .CountAsync(p => p.UserId == userId
-                && (p.Status == "completed" || p.Status == "perfect")
+                && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect)
                 && p.Attempts == 1
-                && (p.Lesson.Type == "challenge" || p.Lesson.Type == "build-project"));
+                && (p.Lesson.Type == LessonTypes.Challenge || p.Lesson.Type == LessonTypes.BuildProject));
 
         return firstTryPasses >= count;
     }
@@ -421,7 +421,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
         var completedBossCount = await db.UserProgress
             .CountAsync(p => p.UserId == userId
                 && bossLessonIds.Contains(p.LessonId)
-                && (p.Status == "completed" || p.Status == "perfect"));
+                && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect));
 
         return completedBossCount >= bossLessonIds.Count;
     }
@@ -429,7 +429,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
     private async Task<bool> CheckAllBuildProjectsCompleteAsync(Guid userId)
     {
         var buildLessonIds = await db.Lessons
-            .Where(l => l.Type == "build-project")
+            .Where(l => l.Type == LessonTypes.BuildProject)
             .Select(l => l.Id)
             .ToListAsync();
 
@@ -441,7 +441,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
         var completedCount = await db.UserProgress
             .CountAsync(p => p.UserId == userId
                 && buildLessonIds.Contains(p.LessonId)
-                && (p.Status == "completed" || p.Status == "perfect"));
+                && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect));
 
         return completedCount >= buildLessonIds.Count;
     }
@@ -461,7 +461,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
         var completedCount = await db.UserProgress
             .CountAsync(p => p.UserId == userId
                 && lessonIds.Contains(p.LessonId)
-                && (p.Status == "completed" || p.Status == "perfect"));
+                && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect));
 
         return completedCount >= lessonIds.Count;
     }
