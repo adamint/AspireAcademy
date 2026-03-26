@@ -1,0 +1,108 @@
+instructions: |
+  # Boss Challenge: Multi-Database E-Commerce Platform
+
+  Build an AppHost that configures a multi-database e-commerce backend. Each database serves a different purpose:
+
+  - **PostgreSQL** for the product catalog with schema seeding
+  - **SQL Server** for order processing with data persistence
+  - **MongoDB** for user sessions
+
+  **What to do:**
+  1. Add a PostgreSQL server named `"pg"` with `WithInitBindMount("./pg-scripts")` and `WithDataVolume()`
+  2. Add a database `"catalog"` on the PostgreSQL server
+  3. Add a SQL Server named `"sql"` with `WithDataVolume()`
+  4. Add a database `"orders"` on the SQL Server
+  5. Add a MongoDB server named `"mongo"` and add a database `"sessions"`
+  6. Add a project `"webapi"` that references all three databases
+
+  **Key concepts:**
+  - The two-tier server + database pattern: `AddPostgres("pg").AddDatabase("catalog")`
+  - `WithReference` injects per-database connection strings
+  - Each database type has a different connection string format
+starterCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add PostgreSQL with "catalog" database, init scripts in ./pg-scripts, data volume
+  // TODO: Add SQL Server with "orders" database, data volume
+  // TODO: Add MongoDB with "sessions" database
+  // TODO: Add a "webapi" project referencing all three databases
+
+  builder.Build().Run();
+solutionCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var pg = builder.AddPostgres("pg")
+      .WithInitBindMount("./pg-scripts")
+      .WithDataVolume();
+  var catalogDb = pg.AddDatabase("catalog");
+
+  var sql = builder.AddSqlServer("sql")
+      .WithDataVolume();
+  var ordersDb = sql.AddDatabase("orders");
+
+  var mongo = builder.AddMongoDB("mongo");
+  var sessionsDb = mongo.AddDatabase("sessions");
+
+  builder.AddProject<Projects.WebApi>("webapi")
+      .WithReference(catalogDb)
+      .WithReference(ordersDb)
+      .WithReference(sessionsDb);
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: "Adds PostgreSQL server"
+    type: code-contains
+    expected: 'AddPostgres("pg")'
+    description: "Code must add a PostgreSQL server named 'pg'"
+  - id: tc2
+    name: "Adds catalog database"
+    type: code-contains
+    expected: 'AddDatabase("catalog")'
+    description: "Code must add a 'catalog' database on the PostgreSQL server"
+  - id: tc3
+    name: "PostgreSQL has init bind mount"
+    type: code-contains
+    expected: "WithInitBindMount"
+    description: "PostgreSQL must have init scripts configured with WithInitBindMount"
+  - id: tc4
+    name: "Adds SQL Server"
+    type: code-contains
+    expected: 'AddSqlServer("sql")'
+    description: "Code must add a SQL Server named 'sql'"
+  - id: tc5
+    name: "Adds orders database"
+    type: code-contains
+    expected: 'AddDatabase("orders")'
+    description: "Code must add an 'orders' database on the SQL Server"
+  - id: tc6
+    name: "Adds MongoDB"
+    type: code-contains
+    expected: 'AddMongoDB("mongo")'
+    description: "Code must add a MongoDB server named 'mongo'"
+  - id: tc7
+    name: "Adds sessions database"
+    type: code-contains
+    expected: 'AddDatabase("sessions")'
+    description: "Code must add a 'sessions' database on the MongoDB server"
+  - id: tc8
+    name: "Adds webapi project"
+    type: code-contains
+    expected: 'AddProject'
+    description: "Code must add a project resource for the webapi"
+  - id: tc9
+    name: "Wires references to webapi"
+    type: code-contains
+    expected: "WithReference"
+    description: "Code must use WithReference to wire database connections to the webapi project"
+hints:
+  - "Use AddPostgres(\"pg\").AddDatabase(\"catalog\") — the database is a child of the server"
+  - "WithInitBindMount takes a relative path to a directory containing .sql files"
+  - "Each WithReference(db) injects a connection string named after the database resource"
+  - "MongoDB: AddMongoDB(\"mongo\").AddDatabase(\"sessions\") follows the same pattern as PostgreSQL"
+requiredPackages:
+  - "Aspire.Hosting"
+  - "Aspire.Hosting.PostgreSQL"
+  - "Aspire.Hosting.SqlServer"
+  - "Aspire.Hosting.MongoDB"
+sortOrder: 0

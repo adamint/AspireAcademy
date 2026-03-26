@@ -1,0 +1,177 @@
+instructions: |
+  # Boss Challenge: Custom ServiceDefaults
+
+  Configure a complete ServiceDefaults file with custom tracing, a custom health check, and tuned resilience policies. This is what a production-ready ServiceDefaults looks like.
+
+  **What to do:**
+  1. In `ConfigureOpenTelemetry`:
+     - Add OpenTelemetry logging with `IncludeFormattedMessage = true` and `IncludeScopes = true`
+     - Add metrics with ASP.NET Core and HTTP client instrumentation
+     - Add tracing with a custom `ActivitySource` named `"MyApp"`, plus ASP.NET Core and HTTP client instrumentation
+  2. In `AddDefaultHealthChecks`:
+     - Register a liveness check named `"self"` tagged `["live"]`
+     - Register an additional check named `"ready"` that returns `HealthCheckResult.Healthy()`
+  3. In `ConfigureResilience`:
+     - Use `ConfigureHttpClientDefaults` to add `AddStandardResilienceHandler()` and `AddServiceDiscovery()`
+
+  **Key concepts:**
+  - `AddOpenTelemetry()` with `.WithMetrics()` and `.WithTracing()` for telemetry
+  - `AddHealthChecks()` with `.AddCheck()` for health monitoring
+  - `ConfigureHttpClientDefaults()` with `AddStandardResilienceHandler()` for resilience
+starterCode: |
+  using Microsoft.AspNetCore.Builder;
+  using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+  using Microsoft.Extensions.DependencyInjection;
+  using Microsoft.Extensions.Diagnostics.HealthChecks;
+  using Microsoft.Extensions.Hosting;
+  using Microsoft.Extensions.Logging;
+  using OpenTelemetry;
+  using OpenTelemetry.Metrics;
+  using OpenTelemetry.Trace;
+
+  public static class Extensions
+  {
+      public static IHostApplicationBuilder AddServiceDefaults(
+          this IHostApplicationBuilder builder)
+      {
+          builder.ConfigureOpenTelemetry();
+          builder.AddDefaultHealthChecks();
+          builder.ConfigureResilience();
+          return builder;
+      }
+
+      public static IHostApplicationBuilder ConfigureOpenTelemetry(
+          this IHostApplicationBuilder builder)
+      {
+          // TODO: Configure OpenTelemetry logging
+          // builder.Logging.AddOpenTelemetry(logging => { ... });
+
+          // TODO: Configure metrics and tracing
+          // builder.Services.AddOpenTelemetry()
+          //     .WithMetrics(metrics => { ... })
+          //     .WithTracing(tracing => { ... });
+
+          return builder;
+      }
+
+      public static IHostApplicationBuilder AddDefaultHealthChecks(
+          this IHostApplicationBuilder builder)
+      {
+          // TODO: Register health checks
+          // - "self" check with tag ["live"]
+          // - "ready" check
+
+          return builder;
+      }
+
+      public static IHostApplicationBuilder ConfigureResilience(
+          this IHostApplicationBuilder builder)
+      {
+          // TODO: Configure HTTP client defaults with resilience and service discovery
+
+          return builder;
+      }
+  }
+solutionCode: |
+  using Microsoft.AspNetCore.Builder;
+  using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+  using Microsoft.Extensions.DependencyInjection;
+  using Microsoft.Extensions.Diagnostics.HealthChecks;
+  using Microsoft.Extensions.Hosting;
+  using Microsoft.Extensions.Logging;
+  using OpenTelemetry;
+  using OpenTelemetry.Metrics;
+  using OpenTelemetry.Trace;
+
+  public static class Extensions
+  {
+      public static IHostApplicationBuilder AddServiceDefaults(
+          this IHostApplicationBuilder builder)
+      {
+          builder.ConfigureOpenTelemetry();
+          builder.AddDefaultHealthChecks();
+          builder.ConfigureResilience();
+          return builder;
+      }
+
+      public static IHostApplicationBuilder ConfigureOpenTelemetry(
+          this IHostApplicationBuilder builder)
+      {
+          builder.Logging.AddOpenTelemetry(logging =>
+          {
+              logging.IncludeFormattedMessage = true;
+              logging.IncludeScopes = true;
+          });
+
+          builder.Services.AddOpenTelemetry()
+              .WithMetrics(metrics =>
+              {
+                  metrics.AddAspNetCoreInstrumentation()
+                      .AddHttpClientInstrumentation()
+                      .AddRuntimeInstrumentation();
+              })
+              .WithTracing(tracing =>
+              {
+                  tracing.AddSource("MyApp")
+                      .AddAspNetCoreInstrumentation()
+                      .AddHttpClientInstrumentation();
+              });
+
+          return builder;
+      }
+
+      public static IHostApplicationBuilder AddDefaultHealthChecks(
+          this IHostApplicationBuilder builder)
+      {
+          builder.Services.AddHealthChecks()
+              .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"])
+              .AddCheck("ready", () => HealthCheckResult.Healthy());
+
+          return builder;
+      }
+
+      public static IHostApplicationBuilder ConfigureResilience(
+          this IHostApplicationBuilder builder)
+      {
+          builder.Services.ConfigureHttpClientDefaults(http =>
+          {
+              http.AddStandardResilienceHandler();
+              http.AddServiceDiscovery();
+          });
+
+          return builder;
+      }
+  }
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile without errors"
+  - id: tc2
+    name: "Configures OpenTelemetry"
+    type: code-contains
+    expected: "AddOpenTelemetry"
+    description: "Code must call AddOpenTelemetry to configure telemetry"
+  - id: tc3
+    name: "Registers health checks"
+    type: code-contains
+    expected: "AddHealthChecks"
+    description: "Code must call AddHealthChecks to register health monitoring"
+  - id: tc4
+    name: "Adds standard resilience handler"
+    type: code-contains
+    expected: "AddStandardResilienceHandler"
+    description: "Code must add the standard HTTP resilience handler with retry, circuit breaker, and timeout"
+hints:
+  - "For OpenTelemetry, start with builder.Logging.AddOpenTelemetry(...) for logging, then builder.Services.AddOpenTelemetry().WithMetrics(...).WithTracing(...) for metrics and tracing"
+  - "For health checks, chain: builder.Services.AddHealthChecks().AddCheck(\"self\", () => HealthCheckResult.Healthy(), [\"live\"]).AddCheck(\"ready\", () => HealthCheckResult.Healthy())"
+  - "For resilience, use builder.Services.ConfigureHttpClientDefaults(http => { http.AddStandardResilienceHandler(); http.AddServiceDiscovery(); })"
+requiredPackages:
+  - "Microsoft.Extensions.Http.Resilience"
+  - "Microsoft.Extensions.ServiceDiscovery"
+  - "OpenTelemetry.Extensions.Hosting"
+  - "OpenTelemetry.Instrumentation.AspNetCore"
+  - "OpenTelemetry.Instrumentation.Http"
+  - "OpenTelemetry.Instrumentation.Runtime"
+sortOrder: 0

@@ -1,0 +1,80 @@
+instructions: |
+  # Boss Challenge: Build a Two-Service App
+
+  Create an Aspire AppHost that orchestrates two .NET projects: an API service and a Web frontend. The Web frontend should reference the API so it can discover and communicate with it.
+
+  **What to do:**
+  1. Add a project resource named `"api"` using `Projects.ApiService`
+  2. Add a project resource named `"web"` using `Projects.WebFrontend`
+  3. Use `WithReference(api)` on the web project so it knows how to reach the API
+  4. Call `builder.Build().Run()` to start everything
+
+  **What this achieves:**
+  - Aspire injects the API's URL into the Web frontend as configuration
+  - The Web frontend can use service discovery to call the API by name
+  - Both services appear in the Dashboard with their endpoints, logs, and traces
+
+  **Key concepts:**
+  - `AddProject<T>(name)` registers a .NET project as a resource
+  - `WithReference(resource)` creates a dependency — the caller receives the referenced resource's URL
+  - `Build().Run()` validates the resource graph, starts everything, and launches the Dashboard
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // Step 1: Add the API project resource named "api"
+  // TODO: var api = builder.AddProject<Projects.ApiService>("api");
+
+  // Step 2: Add the Web frontend project resource named "web"
+  //         and wire it to reference the API
+  // TODO: builder.AddProject<Projects.WebFrontend>("web")
+  //              .WithReference(???);
+
+  // Step 3: Build and run
+  builder.Build().Run();
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var api = builder.AddProject<Projects.ApiService>("api");
+
+  builder.AddProject<Projects.WebFrontend>("web")
+         .WithReference(api);
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: "Adds API project"
+    type: code-contains
+    expected: "AddProject"
+    description: "Code must use AddProject to register at least one project resource"
+  - id: tc2
+    name: "Names the API resource"
+    type: code-pattern
+    expected: "AddProject.*\\(.*\"api\".*\\)"
+    description: "Code must add a project resource named 'api'"
+  - id: tc3
+    name: "Adds web project"
+    type: code-pattern
+    expected: "AddProject.*\\(.*\"web\".*\\)"
+    description: "Code must include a project resource named 'web'"
+  - id: tc4
+    name: "Wires dependency with WithReference"
+    type: code-contains
+    expected: "WithReference"
+    description: "Code must use WithReference to create a dependency between the web frontend and the API"
+  - id: tc5
+    name: "Builds and runs"
+    type: code-contains
+    expected: "Build().Run()"
+    description: "Code must call Build().Run() to start the application"
+hints:
+  - "First, add the API project and store the result: var api = builder.AddProject<Projects.ApiService>(\"api\");"
+  - "Then add the Web project and chain WithReference: builder.AddProject<Projects.WebFrontend>(\"web\").WithReference(api);"
+  - "The order matters — you must define 'api' before you can pass it to WithReference on the web project"
+requiredPackages:
+  - "Aspire.Hosting"
+  - "Aspire.Hosting.AppHost"
+sortOrder: 0

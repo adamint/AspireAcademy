@@ -1,0 +1,70 @@
+questions:
+  - id: q1
+    text: "Which project type consumes client integration NuGet packages?"
+    options:
+      - id: a
+        text: "The AppHost project"
+      - id: b
+        text: "The service/worker project"
+      - id: c
+        text: "The test project only"
+      - id: d
+        text: "The shared defaults project"
+    correctOptionId: b
+    explanation: "Client integrations register SDK clients in service projects, not the AppHost. Hosting integrations (Aspire.Hosting.*) are used in the AppHost."
+
+  - id: q2
+    text: "What does AddKeyed{Component} enable?"
+    options:
+      - id: a
+        text: "Encrypted connections to the resource"
+      - id: b
+        text: "Multiple named instances of the same client type"
+      - id: c
+        text: "API key authentication for the resource"
+      - id: d
+        text: "Automatic key rotation for secrets"
+    correctOptionId: b
+    explanation: "AddKeyed{Component} uses .NET 8's keyed dependency injection to register multiple named instances of the same client type. Resolve them with [FromKeyedServices(\"name\")]."
+
+  - id: q3
+    text: "Which configuration source has the highest precedence in Aspire client integrations?"
+    options:
+      - id: a
+        text: "The Aspire:{Component} JSON section"
+      - id: b
+        text: "The ConnectionStrings:{name} entry"
+      - id: c
+        text: "The configureSettings inline delegate"
+      - id: d
+        text: "The named instance Aspire:{Component}:{name} section"
+    correctOptionId: c
+    explanation: "The configureSettings delegate runs last and overrides all other configuration sources, including JSON configuration and connection strings."
+
+  - id: q4
+    text: "What is the configuration key path for Npgsql settings?"
+    options:
+      - id: a
+        text: "Aspire:PostgreSQL:Npgsql"
+      - id: b
+        text: "Aspire:Npgsql"
+      - id: c
+        text: "Npgsql:Settings"
+      - id: d
+        text: "ConnectionStrings:Npgsql:Settings"
+    correctOptionId: b
+    explanation: "Npgsql settings are loaded from the Aspire:Npgsql configuration section. Each integration follows the pattern Aspire:{Technology}:{Component}."
+
+  - id: q5
+    text: "What happens when you set DisableHealthChecks = true in a settings class?"
+    options:
+      - id: a
+        text: "The connection string is ignored"
+      - id: b
+        text: "The integration does not register an IHealthCheck for that resource"
+      - id: c
+        text: "The health check runs but always returns healthy"
+      - id: d
+        text: "OpenTelemetry tracing is also disabled"
+    correctOptionId: b
+    explanation: "Setting DisableHealthChecks to true prevents the integration from registering an IHealthCheck. The resource still functions normally — it simply won't appear in health check probes."

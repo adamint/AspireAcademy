@@ -1,0 +1,108 @@
+instructions: |
+  # Boss Challenge: AI-Powered Secure Application
+
+  Build an AppHost for an AI-powered application combining identity management, vector search, language models, and structured logging.
+
+  **Architecture:**
+  - **Keycloak** for authentication with a pre-configured realm
+  - **Qdrant** for vector similarity search
+  - **OpenAI** for chat completions with a specific model
+  - **Seq** for centralized structured logging
+
+  **What to do:**
+  1. Add Keycloak named `"idp"` with `WithRealmImport("./realms")` and `WithDataVolume()`
+  2. Add Qdrant named `"vectors"` with `WithDataVolume()`
+  3. Add OpenAI named `"openai"` and add a model `"chat"` using `"gpt-4o"`
+  4. Add Seq named `"seq"` with `WithDataVolume()`
+  5. Add project `"ai-api"` referencing Keycloak, Qdrant, the OpenAI chat model, and Seq
+
+  **Key concepts:**
+  - OpenAI is a connection resource, not a container — reference the model, not the parent
+  - Keycloak realm import pre-configures clients, users, and roles
+  - Qdrant auto-generates an API key for authentication
+starterCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add Keycloak "idp" with realm import from "./realms" and data volume
+  // TODO: Add Qdrant "vectors" with data volume
+  // TODO: Add OpenAI "openai" with model "chat" using "gpt-4o"
+  // TODO: Add Seq "seq" with data volume
+  // TODO: Add "ai-api" referencing Keycloak, Qdrant, OpenAI chat model, and Seq
+
+  builder.Build().Run();
+solutionCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var keycloak = builder.AddKeycloak("idp")
+      .WithRealmImport("./realms")
+      .WithDataVolume();
+
+  var vectors = builder.AddQdrant("vectors")
+      .WithDataVolume();
+
+  var openai = builder.AddOpenAI("openai");
+  var chatModel = openai.AddModel("chat", "gpt-4o");
+
+  var seq = builder.AddSeq("seq")
+      .WithDataVolume();
+
+  builder.AddProject<Projects.AiApi>("ai-api")
+      .WithReference(keycloak)
+      .WithReference(vectors)
+      .WithReference(chatModel)
+      .WithReference(seq);
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: "Adds Keycloak"
+    type: code-contains
+    expected: 'AddKeycloak("idp")'
+    description: "Code must add a Keycloak resource named 'idp'"
+  - id: tc2
+    name: "Keycloak has realm import"
+    type: code-contains
+    expected: "WithRealmImport"
+    description: "Keycloak must have realm import configured"
+  - id: tc3
+    name: "Adds Qdrant"
+    type: code-contains
+    expected: 'AddQdrant("vectors")'
+    description: "Code must add a Qdrant resource named 'vectors'"
+  - id: tc4
+    name: "Adds OpenAI"
+    type: code-contains
+    expected: 'AddOpenAI("openai")'
+    description: "Code must add an OpenAI resource named 'openai'"
+  - id: tc5
+    name: "Adds OpenAI chat model"
+    type: code-contains
+    expected: 'AddModel("chat"'
+    description: "Code must add an OpenAI model named 'chat'"
+  - id: tc6
+    name: "Adds Seq"
+    type: code-contains
+    expected: 'AddSeq("seq")'
+    description: "Code must add a Seq resource named 'seq'"
+  - id: tc7
+    name: "Adds ai-api project"
+    type: code-pattern
+    expected: 'AddProject.*"ai-api"'
+    description: "Code must add a project resource named 'ai-api'"
+  - id: tc8
+    name: "AI API references all resources"
+    type: code-contains
+    expected: "WithReference"
+    description: "The ai-api project must reference all four resources"
+hints:
+  - "Keycloak realm: AddKeycloak(\"idp\").WithRealmImport(\"./realms\").WithDataVolume()"
+  - "OpenAI model: var chatModel = openai.AddModel(\"chat\", \"gpt-4o\") — reference chatModel, not openai"
+  - "Qdrant auto-generates an API key if you don't supply one"
+  - "Chain four WithReference calls on the ai-api project for all resources"
+requiredPackages:
+  - "Aspire.Hosting"
+  - "Aspire.Hosting.Keycloak"
+  - "Aspire.Hosting.Qdrant"
+  - "Aspire.Hosting.OpenAI"
+  - "Aspire.Hosting.Seq"
+sortOrder: 0

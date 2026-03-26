@@ -1,0 +1,84 @@
+instructions: |
+  Build an AppHost with multiple connection string patterns: standard hosting integration, custom-built, and external.
+
+  1. Add a PostgreSQL server with `AddPostgres` and a database `"orders"` (standard pattern).
+  2. Add a custom Cassandra container and create a custom connection string using `AddConnectionString` with `ReferenceExpression`.
+  3. Add an external connection string for a legacy SQL Server database `"legacy-sql"`.
+  4. Add an API project referencing all three connection strings.
+
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add PostgreSQL with database "orders" (standard hosting integration)
+
+  // TODO: Add Cassandra container with endpoint on target port 9042
+  // TODO: Create custom connection string "cassandra" using ReferenceExpression
+
+  // TODO: Add external connection string "legacy-sql"
+
+  // TODO: Add API project referencing all three
+
+  builder.Build().Run();
+
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var orders = builder.AddPostgres("pg").AddDatabase("orders");
+
+  var cassandraContainer = builder.AddContainer("cassandra-node", "cassandra:4")
+      .WithEndpoint(targetPort: 9042, scheme: "tcp", name: "cql");
+
+  var cassandraEndpoint = cassandraContainer.GetEndpoint("cql");
+  var cassandra = builder.AddConnectionString("cassandra",
+      ReferenceExpression.Create(
+          $"Contact Points={cassandraEndpoint.Property(EndpointProperty.Host)};Port={cassandraEndpoint.Property(EndpointProperty.Port)}"));
+
+  var legacySql = builder.AddConnectionString("legacy-sql");
+
+  builder.AddProject<Projects.ApiService>("api")
+      .WithReference(orders)
+      .WithReference(cassandra)
+      .WithReference(legacySql);
+
+  builder.Build().Run();
+
+testCases:
+  - id: tc1
+    name: "Code compiles"
+    type: compiles
+    expected: null
+    description: "The AppHost code must compile without errors."
+  - id: tc2
+    name: "Standard PostgreSQL"
+    type: contains
+    expected: "AddPostgres"
+    description: "Should use the PostgreSQL hosting integration."
+  - id: tc3
+    name: "Custom connection string"
+    type: contains
+    expected: "ReferenceExpression.Create"
+    description: "Cassandra connection string should be custom-built with ReferenceExpression."
+  - id: tc4
+    name: "External connection string"
+    type: contains
+    expected: 'AddConnectionString("legacy-sql")'
+    description: "Legacy SQL Server should use an external connection string."
+  - id: tc5
+    name: "All three referenced"
+    type: contains
+    expected: "WithReference"
+    description: "The API should reference all three connection string resources."
+
+hints:
+  - "`AddPostgres(\"pg\").AddDatabase(\"orders\")` provides a standard connection string."
+  - "For Cassandra, use `AddConnectionString(\"cassandra\", ReferenceExpression.Create(...))`."
+  - "`AddConnectionString(\"legacy-sql\")` reads from `ConnectionStrings:legacy-sql` in configuration."
+  - "Chain `.WithReference(orders).WithReference(cassandra).WithReference(legacySql)` on the API."
+
+requiredPackages:
+  - "Aspire.Hosting"
+  - "Aspire.Hosting.PostgreSQL"

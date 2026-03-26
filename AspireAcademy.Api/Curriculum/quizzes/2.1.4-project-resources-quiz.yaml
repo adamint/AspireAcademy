@@ -1,0 +1,76 @@
+questions:
+  - text: "What does the generic type parameter in `AddProject<T>()` represent?"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "The startup class of the project"
+        isCorrect: false
+      - id: b
+        text: "A generated class mapping to a project reference"
+        isCorrect: true
+      - id: c
+        text: "The DI container type"
+        isCorrect: false
+      - id: d
+        text: "The launch profile name"
+        isCorrect: false
+    explanation: "`T` refers to a class auto-generated in the `Projects` namespace from `ProjectReference` items in the AppHost `.csproj`. It implements `IProjectMetadata` and provides the path to the referenced project."
+
+  - text: "How do you prevent Aspire from using `launchSettings.json` for a project?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "Delete the launchSettings.json file"
+        isCorrect: false
+      - id: b
+        text: "Set `ExcludeLaunchProfile = true` in `ProjectResourceOptions`"
+        isCorrect: true
+      - id: c
+        text: "Set `ASPIRE_NO_LAUNCH=true` environment variable"
+        isCorrect: false
+      - id: d
+        text: "Call `WithLaunchProfile(null)`"
+        isCorrect: false
+    explanation: "Pass `options.ExcludeLaunchProfile = true` in the `AddProject` options callback to tell Aspire to ignore launch profiles entirely."
+
+  - text: "What does `WithReplicas(3)` do?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "Creates 3 copies of the source code"
+        isCorrect: false
+      - id: b
+        text: "Launches 3 instances behind load-balanced endpoints"
+        isCorrect: true
+      - id: c
+        text: "Retries failed startups 3 times"
+        isCorrect: false
+      - id: d
+        text: "Allocates 3 ports"
+        isCorrect: false
+    explanation: "`WithReplicas()` creates multiple process instances. Aspire's reverse proxy distributes incoming requests across all replicas."
+
+  - text: "Which method makes HTTP endpoints reachable from outside the Aspire environment?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "`WithEndpoint()`"
+        isCorrect: false
+      - id: b
+        text: "`WithExternalHttpEndpoints()`"
+        isCorrect: true
+      - id: c
+        text: "`WithPublicAccess()`"
+        isCorrect: false
+      - id: d
+        text: "`WithArgs(\"--urls\")`"
+        isCorrect: false
+    explanation: "`WithExternalHttpEndpoints()` marks all HTTP/HTTPS endpoints on the resource as externally accessible. They appear as clickable links in the dashboard."

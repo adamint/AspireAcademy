@@ -1,7 +1,7 @@
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -21,7 +21,12 @@ app.MapPost("/execute", async (ExecuteRequest request) =>
 
     try
     {
-        var result = await compilationService.ExecuteAsync(request.Code, request.Packages, timeout);
+        var result = await compilationService.ExecuteAsync(
+            request.Code,
+            request.Language ?? "csharp",
+            request.Packages,
+            request.StubProjects,
+            timeout);
         return Results.Ok(result);
     }
     catch (TimeoutException)
@@ -38,36 +43,56 @@ app.Run();
 
 // --- Models ---
 
-record ExecuteRequest(string Code, string[]? Packages, int? TimeoutSeconds);
+record ExecuteRequest(
+    string Code,
+    string? Language,
+    string[]? Packages,
+    string[]? StubProjects,
+    int? TimeoutSeconds);
+
 record ExecuteResponse(bool Success, string Output, string Error);
 
 // --- Compilation Service ---
 
-sealed class CompilationService(ILogger logger)
+sealed partial class CompilationService(ILogger logger)
 {
     private static readonly SemaphoreSlim s_semaphore = new(5, 5);
 
     private static readonly HashSet<string> s_allowedPackages = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Newtonsoft.Json",
-        "System.Text.Json",
-        "CsvHelper",
-        "Dapper",
-        "AutoMapper",
-        "FluentValidation",
-        "Humanizer",
-        "MediatR",
-        "Polly",
-        "Bogus",
-        "BenchmarkDotNet",
-        "xunit",
-        "FluentAssertions",
-        "Moq",
+        // Aspire hosting packages
+        "Aspire.Hosting",
+        "Aspire.Hosting.AppHost",
+        "Aspire.Hosting.PostgreSQL",
+        "Aspire.Hosting.SqlServer",
+        "Aspire.Hosting.MySql",
+        "Aspire.Hosting.MongoDB",
+        "Aspire.Hosting.Oracle",
+        "Aspire.Hosting.Redis",
+        "Aspire.Hosting.Garnet",
+        "Aspire.Hosting.Valkey",
+        "Aspire.Hosting.RabbitMQ",
+        "Aspire.Hosting.Kafka",
+        "Aspire.Hosting.Nats",
+        "Aspire.Hosting.Seq",
+        "Aspire.Hosting.Keycloak",
+        "Aspire.Hosting.Qdrant",
+        "Aspire.Hosting.Milvus",
+        "Aspire.Hosting.OpenAI",
+        "Aspire.Hosting.Orleans",
+        "Aspire.Hosting.Yarp",
+        "Aspire.Hosting.Python",
+        "Aspire.Hosting.JavaScript",
+        "Aspire.Hosting.Docker",
+        "Aspire.Hosting.Testing",
+        // Common .NET packages
         "Microsoft.Extensions.Logging.Abstractions",
         "Microsoft.Extensions.DependencyInjection",
+        "Microsoft.Extensions.Http.Resilience",
     };
 
-    public async Task<ExecuteResponse> ExecuteAsync(string code, string[]? packages, int timeoutSeconds)
+    public async Task<ExecuteResponse> ExecuteAsync(
+        string code, string language, string[]? packages, string[]? stubProjects, int timeoutSeconds)
     {
         if (!await s_semaphore.WaitAsync(TimeSpan.FromSeconds(10)))
         {
@@ -86,14 +111,26 @@ sealed class CompilationService(ILogger logger)
                 return new ExecuteResponse(false, "", validatedPackages.Error);
             }
 
-            WriteCsproj(tempDir, validatedPackages.Packages);
-            await File.WriteAllTextAsync(Path.Combine(tempDir, "Program.cs"), code);
+            if (language == "typescript")
+            {
+                return await ExecuteTypeScriptAsync(code, tempDir, timeoutSeconds);
+            }
+
+            // C# execution: scaffold Aspire workspace if needed
+            ScaffoldWorkspace(tempDir, code, validatedPackages.Packages, stubProjects);
 
             var buildResult = await RunProcessAsync("dotnet", "build -c Release --nologo -v q", tempDir, timeoutSeconds);
             if (buildResult.ExitCode != 0)
             {
                 var errors = ParseBuildErrors(buildResult.Output + buildResult.ErrorOutput);
                 return new ExecuteResponse(false, "", $"Build failed:\n{errors}");
+            }
+
+            // For AppHost code that calls Build().Run(), we don't actually run it
+            // (it would try to start DCP). Instead, successful compilation = success.
+            if (code.Contains("Build().Run()") || code.Contains("Build().RunAsync()"))
+            {
+                return new ExecuteResponse(true, "Build succeeded! AppHost code compiles correctly.", "");
             }
 
             var runResult = await RunProcessAsync("dotnet", "run -c Release --no-build --project .", tempDir, timeoutSeconds);
@@ -114,6 +151,127 @@ sealed class CompilationService(ILogger logger)
         }
     }
 
+    /// <summary>
+    /// Scaffolds a workspace that can compile AppHost code with Projects.X references.
+    /// Creates stub projects for each referenced project type so the generic type parameters resolve.
+    /// </summary>
+    private void ScaffoldWorkspace(string dir, string code, List<string> packages, string[]? stubProjects)
+    {
+        // Detect Projects.X references in the code
+        var projectRefs = stubProjects?.ToList() ?? [];
+        foreach (Match match in ProjectsRegex().Matches(code))
+        {
+            var name = match.Groups[1].Value;
+            if (!projectRefs.Contains(name))
+            {
+                projectRefs.Add(name);
+            }
+        }
+
+        if (projectRefs.Count > 0)
+        {
+            // Create stub projects so Projects.X types exist
+            foreach (var projName in projectRefs)
+            {
+                CreateStubProject(dir, projName);
+            }
+        }
+
+        // Write the AppHost csproj with Aspire SDK and project references
+        WriteAppHostCsproj(dir, packages, projectRefs);
+        File.WriteAllText(Path.Combine(dir, "Program.cs"), code);
+
+        // Write a Properties/launchSettings.json so Aspire doesn't complain
+        var propsDir = Path.Combine(dir, "Properties");
+        Directory.CreateDirectory(propsDir);
+        File.WriteAllText(Path.Combine(propsDir, "launchSettings.json"), """
+            {
+              "profiles": {
+                "http": {
+                  "commandName": "Project",
+                  "launchBrowser": false,
+                  "environmentVariables": {
+                    "ASPNETCORE_ENVIRONMENT": "Development"
+                  }
+                }
+              }
+            }
+            """);
+    }
+
+    private static void CreateStubProject(string workspaceDir, string projectName)
+    {
+        // Convert PascalCase to kebab for directory: ApiService → ApiService/
+        var projectDir = Path.Combine(workspaceDir, projectName);
+        Directory.CreateDirectory(projectDir);
+
+        // Minimal web project that compiles
+        File.WriteAllText(Path.Combine(projectDir, $"{projectName}.csproj"), """
+            <Project Sdk="Microsoft.NET.Sdk.Web">
+              <PropertyGroup>
+                <TargetFramework>net9.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        File.WriteAllText(Path.Combine(projectDir, "Program.cs"), """
+            var builder = WebApplication.CreateBuilder(args);
+            var app = builder.Build();
+            app.MapGet("/", () => "Hello");
+            app.Run();
+            """);
+    }
+
+    private static void WriteAppHostCsproj(string dir, List<string> packages, List<string> projectRefs)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <OutputType>Exe</OutputType>
+                <TargetFramework>net9.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+                <IsAspireHost>true</IsAspireHost>
+              </PropertyGroup>
+            """);
+
+        // Always include Aspire.Hosting
+        var allPackages = new HashSet<string>(packages, StringComparer.OrdinalIgnoreCase) { "Aspire.Hosting.AppHost" };
+
+        sb.AppendLine("  <ItemGroup>");
+        foreach (var pkg in allPackages)
+        {
+            sb.AppendLine($"    <PackageReference Include=\"{pkg}\" Version=\"9.*\" />");
+        }
+        sb.AppendLine("  </ItemGroup>");
+
+        if (projectRefs.Count > 0)
+        {
+            sb.AppendLine("  <ItemGroup>");
+            foreach (var proj in projectRefs)
+            {
+                sb.AppendLine($"    <ProjectReference Include=\"{proj}/{proj}.csproj\" />");
+            }
+            sb.AppendLine("  </ItemGroup>");
+        }
+
+        sb.AppendLine("</Project>");
+        File.WriteAllText(Path.Combine(dir, "UserCode.csproj"), sb.ToString());
+    }
+
+    private async Task<ExecuteResponse> ExecuteTypeScriptAsync(string code, string tempDir, int timeoutSeconds)
+    {
+        await File.WriteAllTextAsync(Path.Combine(tempDir, "main.ts"), code);
+        var result = await RunProcessAsync("npx", "ts-node main.ts", tempDir, timeoutSeconds);
+        return new ExecuteResponse(
+            result.ExitCode == 0,
+            TruncateOutput(result.Output),
+            TruncateOutput(result.ErrorOutput));
+    }
+
     private (List<string> Packages, string? Error) ValidatePackages(string[]? packages)
     {
         if (packages is null or { Length: 0 })
@@ -132,33 +290,6 @@ sealed class CompilationService(ILogger logger)
         }
 
         return (validated, null);
-    }
-
-    private static void WriteCsproj(string dir, List<string> packages)
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine("""
-            <Project Sdk="Microsoft.NET.Sdk">
-              <PropertyGroup>
-                <OutputType>Exe</OutputType>
-                <TargetFramework>net9.0</TargetFramework>
-                <ImplicitUsings>enable</ImplicitUsings>
-                <Nullable>enable</Nullable>
-              </PropertyGroup>
-            """);
-
-        if (packages.Count > 0)
-        {
-            sb.AppendLine("  <ItemGroup>");
-            foreach (var pkg in packages)
-            {
-                sb.AppendLine($"    <PackageReference Include=\"{pkg}\" Version=\"*\" />");
-            }
-            sb.AppendLine("  </ItemGroup>");
-        }
-
-        sb.AppendLine("</Project>");
-        File.WriteAllText(Path.Combine(dir, "UserCode.csproj"), sb.ToString());
     }
 
     private async Task<ProcessResult> RunProcessAsync(string fileName, string arguments, string workingDir, int timeoutSeconds)
@@ -213,12 +344,7 @@ sealed class CompilationService(ILogger logger)
 
     private static string TruncateOutput(string output, int maxLength = 10_000)
     {
-        if (output.Length <= maxLength)
-        {
-            return output;
-        }
-
-        return output[..maxLength] + "\n... (output truncated)";
+        return output.Length <= maxLength ? output : output[..maxLength] + "\n... (output truncated)";
     }
 
     private void CleanupDirectory(string dir)
@@ -235,6 +361,9 @@ sealed class CompilationService(ILogger logger)
             logger.LogWarning(ex, "Failed to clean up temp directory: {Dir}", dir);
         }
     }
+
+    [GeneratedRegex(@"Projects\.(\w+)")]
+    private static partial Regex ProjectsRegex();
 }
 
 record ProcessResult(int ExitCode, string Output, string ErrorOutput);

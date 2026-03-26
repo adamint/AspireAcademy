@@ -1,0 +1,70 @@
+questions:
+  - id: q1
+    text: "What protocol does the Aspire dashboard use to receive telemetry data from application services?"
+    options:
+      - id: a
+        text: "HTTP REST with JSON payloads"
+      - id: b
+        text: "OTLP over gRPC"
+      - id: c
+        text: "WebSocket with binary frames"
+      - id: d
+        text: "TCP with custom binary protocol"
+    correctOptionId: b
+    explanation: "The dashboard receives all three telemetry pillars (traces, metrics, logs) via the OpenTelemetry Protocol (OTLP) over gRPC. The OTLP endpoint is configured automatically by the AppHost through the OTEL_EXPORTER_OTLP_ENDPOINT environment variable."
+
+  - id: q2
+    text: "How does the Aspire dashboard store telemetry data?"
+    options:
+      - id: a
+        text: "In a SQLite database on disk"
+      - id: b
+        text: "In Azure Application Insights"
+      - id: c
+        text: "In circular in-memory buffers"
+      - id: d
+        text: "In Redis as a shared cache"
+    correctOptionId: c
+    explanation: "The TelemetryRepository stores all telemetry in circular in-memory buffers with fixed capacity. When buffers are full, the oldest entries are evicted. This keeps the dashboard lightweight and fast but means data is not persisted across restarts."
+
+  - id: q3
+    text: "How do you navigate from a log entry to its associated distributed trace in the dashboard?"
+    options:
+      - id: a
+        text: "Copy the timestamp and search in the Traces view"
+      - id: b
+        text: "Right-click the log entry and select 'View Trace'"
+      - id: c
+        text: "Click the TraceId link on the log entry"
+      - id: d
+        text: "Switch to the Traces tab and filter by resource name"
+    correctOptionId: c
+    explanation: "When a log entry is emitted inside an Activity (span), the TraceId is automatically attached. The dashboard renders this as a clickable link that navigates directly to the full distributed trace in the Traces view."
+
+  - id: q4
+    text: "What does a red-colored span indicate in the Traces waterfall diagram?"
+    options:
+      - id: a
+        text: "The span exceeded a duration threshold"
+      - id: b
+        text: "The span has an error status"
+      - id: c
+        text: "The span belongs to an external service"
+      - id: d
+        text: "The span is a database operation"
+    correctOptionId: b
+    explanation: "Red spans in the waterfall diagram indicate that the span completed with an error status. This makes it easy to visually identify failures across the entire distributed call chain, regardless of which service encountered the error."
+
+  - id: q5
+    text: "What do the edges (arrows) in the Resource Graph represent?"
+    options:
+      - id: a
+        text: "HTTP requests between services"
+      - id: b
+        text: "Data flow direction at runtime"
+      - id: c
+        text: "WithReference() relationships defined in the AppHost"
+      - id: d
+        text: "Network connections between containers"
+    correctOptionId: c
+    explanation: "Resource Graph edges represent the WithReference() relationships declared in the AppHost code. An edge from service A to resource B means the AppHost called .WithReference(B) on service A's builder, indicating a declared dependency."

@@ -1,0 +1,58 @@
+title: "Module 6.1 Boss Quiz — Eventing System"
+module: "6.1"
+passing_score: 80
+questions:
+  - id: "6.1-q1"
+    question: "Which event fires after all resources have been instantiated but before they fully start running?"
+    type: multiple_choice
+    options:
+      - "BeforeStartEvent"
+      - "AfterResourcesCreatedEvent"
+      - "ResourceReadyEvent"
+      - "BeforeResourceStartedEvent"
+    correct_answer: "AfterResourcesCreatedEvent"
+    explanation: "AfterResourcesCreatedEvent fires after all resources are created and added to the model, but before they begin their startup process. BeforeStartEvent fires even earlier — before any resources are created."
+
+  - id: "6.1-q2"
+    question: "Which EventDispatchBehavior should you use when Handler B depends on the result of Handler A?"
+    type: multiple_choice
+    options:
+      - "NonBlockingConcurrent"
+      - "BlockingConcurrent"
+      - "BlockingSequential"
+      - "NonBlockingSequential"
+    correct_answer: "BlockingSequential"
+    explanation: "BlockingSequential executes handlers one at a time in subscription order and awaits each, ensuring Handler A completes before Handler B begins."
+
+  - id: "6.1-q3"
+    question: "Which convenience extension method should you call to run logic before a resource starts?"
+    type: multiple_choice
+    options:
+      - "OnResourceReady<T>()"
+      - "OnBeforeResourceStarted<T>()"
+      - "OnConnectionStringAvailable<T>()"
+      - "OnResourceStopped<T>()"
+    correct_answer: "OnBeforeResourceStarted<T>()"
+    explanation: "OnBeforeResourceStarted<T>() is the convenience wrapper around subscribing to BeforeResourceStartedEvent for a specific resource. It's ideal for database seeding and migrations."
+
+  - id: "6.1-q4"
+    question: "What kind of event is BeforeStartEvent?"
+    type: multiple_choice
+    options:
+      - "A resource-scoped event"
+      - "A container lifecycle event"
+      - "A global lifecycle event"
+      - "A health check event"
+    correct_answer: "A global lifecycle event"
+    explanation: "BeforeStartEvent is a global lifecycle event that fires once for the entire application before orchestration begins. It is not scoped to any individual resource."
+
+  - id: "6.1-q5"
+    question: "Which interface allows structured, reusable lifecycle participation as a registered service?"
+    type: multiple_choice
+    options:
+      - "IDistributedApplicationEventing"
+      - "IResourceWithConnectionString"
+      - "IDistributedApplicationLifecycleHook"
+      - "IResourceAnnotation"
+    correct_answer: "IDistributedApplicationLifecycleHook"
+    explanation: "IDistributedApplicationLifecycleHook defines methods like BeforeStartAsync and AfterResourcesCreatedAsync. Implementations are registered via builder.Services.AddLifecycleHook<T>() for structured lifecycle participation."

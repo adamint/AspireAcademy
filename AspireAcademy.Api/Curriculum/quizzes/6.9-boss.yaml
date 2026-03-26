@@ -1,0 +1,58 @@
+title: "Module 6.9 Boss — Polyglot & Container Runtime"
+description: "Test your understanding of container runtime abstraction, polyglot support, and the manifest publishing pipeline."
+passingScore: 80
+questions:
+  - id: "6.9.1"
+    question: "What interface abstracts Docker and Podman so Aspire can work with either container runtime?"
+    type: "multiple_choice"
+    options:
+      - "IDockerClient"
+      - "IContainerRuntime"
+      - "IContainerEngine"
+      - "IDcpRuntime"
+    correctAnswer: "IContainerRuntime"
+    explanation: "IContainerRuntime (src/Aspire.Hosting/Publishing/IContainerRuntime.cs) defines Name, CheckIfRunningAsync(), BuildImageAsync(), PushImageAsync(), and other operations that both Docker and Podman implementations provide."
+
+  - id: "6.9.2"
+    question: "When ManifestPublisher serializes the app model to JSON, what does ManifestPublishingContext provide to resource types for writing their representation?"
+    type: "multiple_choice"
+    options:
+      - "JsonSerializer with custom converters"
+      - "Utf8JsonWriter"
+      - "StringBuilder with JSON formatting"
+      - "System.Text.Json.JsonDocument"
+    correctAnswer: "Utf8JsonWriter"
+    explanation: "ManifestPublishingContext (src/Aspire.Hosting/Publishing/ManifestPublishingContext.cs) provides a Utf8JsonWriter that each resource type uses to serialize its manifest representation including type, bindings, environment variables, and connection strings."
+
+  - id: "6.9.3"
+    question: "How do containers in an Aspire application discover and communicate with each other by name (e.g., a Redis container connecting to Postgres)?"
+    type: "multiple_choice"
+    options:
+      - "Service discovery via Consul"
+      - "Environment variables with IP addresses"
+      - "DNS aliases on shared Docker networks"
+      - "Kubernetes DNS resolution"
+    correctAnswer: "DNS aliases on shared Docker networks"
+    explanation: "DcpExecutor places all containers on a shared Docker network and configures DNS aliases. A container named 'postgres' is reachable at hostname 'postgres' from other containers, enabling name-based service discovery without external tools."
+
+  - id: "6.9.4"
+    question: "What command triggers code generation for non-.NET languages to produce typed SDK clients from the Aspire app model?"
+    type: "multiple_choice"
+    options:
+      - "dotnet aspire publish"
+      - "aspire generate"
+      - "dotnet run --publisher codegen"
+      - "aspire manifest --generate-clients"
+    correctAnswer: "aspire generate"
+    explanation: "The 'aspire generate' command serializes the app model to a JSON intermediate representation and invokes language-specific generators that produce typed configuration and client code for TypeScript, Python, Go, and Java."
+
+  - id: "6.9.5"
+    question: "In which directory within the Aspire source code is IContainerRuntime defined?"
+    type: "multiple_choice"
+    options:
+      - "src/Aspire.Hosting/Dcp/"
+      - "src/Aspire.Hosting/Publishing/"
+      - "src/Aspire.Hosting/ApplicationModel/"
+      - "src/Aspire.Hosting/ContainerRuntime/"
+    correctAnswer: "src/Aspire.Hosting/Publishing/"
+    explanation: "IContainerRuntime is defined at src/Aspire.Hosting/Publishing/IContainerRuntime.cs, alongside ManifestPublisher and ManifestPublishingContext, as container operations are part of the publishing and deployment infrastructure."

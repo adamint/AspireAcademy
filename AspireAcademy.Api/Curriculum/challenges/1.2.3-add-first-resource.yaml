@@ -1,0 +1,58 @@
+instructions: |
+  # Add Your First Project Resource
+
+  You have an empty AppHost with a builder already created. Your task is to register a .NET project as a resource.
+
+  **What to do:**
+  1. Use `AddProject<T>()` to add a project resource named `"api"` to the builder
+  2. The generic type parameter should be `Projects.ApiService`
+  3. Store the result in a variable named `api`
+
+  **Key concepts:**
+  - `AddProject<T>(name)` registers a .NET project as a resource
+  - The string parameter is the resource's logical name (used in the Dashboard, logs, and service discovery)
+  - The generic parameter `T` is an auto-generated type that points to the project's .csproj file
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add a project resource named "api" using Projects.ApiService
+
+  builder.Build().Run();
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var api = builder.AddProject<Projects.ApiService>("api");
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: "Uses AddProject"
+    type: code-contains
+    expected: "AddProject"
+    description: "Code must use the AddProject method to register a project resource"
+  - id: tc2
+    name: "Uses Projects.ApiService type parameter"
+    type: code-contains
+    expected: "Projects.ApiService"
+    description: "Code must use Projects.ApiService as the generic type parameter"
+  - id: tc3
+    name: "Names the resource 'api'"
+    type: code-contains
+    expected: '"api"'
+    description: "The resource must be named 'api'"
+  - id: tc4
+    name: "Stores result in a variable"
+    type: code-pattern
+    expected: 'var\s+\w+\s*=\s*builder\.AddProject'
+    description: "The result of AddProject must be stored in a variable"
+hints:
+  - "Call AddProject<T>() on the builder object, passing the resource name as a string argument"
+  - "The full syntax is: var api = builder.AddProject<Projects.ApiService>(\"api\");"
+requiredPackages:
+  - "Aspire.Hosting"
+  - "Aspire.Hosting.AppHost"
+sortOrder: 0

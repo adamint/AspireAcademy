@@ -1,0 +1,102 @@
+instructions: |
+  Build a complete AppHost with composed connection strings, endpoint references, and conditional environment variables.
+
+  1. Add a PostgreSQL container with a secret password parameter.
+  2. Add a Redis container with an HTTP endpoint on target port 6379.
+  3. Define a secret parameter for a third-party API key.
+  4. Add an API project.
+  5. Use a `WithEnvironment` callback to conditionally set `LOG_LEVEL` based on `IsRunMode`.
+  6. Compose `DATABASE_URL` using `ReferenceExpression.Create()` with the PostgreSQL endpoint host, port, and password.
+  7. Set `REDIS_URL` from the Redis endpoint reference.
+  8. Set `EXTERNAL_API_KEY` from the API key parameter.
+
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add secret password parameter
+
+  // TODO: Add PostgreSQL container with POSTGRES_PASSWORD from parameter
+  //       and endpoint on target port 5432
+
+  // TODO: Add Redis container with endpoint on target port 6379
+
+  // TODO: Add secret API key parameter
+
+  // TODO: Add API project with:
+  //   - Conditional LOG_LEVEL via callback (Debug for run mode, Warning for publish)
+  //   - DATABASE_URL composed from postgres endpoint + password
+  //   - REDIS_URL from redis endpoint
+  //   - EXTERNAL_API_KEY from parameter
+
+  builder.Build().Run();
+
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var pgPassword = builder.AddParameter("pg-password", secret: true);
+
+  var postgres = builder.AddContainer("postgres", "postgres:16")
+      .WithEnvironment("POSTGRES_PASSWORD", pgPassword)
+      .WithEndpoint(targetPort: 5432, scheme: "tcp", name: "tcp");
+
+  var redis = builder.AddContainer("redis", "redis:7")
+      .WithEndpoint(targetPort: 6379, scheme: "tcp", name: "redis");
+
+  var externalApiKey = builder.AddParameter("external-api-key", secret: true);
+
+  var pgEndpoint = postgres.GetEndpoint("tcp");
+  var redisEndpoint = redis.GetEndpoint("redis");
+
+  builder.AddProject<Projects.ApiService>("api")
+      .WithEnvironment(context =>
+      {
+          context.EnvironmentVariables["LOG_LEVEL"] = builder.ExecutionContext.IsRunMode
+              ? "Debug"
+              : "Warning";
+      })
+      .WithEnvironment("DATABASE_URL", ReferenceExpression.Create(
+          $"Host={pgEndpoint.Property(EndpointProperty.Host)};Port={pgEndpoint.Property(EndpointProperty.Port)};Password={pgPassword}"))
+      .WithEnvironment("REDIS_URL", redisEndpoint)
+      .WithEnvironment("EXTERNAL_API_KEY", externalApiKey);
+
+  builder.Build().Run();
+
+testCases:
+  - id: tc1
+    name: "Code compiles"
+    type: compiles
+    expected: null
+    description: "The AppHost code must compile without errors."
+  - id: tc2
+    name: "Uses callback for LOG_LEVEL"
+    type: contains
+    expected: "IsRunMode"
+    description: "LOG_LEVEL should be conditionally set using execution context."
+  - id: tc3
+    name: "DATABASE_URL composed"
+    type: contains
+    expected: "ReferenceExpression.Create"
+    description: "DATABASE_URL should be composed using ReferenceExpression."
+  - id: tc4
+    name: "REDIS_URL from endpoint"
+    type: contains
+    expected: 'WithEnvironment("REDIS_URL"'
+    description: "REDIS_URL should come from the Redis endpoint reference."
+  - id: tc5
+    name: "API key from parameter"
+    type: contains
+    expected: 'WithEnvironment("EXTERNAL_API_KEY"'
+    description: "EXTERNAL_API_KEY should come from the parameter."
+
+hints:
+  - "Use the `WithEnvironment(context => { ... })` callback for conditional logic."
+  - "`builder.ExecutionContext.IsRunMode` is true during local development."
+  - "Compose DATABASE_URL: `ReferenceExpression.Create($\"Host={endpoint.Property(EndpointProperty.Host)};...\")`."
+  - "Pass endpoint references and parameters directly to `WithEnvironment()`."
+
+requiredPackages:
+  - "Aspire.Hosting"

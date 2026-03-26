@@ -1,0 +1,80 @@
+instructions: |
+  Build an AppHost with a Redis container, a custom Dockerfile sidecar, and an API project.
+
+  1. Add a Redis container named `"cache"` with image `redis:7`.
+  2. Attach a named volume `"redis-data"` mounted at `/data`.
+  3. Set Redis to `ContainerLifetime.Persistent`.
+  4. Add a custom sidecar container built from `"./sidecar"` with build arg `VERSION` = `"1.0"`.
+  5. Add an API project referencing both Redis and the sidecar.
+  6. Expose the API with external HTTP endpoints.
+
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add Redis container "cache" with image redis:7
+  // TODO: Add volume "redis-data" at "/data"
+  // TODO: Set lifetime to Persistent
+
+  // TODO: Add sidecar container built from "./sidecar" with build arg VERSION=1.0
+
+  // TODO: Add API project referencing cache and sidecar, with external endpoints
+
+  builder.Build().Run();
+
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var cache = builder.AddContainer("cache", "redis:7")
+      .WithVolume("redis-data", "/data")
+      .WithLifetime(ContainerLifetime.Persistent);
+
+  var sidecar = builder.AddContainer("sidecar", "sidecar-image")
+      .WithDockerfile("./sidecar")
+      .WithBuildArg("VERSION", "1.0");
+
+  var api = builder.AddProject<Projects.ApiService>("api")
+      .WithReference(cache)
+      .WithReference(sidecar)
+      .WithExternalHttpEndpoints();
+
+  builder.Build().Run();
+
+testCases:
+  - id: tc1
+    name: "Code compiles"
+    type: compiles
+    expected: null
+    description: "The AppHost code must compile without errors."
+  - id: tc2
+    name: "Redis has persistent lifetime"
+    type: contains
+    expected: "ContainerLifetime.Persistent"
+    description: "Redis container should use persistent lifetime."
+  - id: tc3
+    name: "Redis has volume"
+    type: contains
+    expected: 'WithVolume("redis-data", "/data")'
+    description: "Redis should have a named volume mounted at /data."
+  - id: tc4
+    name: "Sidecar uses Dockerfile"
+    type: contains
+    expected: 'WithDockerfile("./sidecar")'
+    description: "The sidecar should be built from a Dockerfile."
+  - id: tc5
+    name: "Sidecar has build arg"
+    type: contains
+    expected: 'WithBuildArg("VERSION", "1.0")'
+    description: "The sidecar should have a VERSION build argument."
+
+hints:
+  - "`builder.AddContainer(\"cache\", \"redis:7\")` creates a Redis container resource."
+  - "Chain `.WithVolume(\"redis-data\", \"/data\")` to mount a named volume."
+  - "Use `.WithLifetime(ContainerLifetime.Persistent)` for persistent containers."
+  - "`WithDockerfile(\"./sidecar\")` builds an image from the sidecar directory."
+
+requiredPackages:
+  - "Aspire.Hosting"

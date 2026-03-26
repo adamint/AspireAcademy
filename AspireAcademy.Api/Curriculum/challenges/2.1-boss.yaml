@@ -1,0 +1,76 @@
+instructions: |
+  Create an AppHost with three project references: an API, a Worker, and a Frontend.
+
+  1. Add the API project with `AddProject<T>()` and make its endpoints externally accessible.
+  2. Add the Worker project with `WithArgs("--mode", "background")` and `WithReplicas(2)`.
+  3. Add the Frontend project using a specific launch profile named `"development"`.
+  4. Wire the Frontend and Worker to reference the API using `WithReference()`.
+
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add API project with external HTTP endpoints
+
+  // TODO: Add Worker project with args "--mode", "background" and 2 replicas
+
+  // TODO: Add Frontend project with launch profile "development"
+
+  // TODO: Wire Frontend and Worker to reference the API
+
+  builder.Build().Run();
+
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var api = builder.AddProject<Projects.ApiService>("api")
+      .WithExternalHttpEndpoints();
+
+  var worker = builder.AddProject<Projects.Worker>("worker")
+      .WithArgs("--mode", "background")
+      .WithReplicas(2)
+      .WithReference(api);
+
+  var frontend = builder.AddProject<Projects.Frontend>("frontend", launchProfileName: "development")
+      .WithReference(api);
+
+  builder.Build().Run();
+
+testCases:
+  - id: tc1
+    name: "Code compiles"
+    type: compiles
+    expected: null
+    description: "The AppHost code must compile without errors."
+  - id: tc2
+    name: "API has external endpoints"
+    type: contains
+    expected: "WithExternalHttpEndpoints"
+    description: "The API resource should have external HTTP endpoints."
+  - id: tc3
+    name: "Worker has replicas"
+    type: contains
+    expected: "WithReplicas(2)"
+    description: "The Worker should be configured with 2 replicas."
+  - id: tc4
+    name: "Worker has args"
+    type: contains
+    expected: 'WithArgs("--mode", "background")'
+    description: "The Worker should receive --mode background arguments."
+  - id: tc5
+    name: "Frontend references API"
+    type: contains
+    expected: "WithReference(api)"
+    description: "The Frontend should reference the API for service discovery."
+
+hints:
+  - "Use `builder.AddProject<Projects.ApiService>(\"api\")` to add the API project."
+  - "`WithExternalHttpEndpoints()` marks all HTTP endpoints as externally accessible."
+  - "`WithReplicas(2)` creates two load-balanced instances of the Worker."
+  - "Pass the launch profile name as the second argument: `AddProject<T>(\"name\", launchProfileName: \"development\")`."
+
+requiredPackages:
+  - "Aspire.Hosting"

@@ -1,0 +1,60 @@
+title: "Boss Challenge — Feature Flag Service Integration"
+module: "6.2"
+difficulty: advanced
+estimated_time_minutes: 45
+description: >
+  Build a complete Aspire hosting integration for a feature flag service,
+  including a custom resource class, dashboard command, health check, icon,
+  and background state monitor.
+
+starter_code: |
+  using Aspire.Hosting;
+  using Aspire.Hosting.ApplicationModel;
+  using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+  // TODO: Create FeatureFlagResource class
+  //   - Inherit from Resource
+  //   - Implement IResourceWithConnectionString
+  //   - Expose an EndpointReference named "http"
+  //   - Implement ConnectionStringExpression using ReferenceExpression.Create()
+
+  // TODO: Create FeatureFlagExtensions static class
+  //   - AddFeatureFlags(builder, name) method
+  //   - Register resource with HTTP endpoint
+  //   - Attach ResourceIconAnnotation("Flag", IconVariant.Filled)
+  //   - Wire health check "feature-flags-health"
+  //   - Add "reset-flags" ResourceCommandAnnotation with confirmation
+
+  // TODO: Create FlagServiceMonitor BackgroundService
+  //   - Inject ResourceNotificationService and FeatureFlagResource
+  //   - Poll every 10 seconds
+  //   - PublishUpdateAsync with State and version property
+
+tests:
+  - name: "Resource implements IResourceWithConnectionString"
+    assertion: "FeatureFlagResource should implement IResourceWithConnectionString"
+    validate: "typeof(IResourceWithConnectionString).IsAssignableFrom(typeof(FeatureFlagResource))"
+
+  - name: "AddFeatureFlags registers resource"
+    assertion: "Calling AddFeatureFlags should add a FeatureFlagResource to the model"
+    validate: "builder.Resources.OfType<FeatureFlagResource>().Any()"
+
+  - name: "Resource has icon annotation"
+    assertion: "Resource should have ResourceIconAnnotation with 'Flag' icon"
+    validate: "resource.TryGetAnnotationsOfType<ResourceIconAnnotation>(out var icons) && icons.Any(i => i.IconName == 'Flag')"
+
+  - name: "Resource has command annotation"
+    assertion: "Resource should have a 'reset-flags' command"
+    validate: "resource.TryGetAnnotationsOfType<ResourceCommandAnnotation>(out var cmds) && cmds.Any(c => c.Name == 'reset-flags')"
+
+  - name: "WithReference works"
+    assertion: "Other resources should be able to use WithReference with the feature flag resource"
+    validate: "builder.AddProject<Projects.MyService>().WithReference(flags) compiles and resolves connection string"
+
+hints:
+  - "Start with the resource class — get IResourceWithConnectionString working first"
+  - "Use `new EndpointReference(this, \"http\")` for the endpoint property"
+  - "ConnectionStringExpression should use ReferenceExpression.Create($\"{Endpoint.Property(EndpointProperty.Url)}\")"
+  - "Register health checks with builder.Services.AddHealthChecks().AddCheck(...)"
+  - "For the background monitor, inject ResourceNotificationService via constructor"
+  - "Use `snapshot with { State = new(\"Running\", KnownResourceStateStyles.Success) }` for updates"

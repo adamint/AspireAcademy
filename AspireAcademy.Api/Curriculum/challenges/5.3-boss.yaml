@@ -1,0 +1,26 @@
+title: "Cached API with Message Bus"
+description: "Build an API with Redis distributed caching and RabbitMQ event publishing."
+starterCode: |
+  var builder = WebApplication.CreateBuilder(args);
+  // TODO: Register Redis distributed cache for "cache"
+  // TODO: Register RabbitMQ client for "messaging"
+  var app = builder.Build();
+  app.MapGet("/products/{id}", async (string id, IDistributedCache cache) =>
+  {
+      // TODO: Try cache first, then fallback
+  });
+  app.MapPost("/products/{id}/restock", async (string id, int qty, IConnection rmq) =>
+  {
+      // TODO: Update and publish event to "inventory.restocked"
+  });
+  app.Run();
+tests:
+  - description: "IDistributedCache resolves successfully"
+  - description: "IConnection (RabbitMQ) resolves successfully"
+  - description: "Cache miss falls through to data source"
+  - description: "Restock publishes message to correct exchange"
+hints:
+  - "Use AddRedisDistributedCache(\"cache\")"
+  - "Use AddRabbitMQClient(\"messaging\")"
+  - "Serialize with JsonSerializer for cache entries"
+  - "Create a channel from IConnection to publish messages"

@@ -1,0 +1,95 @@
+instructions: |
+  # Health Checks: /health and /alive
+
+  ServiceDefaults sets up health check endpoints that the Aspire Dashboard monitors. In this challenge, you'll add a custom health check to the default configuration.
+
+  **What to do:**
+  1. In `AddDefaultHealthChecks`, add a custom health check named `"database"` using `AddCheck`
+  2. The check should return `HealthCheckResult.Healthy()` (simulating a passing DB check)
+  3. In `MapDefaultEndpoints`, map `/health` for all health checks and `/alive` for liveness checks tagged `"live"`
+
+  **Key concepts:**
+  - `AddHealthChecks()` registers the health check system
+  - `AddCheck(name, check, tags)` registers a named check
+  - `MapHealthChecks(path)` exposes an HTTP endpoint
+  - The `"live"` tag distinguishes liveness checks from readiness checks
+starterCode: |
+  using Microsoft.AspNetCore.Builder;
+  using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+  using Microsoft.Extensions.DependencyInjection;
+  using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+  public static class Extensions
+  {
+      public static IHostApplicationBuilder AddDefaultHealthChecks(
+          this IHostApplicationBuilder builder)
+      {
+          // TODO: Register health checks
+          // 1. Call builder.Services.AddHealthChecks()
+          // 2. Chain .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"])
+          // 3. Chain .AddCheck("database", () => HealthCheckResult.Healthy())
+
+          return builder;
+      }
+
+      public static WebApplication MapDefaultEndpoints(this WebApplication app)
+      {
+          // TODO: Map health check endpoints
+          // 1. Map "/health" for all health checks
+          // 2. Map "/alive" for checks tagged "live" only
+
+          return app;
+      }
+  }
+solutionCode: |
+  using Microsoft.AspNetCore.Builder;
+  using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+  using Microsoft.Extensions.DependencyInjection;
+  using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+  public static class Extensions
+  {
+      public static IHostApplicationBuilder AddDefaultHealthChecks(
+          this IHostApplicationBuilder builder)
+      {
+          builder.Services.AddHealthChecks()
+              .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"])
+              .AddCheck("database", () => HealthCheckResult.Healthy());
+
+          return builder;
+      }
+
+      public static WebApplication MapDefaultEndpoints(this WebApplication app)
+      {
+          app.MapHealthChecks("/health");
+          app.MapHealthChecks("/alive", new HealthCheckOptions
+          {
+              Predicate = r => r.Tags.Contains("live")
+          });
+
+          return app;
+      }
+  }
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile without errors"
+  - id: tc2
+    name: "Registers health checks"
+    type: code-contains
+    expected: "AddHealthChecks"
+    description: "Code must call AddHealthChecks() to register the health check system"
+  - id: tc3
+    name: "Maps health endpoints"
+    type: code-contains
+    expected: "MapHealthChecks"
+    description: "Code must call MapHealthChecks to expose health check HTTP endpoints"
+hints:
+  - "Start with builder.Services.AddHealthChecks() — this returns an IHealthChecksBuilder that you chain .AddCheck() calls on"
+  - "For the /alive endpoint, use: app.MapHealthChecks(\"/alive\", new HealthCheckOptions { Predicate = r => r.Tags.Contains(\"live\") })"
+requiredPackages:
+  - "Microsoft.AspNetCore.Diagnostics.HealthChecks"
+  - "Microsoft.Extensions.Diagnostics.HealthChecks"
+sortOrder: 0

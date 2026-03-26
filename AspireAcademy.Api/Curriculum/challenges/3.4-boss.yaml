@@ -1,0 +1,98 @@
+instructions: |
+  Build a 3-service application using HTTP service discovery and RabbitMQ message queue communication.
+
+  1. Add RabbitMQ named `"messaging"` and PostgreSQL with database `"orders"`.
+  2. Add a `"webfrontend"` project that references `"apiservice"` for HTTP calls.
+  3. Add an `"apiservice"` project that references the orders database and messaging. It should wait for both.
+  4. Add an `"orderprocessor"` worker project that references the orders database and messaging. It should wait for both.
+  5. The web frontend should wait for the API service.
+
+  The pattern: Web → HTTP → API → RabbitMQ → OrderProcessor, with both API and OrderProcessor sharing the database.
+
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // Infrastructure
+  // TODO: Add RabbitMQ named "messaging"
+  // TODO: Add PostgreSQL with database "orders"
+
+  // Services
+  // TODO: Add "apiservice" project
+  //       - References: orders database, messaging
+  //       - WaitFor: database, messaging
+
+  // TODO: Add "orderprocessor" project
+  //       - References: orders database, messaging
+  //       - WaitFor: database, messaging
+
+  // TODO: Add "webfrontend" project
+  //       - References: apiservice (for HTTP service discovery)
+  //       - WaitFor: apiservice
+
+  builder.Build().Run();
+
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var messaging = builder.AddRabbitMQ("messaging");
+  var orders = builder.AddPostgres("pg").AddDatabase("orders");
+
+  var apiservice = builder.AddProject<Projects.ApiService>("apiservice")
+      .WithReference(orders)
+      .WithReference(messaging)
+      .WaitFor(orders)
+      .WaitFor(messaging);
+
+  var orderprocessor = builder.AddProject<Projects.OrderProcessor>("orderprocessor")
+      .WithReference(orders)
+      .WithReference(messaging)
+      .WaitFor(orders)
+      .WaitFor(messaging);
+
+  var webfrontend = builder.AddProject<Projects.WebFrontend>("webfrontend")
+      .WithReference(apiservice)
+      .WaitFor(apiservice);
+
+  builder.Build().Run();
+
+testCases:
+  - id: tc1
+    name: "Code compiles"
+    type: compiles
+    expected: null
+    description: "The AppHost code must compile without errors."
+  - id: tc2
+    name: "RabbitMQ added"
+    type: contains
+    expected: 'AddRabbitMQ("messaging")'
+    description: "RabbitMQ should be added as a messaging resource."
+  - id: tc3
+    name: "API references messaging"
+    type: contains
+    expected: "WithReference(messaging)"
+    description: "The API service should reference the messaging resource."
+  - id: tc4
+    name: "Web references API"
+    type: contains
+    expected: "WithReference(apiservice)"
+    description: "The web frontend should reference the API service for HTTP communication."
+  - id: tc5
+    name: "Proper wait ordering"
+    type: contains
+    expected: "WaitFor(orders)"
+    description: "Services should wait for the database to be healthy."
+
+hints:
+  - "`AddRabbitMQ(\"messaging\")` adds a RabbitMQ message broker resource."
+  - "The web frontend uses `WithReference(apiservice)` — this injects `services__apiservice__http__0` for service discovery."
+  - "Both apiservice and orderprocessor need `WithReference(messaging)` for the RabbitMQ connection string."
+  - "Use `WaitFor()` to ensure infrastructure is healthy before services start."
+
+requiredPackages:
+  - "Aspire.Hosting"
+  - "Aspire.Hosting.PostgreSQL"
+  - "Aspire.Hosting.RabbitMQ"

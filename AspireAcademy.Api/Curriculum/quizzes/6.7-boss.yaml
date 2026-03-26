@@ -1,0 +1,58 @@
+title: "Module 6.7 Boss — DCP & Orchestration Internals"
+description: "Test your understanding of how Aspire orchestrates resources internally through DcpHost, DcpExecutor, expression resolution, and resource notifications."
+passingScore: 80
+questions:
+  - id: "6.7.1"
+    question: "When you call `builder.AddPostgres('pg').AddDatabase('mydb')` and run the AppHost, which class orchestrates translating the app model resources into DCP container and executable specs?"
+    type: "multiple_choice"
+    options:
+      - "DcpHost"
+      - "DcpExecutor"
+      - "PortAllocator"
+      - "ManifestPublisher"
+    correctAnswer: "DcpExecutor"
+    explanation: "DcpExecutor (at src/Aspire.Hosting/Dcp/DcpExecutor.cs) implements IDcpExecutor and its RunApplicationAsync() method iterates the DistributedApplicationModel to create container and executable specs. DcpHost only bootstraps the DCP sidecar process."
+
+  - id: "6.7.2"
+    question: "Where does host port allocation happen for container resources? Which interface and implementation handle this?"
+    type: "multiple_choice"
+    options:
+      - "DcpHost using DockerPortMapper"
+      - "IPortAllocator / PortAllocator in src/Aspire.Hosting/ApplicationModel/"
+      - "IContainerRuntime using AllocatePort()"
+      - "EndpointReference using Property(EndpointProperty.Port)"
+    correctAnswer: "IPortAllocator / PortAllocator in src/Aspire.Hosting/ApplicationModel/"
+    explanation: "IPortAllocator (src/Aspire.Hosting/ApplicationModel/IPortAllocator.cs) defines AllocatePort() and AddUsedPort(). PortAllocator (src/Aspire.Hosting/ApplicationModel/PortAllocator.cs) implements it, starting at port 8000 by default."
+
+  - id: "6.7.3"
+    question: "What method on DcpExecutor is responsible for creating container resource specs and submitting them to the DCP gRPC API?"
+    type: "multiple_choice"
+    options:
+      - "RunApplicationAsync()"
+      - "StartResourceAsync()"
+      - "CreateContainerAsync()"
+      - "BuildContainerSpec()"
+    correctAnswer: "CreateContainerAsync()"
+    explanation: "CreateContainerAsync() in DcpExecutor builds the container spec with image, ports, volumes, and environment variables, then submits it to DCP via DcpKubernetesClient."
+
+  - id: "6.7.4"
+    question: "ReferenceExpression.Create() captures format strings at config time without evaluating them. What C# feature enables this deferred capture?"
+    type: "multiple_choice"
+    options:
+      - "String interpolation with FormattableString"
+      - "ExpressionInterpolatedStringHandler"
+      - "Lazy<string> evaluation"
+      - "IValueProvider.GetValueAsync() callback"
+    correctAnswer: "ExpressionInterpolatedStringHandler"
+    explanation: "ReferenceExpression.Create(in ExpressionInterpolatedStringHandler) uses C#'s interpolated string handler pattern to capture the format template and IValueProvider references at config time, deferring actual resolution to runtime."
+
+  - id: "6.7.5"
+    question: "What service pushes resource state updates (Running, Healthy, Stopped) to dashboard subscribers in real time?"
+    type: "multiple_choice"
+    options:
+      - "DcpExecutor via gRPC streaming"
+      - "TelemetryRepository via WatchSpansAsync"
+      - "ResourceNotificationService via PublishUpdateAsync"
+      - "DashboardClient via polling"
+    correctAnswer: "ResourceNotificationService via PublishUpdateAsync"
+    explanation: "ResourceNotificationService (src/Aspire.Hosting/ApplicationModel/ResourceNotificationService.cs) uses Channel<ResourceEvent> for pub/sub. PublishUpdateAsync() pushes immutable CustomResourceSnapshot updates that the dashboard receives via gRPC streaming."

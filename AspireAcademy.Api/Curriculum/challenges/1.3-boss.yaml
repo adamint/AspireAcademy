@@ -1,0 +1,79 @@
+instructions: |
+  # Boss Challenge: Create a Custom Resource
+
+  In this challenge, you'll go beyond built-in resource types and create your own custom resource class. This is how Aspire hosting integrations work internally — they define resource classes that extend `Resource` and register them with the AppHost.
+
+  **What to do:**
+  1. Define a class `MailDevResource` that extends `Resource` and implements `IResourceWithEndpoints`
+  2. The class should accept a `name` parameter and pass it to the base constructor
+  3. Add a public property `SmtpEndpoint` of type `EndpointReference` that returns the endpoint named `"smtp"`
+  4. Register the resource in the AppHost using `builder.CreateResourceBuilder(new MailDevResource("maildev"))`
+  5. Chain `.WithEndpoint(port: 1025, name: "smtp")` to configure the SMTP port
+
+  **Key concepts:**
+  - Custom resources extend `Resource` (the abstract base class)
+  - `IResourceWithEndpoints` marks a resource as having network endpoints
+  - `CreateResourceBuilder(resource)` registers a pre-created resource object with the builder
+  - `GetEndpoint(name)` returns an `EndpointReference` for a named endpoint
+starterCode: |
+  using Aspire.Hosting;
+  using Aspire.Hosting.ApplicationModel;
+
+  // TODO: Define the MailDevResource class
+  // - Extend Resource
+  // - Implement IResourceWithEndpoints
+  // - Constructor takes string name, passes to base(name)
+  // - Property: public EndpointReference SmtpEndpoint => ...
+  //   (Hint: use GetEndpoint("smtp"))
+  public class MailDevResource : Resource
+  {
+      public MailDevResource(string name) : base(name) { }
+  }
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Register the custom resource
+  // 1. Use builder.CreateResourceBuilder(new MailDevResource("maildev"))
+  // 2. Chain .WithEndpoint(port: 1025, name: "smtp")
+
+  builder.Build().Run();
+solutionCode: |
+  using Aspire.Hosting;
+  using Aspire.Hosting.ApplicationModel;
+
+  public class MailDevResource : Resource, IResourceWithEndpoints
+  {
+      public MailDevResource(string name) : base(name) { }
+
+      public EndpointReference SmtpEndpoint => new(this, "smtp");
+  }
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  builder.CreateResourceBuilder(new MailDevResource("maildev"))
+         .WithEndpoint(port: 1025, name: "smtp");
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile without errors"
+  - id: tc2
+    name: "Extends Resource base class"
+    type: code-contains
+    expected: ": Resource"
+    description: "The custom class must inherit from the Resource base class"
+  - id: tc3
+    name: "Registers with CreateResourceBuilder"
+    type: code-contains
+    expected: "CreateResourceBuilder"
+    description: "Code must use CreateResourceBuilder to register the custom resource"
+hints:
+  - "Your class needs to inherit from Resource AND implement IResourceWithEndpoints: public class MailDevResource : Resource, IResourceWithEndpoints"
+  - "To get an endpoint reference, create it with: public EndpointReference SmtpEndpoint => new(this, \"smtp\");"
+  - "Register with: builder.CreateResourceBuilder(new MailDevResource(\"maildev\")).WithEndpoint(port: 1025, name: \"smtp\");"
+requiredPackages:
+  - "Aspire.Hosting"
+sortOrder: 0

@@ -1,0 +1,47 @@
+title: "Module 6.3 Boss Quiz — Publishing & Deployment"
+module: "6.3"
+passing_score: 80
+questions:
+  - id: "6.3-q1"
+    question: "What file does `aspire publish` generate?"
+    type: multiple_choice
+    options:
+      - "docker-compose.yml"
+      - "aspire-manifest.json"
+      - "deployment.yaml"
+      - "appsettings.Production.json"
+    correct_answer: "aspire-manifest.json"
+    explanation: "The `aspire publish` command generates `aspire-manifest.json`, a declarative description of the entire distributed application. This manifest can then be consumed by various deployment tools to produce platform-specific artifacts like docker-compose.yml or Kubernetes manifests."
+
+  - id: "6.3-q2"
+    question: "What is the resource type for a .NET project in the Aspire manifest?"
+    type: multiple_choice
+    options:
+      - "dotnet.v0"
+      - "service.v0"
+      - "project.v0"
+      - "application.v0"
+    correct_answer: "project.v0"
+    explanation: "In the Aspire manifest, .NET projects are represented with the type `project.v0`. Other resource types include `container.v0` for Docker containers, `value.v0` for computed values, and `parameter.v0` for user-supplied parameters."
+
+  - id: "6.3-q3"
+    question: "How do you check if the AppHost is generating a manifest rather than running locally?"
+    type: multiple_choice
+    options:
+      - "Environment.GetEnvironmentVariable(\"ASPIRE_MODE\")"
+      - "builder.Configuration[\"PublishMode\"]"
+      - "ExecutionContext.IsPublishMode"
+      - "builder.IsManifestGeneration"
+    correct_answer: "ExecutionContext.IsPublishMode"
+    explanation: "ExecutionContext.IsPublishMode returns true when Aspire is generating a deployment manifest via `aspire publish`, and false during normal local development. Use this to branch behavior between development containers and production cloud resources."
+
+  - id: "6.3-q4"
+    question: "What placeholder syntax do manifest environment variables use to reference another resource's HTTP URL?"
+    type: multiple_choice
+    options:
+      - "${resource.http.url}"
+      - "{{resource.bindings.http.url}}"
+      - "{resource.bindings.http.url}"
+      - "@resource.bindings.http.url"
+    correct_answer: "{resource.bindings.http.url}"
+    explanation: "The Aspire manifest uses single-brace placeholder syntax like `{resource.bindings.http.url}`. Deployment tools resolve these placeholders to actual values when provisioning infrastructure."

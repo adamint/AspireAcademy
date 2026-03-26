@@ -1,0 +1,114 @@
+questions:
+  - text: |
+      Given this AppHost code:
+      ```csharp
+      var postgres = builder.AddPostgres("pgserver").AddDatabase("inventorydb");
+      var api = builder.AddProject<Projects.Api>("api").WithReference(postgres);
+      ```
+      What environment variable is injected into the `api` service?
+    type: multiple-choice
+    sortOrder: 1
+    points: 15
+    options:
+      - id: a
+        text: "`ConnectionStrings__pgserver` with the server-level connection string"
+        isCorrect: false
+      - id: b
+        text: "`ConnectionStrings__inventorydb` with a connection string including `Database=inventorydb`"
+        isCorrect: true
+      - id: c
+        text: "`services__inventorydb__tcp__0` with a TCP endpoint URL"
+        isCorrect: false
+      - id: d
+        text: "`ConnectionStrings__postgres` with a generic connection string"
+        isCorrect: false
+    explanation: "`AddDatabase(\"inventorydb\")` creates a child resource named `inventorydb` implementing `IResourceWithConnectionString`. The key uses the database resource name, not the server name."
+
+  - text: |
+      Given this AppHost code:
+      ```csharp
+      var api = builder.AddProject<Projects.ApiService>("apiservice");
+      var web = builder.AddProject<Projects.WebFrontend>("webfrontend").WithReference(api);
+      ```
+      What environment variable pattern is injected into `webfrontend`?
+    type: multiple-choice
+    sortOrder: 2
+    points: 15
+    options:
+      - id: a
+        text: "`ConnectionStrings__apiservice` with an HTTP URL"
+        isCorrect: false
+      - id: b
+        text: "`services__apiservice__http__0` and/or `services__apiservice__https__0` with endpoint URLs"
+        isCorrect: true
+      - id: c
+        text: "`services__api__http__0` with the endpoint URL"
+        isCorrect: false
+      - id: d
+        text: "`APISERVICE_URL` with the endpoint URL"
+        isCorrect: false
+    explanation: "`ProjectResource` implements `IResourceWithServiceDiscovery` but not `IResourceWithConnectionString`. `WithReference` uses endpoint injection with the resource name `apiservice` (not the C# variable `api`)."
+
+  - text: |
+      Given this AppHost code:
+      ```csharp
+      var redis = builder.AddRedis("cache");
+      var api = builder.AddProject<Projects.Api>("api").WithReference(redis).WithReference(postgres);
+      var web = builder.AddProject<Projects.Web>("web").WithReference(api).WithReference(redis);
+      ```
+      Which environment variables does the `web` service receive?
+    type: multiple-choice
+    sortOrder: 3
+    points: 15
+    options:
+      - id: a
+        text: "`ConnectionStrings__cache`, `ConnectionStrings__postgres`, `services__api__http__0`"
+        isCorrect: false
+      - id: b
+        text: "`ConnectionStrings__cache` and `services__api__http__0`"
+        isCorrect: true
+      - id: c
+        text: "`ConnectionStrings__redis` and `services__api__http__0`"
+        isCorrect: false
+      - id: d
+        text: "`services__cache__tcp__0` and `services__api__http__0`"
+        isCorrect: false
+    explanation: "`web` has `WithReference(api)` (endpoint injection: `services__api__http__0`) and `WithReference(redis)` (connection string injection: `ConnectionStrings__cache` using the resource name `cache`). `web` does NOT have a reference to postgres."
+
+  - text: "How would you retrieve the Redis connection string in service code where the resource is named `\"cache\"`?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "`builder.Configuration[\"Redis:ConnectionString\"]`"
+        isCorrect: false
+      - id: b
+        text: "`builder.Configuration.GetConnectionString(\"cache\")`"
+        isCorrect: true
+      - id: c
+        text: "`builder.Configuration[\"services:cache:tcp:0\"]`"
+        isCorrect: false
+      - id: d
+        text: "`builder.Configuration.GetConnectionString(\"redis\")`"
+        isCorrect: false
+    explanation: "Redis implements `IResourceWithConnectionString`, so `WithReference` injects `ConnectionStrings__cache`. `GetConnectionString(\"cache\")` reads from `ConnectionStrings:cache`. The resource name is `cache`, not `redis`."
+
+  - text: "What is the key difference between `WithReference()` and `WaitFor()`?"
+    type: multiple-choice
+    sortOrder: 5
+    points: 10
+    options:
+      - id: a
+        text: "`WithReference()` creates startup ordering; `WaitFor()` injects environment variables"
+        isCorrect: false
+      - id: b
+        text: "`WithReference()` injects connection info as environment variables; `WaitFor()` delays startup until the dependency is healthy"
+        isCorrect: true
+      - id: c
+        text: "They are aliases for the same operation"
+        isCorrect: false
+      - id: d
+        text: "`WithReference()` is for containers; `WaitFor()` is for projects"
+        isCorrect: false
+    explanation: "`WithReference()` injects connection information (environment variables). `WaitFor()` controls startup ordering by delaying until the dependency is healthy. You typically use both together."

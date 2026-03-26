@@ -1,0 +1,63 @@
+instructions: |
+  # The IResourceBuilder&lt;T&gt; Pattern
+
+  The fluent builder pattern is at the heart of Aspire's API. Every `Add*` method returns an `IResourceBuilder<T>`, and you chain `With*` methods to configure the resource.
+
+  **What to do:**
+  1. Add a container resource named `"myredis"` using the `"redis"` image with tag `"7.4"`
+  2. Add a named volume called `"redis-data"` mounted at `/data` inside the container
+  3. Add an environment variable `"REDIS_PASSWORD"` with the value `"supersecret"`
+
+  **Key concepts:**
+  - `AddContainer(name, image, tag)` creates a container resource
+  - `WithVolume(name, target)` adds a named volume
+  - `WithEnvironment(name, value)` sets an environment variable
+  - All `With*` methods return the same builder, enabling method chaining
+starterCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add a Redis container with a volume and environment variable
+  // 1. AddContainer("myredis", "redis", "7.4")
+  // 2. Chain .WithVolume("redis-data", "/data")
+  // 3. Chain .WithEnvironment("REDIS_PASSWORD", "supersecret")
+
+  builder.Build().Run();
+solutionCode: |
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  builder.AddContainer("myredis", "redis", "7.4")
+         .WithVolume("redis-data", "/data")
+         .WithEnvironment("REDIS_PASSWORD", "supersecret");
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile without errors"
+  - id: tc2
+    name: "Uses AddContainer"
+    type: code-contains
+    expected: "AddContainer"
+    description: "Code must use AddContainer to create a container resource"
+  - id: tc3
+    name: "Adds a volume"
+    type: code-contains
+    expected: "WithVolume"
+    description: "Code must use WithVolume to add a named volume"
+  - id: tc4
+    name: "Sets an environment variable"
+    type: code-contains
+    expected: "WithEnvironment"
+    description: "Code must use WithEnvironment to set a container environment variable"
+hints:
+  - "Start with builder.AddContainer(\"myredis\", \"redis\", \"7.4\") — this returns an IResourceBuilder<ContainerResource> that you can chain methods on"
+  - "Chain the methods: builder.AddContainer(...).WithVolume(\"redis-data\", \"/data\").WithEnvironment(\"REDIS_PASSWORD\", \"supersecret\")"
+requiredPackages:
+  - "Aspire.Hosting"
+sortOrder: 0

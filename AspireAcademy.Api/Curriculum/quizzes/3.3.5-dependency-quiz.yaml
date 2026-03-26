@@ -1,0 +1,95 @@
+questions:
+  - text: "What does `WaitFor()` wait for before allowing the dependent resource to start?"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "The dependency's process to be created"
+        isCorrect: false
+      - id: b
+        text: "The dependency's health checks to pass (or Running state if no health checks exist)"
+        isCorrect: true
+      - id: c
+        text: "The dependency's environment variables to be set"
+        isCorrect: false
+      - id: d
+        text: "A fixed 5-second delay"
+        isCorrect: false
+    explanation: "`WaitFor()` waits until the dependency enters a healthy state. If health checks are registered, they must pass. If not, the Running state is sufficient."
+
+  - text: "What does `WaitForCompletion()` wait for?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "The dependency to reach Running state"
+        isCorrect: false
+      - id: b
+        text: "The dependency to exit with a specified exit code (default: 0)"
+        isCorrect: true
+      - id: c
+        text: "The dependency's health checks to pass"
+        isCorrect: false
+      - id: d
+        text: "A timeout to elapse"
+        isCorrect: false
+    explanation: "`WaitForCompletion()` waits for the dependency resource to run to completion and exit. The default expected exit code is 0 (success)."
+
+  - text: "What happens with `WaitBehavior.StopOnResourceUnavailable` when a dependency fails?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "The waiting resource keeps waiting indefinitely"
+        isCorrect: false
+      - id: b
+        text: "The waiting resource is stopped"
+        isCorrect: true
+      - id: c
+        text: "The dependency is automatically restarted"
+        isCorrect: false
+      - id: d
+        text: "An exception is thrown in the AppHost"
+        isCorrect: false
+    explanation: "`StopOnResourceUnavailable` causes the waiting resource to be stopped if its dependency becomes unavailable, rather than waiting for recovery."
+
+  - text: "What happens if you create a circular dependency with `WaitFor()`?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "Aspire silently ignores one of the wait dependencies"
+        isCorrect: false
+      - id: b
+        text: "Both resources start simultaneously"
+        isCorrect: false
+      - id: c
+        text: "Aspire throws an `InvalidOperationException` at startup"
+        isCorrect: true
+      - id: d
+        text: "Resources deadlock and the AppHost times out"
+        isCorrect: false
+    explanation: "Aspire detects circular dependencies in the wait graph and throws an `InvalidOperationException` describing the cycle, preventing startup."
+
+  - text: "Which of the following is the correct order to wire a migration scenario?"
+    type: multiple-choice
+    sortOrder: 5
+    points: 15
+    options:
+      - id: a
+        text: "`api.WaitFor(postgres).WaitFor(migrator)`"
+        isCorrect: false
+      - id: b
+        text: "`migrator.WaitFor(postgres)` then `api.WaitForCompletion(migrator)`"
+        isCorrect: true
+      - id: c
+        text: "`api.WaitForCompletion(postgres)` then `migrator.WaitFor(api)`"
+        isCorrect: false
+      - id: d
+        text: "`postgres.WaitFor(migrator)` then `api.WaitFor(postgres)`"
+        isCorrect: false
+    explanation: "The migrator must wait for the database to be healthy (`WaitFor`), then the API must wait for the migrator to complete (`WaitForCompletion`). This ensures: postgres → migrator runs migrations → api starts."

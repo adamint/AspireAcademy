@@ -1,0 +1,38 @@
+title: "Aspire Architect Certification"
+description: "Build CloudMarket — a complete multi-service e-commerce platform."
+starterCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // === STEP 1: Infrastructure Resources ===
+  // TODO: Add PostgreSQL with "catalogdb" database
+  // TODO: Add Redis as "cache"
+  // TODO: Add RabbitMQ as "messaging"
+
+  // === STEP 2: Custom Resources ===
+  // TODO: Add your custom FeatureFlagResource
+
+  // === STEP 3: Service Projects ===
+  // TODO: Add CatalogApi, OrderApi, WebFrontend with references
+
+  // === STEP 4: Eventing ===
+  // TODO: Seed database on BeforeResourceStarted
+  // TODO: Log topology on AfterResourcesCreatedEvent
+
+  builder.Build().Run();
+tests:
+  - description: "AppHost builds and starts without errors"
+  - description: "At least 3 service projects registered"
+  - description: "PostgreSQL and Redis resources present with health checks"
+  - description: "RabbitMQ referenced by at least 2 services"
+  - description: "Custom FeatureFlagResource with icon and command"
+  - description: "At least one event subscription registered"
+  - description: "OpenTelemetry configured with metrics and tracing"
+  - description: "At least 3 passing integration tests"
+  - description: "aspire publish generates valid manifest"
+  - description: "Public API types have XML documentation"
+hints:
+  - "Start with aspire new, then add complexity iteratively"
+  - "builder.AddPostgres(\"pg\").AddDatabase(\"catalogdb\") and builder.AddRedis(\"cache\")"
+  - "Refer to Module 6.2 for custom resource patterns"
+  - "builder.Eventing.Subscribe<BeforeResourceStartedEvent>(db, ...) for seeding"
+  - "Use IAsyncLifetime and class fixtures for integration tests"

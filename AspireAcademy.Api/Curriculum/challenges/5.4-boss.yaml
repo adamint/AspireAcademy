@@ -1,0 +1,32 @@
+title: "Observable Order Service"
+description: "Instrument an order processing service with tracing, metrics, and health checks."
+starterCode: |
+  using System.Diagnostics;
+  using System.Diagnostics.Metrics;
+  var builder = WebApplication.CreateBuilder(args);
+  builder.AddServiceDefaults();
+  // TODO: Create ActivitySource "OrderService"
+  // TODO: Create Meter "OrderService" with Counter and Histogram
+  // TODO: Register custom health check for payment provider
+  // TODO: Register ActivitySource and Meter with OpenTelemetry
+  var app = builder.Build();
+  app.MapPost("/orders", async (Order order) =>
+  {
+      // TODO: Start activity, set tags, record metrics
+      var sw = Stopwatch.StartNew();
+      await Task.Delay(100);
+      sw.Stop();
+      return Results.Created($"/orders/{order.Id}", order);
+  });
+  app.Run();
+  record Order(string Id, decimal Total);
+tests:
+  - description: "ActivitySource named 'OrderService' is registered"
+  - description: "POST /orders creates a span with order.id tag"
+  - description: "Counter increments on each order"
+  - description: "Health check endpoint returns Healthy"
+hints:
+  - "new ActivitySource(\"OrderService\") and new Meter(\"OrderService\")"
+  - ".WithTracing(t => t.AddSource(\"OrderService\")) and .WithMetrics(m => m.AddMeter(\"OrderService\"))"
+  - "Implement IHealthCheck with HTTP call to payment endpoint"
+  - "meter.CreateCounter<long>(\"orders.placed\") and meter.CreateHistogram<double>(\"orders.duration_ms\")"

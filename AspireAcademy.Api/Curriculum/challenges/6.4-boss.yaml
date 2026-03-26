@@ -1,0 +1,33 @@
+title: "Test Architect"
+description: "Write integration tests for an AppHost with API and PostgreSQL."
+starterCode: |
+  public class ApiIntegrationTests : IAsyncLifetime
+  {
+      private DistributedApplication? _app;
+
+      public async Task InitializeAsync()
+      {
+          // TODO: Create and start distributed application
+      }
+
+      [Fact]
+      public async Task PostAndGetProduct_ReturnsCreatedProduct()
+      {
+          // TODO: Create HttpClient, POST product, GET product, assert
+      }
+
+      public async Task DisposeAsync()
+      {
+          // TODO: Dispose the application
+      }
+  }
+tests:
+  - description: "InitializeAsync creates and starts the distributed application"
+  - description: "Test uses CreateHttpClient to obtain configured client"
+  - description: "Test performs POST and GET with success assertions"
+  - description: "DisposeAsync cleans up the application"
+hints:
+  - "await DistributedApplicationTestingBuilder.CreateAsync<Projects.MyAppHost>()"
+  - "await builder.BuildAsync() then await app.StartAsync()"
+  - "app.CreateHttpClient(\"apiservice\")"
+  - "await app.DisposeAsync() in cleanup"

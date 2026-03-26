@@ -1,0 +1,115 @@
+instructions: |
+  # Boss Challenge: Polyglot Microservices Platform
+
+  Build an AppHost for a polyglot microservices platform combining .NET, Python, and JavaScript services with shared infrastructure.
+
+  **Architecture:**
+  - **PostgreSQL** for relational data storage
+  - **Redis** for application caching
+  - **.NET API** as the primary backend service
+  - **Python ML service** for machine learning inference
+  - **JavaScript frontend** for the user interface
+  - **YARP gateway** for unified routing
+
+  **What to do:**
+  1. Add PostgreSQL `"pg"` with database `"appdb"` and `WithDataVolume()`
+  2. Add Redis `"cache"` with `WithPersistence()`
+  3. Add a .NET project `"dotnet-api"` referencing PostgreSQL and Redis
+  4. Add a Python app `"ml-service"` at `"../python-ml"` running `"app.py"`, referencing PostgreSQL
+  5. Add a JavaScript app `"frontend"` at `"../react-app"` with `"dev"` script, referencing the .NET API
+  6. Add YARP `"gateway"` as an API gateway
+
+  **Key concepts:**
+  - `AddPythonApp` runs Python on the host (not in a container)
+  - `AddJavaScriptApp` runs package.json scripts via a package manager
+  - `WithReference` works uniformly across all resource types
+  - YARP provides path-based routing to backend services
+starterCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add PostgreSQL "pg" with database "appdb" and data volume
+  // TODO: Add Redis "cache" with persistence
+  // TODO: Add .NET project "dotnet-api" referencing PostgreSQL and Redis
+  // TODO: Add Python app "ml-service" at "../python-ml/app.py" referencing PostgreSQL
+  // TODO: Add JavaScript app "frontend" at "../react-app" with "dev" script
+  // TODO: Wire frontend to reference dotnet-api
+  // TODO: Add YARP "gateway"
+
+  builder.Build().Run();
+solutionCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var appdb = builder.AddPostgres("pg")
+      .WithDataVolume()
+      .AddDatabase("appdb");
+
+  var cache = builder.AddRedis("cache")
+      .WithPersistence();
+
+  var dotnetApi = builder.AddProject<Projects.DotnetApi>("dotnet-api")
+      .WithReference(appdb)
+      .WithReference(cache);
+
+  var mlService = builder.AddPythonApp("ml-service", "../python-ml", "app.py")
+      .WithReference(appdb);
+
+  var frontend = builder.AddJavaScriptApp("frontend", "../react-app", "dev")
+      .WithReference(dotnetApi);
+
+  var gateway = builder.AddYarp("gateway");
+
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: "Adds PostgreSQL with database"
+    type: code-contains
+    expected: 'AddPostgres("pg")'
+    description: "Code must add a PostgreSQL server named 'pg'"
+  - id: tc2
+    name: "Adds appdb database"
+    type: code-contains
+    expected: 'AddDatabase("appdb")'
+    description: "Code must add a database named 'appdb'"
+  - id: tc3
+    name: "Adds Redis cache"
+    type: code-contains
+    expected: 'AddRedis("cache")'
+    description: "Code must add a Redis resource named 'cache'"
+  - id: tc4
+    name: "Adds .NET project"
+    type: code-pattern
+    expected: 'AddProject.*"dotnet-api"'
+    description: "Code must add a .NET project resource named 'dotnet-api'"
+  - id: tc5
+    name: "Adds Python app"
+    type: code-contains
+    expected: "AddPythonApp"
+    description: "Code must use AddPythonApp for the ML service"
+  - id: tc6
+    name: "Adds JavaScript app"
+    type: code-contains
+    expected: "AddJavaScriptApp"
+    description: "Code must use AddJavaScriptApp for the frontend"
+  - id: tc7
+    name: "Adds YARP gateway"
+    type: code-contains
+    expected: 'AddYarp("gateway")'
+    description: "Code must add a YARP resource named 'gateway'"
+  - id: tc8
+    name: "Services are wired with WithReference"
+    type: code-contains
+    expected: "WithReference"
+    description: "Services must be connected via WithReference calls"
+hints:
+  - "Python app: AddPythonApp(\"ml-service\", \"../python-ml\", \"app.py\")"
+  - "JavaScript app: AddJavaScriptApp(\"frontend\", \"../react-app\", \"dev\")"
+  - "Use WithReference(dotnetApi) on the frontend to inject the API URL"
+  - "YARP: AddYarp(\"gateway\") — configure routing with WithConfiguration if needed"
+requiredPackages:
+  - "Aspire.Hosting"
+  - "Aspire.Hosting.PostgreSQL"
+  - "Aspire.Hosting.Redis"
+  - "Aspire.Hosting.Python"
+  - "Aspire.Hosting.JavaScript"
+  - "Aspire.Hosting.Yarp"
+sortOrder: 0

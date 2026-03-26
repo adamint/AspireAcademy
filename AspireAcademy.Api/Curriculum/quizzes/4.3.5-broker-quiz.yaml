@@ -1,0 +1,95 @@
+questions:
+  - text: "Which extension method adds a web management UI to RabbitMQ?"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "WithKafkaUI"
+        isCorrect: false
+      - id: b
+        text: "WithManagementPlugin"
+        isCorrect: true
+      - id: c
+        text: "WithRedisCommander"
+        isCorrect: false
+      - id: d
+        text: "WithAdminConsole"
+        isCorrect: false
+    explanation: "WithManagementPlugin() switches the RabbitMQ container to the management image tag (rabbitmq:4.2-management) and exposes the web management UI on port 15672. WithKafkaUI is for Kafka, and WithAdminConsole doesn't exist in Aspire."
+
+  - text: "What does WithJetStream() enable on a NATS resource?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "Load balancing across NATS servers"
+        isCorrect: false
+      - id: b
+        text: "TLS encryption for NATS connections"
+        isCorrect: false
+      - id: c
+        text: "Durable persistent messaging with streams and consumers"
+        isCorrect: true
+      - id: d
+        text: "A schema registry for message validation"
+        isCorrect: false
+    explanation: "WithJetStream() enables NATS JetStream, which adds durable streams, persistent consumers, key-value stores, and exactly-once delivery on top of NATS's core pub/sub model. Without JetStream, NATS is fire-and-forget only."
+
+  - text: "Which connection string format does RabbitMQ use?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "host:port"
+        isCorrect: false
+      - id: b
+        text: "nats://host:port"
+        isCorrect: false
+      - id: c
+        text: "amqp://user:pass@host:port"
+        isCorrect: true
+      - id: d
+        text: "Server=host;Port=port"
+        isCorrect: false
+    explanation: "RabbitMQ uses the AMQP URI format (amqp://user:pass@host:port). Kafka uses plain host:port, NATS uses nats://host:port, and Server=host;Port=port is a relational database format."
+
+  - text: "What tool does WithKafkaUI() add for Kafka?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "A command-line consumer tool"
+        isCorrect: false
+      - id: b
+        text: "A web UI for topic and consumer group management"
+        isCorrect: true
+      - id: c
+        text: "A schema registry for message serialization"
+        isCorrect: false
+      - id: d
+        text: "A load balancer for Kafka brokers"
+        isCorrect: false
+    explanation: "WithKafkaUI() adds a KafkaUIContainerResource (docker.io/kafbat/kafka-ui:v1.4.2) that provides a web interface for browsing topics, inspecting consumer groups, producing test messages, and viewing broker configuration."
+
+  - text: "Which broker uses a plain host:port bootstrap server format for its connection string?"
+    type: multiple-choice
+    sortOrder: 5
+    points: 10
+    options:
+      - id: a
+        text: "RabbitMQ"
+        isCorrect: false
+      - id: b
+        text: "NATS"
+        isCorrect: false
+      - id: c
+        text: "Kafka"
+        isCorrect: true
+      - id: d
+        text: "Redis"
+        isCorrect: false
+    explanation: "Kafka uses a simple host:port format as its bootstrap server address. RabbitMQ uses amqp:// URI format, NATS uses nats:// URI format, and Redis uses host:port with optional password parameter."
