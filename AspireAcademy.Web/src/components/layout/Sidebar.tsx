@@ -17,7 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 import api from '../../services/apiClient';
 import { useAuthStore } from '../../store/authStore';
-import type { World } from '../../types';
+import type { World, Module } from '../../types';
 
 interface SidebarProps {
   open: boolean;
@@ -62,6 +62,44 @@ function SideNavLink({
       )}
     </NavLink>
   );
+}
+
+function WorldModules({
+  worldId,
+  onNav,
+}: {
+  worldId: string;
+  onNav: (path: string) => void;
+}) {
+  const { data: modules } = useQuery<Module[]>({
+    queryKey: ['worldModules', worldId],
+    queryFn: () => api.get(`/worlds/${worldId}/modules`).then((r) => r.data),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  if (!modules) return null;
+
+  return modules.map((mod) => (
+    <Flex
+      key={mod.id}
+      align="center"
+      gap="2"
+      pl="9"
+      pr="3"
+      py="1"
+      borderRadius="md"
+      fontSize="12px"
+      color={!mod.isUnlocked ? 'whiteAlpha.500' : 'whiteAlpha.700'}
+      cursor={mod.isUnlocked ? 'pointer' : 'default'}
+      _hover={mod.isUnlocked ? { bg: 'whiteAlpha.100', color: 'white' } : undefined}
+      onClick={() => mod.isUnlocked && onNav(`/worlds/${worldId}`)}
+      role="button"
+      tabIndex={mod.isUnlocked ? 0 : -1}
+    >
+      {!mod.isUnlocked && <FiLock size={10} />}
+      {mod.name}
+    </Flex>
+  ));
 }
 
 export function Sidebar({ open, onClose }: SidebarProps) {
@@ -152,7 +190,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <Text
             fontSize="10px"
             fontWeight="700"
-            color="whiteAlpha.500"
+            color="whiteAlpha.700"
             textTransform="uppercase"
             letterSpacing="0.5px"
             px="3"
@@ -173,7 +211,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 py="1.5"
                 borderRadius="md"
                 fontSize="13px"
-                color={!world.isUnlocked ? 'whiteAlpha.400' : 'whiteAlpha.800'}
+                color={!world.isUnlocked ? 'whiteAlpha.500' : 'whiteAlpha.800'}
                 bg="transparent"
                 border="none"
                 cursor={world.isUnlocked ? 'pointer' : 'default'}
@@ -183,7 +221,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               >
                 <FiGlobe size={14} />
                 <Text as="span" flex="1" truncate>
-                  {world.iconEmoji} {world.name}
+                  {world.icon} {world.name}
                 </Text>
                 {!world.isUnlocked ? (
                   <FiLock size={12} />
@@ -195,28 +233,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </Flex>
 
               {world.isUnlocked &&
-                expandedWorlds.has(world.id) &&
-                world.modules?.map((mod) => (
-                  <Flex
-                    key={mod.id}
-                    align="center"
-                    gap="2"
-                    pl="9"
-                    pr="3"
-                    py="1"
-                    borderRadius="md"
-                    fontSize="12px"
-                    color={!mod.isUnlocked ? 'whiteAlpha.300' : 'whiteAlpha.700'}
-                    cursor={mod.isUnlocked ? 'pointer' : 'default'}
-                    _hover={mod.isUnlocked ? { bg: 'whiteAlpha.100', color: 'white' } : undefined}
-                    onClick={() => mod.isUnlocked && navTo(`/worlds/${world.id}`)}
-                    role="button"
-                    tabIndex={mod.isUnlocked ? 0 : -1}
-                  >
-                    {!mod.isUnlocked && <FiLock size={10} />}
-                    {mod.name}
-                  </Flex>
-                ))}
+                expandedWorlds.has(world.id) && (
+                  <WorldModules worldId={world.id} onNav={navTo} />
+                )}
             </Box>
           ))}
         </Box>
@@ -226,7 +245,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <Text
             fontSize="10px"
             fontWeight="700"
-            color="whiteAlpha.500"
+            color="whiteAlpha.700"
             textTransform="uppercase"
             letterSpacing="0.5px"
             px="3"
@@ -256,7 +275,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             <Text
               fontSize="10px"
               fontWeight="700"
-              color="whiteAlpha.500"
+              color="whiteAlpha.700"
               textTransform="uppercase"
               letterSpacing="0.5px"
               px="3"

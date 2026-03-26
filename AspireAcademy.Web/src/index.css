@@ -30,6 +30,21 @@
   }
 }
 
+:root.light {
+  --text: #6B5B95;
+  --text-h: #1A0B2E;
+  --bg: #F5F0FF;
+  --border: #C4B5E0;
+  --code-bg: #EDE7F6;
+  --accent: #6B4FBB;
+  --accent-bg: rgba(107, 79, 187, 0.08);
+  --accent-border: rgba(107, 79, 187, 0.3);
+  --social-bg: rgba(237, 231, 246, 0.5);
+  --shadow:
+    rgba(107, 79, 187, 0.15) 0 10px 15px -3px, rgba(107, 79, 187, 0.1) 0 4px 6px -2px;
+  color-scheme: light;
+}
+
 #root {
   width: 1126px;
   max-width: 100%;

@@ -1,0 +1,13 @@
+🔐 Checking certificates...
+🛠  Building apphost... ../apphost.cs
+Connecting to apphost...
+Starting dashboard...
+
+     [1;38;5;2mAppHost[0m:  ../apphost.cs                                                      
+                                                                                  
+   [1;38;5;2mDashboard[0m:  ]8;id=406581426;https://localhost:17193/login?t=3a2fe38f5315ec54f3235727c3ff0628\https://localhost:17193/login?t=3a2fe38f5315ec54f3235727c3ff0628]8;;\   
+                                                                                  
+        [1;38;5;2mLogs[0m:  /Users/adamratzman/.aspire/logs/cli_20260326T065726_26ec0ece.log   
+                                                            
+               Press [1mCTRL+C[0m to stop the apphost and exit.   
+

@@ -197,7 +197,7 @@ export default function QuizPage() {
           <Box
             p={6}
             bg="game.retroBg"
-            color="gray.100"
+            color="dark.text"
             {...retroCardProps}
             borderColor="game.error"
             textAlign="center"
@@ -208,7 +208,7 @@ export default function QuizPage() {
             <Button
               variant="outline"
               borderColor="game.pixelBorder"
-              color="gray.200"
+              color="dark.text"
               _hover={{ bg: 'whiteAlpha.100' }}
               onClick={() => navigate(-1)}
             >
@@ -253,11 +253,11 @@ export default function QuizPage() {
         gap={2}
         mb={6}
       >
-        <Heading size="md" color="gray.100" display="flex" alignItems="center" gap={2}>
+        <Heading size="md" color="dark.text" display="flex" alignItems="center" gap={2}>
           🧪 {quiz.title}
         </Heading>
         <Flex gap={4} align="center">
-          <Text fontSize="sm" color="gray.400">
+          <Text fontSize="sm" color="dark.muted">
             Question {currentIndex + 1} of {quiz.questions.length}
           </Text>
           <Box

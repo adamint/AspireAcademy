@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
+using AspireAcademy.Api.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -78,7 +79,6 @@ public static partial class AuthEndpoints
             DisplayName = string.IsNullOrWhiteSpace(request.DisplayName)
                 ? request.Username!
                 : request.DisplayName,
-            AvatarBase = "developer",
             LoginStreakDays = 0,
             CreatedAt = now
         };
@@ -96,15 +96,18 @@ public static partial class AuthEndpoints
         db.UserXp.Add(userXp);
         await db.SaveChangesAsync();
 
+        AcademyMetrics.UsersRegistered.Add(1);
         s_logger.LogInformation("Register succeeded for UserId={UserId}, Username={Username}", user.Id, user.Username);
 
         var token = GenerateJwtToken(user, config);
+
+        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email);
 
         return Results.Created("/api/auth/me", new AuthResponse(
             token,
             new AuthUserDto(
                 user.Id, user.Username, user.DisplayName, user.Email,
-                user.AvatarBase, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp)));
+                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp)));
     }
 
     private static async Task<IResult> Login(
@@ -154,15 +157,18 @@ public static partial class AuthEndpoints
         var userXp = await db.UserXp.FirstAsync(x => x.UserId == user.Id);
         await db.SaveChangesAsync();
 
+        AcademyMetrics.LoginsTotal.Add(1);
         var token = GenerateJwtToken(user, config);
 
         s_logger.LogInformation("Login succeeded for UserId={UserId}, Username={Username}", user.Id, user.Username);
+
+        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email);
 
         return Results.Ok(new AuthResponse(
             token,
             new AuthUserDto(
                 user.Id, user.Username, user.DisplayName, user.Email,
-                user.AvatarBase, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp)));
+                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp)));
     }
 
     private static async Task<IResult> GetMe(
@@ -181,9 +187,11 @@ public static partial class AuthEndpoints
 
         var userXp = await db.UserXp.FirstAsync(x => x.UserId == userId);
 
+        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email);
+
         return Results.Ok(new MeResponse(
             user.Id, user.Username, user.DisplayName, user.Email,
-            user.AvatarBase, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp,
+            avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp,
             user.Bio, user.LoginStreakDays, user.CreatedAt));
     }
 
@@ -296,7 +304,7 @@ public record AuthUserDto(
     string Username,
     string DisplayName,
     string Email,
-    string AvatarBase,
+    string AvatarUrl,
     int CurrentLevel,
     string CurrentRank,
     int TotalXp);
@@ -306,7 +314,7 @@ public record MeResponse(
     string Username,
     string DisplayName,
     string Email,
-    string AvatarBase,
+    string AvatarUrl,
     int CurrentLevel,
     string CurrentRank,
     int TotalXp,

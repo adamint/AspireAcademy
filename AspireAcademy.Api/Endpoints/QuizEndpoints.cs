@@ -3,6 +3,7 @@ using System.Text.Json;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
 using AspireAcademy.Api.Services;
+using AspireAcademy.Api.Telemetry;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspireAcademy.Api.Endpoints;
@@ -115,6 +116,12 @@ public static class QuizEndpoints
 
         s_logger.LogInformation("Quiz submit for LessonId={LessonId}, UserId={UserId}, score={Score}/{MaxScore}, passed={Passed}, isPerfect={IsPerfect}",
             lessonId, userId, percentage, 100, passed, isPerfect);
+
+        AcademyMetrics.QuizzesSubmitted.Add(1);
+        AcademyMetrics.QuizScorePercent.Record(
+            percentage,
+            new KeyValuePair<string, object?>("lessonId", lessonId),
+            new KeyValuePair<string, object?>("passed", passed));
 
         // Update or create progress
         var xpEarned = 0;

@@ -261,7 +261,7 @@ export default function ChallengePage() {
         <Box
           p={6}
           bg="game.retroBg"
-          color="gray.100"
+          color="dark.text"
           {...retroCardProps}
           borderColor="game.error"
           textAlign="center"
@@ -272,7 +272,7 @@ export default function ChallengePage() {
           <Button
             variant="outline"
             borderColor="game.pixelBorder"
-            color="gray.200"
+            color="dark.text"
             _hover={{ bg: 'whiteAlpha.100' }}
             onClick={() => navigate(-1)}
           >
@@ -303,7 +303,7 @@ export default function ChallengePage() {
           <Box
             p={10}
             bg="game.retroBg"
-            color="gray.100"
+            color="dark.text"
             textAlign="center"
             maxW="400px"
             w="90%"
@@ -359,13 +359,13 @@ export default function ChallengePage() {
         wrap="wrap"
         gap={2}
       >
-        <Heading size="sm" color="gray.100" display="flex" alignItems="center" gap={2}>
+        <Heading size="sm" color="dark.text" display="flex" alignItems="center" gap={2}>
           💻 {challenge.title}
         </Heading>
         <Button
           variant="ghost"
           size="sm"
-          color="gray.400"
+          color="dark.muted"
           _hover={{ color: 'gray.200' }}
           onClick={() => navigate(-1)}
         >
@@ -392,13 +392,13 @@ export default function ChallengePage() {
             flex={1}
             overflowY="auto"
             p={5}
-            color="gray.200"
+            color="dark.text"
             fontSize="sm"
             lineHeight="tall"
             css={{
-              '& h1, & h2, & h3': { color: '#d4d4d4', marginTop: '1em', marginBottom: '0.5em' },
-              '& code': { bg: '#2d2060', color: '#c5b3f0', px: '4px', borderRadius: '3px' },
-              '& pre': { bg: '#1a0b2e', p: '12px', borderRadius: '4px', overflow: 'auto' },
+              '& h1, & h2, & h3': { color: 'var(--text-h)', marginTop: '1em', marginBottom: '0.5em' },
+              '& code': { bg: 'var(--code-bg)', color: 'var(--accent)', px: '4px', borderRadius: '3px' },
+              '& pre': { bg: 'var(--code-bg)', p: '12px', borderRadius: '4px', overflow: 'auto' },
               '& a': { color: '#9185D1' },
             }}
           >
@@ -420,7 +420,7 @@ export default function ChallengePage() {
               {testCases.map((tc) => (
                 <HStack key={tc.id} gap={2} py={1}>
                   <Text fontSize="md">{testIcon(tc.status)}</Text>
-                  <Text fontSize="sm" color="gray.300">{tc.description}</Text>
+                  <Text fontSize="sm" color="dark.muted">{tc.description}</Text>
                 </HStack>
               ))}
             </VStack>
@@ -457,7 +457,7 @@ export default function ChallengePage() {
                   size="xs"
                   variant="outline"
                   borderColor="game.pixelBorder"
-                  color="gray.400"
+                  color="dark.muted"
                   _hover={{ bg: 'whiteAlpha.100', color: 'yellow.200' }}
                   onClick={i === revealedHints ? handleRevealHint : undefined}
                   disabled={i !== revealedHints}
@@ -546,7 +546,7 @@ export default function ChallengePage() {
       >
         <Drawer.Backdrop />
         <Drawer.Positioner>
-          <Drawer.Content bg="game.retroBg" color="gray.100" borderLeft="3px solid" borderColor="game.pixelBorder">
+          <Drawer.Content bg="dark.sidebar" color="whiteAlpha.900" borderLeft="3px solid" borderColor="game.pixelBorder">
             <Drawer.Header borderBottom="2px solid" borderColor="game.pixelBorder">
               <Flex justify="space-between" align="center" w="100%">
                 <Drawer.Title {...pixelFontProps} fontSize="xs">

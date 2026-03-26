@@ -8,10 +8,7 @@ export interface User {
   username: string;
   displayName: string;
   email: string;
-  avatarBase: string;
-  avatarAccessories: string[];
-  avatarBackground: string;
-  avatarFrame: string;
+  avatarUrl: string;
   bio: string | null;
   currentLevel: number;
   currentRank: string;

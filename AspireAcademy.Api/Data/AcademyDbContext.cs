@@ -34,13 +34,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.Property(u => u.Email).HasMaxLength(255).IsRequired();
             e.Property(u => u.PasswordHash).HasMaxLength(255).IsRequired();
             e.Property(u => u.DisplayName).HasMaxLength(50).IsRequired();
-            e.Property(u => u.AvatarBase).HasMaxLength(30).HasDefaultValue("developer").IsRequired();
-            e.Property(u => u.AvatarAccessories)
-                .HasColumnType("jsonb")
-                .HasDefaultValueSql("'[]'::jsonb")
-                .IsRequired();
-            e.Property(u => u.AvatarBackground).HasMaxLength(30).HasDefaultValue("default").IsRequired();
-            e.Property(u => u.AvatarFrame).HasMaxLength(30).HasDefaultValue("none").IsRequired();
+            e.Property(u => u.AvatarSeed).HasMaxLength(50);
             e.Property(u => u.Bio).HasMaxLength(200);
             e.Property(u => u.CreatedAt).HasDefaultValueSql("now()").IsRequired();
             e.Property(u => u.LoginStreakDays).HasDefaultValue(0).IsRequired();

@@ -94,5 +94,7 @@ export interface LessonDetail extends Lesson {
   nextLessonId?: string;
   previousLessonTitle?: string;
   nextLessonTitle?: string;
+  previousLessonType?: LessonType;
+  nextLessonType?: LessonType;
   isCompleted: boolean;
 }

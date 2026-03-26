@@ -94,8 +94,20 @@ export default function LessonPage() {
     }
   }, [lesson, completeMutation]);
 
-  const navigateToLesson = (id: string | undefined) => {
-    if (id) navigate(`/lessons/${id}`);
+  const navigateToLesson = (id: string | undefined, type?: string) => {
+    if (!id) return;
+    switch (type) {
+      case 'quiz':
+        navigate(`/quizzes/${id}`);
+        break;
+      case 'challenge':
+      case 'build':
+        navigate(`/challenges/${id}`);
+        break;
+      default:
+        navigate(`/lessons/${id}`);
+        break;
+    }
   };
 
   if (isLoading) {
@@ -140,8 +152,8 @@ export default function LessonPage() {
         <code
           className={className}
           style={{
-            background: '#2D2D2D',
-            color: '#E0E0E0',
+            background: 'var(--code-bg)',
+            color: 'var(--text-h)',
             padding: '2px 6px',
             borderRadius: 4,
             fontSize: '0.9em',
@@ -194,7 +206,7 @@ export default function LessonPage() {
           borderColor="aspire.400"
           pl="4"
           my="3"
-          color="aspire.600"
+          color="dark.muted"
         >
           {children}
         </Box>
@@ -247,7 +259,13 @@ export default function LessonPage() {
         border="none"
         p="0"
         _hover={{ textDecoration: 'underline' }}
-        onClick={() => navigate(`/worlds/${lesson.worldId}`)}
+        onClick={() => {
+          if (lesson.worldId) {
+            navigate(`/worlds/${lesson.worldId}`);
+          } else {
+            navigate(-1);
+          }
+        }}
       >
         <FiArrowLeft />
         <Text>Back to {lesson.moduleName}</Text>
@@ -269,7 +287,7 @@ export default function LessonPage() {
       </Heading>
 
       {/* Content */}
-      <Card.Root>
+      <Card.Root bg="dark.card">
         <Card.Body
           p="6"
           lineHeight="1.7"
@@ -326,7 +344,7 @@ export default function LessonPage() {
           variant="ghost"
           size="sm"
           disabled={!lesson.previousLessonId}
-          onClick={() => navigateToLesson(lesson.previousLessonId)}
+          onClick={() => navigateToLesson(lesson.previousLessonId, lesson.previousLessonType)}
         >
           <FiArrowLeft />
           <Text ml="1">{lesson.previousLessonTitle ?? 'Previous'}</Text>
@@ -335,7 +353,7 @@ export default function LessonPage() {
           variant="ghost"
           size="sm"
           disabled={!lesson.nextLessonId}
-          onClick={() => navigateToLesson(lesson.nextLessonId)}
+          onClick={() => navigateToLesson(lesson.nextLessonId, lesson.nextLessonType)}
         >
           <Text mr="1">{lesson.nextLessonTitle ?? 'Next'}</Text>
           <FiArrowRight />

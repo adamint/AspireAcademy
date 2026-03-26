@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace AspireAcademy.Api.Models;
 
 public class User
@@ -9,10 +7,7 @@ public class User
     public string Email { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
     public string DisplayName { get; set; } = null!;
-    public string AvatarBase { get; set; } = "developer";
-    public List<string> AvatarAccessories { get; set; } = [];
-    public string AvatarBackground { get; set; } = "default";
-    public string AvatarFrame { get; set; } = "none";
+    public string? AvatarSeed { get; set; }
     public string? Bio { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }

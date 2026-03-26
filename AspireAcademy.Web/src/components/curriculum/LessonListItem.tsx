@@ -68,7 +68,7 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       borderRadius="sm"
       cursor={isClickable ? 'pointer' : 'default'}
       opacity={isClickable ? 1 : 0.5}
-      _hover={isClickable ? { bg: 'whiteAlpha.100' } : {}}
+      _hover={isClickable ? { bg: 'content.hover' } : {}}
       onClick={handleClick}
       role="button"
       tabIndex={isClickable ? 0 : -1}

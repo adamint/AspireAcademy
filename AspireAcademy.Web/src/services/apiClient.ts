@@ -25,6 +25,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();
     }
+    // Also logout if /me returns 404 (user deleted from DB but JWT still valid)
+    if (error.response?.status === 404 && url?.includes('/auth/me')) {
+      useAuthStore.getState().logout();
+    }
     return Promise.reject(error);
   }
 );

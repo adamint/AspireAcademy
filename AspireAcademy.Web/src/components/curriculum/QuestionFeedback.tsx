@@ -60,7 +60,7 @@ export default function QuestionFeedback({
         </Text>
       )}
 
-      <Text color="gray.200" fontSize="sm" lineHeight="tall">
+      <Text color="dark.text" fontSize="sm" lineHeight="tall">
         {explanation}
       </Text>
     </Box>

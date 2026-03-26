@@ -1,5 +1,6 @@
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
+using AspireAcademy.Api.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using YamlDotNet.Serialization;
@@ -37,6 +38,8 @@ public class CurriculumLoader
 
     public async Task LoadAsync(CancellationToken ct = default)
     {
+        using var activity = AcademyTracing.Source.StartActivity("CurriculumLoader.Load");
+
         var worldsFile = Path.Combine(_curriculumPath, "worlds.yaml");
         _logger.LogInformation("Looking for worlds.yaml at {Path}", worldsFile);
 
@@ -79,6 +82,10 @@ public class CurriculumLoader
         _logger.LogInformation(
             "Parsed from YAML: {WorldCount} worlds, {ModuleCount} modules, {LessonCount} lessons",
             curriculum.Worlds.Count, totalModules, totalLessons);
+
+        activity?.SetTag("curriculum.worldCount", curriculum.Worlds.Count);
+        activity?.SetTag("curriculum.moduleCount", totalModules);
+        activity?.SetTag("curriculum.lessonCount", totalLessons);
 
         foreach (var worldDef in curriculum.Worlds)
         {

@@ -7,8 +7,7 @@ export interface FriendCardUser {
   id: string;
   username: string;
   displayName: string;
-  avatarBase: string;
-  avatarFrame: string;
+  avatarUrl: string;
   currentLevel: number;
   currentRank: string;
   loginStreakDays: number;
@@ -36,9 +35,9 @@ export default function FriendCard({ user, actions }: FriendCardProps) {
       onClick={() => navigate(`/users/${user.id}`)}
     >
       <AvatarDisplay
-        base={user.avatarBase}
+        url={user.avatarUrl}
         size="sm"
-        frame={user.avatarFrame}
+        level={user.currentLevel}
         name={user.displayName}
       />
       <Box flex={1} minW={0}>

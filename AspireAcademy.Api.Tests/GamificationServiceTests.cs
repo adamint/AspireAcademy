@@ -43,10 +43,6 @@ public class GamificationServiceTests : IDisposable
             Email = "gam@example.com",
             PasswordHash = "hash",
             DisplayName = "Gam User",
-            AvatarBase = "developer",
-            AvatarAccessories = [],
-            AvatarBackground = "default",
-            AvatarFrame = "none",
             CreatedAt = DateTime.UtcNow,
             LoginStreakDays = 0
         });

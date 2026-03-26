@@ -38,7 +38,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <Box
             {...retroCardProps}
             bg="game.retroBg"
-            color="gray.100"
+            color="dark.text"
             p="8"
             maxW="480px"
             w="100%"
@@ -50,7 +50,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <Heading {...pixelFontProps} fontSize="sm" color="game.error" mb="4">
               Something went wrong
             </Heading>
-            <Text fontSize="sm" color="gray.400" mb="6">
+            <Text fontSize="sm" color="dark.muted" mb="6">
               {this.state.error?.message ?? 'An unexpected error occurred.'}
             </Text>
             <Button

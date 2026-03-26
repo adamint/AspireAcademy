@@ -1,9 +1,10 @@
 import { Flex, Box, Text, IconButton } from '@chakra-ui/react';
-import { FiMenu, FiLogOut, FiUser } from 'react-icons/fi';
+import { FiMenu, FiLogOut, FiUser, FiSun, FiMoon } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { useGamificationStore } from '../../store/gamificationStore';
+import { useColorMode } from '../../hooks/useColorMode';
 import { XPProgressBar } from '../gamification/XPProgressBar';
 import { pixelFontProps } from '../../theme/aspireTheme';
 
@@ -16,6 +17,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const loginStreakDays = useGamificationStore((s) => s.loginStreakDays);
+  const { colorMode, toggleColorMode } = useColorMode();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +45,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
         aria-label="Toggle navigation"
         variant="ghost"
         size="sm"
+        color="whiteAlpha.800"
         onClick={onToggleSidebar}
       >
         <FiMenu />
@@ -72,6 +75,18 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
             🔥 {loginStreakDays}
           </Text>
         )}
+
+        {/* Theme toggle */}
+        <IconButton
+          aria-label="Toggle color mode"
+          variant="ghost"
+          size="sm"
+          color="whiteAlpha.800"
+          _hover={{ bg: 'whiteAlpha.200' }}
+          onClick={toggleColorMode}
+        >
+          {colorMode === 'dark' ? <FiSun /> : <FiMoon />}
+        </IconButton>
 
         {/* Avatar with dropdown menu */}
         <Box position="relative" ref={menuRef}>
@@ -105,7 +120,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                 position="absolute"
                 right="0"
                 top="40px"
-                bg="dark.card"
+                bg="dark.sidebar"
                 border="2px solid"
                 borderColor="game.pixelBorder"
                 borderRadius="md"
@@ -115,7 +130,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                 py="2"
               >
                 <Box px="3" pb="2" borderBottom="1px solid" borderColor="game.pixelBorder">
-                  <Text fontWeight="600" fontSize="sm" color="dark.text">
+                  <Text fontWeight="600" fontSize="sm" color="whiteAlpha.900">
                     {user?.displayName ?? user?.username}
                   </Text>
                   <Text
@@ -138,7 +153,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                   bg="transparent"
                   border="none"
                   cursor="pointer"
-                  color="dark.text"
+                  color="whiteAlpha.900"
                   _hover={{ bg: 'whiteAlpha.100' }}
                   onClick={() => {
                     setMenuOpen(false);

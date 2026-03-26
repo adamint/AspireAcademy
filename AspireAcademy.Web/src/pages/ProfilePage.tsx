@@ -4,7 +4,7 @@ import {
   Box, Flex, Text, Button, Badge, Skeleton, SimpleGrid, VStack,
   Dialog, Input, Textarea, Tooltip, Field,
 } from '@chakra-ui/react';
-import { FiEdit2, FiUserPlus, FiUserMinus, FiImage } from 'react-icons/fi';
+import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX } from 'react-icons/fi';
 import { useState } from 'react';
 import api from '../services/apiClient';
 import { useAuthStore, type User } from '../store/authStore';
@@ -40,8 +40,7 @@ export default function ProfilePage() {
   const isOwnProfile = !userId || userId === currentUser?.id;
   const profileId = isOwnProfile ? currentUser?.id : userId;
 
-  const { data: profile, isLoading, error: queryError } = useQuery<UserProfile>({
-    queryKey: ['profile', profileId],
+  const { data: profile, isLoading, error: queryError } = useQuery<UserProfile>({    queryKey: ['profile', profileId],
     queryFn: async () => {
       const endpoint = `/users/${profileId}/profile`;
       try {
@@ -83,6 +82,28 @@ export default function ProfilePage() {
     },
     onError: (err) => {
       console.error('[ProfilePage] Edit profile failed:', err);
+    },
+  });
+
+  const randomizeMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.post('/avatar/randomize');
+      return response.data as { avatarUrl: string };
+    },
+    onSuccess: (data) => {
+      updateUser({ avatarUrl: data.avatarUrl });
+      queryClient.invalidateQueries({ queryKey: ['profile', profileId] });
+    },
+  });
+
+  const resetAvatarMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.delete('/avatar');
+      return response.data as { avatarUrl: string };
+    },
+    onSuccess: (data) => {
+      updateUser({ avatarUrl: data.avatarUrl });
+      queryClient.invalidateQueries({ queryKey: ['profile', profileId] });
     },
   });
 
@@ -130,9 +151,9 @@ export default function ProfilePage() {
       {/* Profile Header */}
       <Flex gap={6} align="flex-start" flexWrap="wrap">
         <AvatarDisplay
-          base={profile.avatarBase}
+          url={profile.avatarUrl}
           size="lg"
-          frame={profile.avatarFrame}
+          level={profile.currentLevel}
           name={profile.displayName}
         />
         <VStack align="flex-start" flex={1} minW="200px" gap={1}>
@@ -162,8 +183,27 @@ export default function ProfilePage() {
                 <Button variant="outline" size="sm" borderColor="game.pixelBorder" color="dark.text" _hover={{ bg: 'whiteAlpha.100' }} onClick={openEditDialog}>
                   <FiEdit2 /> Edit Profile
                 </Button>
-                <Button variant="outline" size="sm" borderColor="game.pixelBorder" color="dark.text" _hover={{ bg: 'whiteAlpha.100' }}>
-                  <FiImage /> Customize Avatar
+                <Button
+                  variant="outline"
+                  size="sm"
+                  borderColor="game.pixelBorder"
+                  color="dark.text"
+                  _hover={{ bg: 'whiteAlpha.100' }}
+                  onClick={() => randomizeMutation.mutate()}
+                  disabled={randomizeMutation.isPending}
+                >
+                  <FiRefreshCw /> Randomize Avatar
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  borderColor="game.pixelBorder"
+                  color="dark.text"
+                  _hover={{ bg: 'whiteAlpha.100' }}
+                  onClick={() => resetAvatarMutation.mutate()}
+                  disabled={resetAvatarMutation.isPending}
+                >
+                  <FiX /> Reset to Gravatar
                 </Button>
               </>
             ) : (

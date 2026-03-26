@@ -1,6 +1,7 @@
 using System.Text.Json;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
+using AspireAcademy.Api.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -14,6 +15,11 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 {
     public async Task<XpAwardResult> AwardXpAsync(Guid userId, int amount, string sourceType, string? sourceId)
     {
+        using var activity = AcademyTracing.Source.StartActivity("GamificationService.AwardXp");
+        activity?.SetTag("userId", userId.ToString());
+        activity?.SetTag("xp.amount", amount);
+        activity?.SetTag("xp.sourceType", sourceType);
+
         logger.LogInformation("XP awarded: +{Amount} to UserId={UserId}, source={SourceType}/{SourceId}",
             amount, userId, sourceType, sourceId);
 
@@ -139,6 +145,9 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
     public async Task<List<Achievement>> CheckAchievementsAsync(Guid userId)
     {
+        using var activity = AcademyTracing.Source.StartActivity("GamificationService.CheckAchievements");
+        activity?.SetTag("userId", userId.ToString());
+
         var unlockedIds = await db.UserAchievements
             .Where(ua => ua.UserId == userId)
             .Select(ua => ua.AchievementId)

@@ -255,7 +255,6 @@ public static class AdminEndpoints
             Email = "test@aspireacademy.dev",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("TestPass1"),
             DisplayName = "Test Learner",
-            AvatarBase = "developer",
             LoginStreakDays = 5,
             LastStreakDate = DateOnly.FromDateTime(now),
             LastLoginAt = now,

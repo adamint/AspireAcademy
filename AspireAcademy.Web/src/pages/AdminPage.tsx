@@ -237,8 +237,8 @@ export default function AdminPage() {
               maxW="250px"
               bg="whiteAlpha.100"
               color="white"
-              borderColor="whiteAlpha.300"
-              _placeholder={{ color: 'whiteAlpha.500' }}
+              borderColor="whiteAlpha.500"
+              _placeholder={{ color: 'whiteAlpha.700' }}
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -311,7 +311,7 @@ export default function AdminPage() {
                     {usersData?.users.length === 0 && (
                       <Table.Row>
                         <Table.Cell colSpan={7}>
-                          <Text textAlign="center" color="whiteAlpha.500" py="4" fontSize="sm">
+                          <Text textAlign="center" color="whiteAlpha.700" py="4" fontSize="sm">
                             No users found.
                           </Text>
                         </Table.Cell>

@@ -63,7 +63,7 @@ export default function LevelUpModal() {
           Level {pendingLevelUp.newLevel}
         </Text>
 
-        <Text color="gray.300" fontSize="md">
+        <Text color="dark.text" fontSize="md">
           {rankEmoji}{' '}
           {pendingLevelUp.previousRank !== pendingLevelUp.newRank ? (
             <>New Rank: <Text as="span" fontWeight="bold" color="game.xpGold">{pendingLevelUp.newRank}</Text></>

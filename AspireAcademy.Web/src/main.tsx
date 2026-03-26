@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { system } from './theme/aspireTheme';
+import { system, initColorMode } from './theme/aspireTheme';
 import App from './App';
 import './App.css';
+
+initColorMode();
 
 const queryClient = new QueryClient({
   defaultOptions: {

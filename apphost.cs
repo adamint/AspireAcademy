@@ -55,6 +55,13 @@ api.WithHttpCommand("/api/admin/reload-curriculum", "Reload Curriculum", command
     PrepareRequest = AddAdminHeader
 });
 
+api.WithHttpCommand("/api/admin/seed-test-data", "Seed Test Data", commandOptions: new HttpCommandOptions
+{
+    Description = "Creates a test user with sample progress for development",
+    IconName = "PersonAdd",
+    PrepareRequest = AddAdminHeader
+});
+
 api.WithHttpCommand("/api/admin/flush-db", "Flush Database", commandOptions: new HttpCommandOptions
 {
     Description = "Drops and recreates all tables, then reloads curriculum (dev only)",

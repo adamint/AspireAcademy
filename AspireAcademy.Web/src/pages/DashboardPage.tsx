@@ -118,7 +118,7 @@ export default function DashboardPage() {
                 Level &amp; Rank
               </Text>
               <Flex align="baseline" gap="2">
-                <Text {...pixelFontProps} fontSize="sm" color="white">
+                <Text {...pixelFontProps} fontSize="sm" color="dark.text">
                   Lv. {stats.level}
                 </Text>
                 <Text fontSize="lg">{rankEmojis[stats.rank] ?? '🌟'}</Text>
@@ -135,7 +135,7 @@ export default function DashboardPage() {
               <Text fontSize="xs" color="aspire.300" mb="2">
                 Streak
               </Text>
-              <Text {...pixelFontProps} fontSize="sm" color="white">
+              <Text {...pixelFontProps} fontSize="sm" color="dark.text">
                 🔥 {stats.streak} day{stats.streak !== 1 ? 's' : ''}
               </Text>
               <Text fontSize="xs" color="game.streak" mt="1">
@@ -221,7 +221,7 @@ export default function DashboardPage() {
                   px="3"
                   py="2"
                   borderRadius="sm"
-                  _hover={{ bg: 'whiteAlpha.100' }}
+                  _hover={{ bg: 'content.hover' }}
                 >
                   <Flex align="center" gap="2">
                     <Text fontSize="sm">{xpEventIcons[event.type] ?? '✅'}</Text>

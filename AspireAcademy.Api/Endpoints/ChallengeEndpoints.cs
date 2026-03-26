@@ -1,9 +1,11 @@
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
 using AspireAcademy.Api.Services;
+using AspireAcademy.Api.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -118,6 +120,7 @@ public static class ChallengeEndpoints
     {
         var userId = GetUserId(user);
         s_logger.LogInformation("Code submit for LessonId={LessonId}, UserId={UserId}", lessonId, userId);
+        AcademyMetrics.ChallengesSubmitted.Add(1);
 
         // Validate lesson
         var lesson = await db.Lessons
@@ -242,6 +245,10 @@ public static class ChallengeEndpoints
         string code,
         JsonDocument requiredPackages)
     {
+        AcademyMetrics.CodeRunnerExecutions.Add(1);
+        using var activity = AcademyTracing.Source.StartActivity("CodeRunner.Execute");
+        var sw = Stopwatch.StartNew();
+
         try
         {
             var client = httpClientFactory.CreateClient("coderunner");
@@ -258,10 +265,12 @@ public static class ChallengeEndpoints
             var response = await client.PostAsJsonAsync("/execute", payload);
 
             s_logger.LogInformation("CodeRunner response: {StatusCode}", response.StatusCode);
+            activity?.SetTag("http.status_code", (int)response.StatusCode);
 
             if (!response.IsSuccessStatusCode)
             {
                 s_logger.LogWarning("CodeRunner returned non-success status: {StatusCode}", response.StatusCode);
+                activity?.SetStatus(ActivityStatusCode.Error, "Non-success status code");
                 return null;
             }
 
@@ -270,7 +279,13 @@ public static class ChallengeEndpoints
         catch (Exception ex)
         {
             s_logger.LogError(ex, "CodeRunner call failed: {Message}", ex.Message);
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             return null;
+        }
+        finally
+        {
+            sw.Stop();
+            AcademyMetrics.CodeRunnerDurationMs.Record(sw.Elapsed.TotalMilliseconds);
         }
     }
 

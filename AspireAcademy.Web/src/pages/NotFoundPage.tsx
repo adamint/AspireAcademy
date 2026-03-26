@@ -17,7 +17,7 @@ export default function NotFoundPage() {
       <Box
         {...retroCardProps}
         bg="game.retroBg"
-        color="gray.100"
+        color="dark.text"
         p="10"
         maxW="480px"
         w="100%"
@@ -29,7 +29,7 @@ export default function NotFoundPage() {
         <Text {...pixelFontProps} fontSize="xs" color="aspire.400" mb="2">
           Page Not Found
         </Text>
-        <Text fontSize="sm" color="gray.400" mb="6">
+        <Text fontSize="sm" color="dark.muted" mb="6">
           The page you're looking for doesn't exist or has been moved.
         </Text>
         <Button

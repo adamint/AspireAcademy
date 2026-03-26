@@ -3,10 +3,7 @@ export interface User {
   username: string;
   displayName: string;
   email: string;
-  avatarBase: string;
-  avatarAccessories: string[];
-  avatarBackground: string;
-  avatarFrame: string;
+  avatarUrl: string;
   bio: string | null;
   currentLevel: number;
   currentRank: string;
@@ -20,10 +17,10 @@ export interface World {
   name: string;
   description: string;
   sortOrder: number;
-  iconEmoji: string;
+  icon: string;
   prerequisiteWorldId: string | null;
   isUnlocked: boolean;
-  modules: Module[];
+  modules?: Module[];
 }
 
 export interface Module {
@@ -163,8 +160,7 @@ export interface LeaderboardEntry {
   userId: string;
   username: string;
   displayName: string;
-  avatarBase: string;
-  avatarFrame: string;
+  avatarUrl: string;
   currentLevel: number;
   currentRank: string;
   xp: number;

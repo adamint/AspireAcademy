@@ -332,10 +332,6 @@ public abstract class TestFixture : IAsyncLifetime, IDisposable
             Email = TestEmail,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(TestPassword),
             DisplayName = "Test User",
-            AvatarBase = "developer",
-            AvatarAccessories = [],
-            AvatarBackground = "default",
-            AvatarFrame = "none",
             Bio = "I am a test user",
             CreatedAt = DateTime.UtcNow,
             LoginStreakDays = 0

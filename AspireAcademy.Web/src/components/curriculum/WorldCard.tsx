@@ -46,7 +46,7 @@ export default function WorldCard({ world }: WorldCardProps) {
             h="11"
             borderRadius="sm"
             bg={world.isLocked ? 'game.locked' : 'game.pixelBorder'}
-            color="white"
+            color="dark.text"
             fontSize="xl"
           >
             {world.isLocked ? <FiLock /> : world.icon}

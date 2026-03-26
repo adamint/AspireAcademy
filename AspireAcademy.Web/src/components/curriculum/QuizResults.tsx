@@ -39,7 +39,7 @@ export default function QuizResults({
         maxW="720px"
         p={8}
         bg="game.retroBg"
-        color="gray.100"
+        color="dark.text"
         {...retroCardProps}
       >
         <Heading
@@ -140,7 +140,7 @@ export default function QuizResults({
             <Button
               variant="outline"
               borderColor="game.pixelBorder"
-              color="gray.200"
+              color="dark.text"
               _hover={{ bg: 'whiteAlpha.100' }}
               onClick={onReview}
             >

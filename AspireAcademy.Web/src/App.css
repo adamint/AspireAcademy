@@ -9,10 +9,18 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: #0D0B1A;
-  color: #E8E0F0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Color mode: body colors ─── */
+.dark body {
+  background: #0D0B1A;
+  color: #E8E0F0;
+}
+.light body {
+  background: #F5F0FF;
+  color: #1A0B2E;
 }
 
 #root {
@@ -61,24 +69,42 @@ body {
 }
 
 /* ─── Scrollbar styling (dark) ─── */
-::-webkit-scrollbar {
+.dark ::-webkit-scrollbar {
   width: 8px;
 }
 
-::-webkit-scrollbar-track {
+.dark ::-webkit-scrollbar-track {
   background: #0D0B1A;
 }
 
-::-webkit-scrollbar-thumb {
+.dark ::-webkit-scrollbar-thumb {
   background: #391578;
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+.dark ::-webkit-scrollbar-thumb:hover {
   background: #551CA9;
 }
 
-/* Dark sidebar scrollbar */
+/* ─── Scrollbar styling (light) ─── */
+.light ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.light ::-webkit-scrollbar-track {
+  background: #F5F0FF;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #C4B5E0;
+  border-radius: 4px;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #9185D1;
+}
+
+/* Dark sidebar scrollbar — always dark regardless of mode */
 .dark-scrollbar::-webkit-scrollbar-track {
   background: #0A0818;
 }

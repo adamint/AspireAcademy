@@ -11,8 +11,7 @@ interface LeaderboardEntry {
   userId: string;
   username: string;
   displayName: string;
-  avatarBase: string;
-  avatarFrame: string;
+  avatarUrl: string;
   currentLevel: number;
   currentRank: string;
   xp: number;
@@ -113,9 +112,9 @@ export default function LeaderboardPage() {
 
                   {/* Avatar */}
                   <AvatarDisplay
-                    base={entry.avatarBase}
+                    url={entry.avatarUrl}
                     size="sm"
-                    frame={entry.avatarFrame}
+                    level={entry.currentLevel}
                     name={entry.displayName}
                   />
 

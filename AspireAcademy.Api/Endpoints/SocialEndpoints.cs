@@ -22,44 +22,68 @@ public static class SocialEndpoints
             s_logger.LogInformation("GET /friends for UserId={UserId}", userId);
 
             // Accepted friends where current user is the requester
-            var friendsAsRequester = await db.Friendships
+            var friendsAsRequester = (await db.Friendships
                 .Where(f => f.RequesterId == userId && f.Status == "accepted")
                 .Join(db.Users, f => f.AddresseeId, u => u.Id, (f, u) => new { f, u })
-                .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new FriendDto(
-                    fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarBase,
-                    x.CurrentLevel, x.CurrentRank, x.TotalXp, fu.u.LoginStreakDays, fu.f.Id))
-                .ToListAsync();
+                .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
+                {
+                    fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email,
+                    x.CurrentLevel, x.CurrentRank, x.TotalXp, fu.u.LoginStreakDays, FriendshipId = fu.f.Id
+                })
+                .ToListAsync())
+                .Select(r => new FriendDto(
+                    r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email),
+                    r.CurrentLevel, r.CurrentRank, r.TotalXp, r.LoginStreakDays, r.FriendshipId))
+                .ToList();
 
             // Accepted friends where current user is the addressee
-            var friendsAsAddressee = await db.Friendships
+            var friendsAsAddressee = (await db.Friendships
                 .Where(f => f.AddresseeId == userId && f.Status == "accepted")
                 .Join(db.Users, f => f.RequesterId, u => u.Id, (f, u) => new { f, u })
-                .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new FriendDto(
-                    fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarBase,
-                    x.CurrentLevel, x.CurrentRank, x.TotalXp, fu.u.LoginStreakDays, fu.f.Id))
-                .ToListAsync();
+                .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
+                {
+                    fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email,
+                    x.CurrentLevel, x.CurrentRank, x.TotalXp, fu.u.LoginStreakDays, FriendshipId = fu.f.Id
+                })
+                .ToListAsync())
+                .Select(r => new FriendDto(
+                    r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email),
+                    r.CurrentLevel, r.CurrentRank, r.TotalXp, r.LoginStreakDays, r.FriendshipId))
+                .ToList();
 
             var friends = friendsAsRequester.Concat(friendsAsAddressee).ToList();
 
             // Pending requests received
-            var pendingReceived = await db.Friendships
+            var pendingReceived = (await db.Friendships
                 .Where(f => f.AddresseeId == userId && f.Status == "pending")
                 .Join(db.Users, f => f.RequesterId, u => u.Id, (f, u) => new { f, u })
-                .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new PendingFriendDto(
-                    fu.f.Id,
-                    new FriendUserDto(fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarBase, x.CurrentLevel),
-                    fu.f.CreatedAt))
-                .ToListAsync();
+                .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
+                {
+                    FriendshipId = fu.f.Id, fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email,
+                    x.CurrentLevel, fu.f.CreatedAt
+                })
+                .ToListAsync())
+                .Select(r => new PendingFriendDto(
+                    r.FriendshipId,
+                    new FriendUserDto(r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email), r.CurrentLevel),
+                    r.CreatedAt))
+                .ToList();
 
             // Pending requests sent
-            var pendingSent = await db.Friendships
+            var pendingSent = (await db.Friendships
                 .Where(f => f.RequesterId == userId && f.Status == "pending")
                 .Join(db.Users, f => f.AddresseeId, u => u.Id, (f, u) => new { f, u })
-                .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new PendingFriendDto(
-                    fu.f.Id,
-                    new FriendUserDto(fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarBase, x.CurrentLevel),
-                    fu.f.CreatedAt))
-                .ToListAsync();
+                .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
+                {
+                    FriendshipId = fu.f.Id, fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email,
+                    x.CurrentLevel, fu.f.CreatedAt
+                })
+                .ToListAsync())
+                .Select(r => new PendingFriendDto(
+                    r.FriendshipId,
+                    new FriendUserDto(r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email), r.CurrentLevel),
+                    r.CreatedAt))
+                .ToList();
 
             return Results.Ok(new FriendsResponse(friends, pendingReceived, pendingSent));
         });
@@ -195,7 +219,7 @@ public static class SocialEndpoints
 
                 var xp = xpByUser.GetValueOrDefault(u.Id);
                 return new UserSearchResult(
-                    u.Id, u.Username, u.DisplayName, u.AvatarBase, xp?.CurrentLevel ?? 1,
+                    u.Id, u.Username, u.DisplayName, AvatarHelper.GetAvatarUrl(u.AvatarSeed, u.Email), xp?.CurrentLevel ?? 1,
                     friendship?.Status == "accepted",
                     friendship?.Status == "pending");
             }).ToList();
@@ -233,9 +257,11 @@ public static class SocialEndpoints
                  (f.RequesterId == userId && f.AddresseeId == currentUserId)) &&
                 f.Status == "accepted");
 
+            var avatarUrl = AvatarHelper.GetAvatarUrl(profileUser.AvatarSeed, profileUser.Email);
+
             return Results.Ok(new UserProfileResponse(
                 profileUser.Id, profileUser.Username, profileUser.DisplayName, profileUser.Bio,
-                profileUser.AvatarBase, profileUser.AvatarAccessories, profileUser.AvatarBackground, profileUser.AvatarFrame,
+                avatarUrl,
                 profileXp?.CurrentLevel ?? 1, profileXp?.CurrentRank ?? "aspire-intern", profileXp?.TotalXp ?? 0, profileUser.LoginStreakDays,
                 profileUser.CreatedAt, achievementCount, completedLessons, totalLessons,
                 showcaseAchievements,
@@ -268,13 +294,15 @@ public static class SocialEndpoints
             .ToListAsync();
         friendIds.Add(userId);
 
-        var entries = await db.UserXp
+        var entries = (await db.UserXp
             .Where(x => friendIds.Contains(x.UserId))
             .Join(db.Users, x => x.UserId, u => u.Id, (x, u) => new { u, x })
             .OrderByDescending(ux => ux.x.TotalXp)
             .Take(maxLimit)
-            .Select(ux => new LeaderboardEntry(0, ux.u.Id, ux.u.Username, ux.u.DisplayName, ux.u.AvatarBase, ux.x.TotalXp, ux.x.CurrentLevel))
-            .ToListAsync();
+            .Select(ux => new { ux.u.Id, ux.u.Username, ux.u.DisplayName, ux.u.AvatarSeed, ux.u.Email, ux.x.TotalXp, ux.x.CurrentLevel })
+            .ToListAsync())
+            .Select(r => new LeaderboardEntry(0, r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email), r.TotalXp, r.CurrentLevel))
+            .ToList();
 
         // Assign ranks after materializing
         for (var i = 0; i < entries.Count; i++)
@@ -311,9 +339,10 @@ public static class SocialEndpoints
             var uid = Guid.Parse(e.Element.ToString());
             var u = users.GetValueOrDefault(uid);
             var xp = xpByUser.GetValueOrDefault(uid);
+            var avatarUrl = AvatarHelper.GetAvatarUrl(u?.AvatarSeed, u?.Email ?? "");
             return new LeaderboardEntry(
                 i + 1, uid,
-                u?.Username ?? "", u?.DisplayName ?? "", u?.AvatarBase ?? "developer",
+                u?.Username ?? "", u?.DisplayName ?? "", avatarUrl,
                 (int)e.Score, xp?.CurrentLevel ?? 1);
         }).ToList();
 
@@ -328,9 +357,10 @@ public static class SocialEndpoints
 
             if (currentUser is not null)
             {
+                var currentUserAvatarUrl = AvatarHelper.GetAvatarUrl(currentUser.AvatarSeed, currentUser.Email);
                 currentUserEntry = new LeaderboardEntry(
                     (int)userRank.Value + 1, userId,
-                    currentUser.Username, currentUser.DisplayName, currentUser.AvatarBase,
+                    currentUser.Username, currentUser.DisplayName, currentUserAvatarUrl,
                     (int)(userScore ?? 0), currentUserXp?.CurrentLevel ?? 1);
             }
         }
@@ -357,23 +387,23 @@ file record FriendsResponse(
     List<PendingFriendDto> PendingSent);
 
 file record FriendDto(
-    Guid Id, string Username, string DisplayName, string AvatarBase,
+    Guid Id, string Username, string DisplayName, string AvatarUrl,
     int CurrentLevel, string CurrentRank, int TotalXp, int LoginStreakDays,
     Guid FriendshipId);
 
 file record PendingFriendDto(Guid FriendshipId, FriendUserDto User, DateTime SentAt);
 
-file record FriendUserDto(Guid Id, string Username, string DisplayName, string AvatarBase, int CurrentLevel);
+file record FriendUserDto(Guid Id, string Username, string DisplayName, string AvatarUrl, int CurrentLevel);
 
 file record FriendRequestDto(string Username);
 
 file record UserSearchResult(
-    Guid Id, string Username, string DisplayName, string AvatarBase,
+    Guid Id, string Username, string DisplayName, string AvatarUrl,
     int CurrentLevel, bool IsFriend, bool IsPending);
 
 file record UserProfileResponse(
     Guid Id, string Username, string DisplayName, string? Bio,
-    string AvatarBase, List<string> AvatarAccessories, string AvatarBackground, string AvatarFrame,
+    string AvatarUrl,
     int CurrentLevel, string CurrentRank, int TotalXp, int LoginStreakDays,
     DateTime CreatedAt, int AchievementCount, int CompletedLessons, int TotalLessons,
     List<ShowcaseAchievementDto> ShowcaseAchievements,
@@ -381,7 +411,7 @@ file record UserProfileResponse(
 
 file record ShowcaseAchievementDto(string Id, string Name, string Icon, string Rarity);
 
-file record LeaderboardEntry(int Rank, Guid UserId, string Username, string DisplayName, string AvatarBase, int Xp, int Level);
+file record LeaderboardEntry(int Rank, Guid UserId, string Username, string DisplayName, string AvatarUrl, int Xp, int Level);
 
 file record LeaderboardResponse(
     List<LeaderboardEntry> Entries,

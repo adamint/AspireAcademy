@@ -8,32 +8,33 @@ test.describe.serial('Quiz functionality', () => {
     const page = await browser.newPage();
     await registerUser(page, username);
 
-    // Complete prerequisite lessons via UI to unlock the quiz lesson
+    // Navigate to world page to find its URL
     await page.getByRole('main').getByText('Aspire Foundations').click();
     await page.waitForURL(/\/worlds\//);
+    const worldUrl = page.url();
 
     // Wait for lessons to load
     await expect(page.locator('[role="button"]').filter({ hasText: /XP/ }).first()).toBeVisible({ timeout: 10_000 });
 
-    // Complete learn lessons one by one until the quiz (🧪) is unlocked
+    // Complete prerequisite learn lessons to unlock the quiz
     for (let i = 0; i < 5; i++) {
-      const availableLearn = page.locator('[role="button"]').filter({ hasText: /○.*📖/ });
+      const availableLearn = page.locator('[role="button"]').filter({ hasText: /○/ }).filter({ hasText: /📖/ });
       if ((await availableLearn.count()) === 0) break;
 
       await availableLearn.first().click();
-      await page.waitForURL(/\/lessons\//);
+      await page.waitForURL(/\/lessons\//, { timeout: 10_000 });
       const markBtn = page.getByRole('button', { name: /mark complete/i });
       await expect(markBtn).toBeVisible({ timeout: 10_000 });
       await markBtn.click();
       await page.waitForTimeout(1_000);
 
-      // Go back to world page
-      await page.getByText(/back to/i).click();
-      await page.waitForURL(/\/worlds\//);
-      await page.waitForTimeout(500);
+      // Navigate back to world page and reload for fresh data
+      await page.goto(worldUrl);
+      await page.reload();
+      await expect(page.locator('[role="button"]').filter({ hasText: /XP/ }).first()).toBeVisible({ timeout: 10_000 });
 
-      // Check if quiz is now unlocked
-      const unlockedQuiz = page.locator('[role="button"]').filter({ hasText: /○.*🧪/ });
+      // Check if quiz is now unlocked (🧪 without 🔒)
+      const unlockedQuiz = page.locator('[role="button"]').filter({ hasText: '🧪' }).filter({ hasNotText: '🔒' });
       if ((await unlockedQuiz.count()) > 0) break;
     }
 

@@ -26,7 +26,7 @@ export default function QuestionCard({
           maxW="720px"
           p={6}
           bg="game.retroBg"
-          color="gray.100"
+          color="dark.text"
           {...retroCardProps}
         >
           <Text fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
@@ -78,7 +78,7 @@ export default function QuestionCard({
           maxW="720px"
           p={6}
           bg="game.retroBg"
-          color="gray.100"
+          color="dark.text"
           {...retroCardProps}
         >
           <Text fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
@@ -97,7 +97,7 @@ export default function QuestionCard({
               </SyntaxHighlighter>
             </Box>
           )}
-          <Text fontSize="sm" color="gray.400" mb={3} fontStyle="italic">
+          <Text fontSize="sm" color="dark.muted" mb={3} fontStyle="italic">
             What will this code output?
           </Text>
           <RadioGroup.Root
@@ -137,14 +137,14 @@ export default function QuestionCard({
           maxW="720px"
           p={6}
           bg="game.retroBg"
-          color="gray.100"
+          color="dark.text"
           {...retroCardProps}
         >
           <Text fontSize="md" lineHeight="tall" mb={4} fontWeight="medium">
             {question.text}
           </Text>
           <Box maxW="400px">
-            <Text fontSize="sm" color="gray.400" mb={2}>
+            <Text fontSize="sm" color="dark.muted" mb={2}>
               Type your answer
             </Text>
             <Input
@@ -155,7 +155,7 @@ export default function QuestionCard({
               bg="whiteAlpha.100"
               border="2px solid"
               borderColor="game.pixelBorder"
-              color="gray.100"
+              color="dark.text"
               _placeholder={{ color: 'gray.500' }}
               _focus={{ borderColor: 'aspire.500', boxShadow: '0 0 0 1px var(--chakra-colors-aspire-500)' }}
             />
@@ -192,13 +192,13 @@ function MultiSelectCard({
       maxW="720px"
       p={6}
       bg="game.retroBg"
-      color="gray.100"
+      color="dark.text"
       {...retroCardProps}
     >
       <Text fontSize="md" lineHeight="tall" mb={2} fontWeight="medium">
         {question.text}
       </Text>
-      <Text fontSize="xs" color="gray.400" mb={4} fontStyle="italic">
+      <Text fontSize="xs" color="dark.muted" mb={4} fontStyle="italic">
         Select all that apply
       </Text>
       <VStack align="stretch" gap={2}>

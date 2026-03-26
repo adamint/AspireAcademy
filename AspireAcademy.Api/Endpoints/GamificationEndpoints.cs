@@ -1,8 +1,8 @@
 using System.Security.Claims;
-using System.Text.Json;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
 using AspireAcademy.Api.Services;
+using AspireAcademy.Api.Telemetry;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspireAcademy.Api.Endpoints;
@@ -42,57 +42,11 @@ public record AchievementDto(
     DateTime? UnlockedAt,
     int XpReward);
 
-public record AvatarItemDto(string Id, string Name, int? UnlockLevel = null, string? UnlockAchievement = null, string? UnlockRank = null, bool IsUnlocked = false);
-
-public record AvatarResponse(
-    string Base,
-    List<string> Accessories,
-    string Background,
-    string Frame,
-    List<string> AvailableBases,
-    List<AvatarItemDto> AvailableAccessories,
-    List<AvatarItemDto> AvailableBackgrounds,
-    List<AvatarItemDto> AvailableFrames);
-
-public record AvatarUpdateRequest(string Base, List<string> Accessories, string Background, string Frame);
+public record AvatarRandomizeResponse(string AvatarUrl);
 
 public static class GamificationEndpoints
 {
     private static ILogger s_logger = null!;
-
-    // ── Static avatar data ──
-
-    private static readonly List<string> s_allBases = ["developer", "architect", "devops", "data-engineer"];
-
-    private static readonly List<(string Id, string Name, int UnlockLevel)> s_accessories =
-    [
-        ("hard-hat", "Hard Hat", 6),
-        ("cloud-cape", "Cloud Cape", 13),
-        ("container-hat", "Container Hat", 18),
-        ("telescope", "Telescope", 29),
-        ("golden-wrench", "Golden Wrench", 37),
-        ("crown", "Crown", 42)
-    ];
-
-    private static readonly List<(string Id, string Name, string? UnlockAchievement)> s_backgrounds =
-    [
-        ("default", "Default Gray", null),
-        ("server-room", "Server Room", "first-resource"),
-        ("cloud-sky", "Cloud Sky", "container-captain"),
-        ("dashboard", "Dashboard View", "observability-guru"),
-        ("code-matrix", "Code Matrix", "hundred-lessons"),
-        ("golden-hall", "Golden Hall", "aspire-architect")
-    ];
-
-    private static readonly List<(string Id, string Name, int? UnlockLevel, string? UnlockRank)> s_frames =
-    [
-        ("none", "No Frame", null, null),
-        ("bronze", "Bronze Frame", 10, null),
-        ("silver", "Silver Frame", 20, null),
-        ("gold", "Gold Frame", 30, null),
-        ("diamond", "Diamond Frame", 40, null),
-        ("golden", "Golden Frame", null, "aspire-architect")
-    ];
 
     public static WebApplication MapGamificationEndpoints(this WebApplication app)
     {
@@ -103,8 +57,8 @@ public static class GamificationEndpoints
         group.MapGet("/xp", GetXpStatsAsync);
         group.MapPost("/progress/complete", CompleteLessonAsync);
         group.MapGet("/achievements", GetAchievementsAsync);
-        group.MapGet("/avatar", GetAvatarAsync);
-        group.MapPut("/avatar", UpdateAvatarAsync);
+        group.MapPost("/avatar/randomize", RandomizeAvatarAsync);
+        group.MapDelete("/avatar", ClearAvatarAsync);
 
         return app;
     }
@@ -207,36 +161,46 @@ public static class GamificationEndpoints
         existing.CompletedAt = DateTime.UtcNow;
         existing.Attempts = 1;
 
-        // Wrap XP award + progress creation in a transaction to prevent duplicate XP
-        await using var transaction = await db.Database.BeginTransactionAsync();
+        // Award XP — use execution strategy to support Npgsql retry with transactions
+        var strategy = db.Database.CreateExecutionStrategy();
+        var xpEarned = lesson.XpReward;
+        XpAwardResult result = null!;
 
-        try
+        await strategy.ExecuteAsync(async () =>
         {
-            // Award XP
-            var xpEarned = lesson.XpReward;
-            var result = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", request.LessonId);
-            existing.XpEarned = xpEarned;
+            await using var transaction = await db.Database.BeginTransactionAsync();
+            try
+            {
+                result = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", request.LessonId);
+                existing.XpEarned = xpEarned;
+                await db.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        });
 
-            await db.SaveChangesAsync();
-            await transaction.CommitAsync();
+        // Check achievements (outside transaction — not critical path)
+        var achievements = await gamification.CheckAchievementsAsync(userId);
 
-            // Check achievements
-            var achievements = await gamification.CheckAchievementsAsync(userId);
-
-            return Results.Ok(new ProgressCompleteResponse(
-                XpEarned: xpEarned,
-                BonusXpEarned: 0,
-                TotalXp: result.TotalXp,
-                CurrentLevel: result.CurrentLevel,
-                LevelUp: result.LevelUp,
-                AchievementsUnlocked: achievements.Select(a =>
-                    new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));
-        }
-        catch
+        AcademyMetrics.LessonsCompleted.Add(1);
+        AcademyMetrics.XpAwarded.Add(xpEarned);
+        if (achievements.Count > 0)
         {
-            await transaction.RollbackAsync();
-            throw;
+            AcademyMetrics.AchievementsUnlocked.Add(achievements.Count);
         }
+
+        return Results.Ok(new ProgressCompleteResponse(
+            XpEarned: xpEarned,
+            BonusXpEarned: 0,
+            TotalXp: result.TotalXp,
+            CurrentLevel: result.CurrentLevel,
+            LevelUp: result.LevelUp,
+            AchievementsUnlocked: achievements.Select(a =>
+                new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));
     }
 
     private static async Task<IResult> GetAchievementsAsync(
@@ -272,7 +236,7 @@ public static class GamificationEndpoints
         return Results.Ok(result);
     }
 
-    private static async Task<IResult> GetAvatarAsync(
+    private static async Task<IResult> RandomizeAvatarAsync(
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
@@ -284,155 +248,30 @@ public static class GamificationEndpoints
             return Results.NotFound(new { error = "User not found" });
         }
 
-        var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
-        var level = userXp?.CurrentLevel ?? 1;
-        var rank = userXp?.CurrentRank ?? "aspire-intern";
-
-        var unlockedAchievementIds = await db.UserAchievements
-            .Where(ua => ua.UserId == userId)
-            .Select(ua => ua.AchievementId)
-            .ToListAsync();
-
-        var availableAccessories = s_accessories.Select(a =>
-            new AvatarItemDto(a.Id, a.Name, UnlockLevel: a.UnlockLevel, IsUnlocked: level >= a.UnlockLevel))
-            .ToList();
-
-        var availableBackgrounds = s_backgrounds.Select(b =>
-            new AvatarItemDto(b.Id, b.Name, UnlockAchievement: b.UnlockAchievement,
-                IsUnlocked: b.UnlockAchievement is null || unlockedAchievementIds.Contains(b.UnlockAchievement)))
-            .ToList();
-
-        var availableFrames = s_frames.Select(f =>
-        {
-            var isUnlocked = f.UnlockLevel is null && f.UnlockRank is null
-                || (f.UnlockLevel is not null && level >= f.UnlockLevel)
-                || (f.UnlockRank is not null && rank == f.UnlockRank);
-
-            return new AvatarItemDto(f.Id, f.Name, UnlockLevel: f.UnlockLevel, UnlockRank: f.UnlockRank, IsUnlocked: isUnlocked);
-        }).ToList();
-
-        return Results.Ok(new AvatarResponse(
-            Base: dbUser.AvatarBase,
-            Accessories: dbUser.AvatarAccessories,
-            Background: dbUser.AvatarBackground,
-            Frame: dbUser.AvatarFrame,
-            AvailableBases: s_allBases,
-            AvailableAccessories: availableAccessories,
-            AvailableBackgrounds: availableBackgrounds,
-            AvailableFrames: availableFrames));
-    }
-
-    private static async Task<IResult> UpdateAvatarAsync(
-        AvatarUpdateRequest request,
-        AcademyDbContext db,
-        ClaimsPrincipal user)
-    {
-        var userId = GetUserId(user);
-
-        var dbUser = await db.Users.FindAsync(userId);
-        if (dbUser is null)
-        {
-            return Results.NotFound(new { error = "User not found" });
-        }
-
-        var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
-        var level = userXp?.CurrentLevel ?? 1;
-        var rank = userXp?.CurrentRank ?? "aspire-intern";
-
-        var unlockedAchievementIds = await db.UserAchievements
-            .Where(ua => ua.UserId == userId)
-            .Select(ua => ua.AchievementId)
-            .ToListAsync();
-
-        // Validate base
-        if (!s_allBases.Contains(request.Base))
-        {
-            return Results.BadRequest(new { error = $"Invalid base: {request.Base}" });
-        }
-
-        // Validate accessories
-        if (request.Accessories is not null)
-        {
-            foreach (var accessoryId in request.Accessories)
-        {
-            var accessory = s_accessories.FirstOrDefault(a => a.Id == accessoryId);
-
-            if (accessory == default)
-            {
-                return Results.BadRequest(new { error = $"Invalid accessory: {accessoryId}" });
-            }
-
-            if (level < accessory.UnlockLevel)
-            {
-                return Results.BadRequest(new { error = $"Accessory '{accessoryId}' requires level {accessory.UnlockLevel}" });
-            }
-            }
-        }
-
-        // Validate background
-        var bg = s_backgrounds.FirstOrDefault(b => b.Id == request.Background);
-        if (bg == default)
-        {
-            return Results.BadRequest(new { error = $"Invalid background: {request.Background}" });
-        }
-
-        if (bg.UnlockAchievement is not null && !unlockedAchievementIds.Contains(bg.UnlockAchievement))
-        {
-            return Results.BadRequest(new { error = $"Background '{request.Background}' requires achievement '{bg.UnlockAchievement}'" });
-        }
-
-        // Validate frame
-        var frame = s_frames.FirstOrDefault(f => f.Id == request.Frame);
-        if (frame == default)
-        {
-            return Results.BadRequest(new { error = $"Invalid frame: {request.Frame}" });
-        }
-
-        var frameUnlocked = frame.UnlockLevel is null && frame.UnlockRank is null
-            || (frame.UnlockLevel is not null && level >= frame.UnlockLevel)
-            || (frame.UnlockRank is not null && rank == frame.UnlockRank);
-
-        if (!frameUnlocked)
-        {
-            return Results.BadRequest(new { error = $"Frame '{request.Frame}' is not unlocked" });
-        }
-
-        // Apply updates
-        dbUser.AvatarBase = request.Base;
-        dbUser.AvatarAccessories = request.Accessories ?? [];
-        dbUser.AvatarBackground = request.Background;
-        dbUser.AvatarFrame = request.Frame;
-
+        dbUser.AvatarSeed = Guid.NewGuid().ToString("N");
         await db.SaveChangesAsync();
 
-        // Build response (same shape as GET)
-        var availableAccessories = s_accessories.Select(a =>
-            new AvatarItemDto(a.Id, a.Name, UnlockLevel: a.UnlockLevel, IsUnlocked: level >= a.UnlockLevel))
-            .ToList();
+        var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email);
+        return Results.Ok(new AvatarRandomizeResponse(avatarUrl));
+    }
 
-        var availableBackgrounds = s_backgrounds.Select(b =>
-            new AvatarItemDto(b.Id, b.Name, UnlockAchievement: b.UnlockAchievement,
-                IsUnlocked: b.UnlockAchievement is null || unlockedAchievementIds.Contains(b.UnlockAchievement)))
-            .ToList();
+    private static async Task<IResult> ClearAvatarAsync(
+        AcademyDbContext db,
+        ClaimsPrincipal user)
+    {
+        var userId = GetUserId(user);
 
-        var availableFrames = s_frames.Select(f =>
+        var dbUser = await db.Users.FindAsync(userId);
+        if (dbUser is null)
         {
-            var isUnlocked = f.UnlockLevel is null && f.UnlockRank is null
-                || (f.UnlockLevel is not null && level >= f.UnlockLevel)
-                || (f.UnlockRank is not null && rank == f.UnlockRank);
+            return Results.NotFound(new { error = "User not found" });
+        }
 
-            return new AvatarItemDto(f.Id, f.Name, UnlockLevel: f.UnlockLevel, UnlockRank: f.UnlockRank, IsUnlocked: isUnlocked);
-        }).ToList();
+        dbUser.AvatarSeed = null;
+        await db.SaveChangesAsync();
 
-        return Results.Ok(new AvatarResponse(
-            Base: dbUser.AvatarBase,
-            Accessories: dbUser.AvatarAccessories,
-            Background: dbUser.AvatarBackground,
-            Frame: dbUser.AvatarFrame,
-            AvailableBases: s_allBases,
-            AvailableAccessories: availableAccessories,
-            AvailableBackgrounds: availableBackgrounds,
-            AvailableFrames: availableFrames));
+        var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email);
+        return Results.Ok(new AvatarRandomizeResponse(avatarUrl));
     }
 
     private static Guid GetUserId(ClaimsPrincipal user)

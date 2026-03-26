@@ -25,21 +25,34 @@ const config = defineConfig({
           error: { value: '#D13438' },
           locked: { value: '#8A8886' },
           perfect: { value: '#6B4FBB' },
-          pixelBorder: { value: '#2B1260' },
-          retroBg: { value: '#1A0B2E' },
-        },
-        dark: {
-          bg: { value: '#0D0B1A' },
-          card: { value: '#1A1630' },
-          sidebar: { value: '#0A0818' },
-          surface: { value: '#151224' },
-          text: { value: '#E8E0F0' },
-          muted: { value: '#9B93B0' },
-          border: { value: '#2B1260' },
         },
       },
       fonts: {
         pixel: { value: '"Press Start 2P", monospace' },
+      },
+    },
+    semanticTokens: {
+      colors: {
+        // Page-level backgrounds and text
+        dark: {
+          bg: { value: { base: '#F5F0FF', _dark: '#0D0B1A' } },
+          card: { value: { base: '#FFFFFF', _dark: '#1A1630' } },
+          sidebar: { value: '#0A0818' },
+          surface: { value: { base: '#EDE7F6', _dark: '#151224' } },
+          text: { value: { base: '#1A0B2E', _dark: '#E8E0F0' } },
+          muted: { value: { base: '#6B5B95', _dark: '#9B93B0' } },
+          border: { value: { base: '#C4B5E0', _dark: '#2B1260' } },
+        },
+        // Game UI tokens
+        game: {
+          pixelBorder: { value: '#2B1260' },
+          retroBg: { value: { base: '#FFFFFF', _dark: '#1A0B2E' } },
+        },
+        // Semantic aliases for content area hover/highlight
+        content: {
+          hover: { value: { base: 'rgba(107, 79, 187, 0.08)', _dark: 'rgba(255, 255, 255, 0.06)' } },
+          subtle: { value: { base: '#F0EBF7', _dark: '#1E1A34' } },
+        },
       },
     },
   },
@@ -87,3 +100,33 @@ export const gameColors = {
   pixelBorder: '#2B1260',
   retroBg: '#1A0B2E',
 } as const;
+
+// ── Color mode helpers ──
+
+const COLOR_MODE_KEY = 'aspire-color-mode';
+
+export type ColorMode = 'dark' | 'light';
+
+export function getStoredColorMode(): ColorMode {
+  try {
+    const stored = localStorage.getItem(COLOR_MODE_KEY);
+    if (stored === 'light' || stored === 'dark') return stored;
+  } catch { /* ignore */ }
+  return 'dark';
+}
+
+export function setColorMode(mode: ColorMode) {
+  try { localStorage.setItem(COLOR_MODE_KEY, mode); } catch { /* ignore */ }
+  const root = document.documentElement;
+  if (mode === 'dark') {
+    root.classList.add('dark');
+    root.classList.remove('light');
+  } else {
+    root.classList.remove('dark');
+    root.classList.add('light');
+  }
+}
+
+export function initColorMode() {
+  setColorMode(getStoredColorMode());
+}
