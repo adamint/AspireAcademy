@@ -12,7 +12,7 @@ export function AppShell() {
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   return (
-    <Flex direction="column" minH="100vh">
+    <Flex direction="column" h="100vh" overflow="hidden">
       <TopBar onToggleSidebar={toggleSidebar} />
       <Flex flexGrow={1} overflow="hidden">
         <Sidebar open={sidebarOpen} onClose={closeSidebar} />
