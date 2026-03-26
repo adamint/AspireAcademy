@@ -7,9 +7,9 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-preview
 WORKDIR /app
 COPY --from=build /app .
 
-# Install Aspire CLI
-RUN dotnet tool install -g aspire
-ENV PATH="$PATH:/root/.dotnet/tools"
+# Install Aspire CLI (standalone installer, not dotnet tool)
+RUN curl -fsSL https://aka.ms/install-aspire.sh | bash
+ENV PATH="$PATH:/root/.aspire/bin"
 
 # Install Node.js for TypeScript support
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
@@ -17,8 +17,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     npm install -g typescript ts-node
 
 RUN useradd -m coderunner
+# Install aspire CLI for coderunner user too
 USER coderunner
-ENV PATH="$PATH:/home/coderunner/.dotnet/tools"
+RUN curl -fsSL https://aka.ms/install-aspire.sh | bash
+ENV PATH="$PATH:/home/coderunner/.aspire/bin"
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "AspireAcademy.CodeRunner.dll"]
