@@ -35,6 +35,9 @@ This repository uses Aspire to orchestrate its distributed application. Resource
 
 Most commands support `--format Json` for machine-readable output. Use `--apphost <path>` to target a specific AppHost.
 
+Before executing a command, you *must* get --help for that command to understand its usage and options. For example: `aspire ps --help`.
+
+
 ## Key workflows
 
 ### Running in agent environments

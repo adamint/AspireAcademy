@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -103,6 +103,14 @@ export default function LessonPage() {
       console.error('[LessonPage] Failed to unskip lesson:', err);
     },
   });
+
+  // Reset mutation states when navigating to a different lesson
+  useEffect(() => {
+    completeMutation.reset();
+    skipMutation.reset();
+    unskipMutation.reset();
+    setXpAnim(null);
+  }, [lessonId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleComplete = useCallback(() => {
     if (!lesson?.isCompleted && !completeMutation.isPending) {
