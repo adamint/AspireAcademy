@@ -24,7 +24,7 @@ builder.Services.AddHttpClient("coderunner", client =>
 });
 
 // JWT authentication
-var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "dev-secret-key-change-in-production-min-32-chars!!";
+var jwtSecret = builder.Configuration["Jwt:Key"] ?? "dev-secret-key-change-in-production-min-32-chars!!";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "AspireAcademy";
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -85,3 +85,5 @@ app.MapSocialEndpoints();
 app.MapAiTutorEndpoints();
 
 app.Run();
+
+public partial class Program { }

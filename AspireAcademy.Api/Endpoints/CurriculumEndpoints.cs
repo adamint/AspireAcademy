@@ -212,11 +212,23 @@ public static class CurriculumEndpoints
 
         var userId = GetUserId(principal);
 
+        // Check if lesson is unlocked before returning content
+        if (lesson.UnlockAfterLessonId is not null)
+        {
+            var prereqProgress = await db.UserProgress
+                .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
+
+            if (prereqProgress?.Status is not ("completed" or "perfect"))
+            {
+                return Results.Json(new ErrorResponse("Lesson is locked."), statusCode: 403);
+            }
+        }
+
         var progress = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lessonId);
 
         QuizDto? quizDto = null;
-        ChallengeDto? challengeDto = null;
+        List<ChallengeDto>? challengeSteps = null;
 
         if (lesson.Type is "quiz" or "boss-battle")
         {
@@ -247,19 +259,21 @@ public static class CurriculumEndpoints
 
         if (lesson.Type is "challenge" or "build-project" or "boss-battle")
         {
-            var challenge = await db.CodeChallenges
-                .FirstOrDefaultAsync(c => c.LessonId == lessonId);
+            var challenges = await db.CodeChallenges
+                .Where(c => c.LessonId == lessonId)
+                .OrderBy(c => c.SortOrder)
+                .ToListAsync();
 
-            if (challenge is not null)
+            if (challenges.Count > 0)
             {
-                challengeDto = new ChallengeDto(
+                challengeSteps = challenges.Select(challenge => new ChallengeDto(
                     challenge.Id,
                     challenge.InstructionsMarkdown,
                     challenge.StarterCode,
                     challenge.Hints.Deserialize<List<string>>() ?? [],
                     challenge.TestCases.RootElement.Clone(),
                     challenge.RequiredPackages.Deserialize<List<string>>() ?? [],
-                    challenge.StepTitle);
+                    challenge.StepTitle)).ToList();
             }
         }
 
@@ -277,7 +291,7 @@ public static class CurriculumEndpoints
             Status: progress?.Status ?? "not-started",
             Score: progress?.Score,
             quizDto,
-            challengeDto));
+            challengeSteps));
     }
 
     // --- Unlock Logic ---
@@ -392,7 +406,7 @@ public record LessonDetailDto(
     string Status,
     int? Score,
     QuizDto? Quiz,
-    ChallengeDto? Challenge);
+    List<ChallengeDto>? ChallengeSteps);
 
 public record QuizDto(
     List<QuizQuestionDto> Questions,

@@ -28,13 +28,20 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
                 WeekStart = GetCurrentWeekStart()
             };
             db.UserXp.Add(userXp);
+            await db.SaveChangesAsync();
         }
 
         var previousLevel = userXp.CurrentLevel;
         var previousRank = userXp.CurrentRank;
 
-        userXp.TotalXp += amount;
-        userXp.WeeklyXp += amount;
+        // Atomic increment to avoid race conditions
+        await db.UserXp.Where(x => x.UserId == userId)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(x => x.TotalXp, x => x.TotalXp + amount)
+                .SetProperty(x => x.WeeklyXp, x => x.WeeklyXp + amount));
+
+        // Re-read updated values
+        await db.Entry(userXp).ReloadAsync();
 
         var (newLevel, newRank) = CalculateLevel(userXp.TotalXp);
         userXp.CurrentLevel = newLevel;

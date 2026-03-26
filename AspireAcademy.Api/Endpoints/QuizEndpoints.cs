@@ -49,6 +49,11 @@ public static class QuizEndpoints
     {
         var userId = GetUserId(user);
 
+        if (request.Answers is null or { Count: 0 })
+        {
+            return Results.BadRequest(new { error = "Answers are required" });
+        }
+
         // Validate lesson exists and has quiz questions
         var lesson = await db.Lessons
             .Include(l => l.QuizQuestions.OrderBy(q => q.SortOrder))

@@ -198,7 +198,7 @@ public static partial class AuthEndpoints
     internal static string GenerateJwtToken(User user, IConfiguration config)
     {
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+            Encoding.UTF8.GetBytes(config["Jwt:Key"] ?? "dev-secret-key-change-in-production-min-32-chars!!"));
 
         Claim[] claims =
         [
@@ -207,7 +207,7 @@ public static partial class AuthEndpoints
         ];
 
         var token = new JwtSecurityToken(
-            issuer: config["Jwt:Issuer"],
+            issuer: config["Jwt:Issuer"] ?? "AspireAcademy",
             audience: config["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(24),
@@ -223,7 +223,7 @@ public static partial class AuthEndpoints
             return null;
         }
 
-        var key = Encoding.UTF8.GetBytes(config["Jwt:Key"]!);
+        var key = Encoding.UTF8.GetBytes(config["Jwt:Key"] ?? "dev-secret-key-change-in-production-min-32-chars!!");
         var handler = new JwtSecurityTokenHandler();
 
         try
@@ -233,7 +233,7 @@ public static partial class AuthEndpoints
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
-                ValidIssuer = config["Jwt:Issuer"],
+                ValidIssuer = config["Jwt:Issuer"] ?? "AspireAcademy",
                 ValidateAudience = true,
                 ValidAudience = config["Jwt:Audience"],
                 ValidateLifetime = false, // allow expired tokens for refresh

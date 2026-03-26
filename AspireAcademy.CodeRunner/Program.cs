@@ -168,9 +168,14 @@ sealed partial class CompilationService(ILogger logger)
             }
         }
 
+        // Sanitize project names — alphanumeric + dots/hyphens only, no path traversal
+        projectRefs = projectRefs
+            .Where(n => SanitizedNameRegex().IsMatch(n))
+            .Take(10)  // limit to 10 stub projects max
+            .ToList();
+
         if (projectRefs.Count > 0)
         {
-            // Create stub projects so Projects.X types exist
             foreach (var projName in projectRefs)
             {
                 CreateStubProject(dir, projName);
@@ -265,7 +270,8 @@ sealed partial class CompilationService(ILogger logger)
     private async Task<ExecuteResponse> ExecuteTypeScriptAsync(string code, string tempDir, int timeoutSeconds)
     {
         await File.WriteAllTextAsync(Path.Combine(tempDir, "main.ts"), code);
-        var result = await RunProcessAsync("npx", "ts-node main.ts", tempDir, timeoutSeconds);
+        // Use ts-node directly (pre-installed in container) — avoid npx which may download packages
+        var result = await RunProcessAsync("ts-node", "main.ts", tempDir, timeoutSeconds);
         return new ExecuteResponse(
             result.ExitCode == 0,
             TruncateOutput(result.Output),
@@ -364,6 +370,9 @@ sealed partial class CompilationService(ILogger logger)
 
     [GeneratedRegex(@"Projects\.(\w+)")]
     private static partial Regex ProjectsRegex();
+
+    [GeneratedRegex(@"^[A-Za-z][A-Za-z0-9.\-]{0,49}$")]
+    private static partial Regex SanitizedNameRegex();
 }
 
 record ProcessResult(int ExitCode, string Output, string ErrorOutput);

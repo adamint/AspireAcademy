@@ -202,24 +202,36 @@ public static class GamificationEndpoints
         existing.CompletedAt = DateTime.UtcNow;
         existing.Attempts = 1;
 
-        // Award XP
-        var xpEarned = lesson.XpReward;
-        var result = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", request.LessonId);
-        existing.XpEarned = xpEarned;
+        // Wrap XP award + progress creation in a transaction to prevent duplicate XP
+        await using var transaction = await db.Database.BeginTransactionAsync();
 
-        await db.SaveChangesAsync();
+        try
+        {
+            // Award XP
+            var xpEarned = lesson.XpReward;
+            var result = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", request.LessonId);
+            existing.XpEarned = xpEarned;
 
-        // Check achievements
-        var achievements = await gamification.CheckAchievementsAsync(userId);
+            await db.SaveChangesAsync();
+            await transaction.CommitAsync();
 
-        return Results.Ok(new ProgressCompleteResponse(
-            XpEarned: xpEarned,
-            BonusXpEarned: 0,
-            TotalXp: result.TotalXp,
-            CurrentLevel: result.CurrentLevel,
-            LevelUp: result.LevelUp,
-            AchievementsUnlocked: achievements.Select(a =>
-                new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));
+            // Check achievements
+            var achievements = await gamification.CheckAchievementsAsync(userId);
+
+            return Results.Ok(new ProgressCompleteResponse(
+                XpEarned: xpEarned,
+                BonusXpEarned: 0,
+                TotalXp: result.TotalXp,
+                CurrentLevel: result.CurrentLevel,
+                LevelUp: result.LevelUp,
+                AchievementsUnlocked: achievements.Select(a =>
+                    new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     private static async Task<IResult> GetAchievementsAsync(
@@ -334,7 +346,9 @@ public static class GamificationEndpoints
         }
 
         // Validate accessories
-        foreach (var accessoryId in request.Accessories)
+        if (request.Accessories is not null)
+        {
+            foreach (var accessoryId in request.Accessories)
         {
             var accessory = s_accessories.FirstOrDefault(a => a.Id == accessoryId);
 
@@ -346,6 +360,7 @@ public static class GamificationEndpoints
             if (level < accessory.UnlockLevel)
             {
                 return Results.BadRequest(new { error = $"Accessory '{accessoryId}' requires level {accessory.UnlockLevel}" });
+            }
             }
         }
 
@@ -379,7 +394,7 @@ public static class GamificationEndpoints
 
         // Apply updates
         dbUser.AvatarBase = request.Base;
-        dbUser.AvatarAccessories = request.Accessories;
+        dbUser.AvatarAccessories = request.Accessories ?? [];
         dbUser.AvatarBackground = request.Background;
         dbUser.AvatarFrame = request.Frame;
 

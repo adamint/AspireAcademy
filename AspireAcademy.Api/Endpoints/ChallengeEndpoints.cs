@@ -279,7 +279,7 @@ public static class ChallengeEndpoints
                 "output-equals" => compilationSuccess && executionOutput.Trim() == expected?.Trim(),
                 "output-contains" => compilationSuccess && expected is not null && executionOutput.Contains(expected, StringComparison.Ordinal),
                 "code-contains" => expected is not null && code.Contains(expected, StringComparison.Ordinal),
-                "code-pattern" => expected is not null && System.Text.RegularExpressions.Regex.IsMatch(code, expected),
+                "code-pattern" => expected is not null && System.Text.RegularExpressions.Regex.IsMatch(code, expected, System.Text.RegularExpressions.RegexOptions.None, TimeSpan.FromSeconds(1)),
                 _ => false
             };
 
