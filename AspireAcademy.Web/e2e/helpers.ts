@@ -50,6 +50,34 @@ export async function clearAuth(page: Page): Promise<void> {
   await page.evaluate(() => localStorage.removeItem('aspire-academy-auth'));
 }
 
+/* ---------- fake auth injection ---------- */
+
+export async function injectAuth(page: Page, token: string, user: Record<string, unknown>): Promise<void> {
+  await page.addInitScript(
+    ({ token, user }) => {
+      localStorage.setItem(
+        'aspire-academy-auth',
+        JSON.stringify({ state: { token, user }, version: 0 }),
+      );
+    },
+    { token, user },
+  );
+}
+
+export const FAKE_USER = {
+  id: 'test-id',
+  username: 'testuser',
+  displayName: 'Test User',
+  email: 'test@test.com',
+  avatarUrl: '',
+  bio: null,
+  currentLevel: 1,
+  currentRank: 'aspire-intern',
+  totalXp: 0,
+  loginStreakDays: 0,
+  createdAt: new Date().toISOString(),
+};
+
 /* ---------- navigation helpers ---------- */
 
 export async function navigateToWorld(page: Page, worldName = 'Aspire Foundations'): Promise<void> {
@@ -64,6 +92,22 @@ export async function navigateToFirstLearnLesson(page: Page): Promise<void> {
   await learnLesson.first().click();
   await page.waitForURL(/\/lessons\//);
   await expect(page.getByText(/back to/i)).toBeVisible({ timeout: 10_000 });
+}
+
+export async function loginAndGoToDashboard(page: Page, username: string): Promise<void> {
+  await loginUser(page, username);
+  await expectDashboard(page);
+}
+
+export async function loginAndGoToWorld(page: Page, username: string, worldName = 'Aspire Foundations'): Promise<void> {
+  await loginUser(page, username);
+  await expectDashboard(page);
+  await navigateToWorld(page, worldName);
+}
+
+export async function loginAndGoToFirstLesson(page: Page, username: string): Promise<void> {
+  await loginAndGoToWorld(page, username);
+  await navigateToFirstLearnLesson(page);
 }
 
 export async function completeLearnLessons(page: Page, worldUrl: string, count: number): Promise<void> {

@@ -157,8 +157,7 @@ test.describe.serial('Authentication — complete coverage', () => {
     await page.goto('/register');
     // Register is a public route — it always shows
     await expect(
-      page.getByText(/create your hero account/i)
-        .or(page.getByRole('button', { name: 'Create Account' })),
+      page.getByRole('button', { name: 'Create Account' }),
     ).toBeVisible({ timeout: 5_000 });
   });
 });
