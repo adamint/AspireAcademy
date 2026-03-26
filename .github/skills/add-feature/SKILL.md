@@ -66,3 +66,19 @@ ALL tests must pass before the feature is considered done.
 - [ ] Frontend buttons disabled during submission
 - [ ] Playwright E2E test covers the full user flow
 - [ ] All existing tests still pass
+
+## Restarting the app
+
+Use `aspire stop` then `aspire run` — NOT `kill` or `kill -9`.
+
+```bash
+# Stop gracefully (preserves data)
+aspire stop --all
+
+# Start fresh (rebuilds Docker images if Dockerfile changed)
+aspire run
+```
+
+**NEVER use `kill -9` on the aspire process** — it can corrupt the PostgreSQL WAL, causing `invalid checkpoint record` errors on next startup. Always use `aspire stop`.
+
+**NEVER delete `aspire-academy-pgdata` volume** — it contains user data. Only delete if schema migration fails and user explicitly asks.
