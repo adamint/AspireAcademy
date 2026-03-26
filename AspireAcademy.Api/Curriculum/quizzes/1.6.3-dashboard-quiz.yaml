@@ -1,13 +1,76 @@
 questions:
-  - text: "Placeholder question for Dashboard Quiz"
+  - text: "What are the five main views in the Aspire Dashboard?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
+        text: "Resources, Console Logs, Structured Logs, Traces, Metrics"
         isCorrect: true
       - id: b
-        text: "Option B"
+        text: "Services, Containers, Logs, Errors, Performance"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: c
+        text: "Resources, Endpoints, Health Checks, Alerts, Settings"
+        isCorrect: false
+      - id: d
+        text: "Projects, Docker, Networking, Storage, Security"
+        isCorrect: false
+    explanation: "The Dashboard has five views: Resources (status table), Console Logs (raw stdout/stderr), Structured Logs (parsed ILogger entries), Traces (distributed request waterfall), and Metrics (time-series charts)."
+
+  - text: "In a distributed trace waterfall, what does indentation represent?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "The order in which services were started"
+        isCorrect: false
+      - id: b
+        text: "Parent-child relationships between spans across services"
+        isCorrect: true
+      - id: c
+        text: "The priority level of each operation"
+        isCorrect: false
+      - id: d
+        text: "The memory usage of each span"
+        isCorrect: false
+    explanation: "In the trace waterfall, indentation shows parent-child relationships. If Service A calls Service B, Service B's span appears indented under Service A's span. This lets you trace a request's complete path."
+
+  - text: "How does trace context propagate between services?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "Through a shared database table"
+        isCorrect: false
+      - id: b
+        text: "Through the traceparent HTTP header, added automatically by HttpClient"
+        isCorrect: true
+      - id: c
+        text: "Through environment variables set by the AppHost"
+        isCorrect: false
+      - id: d
+        text: "Through a gRPC sidecar process"
+        isCorrect: false
+    explanation: "When Service A calls Service B via HttpClient, .NET automatically adds a traceparent header containing the trace ID and parent span ID. Service B reads this header and creates a child span, linking the operations into one trace."
+
+  - text: "What protocol does the Dashboard use to receive real-time telemetry from services?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "REST API polling"
+        isCorrect: false
+      - id: b
+        text: "WebSocket connections"
+        isCorrect: false
+      - id: c
+        text: "OTLP (OpenTelemetry Protocol) over gRPC or HTTP"
+        isCorrect: true
+      - id: d
+        text: "File-based log shipping"
+        isCorrect: false
+    explanation: "Services export telemetry (traces, metrics, logs) to the Dashboard via OTLP. The AppHost injects the OTEL_EXPORTER_OTLP_ENDPOINT environment variable into each service, pointing to the Dashboard's OTLP receiver."

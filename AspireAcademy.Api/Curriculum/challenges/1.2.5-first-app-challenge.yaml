@@ -1,18 +1,87 @@
 instructions: |
   # First App Challenge
-  Create an Aspire app with the CLI and add a project resource.
+
+  Build a complete AppHost that orchestrates two services with a shared Redis cache.
+
+  **What to do:**
+  1. Create a Redis cache named `"cache"`
+  2. Add an API project named `"api"` using `Projects.ApiService` that references the cache
+  3. Add a web frontend named `"web"` using `Projects.Web` that references the API
+  4. Make the web frontend's HTTP endpoints externally accessible
+  5. Use `WaitFor` to ensure the API starts after Redis, and the web starts after the API
+
+  **Key concepts:**
+  - `AddRedis(name)` registers a Redis container
+  - `AddProject<T>(name)` registers a .NET project
+  - `WithReference(resource)` injects connection strings or service discovery URLs
+  - `WithExternalHttpEndpoints()` marks endpoints as externally accessible
+  - `WaitFor(resource)` controls startup ordering
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add a Redis cache named "cache"
+
+  // TODO: Add an API project that references the cache
+
+  // TODO: Add a web frontend that references the API with external endpoints
+
+  builder.Build().Run();
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var cache = builder.AddRedis("cache");
+
+  var api = builder.AddProject<Projects.ApiService>("api")
+                   .WithReference(cache)
+                   .WaitFor(cache);
+
+  builder.AddProject<Projects.Web>("web")
+         .WithExternalHttpEndpoints()
+         .WithReference(api)
+         .WaitFor(api);
+
+  builder.Build().Run();
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Uses AddRedis
+    type: code-contains
+    expected: AddRedis
+    description: Must add a Redis resource
+  - id: tc3
+    name: Names the cache resource
+    type: code-contains
+    expected: '"cache"'
+    description: Redis must be named 'cache'
+  - id: tc4
+    name: Uses WithReference for cache
+    type: code-contains
+    expected: WithReference(cache)
+    description: API must reference the cache
+  - id: tc5
+    name: Uses WithExternalHttpEndpoints
+    type: code-contains
+    expected: WithExternalHttpEndpoints
+    description: Web frontend must have external HTTP endpoints
+  - id: tc6
+    name: Uses WaitFor
+    type: code-contains
+    expected: WaitFor
+    description: Must use WaitFor to control startup ordering
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - Start by adding Redis with builder.AddRedis("cache") and storing it in a variable
+  - Chain .WithReference(cache) and .WaitFor(cache) on the API project builder
+  - Use .WithExternalHttpEndpoints() on the web project so it's accessible from your browser
+requiredPackages:
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+  - Aspire.Hosting.Redis
 sortOrder: 0

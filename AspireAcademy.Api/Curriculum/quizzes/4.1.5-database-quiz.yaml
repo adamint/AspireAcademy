@@ -1,13 +1,82 @@
 questions:
-  - text: "Placeholder question for Database Hosting Quiz"
+  - text: "What does `AddDatabase(\"mydb\")` do when called on a PostgreSQL server resource?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
+        text: "Creates a new PostgreSQL container"
+        isCorrect: false
+      - id: b
+        text: "Creates a logical database on the server and provides a connection string including the database name"
+        isCorrect: true
+      - id: c
+        text: "Downloads the PostgreSQL client library"
+        isCorrect: false
+      - id: d
+        text: "Registers a health check only"
+        isCorrect: false
+    explanation: "AddDatabase creates a child resource representing a logical database on the PostgreSQL server. The connection string injected via WithReference includes Host, Port, Username, Password, and Database=mydb."
+
+  - text: "How do you persist database data between AppHost restarts?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "Use WithDataVolume() and WithLifetime(ContainerLifetime.Persistent)"
         isCorrect: true
       - id: b
-        text: "Option B"
+        text: "Set a special environment variable"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: c
+        text: "Databases automatically persist data"
+        isCorrect: false
+      - id: d
+        text: "Export the data before shutdown"
+        isCorrect: false
+    explanation: "WithDataVolume() creates a Docker volume for the database files. WithLifetime(ContainerLifetime.Persistent) prevents the container from being destroyed on shutdown, so it's reused on the next start with all data intact."
+
+  - text: "Which method adds a web management UI to a PostgreSQL resource?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "WithDashboard()"
+        isCorrect: false
+      - id: b
+        text: "WithPgAdmin()"
+        isCorrect: true
+      - id: c
+        text: "WithManagementPlugin()"
+        isCorrect: false
+      - id: d
+        text: "WithWebUI()"
+        isCorrect: false
+    explanation: "PostgreSQL uses WithPgAdmin() for its web admin UI. RabbitMQ uses WithManagementPlugin(). MySQL uses WithPhpMyAdmin(). MongoDB uses WithMongoExpress(). Each database technology has its own management tool."
+
+  - text: |
+      What connection string pattern does this code inject into the API service?
+      ```csharp
+      var sql = builder.AddSqlServer("sql");
+      var db = sql.AddDatabase("orders");
+      builder.AddProject<Projects.Api>("api").WithReference(db);
+      ```
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "`ConnectionStrings__sql` with just the server address"
+        isCorrect: false
+      - id: b
+        text: "`ConnectionStrings__orders` with server, database name, and credentials"
+        isCorrect: true
+      - id: c
+        text: "`services__orders__tcp__0` with a TCP endpoint"
+        isCorrect: false
+      - id: d
+        text: "`DATABASE_URL` with a connection URI"
+        isCorrect: false
+    explanation: "When you reference a database child resource, the environment variable uses the database resource name (orders), not the server name (sql). The connection string includes Server, Database=orders, User Id, Password, and TrustServerCertificate settings."

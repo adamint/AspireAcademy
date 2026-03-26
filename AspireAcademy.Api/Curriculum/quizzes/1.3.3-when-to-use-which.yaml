@@ -1,13 +1,76 @@
 questions:
-  - text: "Placeholder question for When to Use Which Style"
+  - text: "What is the `#:sdk` directive in a single-file AppHost?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
-        isCorrect: true
-      - id: b
-        text: "Option B"
+        text: "It imports a NuGet package"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: b
+        text: "It specifies the Aspire SDK version, replacing what a .csproj file would do"
+        isCorrect: true
+      - id: c
+        text: "It references a .NET project"
+        isCorrect: false
+      - id: d
+        text: "It sets an MSBuild property"
+        isCorrect: false
+    explanation: "The #:sdk directive (e.g., #:sdk Aspire.AppHost.Sdk@9.3.0) tells the .NET SDK which Aspire version to use. It replaces the Sdk element and version that would normally be in a .csproj file."
+
+  - text: "What is the main advantage of a .csproj AppHost over a single-file AppHost?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "It runs faster"
+        isCorrect: false
+      - id: b
+        text: "It supports more resource types"
+        isCorrect: false
+      - id: c
+        text: "It provides compile-time safety with generated Projects.* types and full IDE support"
+        isCorrect: true
+      - id: d
+        text: "It works on more operating systems"
+        isCorrect: false
+    explanation: "The .csproj AppHost generates Projects.* types from ProjectReferences, giving compile-time safety — a removed project reference becomes a build error. It also supports full Visual Studio F5 debugging, IntelliSense, and MSBuild customization."
+
+  - text: "When should you choose a single-file AppHost?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "For production applications with CI/CD pipelines"
+        isCorrect: false
+      - id: b
+        text: "For quick prototypes, learning, and simple applications"
+        isCorrect: true
+      - id: c
+        text: "When you need full Visual Studio debugging support"
+        isCorrect: false
+      - id: d
+        text: "When your team requires MSBuild customization"
+        isCorrect: false
+    explanation: "Single-file AppHosts are ideal for prototyping and learning because they have zero ceremony — one file, no solution file, no .csproj. For production apps, the .csproj approach provides compile-time safety, IDE debugging, and MSBuild integration."
+
+  - text: "How do you reference a .NET project in a single-file AppHost?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "Using AddProject<Projects.Api>(\"api\") with generated types"
+        isCorrect: false
+      - id: b
+        text: "Using AddProject(\"api\", \"./src/Api/Api.csproj\") with a string path"
+        isCorrect: true
+      - id: c
+        text: "Using AddContainer(\"api\", \"api-image\")"
+        isCorrect: false
+      - id: d
+        text: "Using a #:project directive only — no code needed"
+        isCorrect: false
+    explanation: "Single-file AppHosts don't have .csproj ProjectReferences, so there are no generated Projects.* types. Instead, you use the string-path overload: AddProject(\"api\", \"./path/to/project.csproj\")."

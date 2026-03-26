@@ -1,13 +1,86 @@
 questions:
-  - text: "Placeholder question for Aspire vs Docker Compose and Kubernetes"
+  - text: "What is the primary advantage Aspire has over Docker Compose for .NET development?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
-        isCorrect: true
-      - id: b
-        text: "Option B"
+        text: "Aspire can deploy to Kubernetes in production"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: b
+        text: "Aspire provides compile-time safety, automatic service discovery, and built-in observability"
+        isCorrect: true
+      - id: c
+        text: "Aspire replaces Docker entirely and doesn't use containers"
+        isCorrect: false
+      - id: d
+        text: "Aspire is language-agnostic and works with any programming language"
+        isCorrect: false
+    explanation: "Aspire's key advantages over Docker Compose are compile-time safety (AddProject<T> uses generated types), automatic service discovery (WithReference injects URLs), and built-in observability (Dashboard with traces, logs, metrics). Docker Compose requires manual wiring and has no observability built in."
+
+  - text: "When should you use Kubernetes instead of Aspire?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "For local development and debugging"
+        isCorrect: false
+      - id: b
+        text: "For integration testing in CI/CD"
+        isCorrect: false
+      - id: c
+        text: "For production deployment at scale"
+        isCorrect: true
+      - id: d
+        text: "For prototyping new microservices"
+        isCorrect: false
+    explanation: "Aspire is a dev-time orchestrator, not a production deployment tool. Kubernetes excels at production orchestration with scaling, rolling updates, and infrastructure management. Aspire can generate Kubernetes manifests from your app model, so the two complement each other."
+
+  - text: "Which statement about Aspire is FALSE?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "Aspire can run .NET projects directly without building Docker images"
+        isCorrect: false
+      - id: b
+        text: "Aspire replaces Kubernetes for production deployments"
+        isCorrect: true
+      - id: c
+        text: "Aspire can orchestrate both containers and .NET projects together"
+        isCorrect: false
+      - id: d
+        text: "Aspire provides a Dashboard for viewing traces and logs"
+        isCorrect: false
+    explanation: "Aspire is a dev-time orchestrator that complements Kubernetes, not replaces it. Aspire runs projects directly (no image build needed), mixes containers with projects, and provides a Dashboard — but production deployment is handled by other tools."
+
+  - text: |
+      A developer has this Docker Compose file. What Aspire feature eliminates the need for manual environment variable wiring?
+      ```yaml
+      services:
+        api:
+          environment:
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+        redis:
+          image: redis:7
+      ```
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "AddContainer()"
+        isCorrect: false
+      - id: b
+        text: "WithReference() — it injects connection strings automatically"
+        isCorrect: true
+      - id: c
+        text: "WithEnvironment()"
+        isCorrect: false
+      - id: d
+        text: "Build().Run()"
+        isCorrect: false
+    explanation: "WithReference(redis) on the API project automatically injects the Redis connection string as an environment variable (ConnectionStrings__cache). In Docker Compose, you must manually set REDIS_HOST and REDIS_PORT. WithReference handles this wiring automatically."

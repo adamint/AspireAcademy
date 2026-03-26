@@ -1,13 +1,81 @@
 questions:
-  - text: "Placeholder question for Container Resources Quiz"
+  - text: "What is the difference between `WithVolume` and `WithBindMount`?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
+        text: "WithVolume creates Docker-managed storage; WithBindMount maps a host directory"
         isCorrect: true
       - id: b
-        text: "Option B"
+        text: "WithVolume is for read-only; WithBindMount is for read-write"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: c
+        text: "WithVolume works on Linux only; WithBindMount works everywhere"
+        isCorrect: false
+      - id: d
+        text: "There is no difference — they are aliases"
+        isCorrect: false
+    explanation: "WithVolume creates a named Docker volume (managed by Docker, persists between container recreations). WithBindMount maps a specific directory from the host filesystem into the container, useful for config files."
+
+  - text: "What does `WithLifetime(ContainerLifetime.Persistent)` do?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "Makes the container run forever without stopping"
+        isCorrect: false
+      - id: b
+        text: "Reuses existing containers by name and doesn't remove them on AppHost shutdown"
+        isCorrect: true
+      - id: c
+        text: "Saves the container state to disk"
+        isCorrect: false
+      - id: d
+        text: "Enables automatic restart on crash"
+        isCorrect: false
+    explanation: "ContainerLifetime.Persistent tells Aspire to reuse an existing container with the same name if one is found, and not to remove it when the AppHost shuts down. This preserves data between development sessions. The default Session lifetime creates and destroys containers each time."
+
+  - text: |
+      What's wrong with this code?
+      ```csharp
+      builder.AddContainer("custom-api", "myimage")
+             .WithReference(db);
+      ```
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "AddContainer doesn't exist"
+        isCorrect: false
+      - id: b
+        text: "Containers don't expose endpoints by default — you need WithHttpEndpoint to make the API accessible"
+        isCorrect: true
+      - id: c
+        text: "WithReference doesn't work with containers"
+        isCorrect: false
+      - id: d
+        text: "You must specify an image tag"
+        isCorrect: false
+    explanation: "While WithReference works fine on containers (it injects connection strings as environment variables), the container doesn't expose any endpoints by default. Without WithHttpEndpoint or WithEndpoint, other resources can't reach this container's API."
+
+  - text: "When should you use `AddContainer` vs a hosting integration like `AddRedis`?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "Always use AddContainer for better performance"
+        isCorrect: false
+      - id: b
+        text: "Use AddContainer for custom containers; hosting integrations add health checks, connection strings, and ports automatically"
+        isCorrect: true
+      - id: c
+        text: "Use hosting integrations only in production"
+        isCorrect: false
+      - id: d
+        text: "AddContainer is deprecated — always use hosting integrations"
+        isCorrect: false
+    explanation: "Hosting integrations (AddRedis, AddPostgres, etc.) are purpose-built wrappers that configure health checks, connection strings, default ports, and proper container settings automatically. Use AddContainer for custom or uncommon containers that don't have a hosting integration."

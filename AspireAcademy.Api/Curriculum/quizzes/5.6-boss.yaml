@@ -1,13 +1,73 @@
 questions:
-  - text: "Placeholder question for Boss: Debug a Distributed System"
+  - text: "The Aspire Dashboard receives telemetry from services via which protocol?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
-        isCorrect: true
-      - id: b
-        text: "Option B"
+        text: "HTTP REST APIs"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: b
+        text: "OpenTelemetry Protocol (OTLP)"
+        isCorrect: true
+      - id: c
+        text: "WebSocket connections"
+        isCorrect: false
+      - id: d
+        text: "SignalR hubs"
+        isCorrect: false
+    explanation: "Services export traces, logs, and metrics to the Dashboard via OTLP (OpenTelemetry Protocol). The Dashboard exposes OTLP endpoints on ports 18889 (gRPC) and 18890 (HTTP)."
+  - text: "Which environment variable does Aspire automatically set on services to configure OTLP telemetry export?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "ASPIRE_DASHBOARD_URL"
+        isCorrect: false
+      - id: b
+        text: "DOTNET_TELEMETRY_ENDPOINT"
+        isCorrect: false
+      - id: c
+        text: "OTEL_EXPORTER_OTLP_ENDPOINT"
+        isCorrect: true
+      - id: d
+        text: "OTEL_SERVICE_ENDPOINT"
+        isCorrect: false
+    explanation: "Aspire sets the standard OpenTelemetry environment variable OTEL_EXPORTER_OTLP_ENDPOINT on each service. The OpenTelemetry SDK reads this to know where to send telemetry."
+  - text: "What does a client integration's DisableHealthChecks setting do when set to true?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "Removes the /health endpoint from the service entirely"
+        isCorrect: false
+      - id: b
+        text: "Prevents the health check for that specific client dependency from being registered"
+        isCorrect: true
+      - id: c
+        text: "Disables all health checks across the entire application"
+        isCorrect: false
+      - id: d
+        text: "Makes the health check always report Healthy regardless of actual state"
+        isCorrect: false
+    explanation: "DisableHealthChecks = true prevents that specific client integration from registering its health check. Other health checks (from other integrations or custom ones) are unaffected."
+  - text: "How does the Dashboard receive real-time resource state updates (e.g., when a container starts or stops)?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "It polls each resource's health endpoint every 5 seconds"
+        isCorrect: false
+      - id: b
+        text: "The AppHost streams updates via a gRPC DashboardService connection"
+        isCorrect: true
+      - id: c
+        text: "Resources send state change events directly to the Dashboard via HTTP"
+        isCorrect: false
+      - id: d
+        text: "The Dashboard watches Docker events and process status directly"
+        isCorrect: false
+    explanation: "The AppHost's DashboardService implements a gRPC streaming RPC that pushes resource snapshots to the Dashboard whenever state changes occur, providing real-time updates."

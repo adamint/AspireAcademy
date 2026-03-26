@@ -1,13 +1,77 @@
 questions:
-  - text: "Placeholder question for Environment Variables Quiz"
+  - text: "Which `WithEnvironment` overload should you use to inject a parameter resource?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
+        text: "`WithEnvironment(\"KEY\", apiKey)` where apiKey is an `IResourceBuilder<ParameterResource>`"
         isCorrect: true
       - id: b
-        text: "Option B"
+        text: "`WithEnvironment(\"KEY\", apiKey.Value)` to get the string value"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: c
+        text: "`WithEnvironment(ctx => ctx[\"KEY\"] = apiKey)` in a callback"
+        isCorrect: false
+      - id: d
+        text: "`WithReference(apiKey)` — parameters use WithReference, not WithEnvironment"
+        isCorrect: false
+    explanation: "WithEnvironment has an overload that accepts IResourceBuilder<ParameterResource> directly. It resolves the parameter's value at runtime and injects it as the environment variable. You don't need to extract the value manually."
+
+  - text: |
+      What environment variable does `WithReference(redis)` inject when redis is created by `AddRedis("cache")`?
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "`REDIS_URL=redis://localhost:6379`"
+        isCorrect: false
+      - id: b
+        text: "`ConnectionStrings__cache=localhost:6379`"
+        isCorrect: true
+      - id: c
+        text: "`CACHE_HOST=localhost` and `CACHE_PORT=6379`"
+        isCorrect: false
+      - id: d
+        text: "`services__cache__tcp__0=tcp://localhost:6379`"
+        isCorrect: false
+    explanation: "Redis implements IResourceWithConnectionString, so WithReference injects a ConnectionStrings__{name} environment variable. The name comes from the resource name passed to AddRedis (\"cache\"), giving ConnectionStrings__cache."
+
+  - text: "When should you use the callback overload of `WithEnvironment`?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "When you need to compute values dynamically or set multiple variables at once"
+        isCorrect: true
+      - id: b
+        text: "Always — it's the recommended approach"
+        isCorrect: false
+      - id: c
+        text: "Only for secret values"
+        isCorrect: false
+      - id: d
+        text: "When WithEnvironment(name, value) doesn't compile"
+        isCorrect: false
+    explanation: "The callback overload WithEnvironment(Action<EnvironmentCallbackContext>) is useful for computed values, setting multiple variables at once, or when you need async resolution. For simple static key-value pairs, the string overload is cleaner."
+
+  - text: "How do you inject just the host portion of an endpoint into an environment variable?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "`WithEnvironment(\"HOST\", api.GetEndpoint(\"https\").Host)`"
+        isCorrect: false
+      - id: b
+        text: "`WithEnvironment(\"HOST\", api.GetEndpoint(\"https\").Property(EndpointProperty.Host))`"
+        isCorrect: true
+      - id: c
+        text: "`WithEnvironment(\"HOST\", api.Resource.Host)`"
+        isCorrect: false
+      - id: d
+        text: "You can't — endpoints are always injected as full URLs"
+        isCorrect: false
+    explanation: "Use GetEndpoint(name).Property(EndpointProperty.Host) to extract individual parts of an endpoint. Available properties include Host, Port, Scheme, Url, TargetPort, and IPV4Host."

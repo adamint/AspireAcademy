@@ -1,13 +1,73 @@
 questions:
-  - text: "Placeholder question for Client Integration Quiz"
+  - text: "What method do you call to register a Redis client for a single connection in your service's Program.cs?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
-        isCorrect: true
-      - id: b
-        text: "Option B"
+        text: "builder.AddRedis(\"cache\")"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: b
+        text: "builder.AddRedisClient(\"cache\")"
+        isCorrect: true
+      - id: c
+        text: "builder.Services.AddRedis(\"cache\")"
+        isCorrect: false
+      - id: d
+        text: "builder.UseRedisClient(\"cache\")"
+        isCorrect: false
+    explanation: "Client integrations use AddXxxClient() on IHostApplicationBuilder. AddRedis() is the hosting method used in the AppHost, not the client registration method."
+  - text: "When you need to connect to multiple Redis instances, which pattern should you use?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "Call AddRedisClient() multiple times with different connection names"
+        isCorrect: false
+      - id: b
+        text: "Use AddKeyedRedisClient() with different keys and inject with [FromKeyedServices]"
+        isCorrect: true
+      - id: c
+        text: "Register IConnectionMultiplexer manually in the DI container"
+        isCorrect: false
+      - id: d
+        text: "Use a single AddRedisClient() and pass the instance name at runtime"
+        isCorrect: false
+    explanation: "The AddKeyed pattern registers named instances in DI. You retrieve them using the [FromKeyedServices(\"name\")] attribute on constructor parameters."
+  - text: "What is the correct configuration key path for Npgsql client settings in appsettings.json?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "ConnectionStrings:Npgsql"
+        isCorrect: false
+      - id: b
+        text: "Aspire:Npgsql"
+        isCorrect: true
+      - id: c
+        text: "Npgsql:Settings"
+        isCorrect: false
+      - id: d
+        text: "Aspire:PostgreSQL:Npgsql"
+        isCorrect: false
+    explanation: "Aspire client integration settings use the pattern Aspire:{Technology}:{Component}. For Npgsql, the key is Aspire:Npgsql. For Redis it would be Aspire:StackExchange:Redis."
+  - text: "In the three-layer configuration hierarchy for client integrations, which layer has the highest priority (wins if there's a conflict)?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "Connection string from ConnectionStrings configuration section"
+        isCorrect: false
+      - id: b
+        text: "Configuration providers (appsettings.json)"
+        isCorrect: false
+      - id: c
+        text: "Inline configureSettings delegate"
+        isCorrect: true
+      - id: d
+        text: "Environment variables set by the AppHost"
+        isCorrect: false
+    explanation: "Settings resolve in order: connection string → configuration binding → inline delegate. The inline delegate runs last and can override anything set by previous layers."

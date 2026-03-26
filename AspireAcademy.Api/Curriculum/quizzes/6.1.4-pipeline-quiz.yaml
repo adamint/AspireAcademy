@@ -1,13 +1,73 @@
 questions:
-  - text: "Placeholder question for Pipeline Quiz"
+  - text: "What is the primary output of the publish-manifest pipeline step?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
-        isCorrect: true
-      - id: b
-        text: "Option B"
+        text: "A docker-compose.yaml file"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: b
+        text: "An aspire-manifest.json file describing all resources"
+        isCorrect: true
+      - id: c
+        text: "Kubernetes deployment YAML files"
+        isCorrect: false
+      - id: d
+        text: "A Bicep template for Azure deployment"
+        isCorrect: false
+    explanation: "The publish-manifest step serializes the app model to aspire-manifest.json, which contains all resource definitions, bindings, and connection strings. This manifest is then consumed by downstream steps to generate target-specific artifacts."
+  - text: "In an aspire-manifest.json, what does the expression {postgres.bindings.tcp.host} resolve to?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "The connection string of the postgres resource"
+        isCorrect: false
+      - id: b
+        text: "The hostname of the postgres resource's TCP binding"
+        isCorrect: true
+      - id: c
+        text: "The port number of the postgres TCP endpoint"
+        isCorrect: false
+      - id: d
+        text: "The Docker container name of the postgres resource"
+        isCorrect: false
+    explanation: "Manifest expressions use dot-notation to reference specific properties. {resource.bindings.bindingName.host} resolves to the hostname of that binding. Use {resource.bindings.tcp.port} for the port."
+  - text: "How do you declare that a custom pipeline step must run after the publish-manifest step?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "Set the step's SortOrder property to a higher number"
+        isCorrect: false
+      - id: b
+        text: "Set the step's DependsOn to [\"publish-manifest\"]"
+        isCorrect: true
+      - id: c
+        text: "Register the step after calling AddPublishManifest()"
+        isCorrect: false
+      - id: d
+        text: "Use the [RunAfter(\"publish-manifest\")] attribute on the step class"
+        isCorrect: false
+    explanation: "Pipeline steps declare ordering via DependsOn (runs after) and RequiredBy (runs before). Setting DependsOn = [\"publish-manifest\"] ensures your step executes only after the manifest is generated."
+  - text: "Which resource type string in aspire-manifest.json represents a .NET project?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "dotnet.v0"
+        isCorrect: false
+      - id: b
+        text: "service.v0"
+        isCorrect: false
+      - id: c
+        text: "project.v0"
+        isCorrect: true
+      - id: d
+        text: "application.v0"
+        isCorrect: false
+    explanation: "The manifest uses versioned type strings: project.v0 for .NET projects, container.v0 for containers, and parameter.v0 for parameters. The v0 suffix indicates the schema version."

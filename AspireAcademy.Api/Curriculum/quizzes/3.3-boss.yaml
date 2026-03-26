@@ -1,13 +1,76 @@
 questions:
-  - text: "Placeholder question for Boss: Trace the References"
+  - text: "What is the primary difference between HTTP and message broker communication in Aspire?"
     type: multiple-choice
     sortOrder: 1
     points: 10
     options:
       - id: a
-        text: "Option A"
+        text: "HTTP uses service discovery (services__); message brokers use connection strings (ConnectionStrings__)"
         isCorrect: true
       - id: b
-        text: "Option B"
+        text: "HTTP is synchronous; message brokers don't work with Aspire"
         isCorrect: false
-    explanation: "This is a placeholder question."
+      - id: c
+        text: "Message brokers require WithEnvironment; HTTP uses WithReference"
+        isCorrect: false
+      - id: d
+        text: "There is no difference — both use the same mechanism"
+        isCorrect: false
+    explanation: "HTTP communication between projects uses service discovery with services__{name}__{scheme}__{index} variables. Message brokers (RabbitMQ, Kafka, NATS) expose connection strings via ConnectionStrings__{name}, just like databases."
+
+  - text: "How does service discovery resolve `https://catalog` in an HttpClient request?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "It performs a DNS lookup for 'catalog'"
+        isCorrect: false
+      - id: b
+        text: "It reads the services__catalog__https__0 environment variable injected by the AppHost"
+        isCorrect: true
+      - id: c
+        text: "It queries the Aspire Dashboard API"
+        isCorrect: false
+      - id: d
+        text: "It uses a service registry like Consul"
+        isCorrect: false
+    explanation: "Aspire's configuration-based service discovery reads endpoint URLs from environment variables following the services__{name}__{scheme}__{index} pattern. The scheme in the HttpClient URL (https) must match the endpoint scheme."
+
+  - text: "Which line registers service discovery and resilience for all HttpClient instances?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "`builder.AddServiceDefaults()` in the service's Program.cs"
+        isCorrect: true
+      - id: b
+        text: "`builder.WithReference(api)` in the AppHost"
+        isCorrect: false
+      - id: c
+        text: "`builder.Services.AddHttpClient()` with manual configuration"
+        isCorrect: false
+      - id: d
+        text: "`builder.Services.AddServiceDiscovery()` only"
+        isCorrect: false
+    explanation: "AddServiceDefaults() registers both service discovery and HTTP resilience via ConfigureHttpClientDefaults. This applies to every HttpClient created by the DI container, including named and typed clients."
+
+  - text: "What advantage do message brokers provide over direct HTTP communication?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "Better performance for all scenarios"
+        isCorrect: false
+      - id: b
+        text: "Decoupling — producer doesn't wait for consumer, messages are queued if consumer is down"
+        isCorrect: true
+      - id: c
+        text: "Stronger type safety"
+        isCorrect: false
+      - id: d
+        text: "Built-in authentication"
+        isCorrect: false
+    explanation: "Message brokers decouple producers from consumers. The producer sends a message and moves on. If the consumer is down, messages are queued. Multiple consumers can process messages in parallel. This enables reliable event-driven architectures."
