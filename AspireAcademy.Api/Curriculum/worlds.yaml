@@ -261,7 +261,363 @@ worlds:
     levelRangeStart: 6
     levelRangeEnd: 12
     unlockAfterWorld: world-1
-    modules: []  # TODO: populate from curriculum-world2.md
+    modules:
+      - id: "2.1"
+        name: Project Resources
+        description: "Adding .NET projects to the app model with launch profiles, arguments, and replicas."
+        sortOrder: 1
+        unlockAfterModule: null
+        lessons:
+          - id: "2.1.1"
+            title: "Adding Projects with AddProject<T>"
+            description: "Register a .NET project using AddProject<T>() and understand how T maps to a project reference."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 12
+            contentFile: world-2/2.1.1-add-project.md
+          - id: "2.1.2"
+            title: "Launch Profiles and Configuration"
+            description: "Select launch profiles, understand launchSettings.json integration, and disable launch profiles."
+            type: learn
+            sortOrder: 2
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "2.1.1"
+            contentFile: world-2/2.1.2-launch-profiles.md
+          - id: "2.1.3"
+            title: "Arguments, Replicas, and External Endpoints"
+            description: "Pass CLI arguments, scale with replicas, and expose endpoints externally."
+            type: learn
+            sortOrder: 3
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "2.1.2"
+            contentFile: world-2/2.1.3-args-replicas-external.md
+          - id: "2.1.4"
+            title: "Project Resources Quiz"
+            description: "Test your knowledge of AddProject, launch profiles, replicas, and external endpoints."
+            type: quiz
+            sortOrder: 4
+            xpReward: 150
+            estimatedMinutes: 8
+            unlockAfterLesson: "2.1.3"
+            quizFile: 2.1.4-project-resources-quiz.yaml
+          - id: "2.1-boss"
+            title: "Boss: Multi-Service Project Topology"
+            description: "Create an AppHost with three project references configured with replicas, args, and external endpoints."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 400
+            bonusXp: 200
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "2.1.4"
+            challengeFile: 2.1-boss.yaml
+
+      - id: "2.2"
+        name: Container Resources
+        description: "Running containers alongside .NET projects — images, volumes, bind mounts, lifetime, networking, and Dockerfiles."
+        sortOrder: 2
+        unlockAfterModule: "2.1"
+        lessons:
+          - id: "2.2.1"
+            title: "Adding Containers with AddContainer"
+            description: "Add container resources, specify images and tags, and understand how containers participate in the app model."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 10
+            contentFile: world-2/2.2.1-add-container.md
+          - id: "2.2.2"
+            title: "Volumes and Bind Mounts"
+            description: "Attach named volumes and mount host directories into containers."
+            type: learn
+            sortOrder: 2
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "2.2.1"
+            contentFile: world-2/2.2.2-volumes-bind-mounts.md
+          - id: "2.2.3"
+            title: "Container Lifetime Management"
+            description: "Control container lifetime with Session vs Persistent behavior across restarts."
+            type: learn
+            sortOrder: 3
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "2.2.2"
+            contentFile: world-2/2.2.3-container-lifetime.md
+          - id: "2.2.4"
+            title: "Container Networking and DNS"
+            description: "Understand how Aspire assigns network aliases and DNS resolution for containers."
+            type: learn
+            sortOrder: 4
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "2.2.3"
+            contentFile: world-2/2.2.4-container-networking.md
+          - id: "2.2.5"
+            title: "Building Images with WithDockerfile"
+            description: "Build custom images from Dockerfiles, pass build arguments, and specify build contexts."
+            type: learn
+            sortOrder: 5
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "2.2.4"
+            contentFile: world-2/2.2.5-with-dockerfile.md
+          - id: "2.2.6"
+            title: "Container Runtime Arguments"
+            description: "Pass runtime arguments to the container runtime for resource limits and security options."
+            type: learn
+            sortOrder: 6
+            xpReward: 80
+            estimatedMinutes: 8
+            unlockAfterLesson: "2.2.5"
+            contentFile: world-2/2.2.6-runtime-args.md
+          - id: "2.2.7"
+            title: "Container Resources Quiz"
+            description: "Test your knowledge of container lifetime, volumes, networking, and Dockerfiles."
+            type: quiz
+            sortOrder: 7
+            xpReward: 150
+            estimatedMinutes: 8
+            unlockAfterLesson: "2.2.6"
+            quizFile: 2.2.7-container-resources-quiz.yaml
+          - id: "2.2-boss"
+            title: "Boss: Full-Stack with Custom Containers"
+            description: "Build an app with Redis, a custom Dockerfile sidecar, and persistent container configuration."
+            type: boss-battle
+            sortOrder: 8
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 30
+            isBoss: true
+            unlockAfterLesson: "2.2.7"
+            challengeFile: 2.2-boss.yaml
+
+      - id: "2.3"
+        name: Executable Resources
+        description: "Running non-.NET executables (Node.js, Python, Go) as first-class resources."
+        sortOrder: 3
+        unlockAfterModule: "2.2"
+        lessons:
+          - id: "2.3.1"
+            title: "Adding Executables with AddExecutable"
+            description: "Register executables, specify working directories and arguments, and participate in the lifecycle."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 10
+            contentFile: world-2/2.3.1-add-executable.md
+          - id: "2.3.2"
+            title: "Polyglot Executable Challenge"
+            description: "Add a Node.js frontend and Python API as executable resources and wire them together."
+            type: challenge
+            sortOrder: 2
+            xpReward: 250
+            bonusXp: 125
+            estimatedMinutes: 15
+            unlockAfterLesson: "2.3.1"
+            challengeFile: 2.3.2-polyglot-challenge.yaml
+          - id: "2.3-boss"
+            title: "Boss: Polyglot Microservices Orchestration"
+            description: "Orchestrate .NET, Python, and Node.js services in a single AppHost."
+            type: boss-battle
+            sortOrder: 3
+            xpReward: 400
+            bonusXp: 200
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "2.3.2"
+            challengeFile: 2.3-boss.yaml
+
+      - id: "2.4"
+        name: Endpoints & Networking
+        description: "Defining, configuring, and consuming endpoints — HTTP, HTTPS, custom protocols, port allocation, and endpoint references."
+        sortOrder: 4
+        unlockAfterModule: "2.3"
+        lessons:
+          - id: "2.4.1"
+            title: "Understanding EndpointAnnotation"
+            description: "Describe EndpointAnnotation's role in the resource model with its properties and dashboard visibility."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 10
+            contentFile: world-2/2.4.1-endpoint-annotation.md
+          - id: "2.4.2"
+            title: "HTTP and HTTPS Endpoints"
+            description: "Add HTTP and HTTPS endpoints with port mapping, target ports, and named endpoints."
+            type: learn
+            sortOrder: 2
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "2.4.1"
+            contentFile: world-2/2.4.2-http-https-endpoints.md
+          - id: "2.4.3"
+            title: "Custom Endpoints with WithEndpoint"
+            description: "Define custom protocol endpoints with full control via callback delegates."
+            type: learn
+            sortOrder: 3
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "2.4.2"
+            contentFile: world-2/2.4.3-custom-endpoints.md
+          - id: "2.4.4"
+            title: "Port Allocation and Proxying"
+            description: "Understand automatic port allocation, Port vs TargetPort, and the Aspire reverse proxy."
+            type: learn
+            sortOrder: 4
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "2.4.3"
+            contentFile: world-2/2.4.4-port-allocation.md
+          - id: "2.4.5"
+            title: "External Endpoints and Visibility"
+            description: "Mark endpoints as externally accessible and understand internal vs external visibility."
+            type: learn
+            sortOrder: 5
+            xpReward: 80
+            estimatedMinutes: 8
+            unlockAfterLesson: "2.4.4"
+            contentFile: world-2/2.4.5-external-endpoints.md
+          - id: "2.4.6"
+            title: "EndpointReference Properties and Expressions"
+            description: "Access endpoint details via EndpointReference and compose custom URLs from properties."
+            type: learn
+            sortOrder: 6
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "2.4.5"
+            contentFile: world-2/2.4.6-endpoint-reference.md
+          - id: "2.4.7"
+            title: "Endpoints & Networking Quiz"
+            description: "Test your knowledge of endpoints, ports, proxying, and endpoint references."
+            type: quiz
+            sortOrder: 7
+            xpReward: 150
+            estimatedMinutes: 8
+            unlockAfterLesson: "2.4.6"
+            quizFile: 2.4.7-endpoints-quiz.yaml
+          - id: "2.4-boss"
+            title: "Boss: Multi-Endpoint Service Mesh"
+            description: "Build an app with multiple named endpoints, custom protocols, and endpoint-driven environment variables."
+            type: boss-battle
+            sortOrder: 8
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "2.4.7"
+            challengeFile: 2.4-boss.yaml
+
+      - id: "2.5"
+        name: Parameters & Secrets
+        description: "Externalizing configuration with typed parameters, secrets, generated defaults, and connection strings."
+        sortOrder: 5
+        unlockAfterModule: "2.4"
+        lessons:
+          - id: "2.5.1"
+            title: "Adding Parameters with AddParameter"
+            description: "Define parameters, resolve from configuration, and use parameters in resource configuration."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 10
+            contentFile: world-2/2.5.1-add-parameter.md
+          - id: "2.5.2"
+            title: "Secret Parameters"
+            description: "Create secrets with masking behavior in the dashboard and logs."
+            type: learn
+            sortOrder: 2
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "2.5.1"
+            contentFile: world-2/2.5.2-secret-parameters.md
+          - id: "2.5.3"
+            title: "Generated Defaults and Connection Strings"
+            description: "Provide generated defaults for parameters and register external connection strings."
+            type: learn
+            sortOrder: 3
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "2.5.2"
+            contentFile: world-2/2.5.3-generated-defaults.md
+          - id: "2.5.4"
+            title: "Parameters & Secrets Challenge"
+            description: "Create an AppHost with a generated-default password and a secret API key."
+            type: challenge
+            sortOrder: 4
+            xpReward: 250
+            bonusXp: 125
+            estimatedMinutes: 15
+            unlockAfterLesson: "2.5.3"
+            challengeFile: 2.5.4-parameters-challenge.yaml
+          - id: "2.5-boss"
+            title: "Boss: Secure Configuration Pipeline"
+            description: "Build a complete secure configuration pipeline with generated passwords, secrets, and external connection strings."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 400
+            bonusXp: 200
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "2.5.4"
+            challengeFile: 2.5-boss.yaml
+
+      - id: "2.6"
+        name: Environment Variables
+        description: "Injecting configuration — strings, endpoints, parameters, callbacks, and reference expressions."
+        sortOrder: 6
+        unlockAfterModule: "2.5"
+        lessons:
+          - id: "2.6.1"
+            title: "WithEnvironment Basics — Strings and Endpoints"
+            description: "Set environment variables with string values and endpoint references."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 10
+            contentFile: world-2/2.6.1-env-basics.md
+          - id: "2.6.2"
+            title: "WithEnvironment — Parameters and Callbacks"
+            description: "Pass parameter resources and use callback overloads for dynamic configuration."
+            type: learn
+            sortOrder: 2
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "2.6.1"
+            contentFile: world-2/2.6.2-env-params-callbacks.md
+          - id: "2.6.3"
+            title: "ReferenceExpression and Composite Values"
+            description: "Build composite values with ReferenceExpression.Create() that resolve at runtime."
+            type: learn
+            sortOrder: 3
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "2.6.2"
+            contentFile: world-2/2.6.3-reference-expression.md
+          - id: "2.6.4"
+            title: "Environment Variables Challenge"
+            description: "Wire an API with a composed DB connection string, cache URL, and static feature flag."
+            type: challenge
+            sortOrder: 4
+            xpReward: 250
+            bonusXp: 125
+            estimatedMinutes: 15
+            unlockAfterLesson: "2.6.3"
+            challengeFile: 2.6.4-env-challenge.yaml
+          - id: "2.6-boss"
+            title: "Boss: Dynamic Configuration Orchestrator"
+            description: "Build a complete AppHost with composed connection strings, endpoint references, and conditional environment variables."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 400
+            bonusXp: 200
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "2.6.4"
+            challengeFile: 2.6-boss.yaml
 
   - id: world-3
     name: Service Discovery & Communication
@@ -271,7 +627,254 @@ worlds:
     levelRangeStart: 13
     levelRangeEnd: 17
     unlockAfterWorld: world-2
-    modules: []  # TODO: populate from curriculum-world3.md
+    modules:
+      - id: "3.1"
+        name: "WithReference — The Core Pattern"
+        description: "Understand the fundamental mechanism Aspire uses to wire services together via environment variable injection."
+        sortOrder: 1
+        unlockAfterModule: null
+        lessons:
+          - id: "3.1.1"
+            title: "WithReference for Connection String Resources"
+            description: "How WithReference injects ConnectionStrings__ environment variables for IResourceWithConnectionString resources."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 12
+            contentFile: world-3/3.1.1-withref-connection-strings.md
+          - id: "3.1.2"
+            title: "WithReference for Endpoint Resources"
+            description: "How WithReference injects services__ environment variables for IResourceWithEndpoints resources."
+            type: learn
+            sortOrder: 2
+            xpReward: 120
+            estimatedMinutes: 14
+            unlockAfterLesson: "3.1.1"
+            contentFile: world-3/3.1.2-withref-endpoints.md
+          - id: "3.1.3"
+            title: "Connection String vs Endpoint Injection"
+            description: "Determine which injection pattern is used based on resource interfaces."
+            type: learn
+            sortOrder: 3
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "3.1.2"
+            contentFile: world-3/3.1.3-connstr-vs-endpoint.md
+          - id: "3.1.4"
+            title: "Environment Variable Naming Conventions"
+            description: "Map the exact environment variable names Aspire generates for connection strings and endpoints."
+            type: learn
+            sortOrder: 4
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "3.1.3"
+            contentFile: world-3/3.1.4-env-var-naming.md
+          - id: "3.1.5"
+            title: "How Services Consume Injected Values"
+            description: "Write service code that retrieves injected connection strings and endpoint URLs."
+            type: learn
+            sortOrder: 5
+            xpReward: 110
+            estimatedMinutes: 12
+            unlockAfterLesson: "3.1.4"
+            contentFile: world-3/3.1.5-consuming-values.md
+          - id: "3.1.6"
+            title: "WithReferenceEnvironment and Injection Flags"
+            description: "Fine-grained control over what environment variables WithReference injects."
+            type: learn
+            sortOrder: 6
+            xpReward: 130
+            estimatedMinutes: 14
+            unlockAfterLesson: "3.1.5"
+            contentFile: world-3/3.1.6-injection-flags.md
+          - id: "3.1-boss"
+            title: "Boss: Predict the Environment Variables"
+            description: "Given AppHost code, predict all environment variables injected into each service."
+            type: boss-battle
+            sortOrder: 7
+            xpReward: 300
+            bonusXp: 150
+            estimatedMinutes: 20
+            isBoss: true
+            unlockAfterLesson: "3.1.6"
+            quizFile: 3.1-boss.yaml
+
+      - id: "3.2"
+        name: Connection Strings
+        description: "Deep dive into how Aspire models, builds, and resolves connection strings for infrastructure resources."
+        sortOrder: 2
+        unlockAfterModule: "3.1"
+        lessons:
+          - id: "3.2.1"
+            title: "The IResourceWithConnectionString Interface"
+            description: "Understand the interface that resources implement to provide connection strings."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 12
+            contentFile: world-3/3.2.1-iresource-connstr.md
+          - id: "3.2.2"
+            title: "ConnectionStringReference"
+            description: "How ConnectionStringReference wraps resources as expression and value providers."
+            type: learn
+            sortOrder: 2
+            xpReward: 120
+            estimatedMinutes: 14
+            unlockAfterLesson: "3.2.1"
+            contentFile: world-3/3.2.2-connstr-reference.md
+          - id: "3.2.3"
+            title: "How Hosting Integrations Build Connection Strings"
+            description: "Trace how built-in hosting integrations construct their connection strings from endpoints and parameters."
+            type: learn
+            sortOrder: 3
+            xpReward: 120
+            estimatedMinutes: 14
+            unlockAfterLesson: "3.2.2"
+            contentFile: world-3/3.2.3-hosting-connstr.md
+          - id: "3.2.4"
+            title: "Custom Connection String Formats"
+            description: "Build custom connection strings using ReferenceExpression for non-standard resource types."
+            type: learn
+            sortOrder: 4
+            xpReward: 130
+            estimatedMinutes: 14
+            unlockAfterLesson: "3.2.3"
+            contentFile: world-3/3.2.4-custom-connstr.md
+          - id: "3.2.5"
+            title: "Connection String Resolution Order"
+            description: "Understand how Aspire resolves connection strings — configuration overrides vs resource-provided values."
+            type: learn
+            sortOrder: 5
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "3.2.4"
+            contentFile: world-3/3.2.5-connstr-resolution.md
+          - id: "3.2-boss"
+            title: "Boss: Multi-Pattern Connection Strings"
+            description: "Build an AppHost with multiple connection string patterns — standard, custom, and external."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 400
+            bonusXp: 200
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "3.2.5"
+            challengeFile: 3.2-boss.yaml
+
+      - id: "3.3"
+        name: WaitFor & Dependencies
+        description: "Control resource startup ordering with health-based dependency waiting and completion patterns."
+        sortOrder: 3
+        unlockAfterModule: "3.2"
+        lessons:
+          - id: "3.3.1"
+            title: "WaitFor — Health-Based Dependency Waiting"
+            description: "Delay resource startup until dependencies are healthy using WaitFor."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 12
+            contentFile: world-3/3.3.1-wait-for.md
+          - id: "3.3.2"
+            title: "WaitForCompletion — Init Container Pattern"
+            description: "Wait for a resource to exit successfully before starting dependent resources."
+            type: learn
+            sortOrder: 2
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "3.3.1"
+            contentFile: world-3/3.3.2-wait-for-completion.md
+          - id: "3.3.3"
+            title: "Health-Based Readiness"
+            description: "How ResourceHealthCheckService monitors resources and fires readiness events."
+            type: learn
+            sortOrder: 3
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "3.3.2"
+            contentFile: world-3/3.3.3-health-readiness.md
+          - id: "3.3.4"
+            title: "WaitBehavior and Dependency Graphs"
+            description: "Control what happens when dependencies fail and understand circular dependency detection."
+            type: learn
+            sortOrder: 4
+            xpReward: 110
+            estimatedMinutes: 12
+            unlockAfterLesson: "3.3.3"
+            contentFile: world-3/3.3.4-wait-behavior.md
+          - id: "3.3.5"
+            title: "Dependency Chain Quiz"
+            description: "Test your knowledge of WaitFor, WaitForCompletion, and dependency ordering."
+            type: quiz
+            sortOrder: 5
+            xpReward: 150
+            estimatedMinutes: 10
+            unlockAfterLesson: "3.3.4"
+            quizFile: 3.3.5-dependency-quiz.yaml
+          - id: "3.3-boss"
+            title: "Boss: Complex Dependency Chain"
+            description: "Build an AppHost with migrations, health checks, and multi-level dependency ordering."
+            type: boss-battle
+            sortOrder: 6
+            xpReward: 400
+            bonusXp: 200
+            estimatedMinutes: 25
+            isBoss: true
+            unlockAfterLesson: "3.3.5"
+            challengeFile: 3.3-boss.yaml
+
+      - id: "3.4"
+        name: Inter-Service Communication Patterns
+        description: "HTTP service-to-service calls, gRPC, and message-based async communication."
+        sortOrder: 4
+        unlockAfterModule: "3.3"
+        lessons:
+          - id: "3.4.1"
+            title: "HTTP Service-to-Service with Service Discovery"
+            description: "Configure HttpClient to use Aspire service discovery for resolving resource names to endpoints."
+            type: learn
+            sortOrder: 1
+            xpReward: 120
+            estimatedMinutes: 14
+            contentFile: world-3/3.4.1-http-service-discovery.md
+          - id: "3.4.2"
+            title: "How Service Discovery Works Client-Side"
+            description: "Trace the request flow from HttpClient through ServiceDiscoveryHttpMessageHandler to endpoint resolution."
+            type: learn
+            sortOrder: 2
+            xpReward: 120
+            estimatedMinutes: 14
+            unlockAfterLesson: "3.4.1"
+            contentFile: world-3/3.4.2-service-discovery-internals.md
+          - id: "3.4.3"
+            title: "gRPC Service-to-Service Communication"
+            description: "Configure gRPC services with Aspire service discovery and HTTP/2 transport requirements."
+            type: learn
+            sortOrder: 3
+            xpReward: 130
+            estimatedMinutes: 16
+            unlockAfterLesson: "3.4.2"
+            contentFile: world-3/3.4.3-grpc-communication.md
+          - id: "3.4.4"
+            title: "Message-Based Async Communication"
+            description: "Use message brokers like RabbitMQ for decoupled, asynchronous service communication."
+            type: learn
+            sortOrder: 4
+            xpReward: 130
+            estimatedMinutes: 16
+            unlockAfterLesson: "3.4.3"
+            contentFile: world-3/3.4.4-message-based.md
+          - id: "3.4-boss"
+            title: "Boss: Multi-Pattern Communication App"
+            description: "Build a 3-service app using HTTP, and message queue communication patterns together."
+            type: boss-battle
+            sortOrder: 5
+            xpReward: 500
+            bonusXp: 250
+            estimatedMinutes: 35
+            isBoss: true
+            unlockAfterLesson: "3.4.4"
+            challengeFile: 3.4-boss.yaml
 
   - id: world-4
     name: Hosting Integrations

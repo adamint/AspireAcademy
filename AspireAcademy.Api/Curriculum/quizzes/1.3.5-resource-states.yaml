@@ -1,0 +1,80 @@
+questions:
+  - text: "Which of the following are terminal states in Aspire's resource lifecycle? (Select the best answer)"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "Starting, Running, and Stopping"
+        isCorrect: false
+      - id: b
+        text: "Finished, FailedToStart, and Exited"
+        isCorrect: true
+      - id: c
+        text: "Running, Waiting, and NotStarted"
+        isCorrect: false
+      - id: d
+        text: "RuntimeUnhealthy, Stopping, and Exited"
+        isCorrect: false
+    explanation: "Terminal states are states a resource won't transition out of without manual intervention (like a restart). KnownResourceStates defines TerminalStates as Finished, FailedToStart, and Exited."
+
+  - text: "What class captures a point-in-time snapshot of a resource's state, URLs, environment variables, and health status?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "ResourceStateSnapshot"
+        isCorrect: false
+      - id: b
+        text: "ResourceNotificationService"
+        isCorrect: false
+      - id: c
+        text: "CustomResourceSnapshot"
+        isCorrect: true
+      - id: d
+        text: "KnownResourceStates"
+        isCorrect: false
+    explanation: "CustomResourceSnapshot is a sealed record that captures a resource's state, URLs, environment variables, health reports, volumes, and commands at a specific point in time. It is published through ResourceNotificationService."
+
+  - text: |
+      What does this code wait for?
+      ```csharp
+      await notificationService.WaitForResourceAsync("redis", KnownResourceStates.Running);
+      ```
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "It starts the 'redis' resource and waits for it to exit"
+        isCorrect: false
+      - id: b
+        text: "It blocks until the resource named 'redis' transitions to the Running state"
+        isCorrect: true
+      - id: c
+        text: "It checks if Redis is installed on the machine"
+        isCorrect: false
+      - id: d
+        text: "It creates a new Redis container and returns immediately"
+        isCorrect: false
+    explanation: "WaitForResourceAsync on ResourceNotificationService subscribes to state notifications and returns when the specified resource reaches the target state. It doesn't start or create the resource — it just waits for it to reach the Running state."
+
+  - text: "A resource's HealthStatus is Healthy in the Dashboard. Which state must the resource be in for health checks to be evaluated?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "Starting"
+        isCorrect: false
+      - id: b
+        text: "Waiting"
+        isCorrect: false
+      - id: c
+        text: "Running"
+        isCorrect: true
+      - id: d
+        text: "Any state — health checks run continuously regardless of resource state"
+        isCorrect: false
+    explanation: "Aspire only evaluates health reports when a resource is in the Running state. CustomResourceSnapshot's health computation considers the resource healthy only when its state is Running and all health reports pass."

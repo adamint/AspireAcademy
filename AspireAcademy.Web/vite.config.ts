@@ -15,11 +15,19 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-chakra': ['@chakra-ui/react', '@emotion/react'],
-          'vendor-monaco': ['@monaco-editor/react'],
-          'vendor-markdown': ['react-markdown', 'react-syntax-highlighter'],
+        manualChunks(id) {
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/@chakra-ui') || id.includes('node_modules/@emotion')) {
+            return 'vendor-chakra';
+          }
+          if (id.includes('node_modules/monaco') || id.includes('node_modules/@monaco-editor')) {
+            return 'vendor-monaco';
+          }
+          if (id.includes('node_modules/react-markdown') || id.includes('node_modules/react-syntax-highlighter')) {
+            return 'vendor-markdown';
+          }
         },
       },
     },

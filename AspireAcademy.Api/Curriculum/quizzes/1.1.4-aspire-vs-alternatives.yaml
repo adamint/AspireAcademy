@@ -1,0 +1,76 @@
+questions:
+  - text: "What does Aspire provide that Docker Compose does NOT include out of the box?"
+    type: multiple-choice
+    sortOrder: 1
+    points: 10
+    options:
+      - id: a
+        text: "Container orchestration"
+        isCorrect: false
+      - id: b
+        text: "Built-in distributed tracing and an observability dashboard"
+        isCorrect: true
+      - id: c
+        text: "YAML-based service definitions"
+        isCorrect: false
+      - id: d
+        text: "Volume mount support"
+        isCorrect: false
+    explanation: "Docker Compose can orchestrate containers and supports volumes, but it has no built-in telemetry, tracing, or dashboard. Aspire provides all of these automatically through OpenTelemetry and the Dashboard."
+
+  - text: "Why is Aspire NOT a replacement for Kubernetes?"
+    type: multiple-choice
+    sortOrder: 2
+    points: 10
+    options:
+      - id: a
+        text: "Aspire doesn't support containers"
+        isCorrect: false
+      - id: b
+        text: "Aspire is a development-time orchestrator, not a production deployment platform"
+        isCorrect: true
+      - id: c
+        text: "Kubernetes is easier to learn"
+        isCorrect: false
+      - id: d
+        text: "Aspire only works on Windows"
+        isCorrect: false
+    explanation: "Aspire is designed for the inner development loop — defining your app topology, running locally, and debugging. Kubernetes handles production concerns like scaling, rolling deployments, and self-healing. Aspire complements Kubernetes by generating deployment manifests."
+
+  - text: "What was Project Tye, and what happened to it?"
+    type: multiple-choice
+    sortOrder: 3
+    points: 10
+    options:
+      - id: a
+        text: "A Kubernetes distribution that was acquired by Microsoft"
+        isCorrect: false
+      - id: b
+        text: "A Docker Compose alternative that is still actively maintained"
+        isCorrect: false
+      - id: c
+        text: "Aspire's spiritual predecessor — a .NET microservice tool that was archived in 2023"
+        isCorrect: true
+      - id: d
+        text: "A Visual Studio extension for container debugging"
+        isCorrect: false
+    explanation: "Project Tye was an experimental .NET tool for running microservices locally and deploying to Kubernetes. It was archived in 2023. Aspire inherited its best ideas (code-based orchestration, automatic service discovery) and built a more complete, production-supported platform."
+
+  - text: "What is Aspire's key differentiator compared to both Docker Compose and Kubernetes?"
+    type: multiple-choice
+    sortOrder: 4
+    points: 10
+    options:
+      - id: a
+        text: "It uses YAML with extra validation"
+        isCorrect: false
+      - id: b
+        text: "It compiles to WebAssembly for browser-based orchestration"
+        isCorrect: false
+      - id: c
+        text: "It defines app topology in C# with compile-time type safety and full IDE support"
+        isCorrect: true
+      - id: d
+        text: "It automatically deploys to all major cloud providers"
+        isCorrect: false
+    explanation: "Aspire's unique strength is its code-first approach. Your application topology is defined in C#, giving you compile-time error detection, IntelliSense, refactoring tools, and the ability to use loops and conditionals — none of which are available with YAML-based tools."
