@@ -1,6 +1,8 @@
 import Editor from '@monaco-editor/react';
+import type { Monaco } from '@monaco-editor/react';
 import { Box, Spinner } from '@chakra-ui/react';
 import { retroCardProps } from '../../theme/aspireTheme';
+import { registerAspireCompletions } from './aspireCompletions';
 
 interface CodeEditorProps {
   value: string;
@@ -17,6 +19,10 @@ export default function CodeEditor({
   readOnly = false,
   height = '100%',
 }: CodeEditorProps) {
+  const handleBeforeMount = (monaco: Monaco) => {
+    registerAspireCompletions(monaco);
+  };
+
   return (
     <Box
       w="100%"
@@ -32,6 +38,7 @@ export default function CodeEditor({
         theme="vs-dark"
         value={value}
         onChange={(v) => onChange(v ?? '')}
+        beforeMount={handleBeforeMount}
         loading={<Spinner size="lg" color="aspire.500" />}
         options={{
           minimap: { enabled: false },
@@ -42,6 +49,8 @@ export default function CodeEditor({
           readOnly,
           wordWrap: 'on',
           padding: { top: 12 },
+          quickSuggestions: true,
+          suggestOnTriggerCharacters: true,
         }}
       />
     </Box>
