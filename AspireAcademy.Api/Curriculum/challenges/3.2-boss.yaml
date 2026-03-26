@@ -5,7 +5,6 @@ instructions: |
   2. Add a custom Cassandra container and create a custom connection string using `AddConnectionString` with `ReferenceExpression`.
   3. Add an external connection string for a legacy SQL Server database `"legacy-sql"`.
   4. Add an API project referencing all three connection strings.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -21,7 +20,6 @@ starterCode: |
   // TODO: Add API project referencing all three
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
 
@@ -45,40 +43,39 @@ solutionCode: |
       .WithReference(legacySql);
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "Standard PostgreSQL"
-    type: contains
-    expected: "AddPostgres"
-    description: "Should use the PostgreSQL hosting integration."
+    name: Standard PostgreSQL
+    type: code-contains
+    expected: AddPostgres
+    description: Should use the PostgreSQL hosting integration.
   - id: tc3
-    name: "Custom connection string"
-    type: contains
-    expected: "ReferenceExpression.Create"
-    description: "Cassandra connection string should be custom-built with ReferenceExpression."
+    name: Custom connection string
+    type: code-contains
+    expected: ReferenceExpression.Create
+    description: Cassandra connection string should be custom-built with ReferenceExpression.
   - id: tc4
-    name: "External connection string"
-    type: contains
-    expected: 'AddConnectionString("legacy-sql")'
-    description: "Legacy SQL Server should use an external connection string."
+    name: External connection string
+    type: code-contains
+    expected: AddConnectionString("legacy-sql")
+    description: Legacy SQL Server should use an external connection string.
   - id: tc5
-    name: "All three referenced"
-    type: contains
-    expected: "WithReference"
-    description: "The API should reference all three connection string resources."
-
+    name: All three referenced
+    type: code-contains
+    expected: WithReference
+    description: The API should reference all three connection string resources.
 hints:
-  - "`AddPostgres(\"pg\").AddDatabase(\"orders\")` provides a standard connection string."
-  - "For Cassandra, use `AddConnectionString(\"cassandra\", ReferenceExpression.Create(...))`."
-  - "`AddConnectionString(\"legacy-sql\")` reads from `ConnectionStrings:legacy-sql` in configuration."
-  - "Chain `.WithReference(orders).WithReference(cassandra).WithReference(legacySql)` on the API."
-
+  - '`AddPostgres("pg").AddDatabase("orders")` provides a standard connection string.'
+  - For Cassandra, use `AddConnectionString("cassandra", ReferenceExpression.Create(...))`.
+  - '`AddConnectionString("legacy-sql")` reads from `ConnectionStrings:legacy-sql` in configuration.'
+  - Chain `.WithReference(orders).WithReference(cassandra).WithReference(legacySql)` on the API.
 requiredPackages:
-  - "Aspire.Hosting"
-  - "Aspire.Hosting.PostgreSQL"
+  - Aspire.Hosting
+  - Aspire.Hosting.PostgreSQL
+  - Aspire.Hosting.AppHost
+sortOrder: 0

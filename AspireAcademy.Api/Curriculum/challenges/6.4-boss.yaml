@@ -1,6 +1,22 @@
-title: "Test Architect"
-description: "Write integration tests for an AppHost with API and PostgreSQL."
+instructions: |
+  # Test Architect
+
+  Write integration tests for an AppHost with API and PostgreSQL.
+
+  **What to do:**
+  1. Create a test class `ApiIntegrationTests` implementing `IAsyncLifetime`
+  2. In `InitializeAsync`, create and start a `DistributedApplication` using `DistributedApplicationTestingBuilder`
+  3. Write a test method that creates an `HttpClient`, POSTs a product, GETs it back, and asserts the result
+  4. In `DisposeAsync`, dispose the application
+
+  **Key concepts:**
+  - `DistributedApplicationTestingBuilder.CreateAsync<T>()` creates a test AppHost
+  - `app.CreateHttpClient(resourceName)` gets a configured HTTP client for a resource
+  - `IAsyncLifetime` manages setup and teardown for async test fixtures
 starterCode: |
+  using Aspire.Hosting;
+  using Aspire.Hosting.Testing;
+
   public class ApiIntegrationTests : IAsyncLifetime
   {
       private DistributedApplication? _app;
@@ -10,7 +26,6 @@ starterCode: |
           // TODO: Create and start distributed application
       }
 
-      [Fact]
       public async Task PostAndGetProduct_ReturnsCreatedProduct()
       {
           // TODO: Create HttpClient, POST product, GET product, assert
@@ -21,13 +36,73 @@ starterCode: |
           // TODO: Dispose the application
       }
   }
-tests:
-  - description: "InitializeAsync creates and starts the distributed application"
-  - description: "Test uses CreateHttpClient to obtain configured client"
-  - description: "Test performs POST and GET with success assertions"
-  - description: "DisposeAsync cleans up the application"
+solutionCode: |
+  using Aspire.Hosting;
+  using Aspire.Hosting.Testing;
+
+  public class ApiIntegrationTests : IAsyncLifetime
+  {
+      private DistributedApplication? _app;
+
+      public async Task InitializeAsync()
+      {
+          var builder = await DistributedApplicationTestingBuilder
+              .CreateAsync<Projects.MyAppHost>();
+          _app = await builder.BuildAsync();
+          await _app.StartAsync();
+      }
+
+      public async Task PostAndGetProduct_ReturnsCreatedProduct()
+      {
+          var client = _app!.CreateHttpClient("apiservice");
+          var response = await client.PostAsJsonAsync("/products", new { Name = "Widget", Price = 9.99 });
+          response.EnsureSuccessStatusCode();
+
+          var getResponse = await client.GetAsync("/products/1");
+          getResponse.EnsureSuccessStatusCode();
+      }
+
+      public async Task DisposeAsync()
+      {
+          if (_app is not null)
+          {
+              await _app.DisposeAsync();
+          }
+      }
+  }
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile without errors"
+  - id: tc2
+    name: "Uses DistributedApplicationTestingBuilder"
+    type: code-contains
+    expected: "DistributedApplicationTestingBuilder"
+    description: "Test must use DistributedApplicationTestingBuilder to create the test host"
+  - id: tc3
+    name: "Creates HttpClient"
+    type: code-contains
+    expected: "CreateHttpClient"
+    description: "Test must use CreateHttpClient to get a configured client"
+  - id: tc4
+    name: "Starts the application"
+    type: code-contains
+    expected: "StartAsync"
+    description: "Test must start the distributed application"
+  - id: tc5
+    name: "Disposes the application"
+    type: code-contains
+    expected: "DisposeAsync"
+    description: "Test must dispose the application in cleanup"
 hints:
   - "await DistributedApplicationTestingBuilder.CreateAsync<Projects.MyAppHost>()"
   - "await builder.BuildAsync() then await app.StartAsync()"
   - "app.CreateHttpClient(\"apiservice\")"
   - "await app.DisposeAsync() in cleanup"
+requiredPackages:
+  - "Aspire.Hosting"
+  - "Aspire.Hosting.AppHost"
+  - "Aspire.Hosting.Testing"
+sortOrder: 0

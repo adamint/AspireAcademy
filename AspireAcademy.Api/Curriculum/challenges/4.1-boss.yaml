@@ -20,6 +20,8 @@ instructions: |
   - `WithReference` injects per-database connection strings
   - Each database type has a different connection string format
 starterCode: |
+  using Aspire.Hosting;
+
   var builder = DistributedApplication.CreateBuilder(args);
 
   // TODO: Add PostgreSQL with "catalog" database, init scripts in ./pg-scripts, data volume
@@ -29,6 +31,8 @@ starterCode: |
 
   builder.Build().Run();
 solutionCode: |
+  using Aspire.Hosting;
+
   var builder = DistributedApplication.CreateBuilder(args);
 
   var pg = builder.AddPostgres("pg")
@@ -51,58 +55,64 @@ solutionCode: |
   builder.Build().Run();
 testCases:
   - id: tc1
-    name: "Adds PostgreSQL server"
-    type: code-contains
-    expected: 'AddPostgres("pg")'
-    description: "Code must add a PostgreSQL server named 'pg'"
+    name: Compiles successfully
+    type: compiles
+    expected: null
+    description: Code must compile without errors
   - id: tc2
-    name: "Adds catalog database"
+    name: Adds PostgreSQL server
     type: code-contains
-    expected: 'AddDatabase("catalog")'
-    description: "Code must add a 'catalog' database on the PostgreSQL server"
+    expected: AddPostgres("pg")
+    description: Code must add a PostgreSQL server named 'pg'
   - id: tc3
-    name: "PostgreSQL has init bind mount"
+    name: Adds catalog database
     type: code-contains
-    expected: "WithInitFiles"
-    description: "PostgreSQL must have init scripts configured with WithInitFiles"
+    expected: AddDatabase("catalog")
+    description: Code must add a 'catalog' database on the PostgreSQL server
   - id: tc4
-    name: "Adds SQL Server"
+    name: PostgreSQL has init bind mount
     type: code-contains
-    expected: 'AddSqlServer("sql")'
-    description: "Code must add a SQL Server named 'sql'"
+    expected: WithInitFiles
+    description: PostgreSQL must have init scripts configured with WithInitFiles
   - id: tc5
-    name: "Adds orders database"
+    name: Adds SQL Server
     type: code-contains
-    expected: 'AddDatabase("orders")'
-    description: "Code must add an 'orders' database on the SQL Server"
+    expected: AddSqlServer("sql")
+    description: Code must add a SQL Server named 'sql'
   - id: tc6
-    name: "Adds MongoDB"
+    name: Adds orders database
     type: code-contains
-    expected: 'AddMongoDB("mongo")'
-    description: "Code must add a MongoDB server named 'mongo'"
+    expected: AddDatabase("orders")
+    description: Code must add an 'orders' database on the SQL Server
   - id: tc7
-    name: "Adds sessions database"
+    name: Adds MongoDB
     type: code-contains
-    expected: 'AddDatabase("sessions")'
-    description: "Code must add a 'sessions' database on the MongoDB server"
+    expected: AddMongoDB("mongo")
+    description: Code must add a MongoDB server named 'mongo'
   - id: tc8
-    name: "Adds webapi project"
+    name: Adds sessions database
     type: code-contains
-    expected: 'AddProject'
-    description: "Code must add a project resource for the webapi"
+    expected: AddDatabase("sessions")
+    description: Code must add a 'sessions' database on the MongoDB server
   - id: tc9
-    name: "Wires references to webapi"
+    name: Adds webapi project
     type: code-contains
-    expected: "WithReference"
-    description: "Code must use WithReference to wire database connections to the webapi project"
+    expected: AddProject
+    description: Code must add a project resource for the webapi
+  - id: tc10
+    name: Wires references to webapi
+    type: code-contains
+    expected: WithReference
+    description: Code must use WithReference to wire database connections to the webapi project
 hints:
-  - "Use AddPostgres(\"pg\").AddDatabase(\"catalog\") — the database is a child of the server"
-  - "WithInitFiles takes a relative path to a directory containing .sql files"
-  - "Each WithReference(db) injects a connection string named after the database resource"
-  - "MongoDB: AddMongoDB(\"mongo\").AddDatabase(\"sessions\") follows the same pattern as PostgreSQL"
+  - Use AddPostgres("pg").AddDatabase("catalog") — the database is a child of the server
+  - WithInitFiles takes a relative path to a directory containing .sql files
+  - Each WithReference(db) injects a connection string named after the database resource
+  - 'MongoDB: AddMongoDB("mongo").AddDatabase("sessions") follows the same pattern as PostgreSQL'
 requiredPackages:
-  - "Aspire.Hosting"
-  - "Aspire.Hosting.PostgreSQL"
-  - "Aspire.Hosting.SqlServer"
-  - "Aspire.Hosting.MongoDB"
+  - Aspire.Hosting
+  - Aspire.Hosting.PostgreSQL
+  - Aspire.Hosting.SqlServer
+  - Aspire.Hosting.MongoDB
+  - Aspire.Hosting.AppHost
 sortOrder: 0

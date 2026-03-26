@@ -6,7 +6,6 @@ instructions: |
   3. Add a Redis container with its endpoint on target port 6379.
   4. Wire the API to reference the gRPC service and Redis.
   5. Add a frontend project and pass `API_URL` as an environment variable using the API's `"public"` endpoint.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -23,7 +22,6 @@ starterCode: |
   // TODO: Add frontend with API_URL from API's "public" endpoint
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
   using System.Net.Sockets;
@@ -53,34 +51,33 @@ solutionCode: |
       .WithEnvironment("API_URL", api.GetEndpoint("public"));
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "API has public endpoint"
-    type: contains
+    name: API has public endpoint
+    type: code-contains
     expected: '"public"'
-    description: "The API should have a named 'public' endpoint."
+    description: The API should have a named 'public' endpoint.
   - id: tc3
-    name: "gRPC uses http2 transport"
-    type: contains
+    name: gRPC uses http2 transport
+    type: code-contains
     expected: '"http2"'
-    description: "The gRPC endpoint should use http2 transport."
+    description: The gRPC endpoint should use http2 transport.
   - id: tc4
-    name: "Frontend has API_URL"
-    type: contains
-    expected: 'WithEnvironment("API_URL"'
-    description: "The frontend should receive API_URL as an environment variable."
-
+    name: Frontend has API_URL
+    type: code-contains
+    expected: WithEnvironment("API_URL"
+    description: The frontend should receive API_URL as an environment variable.
 hints:
-  - "Use `WithHttpEndpoint(name: \"public\")` then `WithEndpoint(\"public\", e => e.IsExternal = true)` for the external endpoint."
-  - "For gRPC, use `WithEndpoint(\"grpc\", endpoint => { endpoint.Transport = \"http2\"; ... })`."
-  - "`api.GetEndpoint(\"public\")` returns an `EndpointReference` for the named endpoint."
-  - "Pass the endpoint reference to `WithEnvironment(\"API_URL\", endpointRef)`."
-
+  - 'Use `WithHttpEndpoint(name: "public")` then `WithEndpoint("public", e => e.IsExternal = true)` for the external endpoint.'
+  - For gRPC, use `WithEndpoint("grpc", endpoint => { endpoint.Transport = "http2"; ... })`.
+  - '`api.GetEndpoint("public")` returns an `EndpointReference` for the named endpoint.'
+  - Pass the endpoint reference to `WithEnvironment("API_URL", endpointRef)`.
 requiredPackages:
-  - "Aspire.Hosting"
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+sortOrder: 0

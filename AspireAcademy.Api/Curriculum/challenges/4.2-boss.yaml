@@ -14,6 +14,8 @@ instructions: |
   - `WithPersistence` enables RDB snapshots; pair with `WithDataVolume` for durability
   - A project can reference multiple cache resources via chained `WithReference` calls
 starterCode: |
+  using Aspire.Hosting;
+
   var builder = DistributedApplication.CreateBuilder(args);
 
   // TODO: Add Redis "primary-cache" with RedisInsight, persistence, and data volume
@@ -22,6 +24,8 @@ starterCode: |
 
   builder.Build().Run();
 solutionCode: |
+  using Aspire.Hosting;
+
   var builder = DistributedApplication.CreateBuilder(args);
 
   var primaryCache = builder.AddRedis("primary-cache")
@@ -39,46 +43,52 @@ solutionCode: |
   builder.Build().Run();
 testCases:
   - id: tc1
-    name: "Adds Redis primary cache"
-    type: code-contains
-    expected: 'AddRedis("primary-cache")'
-    description: "Code must add a Redis resource named 'primary-cache'"
+    name: Compiles successfully
+    type: compiles
+    expected: null
+    description: Code must compile without errors
   - id: tc2
-    name: "Redis has RedisInsight"
+    name: Adds Redis primary cache
     type: code-contains
-    expected: "WithRedisInsight"
-    description: "Redis must have RedisInsight enabled for monitoring"
+    expected: AddRedis("primary-cache")
+    description: Code must add a Redis resource named 'primary-cache'
   - id: tc3
-    name: "Redis has persistence"
+    name: Redis has RedisInsight
     type: code-contains
-    expected: "WithPersistence"
-    description: "Redis must have persistence configured"
+    expected: WithRedisInsight
+    description: Redis must have RedisInsight enabled for monitoring
   - id: tc4
-    name: "Adds Garnet session store"
+    name: Redis has persistence
     type: code-contains
-    expected: 'AddGarnet("session-store")'
-    description: "Code must add a Garnet resource named 'session-store'"
+    expected: WithPersistence
+    description: Redis must have persistence configured
   - id: tc5
-    name: "Both have data volumes"
+    name: Adds Garnet session store
     type: code-contains
-    expected: "WithDataVolume"
-    description: "Both cache resources must have data volumes for persistence"
+    expected: AddGarnet("session-store")
+    description: Code must add a Garnet resource named 'session-store'
   - id: tc6
-    name: "Adds api project"
+    name: Both have data volumes
     type: code-contains
-    expected: 'AddProject'
-    description: "Code must add a project resource for the api"
+    expected: WithDataVolume
+    description: Both cache resources must have data volumes for persistence
   - id: tc7
-    name: "Wires references to api"
+    name: Adds api project
     type: code-contains
-    expected: "WithReference"
-    description: "Code must use WithReference to wire cache connections to the api project"
+    expected: AddProject
+    description: Code must add a project resource for the api
+  - id: tc8
+    name: Wires references to api
+    type: code-contains
+    expected: WithReference
+    description: Code must use WithReference to wire cache connections to the api project
 hints:
-  - "Chain methods: AddRedis(\"primary-cache\").WithRedisInsight().WithPersistence().WithDataVolume()"
-  - "Garnet uses AddGarnet, not AddRedis — they are different resource types"
-  - "Both produce the same connection string format (host:port), but they are separate resources"
+  - 'Chain methods: AddRedis("primary-cache").WithRedisInsight().WithPersistence().WithDataVolume()'
+  - Garnet uses AddGarnet, not AddRedis — they are different resource types
+  - Both produce the same connection string format (host:port), but they are separate resources
 requiredPackages:
-  - "Aspire.Hosting"
-  - "Aspire.Hosting.Redis"
-  - "Aspire.Hosting.Garnet"
+  - Aspire.Hosting
+  - Aspire.Hosting.Redis
+  - Aspire.Hosting.Garnet
+  - Aspire.Hosting.AppHost
 sortOrder: 0

@@ -6,7 +6,6 @@ instructions: |
   3. Pass `WithArgs("--verbose")` to the Python worker.
   4. Add a Node.js frontend via `AddExecutable()` with command `"node"`, working dir `"./frontend"`, and arg `"server.js"`.
   5. Wire both Python and Node.js to reference the .NET API.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -21,7 +20,6 @@ starterCode: |
   // TODO: Wire Python and Node.js to reference the API
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
 
@@ -38,39 +36,38 @@ solutionCode: |
       .WithReference(api);
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "Uses AddProject for .NET API"
-    type: contains
-    expected: "AddProject"
-    description: "The .NET API should use AddProject<T>()."
+    name: Uses AddProject for .NET API
+    type: code-contains
+    expected: AddProject
+    description: The .NET API should use AddProject<T>().
   - id: tc3
-    name: "Uses AddExecutable for Python"
-    type: contains
-    expected: 'AddExecutable("worker", "python"'
-    description: "The Python worker should use AddExecutable."
+    name: Uses AddExecutable for Python
+    type: code-contains
+    expected: AddExecutable("worker", "python"
+    description: The Python worker should use AddExecutable.
   - id: tc4
-    name: "Python worker has --verbose"
-    type: contains
-    expected: 'WithArgs("--verbose")'
-    description: "The Python worker should have the --verbose argument."
+    name: Python worker has --verbose
+    type: code-contains
+    expected: WithArgs("--verbose")
+    description: The Python worker should have the --verbose argument.
   - id: tc5
-    name: "Both reference API"
-    type: contains
-    expected: "WithReference(api)"
-    description: "Both Python and Node.js should reference the API."
-
+    name: Both reference API
+    type: code-contains
+    expected: WithReference(api)
+    description: Both Python and Node.js should reference the API.
 hints:
-  - "`AddProject<Projects.ApiService>(\"api\")` adds the .NET API."
-  - "`AddExecutable(\"worker\", \"python\", \"./worker\", \"worker.py\")` adds the Python worker."
-  - "Chain `.WithArgs(\"--verbose\")` on the worker for the verbose flag."
-  - "Use `.WithReference(api)` on both executables to wire them to the API."
-
+  - '`AddProject<Projects.ApiService>("api")` adds the .NET API.'
+  - '`AddExecutable("worker", "python", "./worker", "worker.py")` adds the Python worker.'
+  - Chain `.WithArgs("--verbose")` on the worker for the verbose flag.
+  - Use `.WithReference(api)` on both executables to wire them to the API.
 requiredPackages:
-  - "Aspire.Hosting"
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+sortOrder: 0

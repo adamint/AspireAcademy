@@ -6,7 +6,6 @@ instructions: |
   3. Set `"CACHE_URL"` from the Redis endpoint reference.
   4. Set `"DB_CONNECTION"` using `ReferenceExpression.Create()` composing `dbHost` and `dbPass`.
   5. Set `"FEATURE_X"` to the static string `"enabled"`.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -24,7 +23,6 @@ starterCode: |
   // TODO: Set "FEATURE_X" to "enabled"
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
 
@@ -45,34 +43,33 @@ solutionCode: |
       .WithEnvironment("FEATURE_X", "enabled");
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "CACHE_URL from endpoint"
-    type: contains
-    expected: 'WithEnvironment("CACHE_URL"'
-    description: "The API should have CACHE_URL from the Redis endpoint."
+    name: CACHE_URL from endpoint
+    type: code-contains
+    expected: WithEnvironment("CACHE_URL"
+    description: The API should have CACHE_URL from the Redis endpoint.
   - id: tc3
-    name: "Uses ReferenceExpression"
-    type: contains
-    expected: "ReferenceExpression.Create"
-    description: "DB_CONNECTION should be composed using ReferenceExpression.Create."
+    name: Uses ReferenceExpression
+    type: code-contains
+    expected: ReferenceExpression.Create
+    description: DB_CONNECTION should be composed using ReferenceExpression.Create.
   - id: tc4
-    name: "FEATURE_X set"
-    type: contains
-    expected: 'WithEnvironment("FEATURE_X", "enabled")'
-    description: "FEATURE_X should be set to the string 'enabled'."
-
+    name: FEATURE_X set
+    type: code-contains
+    expected: WithEnvironment("FEATURE_X", "enabled")
+    description: FEATURE_X should be set to the string 'enabled'.
 hints:
-  - "Use `redis.GetEndpoint(\"redis\")` to get the endpoint reference."
-  - "Pass the endpoint reference to `WithEnvironment(\"CACHE_URL\", redisEndpoint)`."
-  - "`ReferenceExpression.Create($\"Server={dbHost};Password={dbPass}\")` composes dynamic values."
-  - "Static strings are set directly: `WithEnvironment(\"FEATURE_X\", \"enabled\")`."
-
+  - Use `redis.GetEndpoint("redis")` to get the endpoint reference.
+  - Pass the endpoint reference to `WithEnvironment("CACHE_URL", redisEndpoint)`.
+  - '`ReferenceExpression.Create($"Server={dbHost};Password={dbPass}")` composes dynamic values.'
+  - 'Static strings are set directly: `WithEnvironment("FEATURE_X", "enabled")`.'
 requiredPackages:
-  - "Aspire.Hosting"
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+sortOrder: 0

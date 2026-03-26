@@ -5,7 +5,6 @@ instructions: |
   2. Add an HTTP endpoint on port 5001 to the Python API.
   3. Add a Node.js frontend executable at `"./node-app"` running `"node"` with argument `"server.js"`.
   4. Wire the Node.js frontend to reference the Python API using `WithReference()`.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -17,7 +16,6 @@ starterCode: |
   // TODO: Wire the frontend to reference the Python API
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
 
@@ -30,34 +28,32 @@ solutionCode: |
       .WithReference(pyapi);
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "Python API uses AddExecutable"
-    type: contains
-    expected: "AddExecutable"
-    description: "Both resources should be added with AddExecutable."
+    name: Python API uses AddExecutable
+    type: code-contains
+    expected: AddExecutable
+    description: Both resources should be added with AddExecutable.
   - id: tc3
-    name: "Python API has HTTP endpoint"
-    type: contains
-    expected: "WithHttpEndpoint"
-    description: "The Python API should have an HTTP endpoint."
+    name: Python API has HTTP endpoint
+    type: code-contains
+    expected: WithHttpEndpoint
+    description: The Python API should have an HTTP endpoint.
   - id: tc4
-    name: "Frontend references Python API"
-    type: contains
-    expected: "WithReference(pyapi)"
-    description: "The frontend should reference the Python API."
-
+    name: Frontend references Python API
+    type: code-contains
+    expected: WithReference(pyapi)
+    description: The frontend should reference the Python API.
 hints:
-  - "`AddExecutable(\"pyapi\", \"python\", \"./python-api\", \"app.py\")` adds the Python API."
-  - "Use `.WithHttpEndpoint(port: 5001, name: \"http\")` to add an endpoint to the Python API."
-  - "`AddExecutable(\"frontend\", \"node\", \"./node-app\", \"server.js\")` adds the Node.js frontend."
-  - "Chain `.WithReference(pyapi)` on the frontend to wire it to the Python API."
-
+  - '`AddExecutable("pyapi", "python", "./python-api", "app.py")` adds the Python API.'
+  - 'Use `.WithHttpEndpoint(port: 5001, name: "http")` to add an endpoint to the Python API.'
+  - '`AddExecutable("frontend", "node", "./node-app", "server.js")` adds the Node.js frontend.'
+  - Chain `.WithReference(pyapi)` on the frontend to wire it to the Python API.
 requiredPackages:
-  - "Aspire.Hosting"
+  - Aspire.Hosting
+sortOrder: 0

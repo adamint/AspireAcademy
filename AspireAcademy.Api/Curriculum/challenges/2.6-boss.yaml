@@ -9,7 +9,6 @@ instructions: |
   6. Compose `DATABASE_URL` using `ReferenceExpression.Create()` with the PostgreSQL endpoint host, port, and password.
   7. Set `REDIS_URL` from the Redis endpoint reference.
   8. Set `EXTERNAL_API_KEY` from the API key parameter.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -31,7 +30,6 @@ starterCode: |
   //   - EXTERNAL_API_KEY from parameter
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
 
@@ -64,39 +62,38 @@ solutionCode: |
       .WithEnvironment("EXTERNAL_API_KEY", externalApiKey);
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "Uses callback for LOG_LEVEL"
-    type: contains
-    expected: "IsRunMode"
-    description: "LOG_LEVEL should be conditionally set using execution context."
+    name: Uses callback for LOG_LEVEL
+    type: code-contains
+    expected: IsRunMode
+    description: LOG_LEVEL should be conditionally set using execution context.
   - id: tc3
-    name: "DATABASE_URL composed"
-    type: contains
-    expected: "ReferenceExpression.Create"
-    description: "DATABASE_URL should be composed using ReferenceExpression."
+    name: DATABASE_URL composed
+    type: code-contains
+    expected: ReferenceExpression.Create
+    description: DATABASE_URL should be composed using ReferenceExpression.
   - id: tc4
-    name: "REDIS_URL from endpoint"
-    type: contains
-    expected: 'WithEnvironment("REDIS_URL"'
-    description: "REDIS_URL should come from the Redis endpoint reference."
+    name: REDIS_URL from endpoint
+    type: code-contains
+    expected: WithEnvironment("REDIS_URL"
+    description: REDIS_URL should come from the Redis endpoint reference.
   - id: tc5
-    name: "API key from parameter"
-    type: contains
-    expected: 'WithEnvironment("EXTERNAL_API_KEY"'
-    description: "EXTERNAL_API_KEY should come from the parameter."
-
+    name: API key from parameter
+    type: code-contains
+    expected: WithEnvironment("EXTERNAL_API_KEY"
+    description: EXTERNAL_API_KEY should come from the parameter.
 hints:
-  - "Use the `WithEnvironment(context => { ... })` callback for conditional logic."
-  - "`builder.ExecutionContext.IsRunMode` is true during local development."
-  - "Compose DATABASE_URL: `ReferenceExpression.Create($\"Host={endpoint.Property(EndpointProperty.Host)};...\")`."
-  - "Pass endpoint references and parameters directly to `WithEnvironment()`."
-
+  - Use the `WithEnvironment(context => { ... })` callback for conditional logic.
+  - '`builder.ExecutionContext.IsRunMode` is true during local development.'
+  - 'Compose DATABASE_URL: `ReferenceExpression.Create($"Host={endpoint.Property(EndpointProperty.Host)};...")`.'
+  - Pass endpoint references and parameters directly to `WithEnvironment()`.
 requiredPackages:
-  - "Aspire.Hosting"
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+sortOrder: 0

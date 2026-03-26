@@ -21,6 +21,8 @@ instructions: |
   - A project can reference multiple broker resources
   - Admin UIs help debug message flows during development
 starterCode: |
+  using Aspire.Hosting;
+
   var builder = DistributedApplication.CreateBuilder(args);
 
   // TODO: Add RabbitMQ "commands" with management plugin and data volume
@@ -32,6 +34,8 @@ starterCode: |
 
   builder.Build().Run();
 solutionCode: |
+  using Aspire.Hosting;
+
   var builder = DistributedApplication.CreateBuilder(args);
 
   var commands = builder.AddRabbitMQ("commands")
@@ -57,63 +61,69 @@ solutionCode: |
   builder.Build().Run();
 testCases:
   - id: tc1
-    name: "Adds RabbitMQ"
-    type: code-contains
-    expected: 'AddRabbitMQ("commands")'
-    description: "Code must add a RabbitMQ resource named 'commands'"
+    name: Compiles successfully
+    type: compiles
+    expected: null
+    description: Code must compile without errors
   - id: tc2
-    name: "RabbitMQ has management plugin"
+    name: Adds RabbitMQ
     type: code-contains
-    expected: "WithManagementPlugin"
-    description: "RabbitMQ must have the management plugin enabled"
+    expected: AddRabbitMQ("commands")
+    description: Code must add a RabbitMQ resource named 'commands'
   - id: tc3
-    name: "Adds Kafka"
+    name: RabbitMQ has management plugin
     type: code-contains
-    expected: 'AddKafka("events")'
-    description: "Code must add a Kafka resource named 'events'"
+    expected: WithManagementPlugin
+    description: RabbitMQ must have the management plugin enabled
   - id: tc4
-    name: "Kafka has KafkaUI"
+    name: Adds Kafka
     type: code-contains
-    expected: "WithKafkaUI"
-    description: "Kafka must have KafkaUI enabled"
+    expected: AddKafka("events")
+    description: Code must add a Kafka resource named 'events'
   - id: tc5
-    name: "Adds NATS"
+    name: Kafka has KafkaUI
     type: code-contains
-    expected: 'AddNats("notifications")'
-    description: "Code must add a NATS resource named 'notifications'"
+    expected: WithKafkaUI
+    description: Kafka must have KafkaUI enabled
   - id: tc6
-    name: "NATS has JetStream"
+    name: Adds NATS
     type: code-contains
-    expected: "WithJetStream"
-    description: "NATS must have JetStream enabled for durable messaging"
+    expected: AddNats("notifications")
+    description: Code must add a NATS resource named 'notifications'
   - id: tc7
-    name: "Adds order-api project"
-    type: code-pattern
-    expected: 'AddProject.*"order-api"'
-    description: "Code must add a project resource named 'order-api'"
-  - id: tc8
-    name: "Adds analytics project"
-    type: code-pattern
-    expected: 'AddProject.*"analytics"'
-    description: "Code must add a project resource named 'analytics'"
-  - id: tc9
-    name: "Adds notifications-svc project"
-    type: code-pattern
-    expected: 'AddProject.*"notifications-svc"'
-    description: "Code must add a project resource named 'notifications-svc'"
-  - id: tc10
-    name: "Services wired with WithReference"
+    name: NATS has JetStream
     type: code-contains
-    expected: "WithReference"
-    description: "Projects must reference broker resources via WithReference calls"
+    expected: WithJetStream
+    description: NATS must have JetStream enabled for durable messaging
+  - id: tc8
+    name: Adds order-api project
+    type: code-pattern
+    expected: AddProject.*"order-api"
+    description: Code must add a project resource named 'order-api'
+  - id: tc9
+    name: Adds analytics project
+    type: code-pattern
+    expected: AddProject.*"analytics"
+    description: Code must add a project resource named 'analytics'
+  - id: tc10
+    name: Adds notifications-svc project
+    type: code-pattern
+    expected: AddProject.*"notifications-svc"
+    description: Code must add a project resource named 'notifications-svc'
+  - id: tc11
+    name: Services wired with WithReference
+    type: code-contains
+    expected: WithReference
+    description: Projects must reference broker resources via WithReference calls
 hints:
-  - "A project can reference multiple brokers with chained WithReference calls"
-  - "Use WithDataVolume() on RabbitMQ to persist queue state across restarts"
-  - "NATS needs WithJetStream() — without it, messages are fire-and-forget only"
-  - "Each broker injects a connection string in its own format (AMQP URI, host:port, nats://)"
+  - A project can reference multiple brokers with chained WithReference calls
+  - Use WithDataVolume() on RabbitMQ to persist queue state across restarts
+  - NATS needs WithJetStream() — without it, messages are fire-and-forget only
+  - Each broker injects a connection string in its own format (AMQP URI, host:port, nats://)
 requiredPackages:
-  - "Aspire.Hosting"
-  - "Aspire.Hosting.RabbitMQ"
-  - "Aspire.Hosting.Kafka"
-  - "Aspire.Hosting.Nats"
+  - Aspire.Hosting
+  - Aspire.Hosting.RabbitMQ
+  - Aspire.Hosting.Kafka
+  - Aspire.Hosting.Nats
+  - Aspire.Hosting.AppHost
 sortOrder: 0

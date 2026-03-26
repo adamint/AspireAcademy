@@ -8,7 +8,6 @@ instructions: |
   5. Add a non-secret parameter `"feature-flags"`.
   6. Add an API project referencing PostgreSQL and the legacy connection string.
   7. Pass the feature flags to the API via `WithEnvironment("FEATURE_FLAGS", featureFlags)`.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -25,7 +24,6 @@ starterCode: |
   // TODO: Add API project referencing db and legacy-db, with FEATURE_FLAGS env var
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
 
@@ -54,39 +52,38 @@ solutionCode: |
       .WithEnvironment("FEATURE_FLAGS", featureFlags);
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "Password is generated"
-    type: contains
-    expected: "GenerateParameterDefault"
-    description: "The pg-password should use a generated default."
+    name: Password is generated
+    type: code-contains
+    expected: GenerateParameterDefault
+    description: The pg-password should use a generated default.
   - id: tc3
-    name: "PostgreSQL has password"
-    type: contains
-    expected: 'WithEnvironment("POSTGRES_PASSWORD"'
-    description: "PostgreSQL container should receive the password."
+    name: PostgreSQL has password
+    type: code-contains
+    expected: WithEnvironment("POSTGRES_PASSWORD"
+    description: PostgreSQL container should receive the password.
   - id: tc4
-    name: "Legacy connection string"
-    type: contains
-    expected: 'AddConnectionString("legacy-db")'
-    description: "Should register an external connection string."
+    name: Legacy connection string
+    type: code-contains
+    expected: AddConnectionString("legacy-db")
+    description: Should register an external connection string.
   - id: tc5
-    name: "Feature flags passed"
-    type: contains
-    expected: 'WithEnvironment("FEATURE_FLAGS"'
-    description: "The API should receive the feature flags parameter."
-
+    name: Feature flags passed
+    type: code-contains
+    expected: WithEnvironment("FEATURE_FLAGS"
+    description: The API should receive the feature flags parameter.
 hints:
-  - "Use `GenerateParameterDefault` with `MinLength = 16` for the password."
-  - "`AddConnectionString(\"legacy-db\")` reads from `ConnectionStrings:legacy-db` in configuration."
-  - "Use `AddParameter(\"feature-flags\")` without `secret: true` for non-sensitive values."
-  - "Wire everything to the API project with `WithReference()` and `WithEnvironment()`."
-
+  - Use `GenerateParameterDefault` with `MinLength = 16` for the password.
+  - '`AddConnectionString("legacy-db")` reads from `ConnectionStrings:legacy-db` in configuration.'
+  - 'Use `AddParameter("feature-flags")` without `secret: true` for non-sensitive values.'
+  - Wire everything to the API project with `WithReference()` and `WithEnvironment()`.
 requiredPackages:
-  - "Aspire.Hosting"
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+sortOrder: 0

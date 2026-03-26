@@ -144,34 +144,35 @@ solutionCode: |
   }
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile without errors"
+    description: Code must compile without errors
   - id: tc2
-    name: "Configures OpenTelemetry"
+    name: Configures OpenTelemetry
     type: code-contains
-    expected: "AddOpenTelemetry"
-    description: "Code must call AddOpenTelemetry to configure telemetry"
+    expected: AddOpenTelemetry
+    description: Code must call AddOpenTelemetry to configure telemetry
   - id: tc3
-    name: "Registers health checks"
+    name: Registers health checks
     type: code-contains
-    expected: "AddHealthChecks"
-    description: "Code must call AddHealthChecks to register health monitoring"
+    expected: AddHealthChecks
+    description: Code must call AddHealthChecks to register health monitoring
   - id: tc4
-    name: "Adds standard resilience handler"
+    name: Adds standard resilience handler
     type: code-contains
-    expected: "AddStandardResilienceHandler"
-    description: "Code must add the standard HTTP resilience handler with retry, circuit breaker, and timeout"
+    expected: AddStandardResilienceHandler
+    description: Code must add the standard HTTP resilience handler with retry, circuit breaker, and timeout
 hints:
-  - "For OpenTelemetry, start with builder.Logging.AddOpenTelemetry(...) for logging, then builder.Services.AddOpenTelemetry().WithMetrics(...).WithTracing(...) for metrics and tracing"
-  - "For health checks, chain: builder.Services.AddHealthChecks().AddCheck(\"self\", () => HealthCheckResult.Healthy(), [\"live\"]).AddCheck(\"ready\", () => HealthCheckResult.Healthy())"
-  - "For resilience, use builder.Services.ConfigureHttpClientDefaults(http => { http.AddStandardResilienceHandler(); http.AddServiceDiscovery(); })"
+  - For OpenTelemetry, start with builder.Logging.AddOpenTelemetry(...) for logging, then builder.Services.AddOpenTelemetry().WithMetrics(...).WithTracing(...) for metrics and tracing
+  - 'For health checks, chain: builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]).AddCheck("ready", () => HealthCheckResult.Healthy())'
+  - For resilience, use builder.Services.ConfigureHttpClientDefaults(http => { http.AddStandardResilienceHandler(); http.AddServiceDiscovery(); })
 requiredPackages:
-  - "Microsoft.Extensions.Http.Resilience"
-  - "Microsoft.Extensions.ServiceDiscovery"
-  - "OpenTelemetry.Extensions.Hosting"
-  - "OpenTelemetry.Instrumentation.AspNetCore"
-  - "OpenTelemetry.Instrumentation.Http"
-  - "OpenTelemetry.Instrumentation.Runtime"
+  - Microsoft.Extensions.Http.Resilience
+  - Microsoft.Extensions.ServiceDiscovery
+  - OpenTelemetry.Extensions.Hosting
+  - OpenTelemetry.Instrumentation.AspNetCore
+  - OpenTelemetry.Instrumentation.Http
+  - OpenTelemetry.Instrumentation.Runtime
+  - Aspire.Hosting
 sortOrder: 0

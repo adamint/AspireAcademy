@@ -72,24 +72,25 @@ solutionCode: |
   }
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile without errors"
+    description: Code must compile without errors
   - id: tc2
-    name: "Registers health checks"
+    name: Registers health checks
     type: code-contains
-    expected: "AddHealthChecks"
-    description: "Code must call AddHealthChecks() to register the health check system"
+    expected: AddHealthChecks
+    description: Code must call AddHealthChecks() to register the health check system
   - id: tc3
-    name: "Maps health endpoints"
+    name: Maps health endpoints
     type: code-contains
-    expected: "MapHealthChecks"
-    description: "Code must call MapHealthChecks to expose health check HTTP endpoints"
+    expected: MapHealthChecks
+    description: Code must call MapHealthChecks to expose health check HTTP endpoints
 hints:
-  - "Start with builder.Services.AddHealthChecks() — this returns an IHealthChecksBuilder that you chain .AddCheck() calls on"
-  - "For the /alive endpoint, use: app.MapHealthChecks(\"/alive\", new HealthCheckOptions { Predicate = r => r.Tags.Contains(\"live\") })"
+  - Start with builder.Services.AddHealthChecks() — this returns an IHealthChecksBuilder that you chain .AddCheck() calls on
+  - 'For the /alive endpoint, use: app.MapHealthChecks("/alive", new HealthCheckOptions { Predicate = r => r.Tags.Contains("live") })'
 requiredPackages:
-  - "Microsoft.AspNetCore.Diagnostics.HealthChecks"
-  - "Microsoft.Extensions.Diagnostics.HealthChecks"
+  - Microsoft.AspNetCore.Diagnostics.HealthChecks
+  - Microsoft.Extensions.Diagnostics.HealthChecks
+  - Aspire.Hosting
 sortOrder: 0

@@ -1,35 +1,23 @@
-title: "Aspire Architect — Internals Edition"
-description: "Diagnose a broken custom hosting integration using Aspire internals knowledge. The container starts but the connection string doesn't resolve, health checks never report healthy, and the dashboard shows no endpoints. Use your knowledge of DcpExecutor, ExpressionResolver, and ResourceNotificationService to identify and fix ALL issues."
-difficulty: "boss"
-modules: ["6.7", "6.8", "6.9"]
+instructions: |
+  # Aspire Architect — Internals Edition
+
+  Diagnose a broken custom hosting integration using Aspire internals knowledge. The container starts but the connection string doesn't resolve, health checks never report healthy, and the dashboard shows no endpoints. Use your knowledge of DcpExecutor, ExpressionResolver, and ResourceNotificationService to identify and fix ALL issues.
+
+  **Bugs to fix:**
+  1. Missing `WithEndpoint()` — DcpExecutor needs an EndpointAnnotation to allocate ports
+  2. `ConnectionStringExpression` references endpoint `"redis"` but no EndpointAnnotation exists with that name
+  3. No health check is wired — ResourceNotificationService never transitions to healthy state
+
+  **What to do:**
+  1. Add `.WithEndpoint("redis", ...)` with port 6379 to create the EndpointAnnotation
+  2. Add `.WithHealthCheck("redis-health")` to wire health monitoring
+  3. Keep the ConnectionStringExpression using the `"redis"` endpoint reference
 starterCode: |
-  // A custom resource that isn't working correctly.
-  // The container starts but the connection string doesn't resolve,
-  // health checks never report healthy, and the dashboard shows no endpoints.
-  //
-  // SOURCE FILE REFERENCES:
-  // - DcpExecutor: src/Aspire.Hosting/Dcp/DcpExecutor.cs
-  // - ExpressionResolver: src/Aspire.Hosting/ApplicationModel/ExpressionResolver.cs
-  // - ResourceNotificationService: src/Aspire.Hosting/ApplicationModel/ResourceNotificationService.cs
-  // - PortAllocator: src/Aspire.Hosting/ApplicationModel/PortAllocator.cs
-  // - EndpointReference: src/Aspire.Hosting/ApplicationModel/EndpointReference.cs
-  //
-  // Use your knowledge of these internals to identify and fix ALL issues.
+  using Aspire.Hosting;
+  using Aspire.Hosting.ApplicationModel;
 
   public class BrokenCacheResource(string name) : ContainerResource(name), IResourceWithConnectionString
   {
-      // BUG 1: Missing endpoint annotation — DcpExecutor.CreateContainerAsync() reads
-      //        EndpointAnnotation to allocate ports via IPortAllocator.AllocatePort().
-      //        Without it, no port mapping is created.
-      //
-      // BUG 2: ConnectionStringExpression references endpoint "redis" via EndpointReference,
-      //        but since no EndpointAnnotation exists for "redis",
-      //        ExpressionResolver.EvalExpressionAsync() cannot resolve it.
-      //
-      // BUG 3: No health check is wired — ResourceNotificationService.PublishUpdateAsync()
-      //        never receives a healthy CustomResourceSnapshot, so the resource stays
-      //        in "Starting" state forever.
-
       public ReferenceExpression ConnectionStringExpression =>
           ReferenceExpression.Create($"{new EndpointReference(this, "redis").Property(EndpointProperty.Url)}");
   }
@@ -41,19 +29,21 @@ starterCode: |
       {
           return builder.AddResource(new BrokenCacheResource(name))
               .WithImage("redis", "7.4")
-              // BUG: No .WithEndpoint() — DcpExecutor won't create port mappings
-              //      PortAllocator.AllocatePort() is never called for this resource
-              // BUG: No .WithHealthCheck() — ResourceNotificationService never gets
-              //      a HealthStatus update, resource stays Starting forever
+              // BUG: No .WithEndpoint() — no port mappings
+              // BUG: No .WithHealthCheck() — stays Starting forever
               .WithAnnotation(new ResourceIconAnnotation("Storage", IconVariant.Regular));
       }
   }
+
+  var builder = DistributedApplication.CreateBuilder(args);
+  builder.AddBrokenCache("cache");
+  builder.Build().Run();
 solutionCode: |
+  using Aspire.Hosting;
+  using Aspire.Hosting.ApplicationModel;
+
   public class FixedCacheResource(string name) : ContainerResource(name), IResourceWithConnectionString
   {
-      // FIX: EndpointReference now matches the endpoint name "redis" added via WithEndpoint()
-      // ExpressionResolver.EvalExpressionAsync() can resolve the EndpointReference
-      // because EndpointAnnotation exists with matching name
       public ReferenceExpression ConnectionStringExpression =>
           ReferenceExpression.Create($"{new EndpointReference(this, "redis").Property(EndpointProperty.Url)}");
   }
@@ -65,37 +55,57 @@ solutionCode: |
       {
           return builder.AddResource(new FixedCacheResource(name))
               .WithImage("redis", "7.4")
-              // FIX 1: WithEndpoint creates EndpointAnnotation
-              // DcpExecutor.CreateContainerAsync() reads this to allocate ports
-              // via PortAllocator.AllocatePort() and create container port mappings
               .WithEndpoint("redis", e =>
               {
                   e.Port = 6379;
                   e.TargetPort = 6379;
                   e.Scheme = "tcp";
               })
-              // FIX 2: WithHealthCheck wires up health monitoring
-              // Health check results flow through ResourceNotificationService.PublishUpdateAsync()
-              // updating CustomResourceSnapshot.HealthStatus
-              // WaitForResourceHealthyAsync() can now complete
               .WithHealthCheck("redis-health")
               .WithAnnotation(new ResourceIconAnnotation("Storage", IconVariant.Regular));
       }
   }
-tests:
-  - description: "Resource has EndpointAnnotation with name 'redis' and port 6379"
-    validate: "Check resource.Annotations.OfType<EndpointAnnotation>() contains entry with Name='redis'"
-  - description: "ConnectionStringExpression resolves to a valid URL containing the allocated port"
-    validate: "Call GetValueAsync() on ConnectionStringExpression and verify it returns a tcp:// URL"
-  - description: "Health check is wired and reports healthy when Redis responds to PING"
-    validate: "Verify resource transitions to HealthStatus.Healthy via ResourceNotificationService"
-  - description: "Dashboard shows endpoints for the resource with correct URL"
-    validate: "CustomResourceSnapshot.Urls contains entry matching the allocated endpoint"
-  - description: "Explain which Aspire source file handles each fix (DcpExecutor for ports, ExpressionResolver for connection string, ResourceNotificationService for health)"
-    validate: "Student references correct source file paths for each bug fix"
+
+  var builder = DistributedApplication.CreateBuilder(args);
+  builder.AddFixedCache("cache");
+  builder.Build().Run();
+testCases:
+  - id: tc1
+    name: "Compiles successfully"
+    type: compiles
+    expected: null
+    description: "Code must compile without errors"
+  - id: tc2
+    name: "Has WithEndpoint for redis"
+    type: code-contains
+    expected: "WithEndpoint"
+    description: "Code must add a WithEndpoint call to create the EndpointAnnotation for port allocation"
+  - id: tc3
+    name: "Configures port 6379"
+    type: code-contains
+    expected: "6379"
+    description: "The endpoint must configure port 6379 for Redis"
+  - id: tc4
+    name: "Has health check"
+    type: code-contains
+    expected: "WithHealthCheck"
+    description: "Code must wire a health check so ResourceNotificationService can report healthy state"
+  - id: tc5
+    name: "Implements IResourceWithConnectionString"
+    type: code-contains
+    expected: "IResourceWithConnectionString"
+    description: "Resource must implement IResourceWithConnectionString for connection string resolution"
+  - id: tc6
+    name: "Uses ReferenceExpression"
+    type: code-contains
+    expected: "ReferenceExpression.Create"
+    description: "ConnectionStringExpression must use ReferenceExpression.Create for ExpressionResolver"
 hints:
-  - "DcpExecutor.CreateContainerAsync() (src/Aspire.Hosting/Dcp/DcpExecutor.cs) reads EndpointAnnotation to build container port mappings. No annotation = no ports."
-  - "Add .WithEndpoint('redis', e => { e.Port = 6379; e.TargetPort = 6379; }) to create the EndpointAnnotation that DcpExecutor needs."
-  - "ExpressionResolver.EvalExpressionAsync() (src/Aspire.Hosting/ApplicationModel/ExpressionResolver.cs) resolves EndpointReference only if a matching EndpointAnnotation exists on the resource."
-  - "ResourceNotificationService.PublishUpdateAsync() (src/Aspire.Hosting/ApplicationModel/ResourceNotificationService.cs) updates CustomResourceSnapshot.HealthStatus from health check results. No health check = stuck in Starting."
-  - "Add .WithHealthCheck('redis-health') to wire up health monitoring so ResourceNotificationService can transition the resource to Healthy state."
+  - "DcpExecutor.CreateContainerAsync() reads EndpointAnnotation to build container port mappings. No annotation = no ports."
+  - "Add .WithEndpoint('redis', e => { e.Port = 6379; e.TargetPort = 6379; }) to create the EndpointAnnotation."
+  - "ExpressionResolver.EvalExpressionAsync() resolves EndpointReference only if a matching EndpointAnnotation exists."
+  - "ResourceNotificationService.PublishUpdateAsync() updates HealthStatus from health check results. No health check = stuck in Starting."
+  - "Add .WithHealthCheck('redis-health') to wire up health monitoring."
+requiredPackages:
+  - "Aspire.Hosting"
+sortOrder: 0

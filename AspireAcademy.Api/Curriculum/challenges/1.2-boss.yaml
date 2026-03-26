@@ -46,35 +46,40 @@ solutionCode: |
   builder.Build().Run();
 testCases:
   - id: tc1
-    name: "Adds API project"
-    type: code-contains
-    expected: "AddProject"
-    description: "Code must use AddProject to register at least one project resource"
+    name: Compiles successfully
+    type: compiles
+    expected: null
+    description: Code must compile without errors
   - id: tc2
-    name: "Names the API resource"
-    type: code-pattern
-    expected: "AddProject.*\\(.*\"api\".*\\)"
-    description: "Code must add a project resource named 'api'"
+    name: Adds API project
+    type: code-contains
+    expected: AddProject
+    description: Code must use AddProject to register at least one project resource
   - id: tc3
-    name: "Adds web project"
+    name: Names the API resource
     type: code-pattern
-    expected: "AddProject.*\\(.*\"web\".*\\)"
-    description: "Code must include a project resource named 'web'"
+    expected: AddProject.*\(.*"api".*\)
+    description: Code must add a project resource named 'api'
   - id: tc4
-    name: "Wires dependency with WithReference"
-    type: code-contains
-    expected: "WithReference"
-    description: "Code must use WithReference to create a dependency between the web frontend and the API"
+    name: Adds web project
+    type: code-pattern
+    expected: AddProject.*\(.*"web".*\)
+    description: Code must include a project resource named 'web'
   - id: tc5
-    name: "Builds and runs"
+    name: Wires dependency with WithReference
     type: code-contains
-    expected: "Build().Run()"
-    description: "Code must call Build().Run() to start the application"
+    expected: WithReference
+    description: Code must use WithReference to create a dependency between the web frontend and the API
+  - id: tc6
+    name: Builds and runs
+    type: code-contains
+    expected: Build().Run()
+    description: Code must call Build().Run() to start the application
 hints:
-  - "First, add the API project and store the result: var api = builder.AddProject<Projects.ApiService>(\"api\");"
-  - "Then add the Web project and chain WithReference: builder.AddProject<Projects.WebFrontend>(\"web\").WithReference(api);"
-  - "The order matters — you must define 'api' before you can pass it to WithReference on the web project"
+  - 'First, add the API project and store the result: var api = builder.AddProject<Projects.ApiService>("api");'
+  - 'Then add the Web project and chain WithReference: builder.AddProject<Projects.WebFrontend>("web").WithReference(api);'
+  - The order matters — you must define 'api' before you can pass it to WithReference on the web project
 requiredPackages:
-  - "Aspire.Hosting"
-  - "Aspire.Hosting.AppHost"
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
 sortOrder: 0

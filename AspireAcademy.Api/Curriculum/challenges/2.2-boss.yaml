@@ -7,7 +7,6 @@ instructions: |
   4. Add a custom sidecar container built from `"./sidecar"` with build arg `VERSION` = `"1.0"`.
   5. Add an API project referencing both Redis and the sidecar.
   6. Expose the API with external HTTP endpoints.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -22,7 +21,6 @@ starterCode: |
   // TODO: Add API project referencing cache and sidecar, with external endpoints
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
 
@@ -42,39 +40,38 @@ solutionCode: |
       .WithExternalHttpEndpoints();
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "Redis has persistent lifetime"
-    type: contains
-    expected: "ContainerLifetime.Persistent"
-    description: "Redis container should use persistent lifetime."
+    name: Redis has persistent lifetime
+    type: code-contains
+    expected: ContainerLifetime.Persistent
+    description: Redis container should use persistent lifetime.
   - id: tc3
-    name: "Redis has volume"
-    type: contains
-    expected: 'WithVolume("redis-data", "/data")'
-    description: "Redis should have a named volume mounted at /data."
+    name: Redis has volume
+    type: code-contains
+    expected: WithVolume("redis-data", "/data")
+    description: Redis should have a named volume mounted at /data.
   - id: tc4
-    name: "Sidecar uses Dockerfile"
-    type: contains
-    expected: 'WithDockerfile("./sidecar")'
-    description: "The sidecar should be built from a Dockerfile."
+    name: Sidecar uses Dockerfile
+    type: code-contains
+    expected: WithDockerfile("./sidecar")
+    description: The sidecar should be built from a Dockerfile.
   - id: tc5
-    name: "Sidecar has build arg"
-    type: contains
-    expected: 'WithBuildArg("VERSION", "1.0")'
-    description: "The sidecar should have a VERSION build argument."
-
+    name: Sidecar has build arg
+    type: code-contains
+    expected: WithBuildArg("VERSION", "1.0")
+    description: The sidecar should have a VERSION build argument.
 hints:
-  - "`builder.AddContainer(\"cache\", \"redis:7\")` creates a Redis container resource."
-  - "Chain `.WithVolume(\"redis-data\", \"/data\")` to mount a named volume."
-  - "Use `.WithLifetime(ContainerLifetime.Persistent)` for persistent containers."
-  - "`WithDockerfile(\"./sidecar\")` builds an image from the sidecar directory."
-
+  - '`builder.AddContainer("cache", "redis:7")` creates a Redis container resource.'
+  - Chain `.WithVolume("redis-data", "/data")` to mount a named volume.
+  - Use `.WithLifetime(ContainerLifetime.Persistent)` for persistent containers.
+  - '`WithDockerfile("./sidecar")` builds an image from the sidecar directory.'
 requiredPackages:
-  - "Aspire.Hosting"
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+sortOrder: 0

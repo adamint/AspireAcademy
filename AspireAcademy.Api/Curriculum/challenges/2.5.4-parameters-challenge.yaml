@@ -4,7 +4,6 @@ instructions: |
   1. Add a secret parameter `"db-password"` with a generated default (min 16 chars, upper + lower + numeric).
   2. Add a secret parameter `"api-key"` (no default — will be prompted or configured).
   3. Add an API project with `DB_PASSWORD` and `API_KEY` environment variables from the parameters.
-
 starterCode: |
   using Aspire.Hosting;
 
@@ -15,7 +14,6 @@ starterCode: |
   // TODO: Add a project with DB_PASSWORD and API_KEY env vars
 
   builder.Build().Run();
-
 solutionCode: |
   using Aspire.Hosting;
 
@@ -40,39 +38,38 @@ solutionCode: |
       .WithEnvironment("API_KEY", apiKey);
 
   builder.Build().Run();
-
 testCases:
   - id: tc1
-    name: "Code compiles"
+    name: Code compiles
     type: compiles
     expected: null
-    description: "The AppHost code must compile without errors."
+    description: The AppHost code must compile without errors.
   - id: tc2
-    name: "db-password is secret"
-    type: contains
-    expected: "secret: true"
-    description: "Both parameters should be marked as secrets."
+    name: db-password is secret
+    type: code-contains
+    expected: 'secret: true'
+    description: Both parameters should be marked as secrets.
   - id: tc3
-    name: "Generated default used"
-    type: contains
-    expected: "GenerateParameterDefault"
-    description: "The db-password should use GenerateParameterDefault."
+    name: Generated default used
+    type: code-contains
+    expected: GenerateParameterDefault
+    description: The db-password should use GenerateParameterDefault.
   - id: tc4
-    name: "API has DB_PASSWORD"
-    type: contains
-    expected: 'WithEnvironment("DB_PASSWORD"'
-    description: "The API should have DB_PASSWORD environment variable."
+    name: API has DB_PASSWORD
+    type: code-contains
+    expected: WithEnvironment("DB_PASSWORD"
+    description: The API should have DB_PASSWORD environment variable.
   - id: tc5
-    name: "API has API_KEY"
-    type: contains
-    expected: 'WithEnvironment("API_KEY"'
-    description: "The API should have API_KEY environment variable."
-
+    name: API has API_KEY
+    type: code-contains
+    expected: WithEnvironment("API_KEY"
+    description: The API should have API_KEY environment variable.
 hints:
-  - "Use `AddParameter(\"db-password\", new GenerateParameterDefault { MinLength = 16, ... }, secret: true)`."
-  - "`GenerateParameterDefault` properties: `MinLength`, `Lower`, `Upper`, `Numeric`, `Special`."
-  - "Use `AddParameter(\"api-key\", secret: true)` for the API key without a default."
-  - "Pass parameters to `WithEnvironment()`: `.WithEnvironment(\"DB_PASSWORD\", dbPassword)`."
-
+  - 'Use `AddParameter("db-password", new GenerateParameterDefault { MinLength = 16, ... }, secret: true)`.'
+  - '`GenerateParameterDefault` properties: `MinLength`, `Lower`, `Upper`, `Numeric`, `Special`.'
+  - 'Use `AddParameter("api-key", secret: true)` for the API key without a default.'
+  - 'Pass parameters to `WithEnvironment()`: `.WithEnvironment("DB_PASSWORD", dbPassword)`.'
 requiredPackages:
-  - "Aspire.Hosting"
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+sortOrder: 0

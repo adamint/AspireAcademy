@@ -25,6 +25,8 @@ instructions: |
   - `WithReference` works uniformly across all resource types
   - YARP provides path-based routing to backend services
 starterCode: |
+  using Aspire.Hosting;
+
   var builder = DistributedApplication.CreateBuilder(args);
 
   // TODO: Add PostgreSQL "pg" with database "appdb" and data volume
@@ -37,6 +39,8 @@ starterCode: |
 
   builder.Build().Run();
 solutionCode: |
+  using Aspire.Hosting;
+
   var builder = DistributedApplication.CreateBuilder(args);
 
   var appdb = builder.AddPostgres("pg")
@@ -61,55 +65,61 @@ solutionCode: |
   builder.Build().Run();
 testCases:
   - id: tc1
-    name: "Adds PostgreSQL with database"
-    type: code-contains
-    expected: 'AddPostgres("pg")'
-    description: "Code must add a PostgreSQL server named 'pg'"
+    name: Compiles successfully
+    type: compiles
+    expected: null
+    description: Code must compile without errors
   - id: tc2
-    name: "Adds appdb database"
+    name: Adds PostgreSQL with database
     type: code-contains
-    expected: 'AddDatabase("appdb")'
-    description: "Code must add a database named 'appdb'"
+    expected: AddPostgres("pg")
+    description: Code must add a PostgreSQL server named 'pg'
   - id: tc3
-    name: "Adds Redis cache"
+    name: Adds appdb database
     type: code-contains
-    expected: 'AddRedis("cache")'
-    description: "Code must add a Redis resource named 'cache'"
+    expected: AddDatabase("appdb")
+    description: Code must add a database named 'appdb'
   - id: tc4
-    name: "Adds .NET project"
-    type: code-pattern
-    expected: 'AddProject.*"dotnet-api"'
-    description: "Code must add a .NET project resource named 'dotnet-api'"
+    name: Adds Redis cache
+    type: code-contains
+    expected: AddRedis("cache")
+    description: Code must add a Redis resource named 'cache'
   - id: tc5
-    name: "Adds Python app"
-    type: code-contains
-    expected: "AddPythonApp"
-    description: "Code must use AddPythonApp for the ML service"
+    name: Adds .NET project
+    type: code-pattern
+    expected: AddProject.*"dotnet-api"
+    description: Code must add a .NET project resource named 'dotnet-api'
   - id: tc6
-    name: "Adds JavaScript app"
+    name: Adds Python app
     type: code-contains
-    expected: "AddJavaScriptApp"
-    description: "Code must use AddJavaScriptApp for the frontend"
+    expected: AddPythonApp
+    description: Code must use AddPythonApp for the ML service
   - id: tc7
-    name: "Adds YARP gateway"
+    name: Adds JavaScript app
     type: code-contains
-    expected: 'AddYarp("gateway")'
-    description: "Code must add a YARP resource named 'gateway'"
+    expected: AddJavaScriptApp
+    description: Code must use AddJavaScriptApp for the frontend
   - id: tc8
-    name: "Services are wired with WithReference"
+    name: Adds YARP gateway
     type: code-contains
-    expected: "WithReference"
-    description: "Services must be connected via WithReference calls"
+    expected: AddYarp("gateway")
+    description: Code must add a YARP resource named 'gateway'
+  - id: tc9
+    name: Services are wired with WithReference
+    type: code-contains
+    expected: WithReference
+    description: Services must be connected via WithReference calls
 hints:
-  - "Python app: AddPythonApp(\"ml-service\", \"../python-ml\", \"app.py\")"
-  - "JavaScript app: AddJavaScriptApp(\"frontend\", \"../react-app\", \"dev\")"
-  - "Use WithReference(dotnetApi) on the frontend to inject the API URL"
-  - "YARP: AddYarp(\"gateway\") — configure routing with WithConfiguration if needed"
+  - 'Python app: AddPythonApp("ml-service", "../python-ml", "app.py")'
+  - 'JavaScript app: AddJavaScriptApp("frontend", "../react-app", "dev")'
+  - Use WithReference(dotnetApi) on the frontend to inject the API URL
+  - 'YARP: AddYarp("gateway") — configure routing with WithConfiguration if needed'
 requiredPackages:
-  - "Aspire.Hosting"
-  - "Aspire.Hosting.PostgreSQL"
-  - "Aspire.Hosting.Redis"
-  - "Aspire.Hosting.Python"
-  - "Aspire.Hosting.JavaScript"
-  - "Aspire.Hosting.Yarp"
+  - Aspire.Hosting
+  - Aspire.Hosting.PostgreSQL
+  - Aspire.Hosting.Redis
+  - Aspire.Hosting.Python
+  - Aspire.Hosting.JavaScript
+  - Aspire.Hosting.Yarp
+  - Aspire.Hosting.AppHost
 sortOrder: 0
