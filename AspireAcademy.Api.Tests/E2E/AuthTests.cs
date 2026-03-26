@@ -230,4 +230,70 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
         }
         finally { await fixture.ClosePageAsync(page); }
     }
+
+    [Fact]
+    public async Task RegisterShowsDashboardWelcomeWithDisplayName()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            var username = UniqueUser("regname");
+            var displayName = $"Hero_{username[^6..]}";
+            await page.GotoAsync(fixture.WebBaseUrl + "/register");
+            await page.Locator("#reg-user").FillAsync(username);
+            await page.Locator("#reg-email").FillAsync($"{username}@test.com");
+            await page.Locator("#reg-display").FillAsync(displayName);
+            await page.Locator("#reg-pass").FillAsync("TestPassword1!");
+            await page.Locator("#reg-confirm").FillAsync("TestPassword1!");
+            await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
+            await page.WaitForURLAsync("**/dashboard**", new() { Timeout = 15_000 });
+
+            await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByRole(AriaRole.Heading, new() { Level = 1 })).ToContainTextAsync(displayName, new() { Timeout = 10_000 });
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
+
+    [Fact]
+    public async Task LoginShowsDashboardWithCorrectDisplayName()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            var username = UniqueUser("loginname");
+            var displayName = $"LoginHero_{username[^6..]}";
+            await page.GotoAsync(fixture.WebBaseUrl + "/register");
+            await page.Locator("#reg-user").FillAsync(username);
+            await page.Locator("#reg-email").FillAsync($"{username}@test.com");
+            await page.Locator("#reg-display").FillAsync(displayName);
+            await page.Locator("#reg-pass").FillAsync("TestPassword1!");
+            await page.Locator("#reg-confirm").FillAsync("TestPassword1!");
+            await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
+            await page.WaitForURLAsync("**/dashboard**", new() { Timeout = 15_000 });
+
+            await LogoutUser(page);
+            await LoginUser(page, username);
+            await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByRole(AriaRole.Heading, new() { Level = 1 })).ToContainTextAsync(displayName, new() { Timeout = 10_000 });
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
+
+    [Fact]
+    public async Task LogoutPreventsAccessToDashboard()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            var username = UniqueUser("logoutblock");
+            await RegisterUser(page, username);
+            await ExpectDashboard(page);
+            await LogoutUser(page);
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"));
+
+            await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
 }

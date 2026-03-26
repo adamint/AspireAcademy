@@ -132,7 +132,21 @@ sealed partial class CompilationService(ILogger logger)
             // C# execution: scaffold Aspire workspace if needed
             ScaffoldWorkspace(tempDir, code, validatedPackages.Packages, stubProjects);
 
-            var buildResult = await RunProcessAsync("dotnet", "build -c Release --nologo -v q", tempDir, timeoutSeconds);
+            // Check if this is Aspire AppHost code (uses single-file format)
+            var isAspireAppHost = File.Exists(Path.Combine(tempDir, "apphost.cs"));
+
+            ProcessResult buildResult;
+            if (isAspireAppHost)
+            {
+                // Single-file Aspire: use dotnet run --file which handles #:sdk directives
+                // We only need to verify it builds, not actually run the AppHost
+                buildResult = await RunProcessAsync("dotnet", "run --file apphost.cs -- --help", tempDir, timeoutSeconds);
+            }
+            else
+            {
+                buildResult = await RunProcessAsync("dotnet", "build -c Release --nologo -v q", tempDir, timeoutSeconds);
+            }
+
             if (buildResult.ExitCode != 0)
             {
                 var errors = ParseBuildErrors(buildResult.Output + buildResult.ErrorOutput);
@@ -244,43 +258,44 @@ sealed partial class CompilationService(ILogger logger)
 
     private static void WriteAppHostCsproj(string dir, List<string> packages, List<string> projectRefs)
     {
-        // Use Microsoft.NET.Sdk.Web to support both AppHost and service-level code.
-        // The Web SDK is a superset of the base SDK and provides ASP.NET Core types
-        // needed by service challenges (WebApplication, IDistributedCache, etc.).
+        // Use single-file Aspire AppHost format with #:sdk directives
+        // This matches how the main app works and doesn't require workloads
         var sb = new StringBuilder();
-        sb.AppendLine("""
-            <Project Sdk="Microsoft.NET.Sdk.Web">
-              <PropertyGroup>
-                <OutputType>Exe</OutputType>
-                <TargetFramework>net9.0</TargetFramework>
-                <ImplicitUsings>enable</ImplicitUsings>
-                <Nullable>enable</Nullable>
-                <IsAspireHost>true</IsAspireHost>
-              </PropertyGroup>
-            """);
+        sb.AppendLine("#:sdk Aspire.AppHost.Sdk@13.2.0");
 
-        // Always include Aspire.Hosting
-        var allPackages = new HashSet<string>(packages, StringComparer.OrdinalIgnoreCase) { "Aspire.Hosting.AppHost" };
-
-        sb.AppendLine("  <ItemGroup>");
-        foreach (var pkg in allPackages)
+        foreach (var pkg in packages)
         {
-            sb.AppendLine($"    <PackageReference Include=\"{pkg}\" Version=\"9.*\" />");
-        }
-        sb.AppendLine("  </ItemGroup>");
-
-        if (projectRefs.Count > 0)
-        {
-            sb.AppendLine("  <ItemGroup>");
-            foreach (var proj in projectRefs)
+            if (!string.Equals(pkg, "Aspire.Hosting", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(pkg, "Aspire.Hosting.AppHost", StringComparison.OrdinalIgnoreCase))
             {
-                sb.AppendLine($"    <ProjectReference Include=\"{proj}/{proj}.csproj\" />");
+                sb.AppendLine($"#:package {pkg}@13.2.*");
             }
-            sb.AppendLine("  </ItemGroup>");
         }
 
-        sb.AppendLine("</Project>");
-        File.WriteAllText(Path.Combine(dir, "UserCode.csproj"), sb.ToString());
+        // For stub projects, use #:project directives
+        foreach (var proj in projectRefs)
+        {
+            sb.AppendLine($"#:project ./{proj}");
+        }
+
+        sb.AppendLine();
+
+        // Read the user's code from Program.cs and append it
+        var userCode = File.ReadAllText(Path.Combine(dir, "Program.cs"));
+        sb.Append(userCode);
+
+        // Write as apphost.cs (replacing Program.cs)
+        File.WriteAllText(Path.Combine(dir, "apphost.cs"), sb.ToString());
+        File.Delete(Path.Combine(dir, "Program.cs"));
+
+        // Write aspire.config.json
+        File.WriteAllText(Path.Combine(dir, "aspire.config.json"), """
+            {
+              "appHost": {
+                "path": "apphost.cs"
+              }
+            }
+            """);
     }
 
     private async Task<ExecuteResponse> ExecuteTypeScriptAsync(string code, string tempDir, int timeoutSeconds)
