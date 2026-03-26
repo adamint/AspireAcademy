@@ -40,11 +40,11 @@ questions:
     type: "multiple_choice"
     options:
       - "dotnet aspire publish"
-      - "aspire generate"
+      - "aspire sdk generate"
       - "dotnet run --publisher codegen"
       - "aspire manifest --generate-clients"
-    correctAnswer: "aspire generate"
-    explanation: "The 'aspire generate' command serializes the app model to a JSON intermediate representation and invokes language-specific generators that produce typed configuration and client code for TypeScript, Python, Go, and Java."
+    correctAnswer: "aspire sdk generate"
+    explanation: "The 'aspire sdk generate' command (a hidden developer subcommand) serializes the app model to a JSON intermediate representation and invokes language-specific generators that produce typed configuration and client code for TypeScript, Python, Go, Java, and Rust."
 
   - id: "6.9.5"
     question: "In which directory within the Aspire source code is IContainerRuntime defined?"
