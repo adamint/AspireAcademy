@@ -89,7 +89,8 @@ public static partial class AuthEndpoints
             TotalXp = 0,
             WeeklyXp = 0,
             CurrentLevel = 1,
-            CurrentRank = "aspire-intern"
+            CurrentRank = "aspire-intern",
+            WeekStart = DateOnly.FromDateTime(DateTime.UtcNow)
         };
 
         db.Users.Add(user);
@@ -274,8 +275,16 @@ public static partial class AuthEndpoints
         }
     }
 
-    internal static Guid GetUserId(ClaimsPrincipal principal) =>
-        Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    internal static Guid GetUserId(ClaimsPrincipal principal)
+    {
+        var idClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
+        {
+            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
+        }
+
+        return userId;
+    }
 
     [GeneratedRegex(@"^[a-zA-Z0-9_]{3,30}$")]
     private static partial Regex UsernameRegex();

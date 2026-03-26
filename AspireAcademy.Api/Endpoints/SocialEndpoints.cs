@@ -188,6 +188,16 @@ public static class SocialEndpoints
             var userId = GetUserId(user);
             s_logger.LogInformation("PUT /users/me for UserId={UserId}", userId);
 
+            if (request.DisplayName is not null && request.DisplayName.Trim().Length > 50)
+            {
+                return Results.BadRequest(new { error = "Display name must be 50 characters or fewer." });
+            }
+
+            if (request.Bio is not null && request.Bio.Trim().Length > 500)
+            {
+                return Results.BadRequest(new { error = "Bio must be 500 characters or fewer." });
+            }
+
             var dbUser = await db.Users.FindAsync(userId);
             if (dbUser is null)
             {
@@ -302,7 +312,7 @@ public static class SocialEndpoints
         {
             var userId = GetUserId(user);
             scope ??= "weekly";
-            var maxLimit = Math.Min(limit ?? 50, 50);
+            var maxLimit = Math.Clamp(limit ?? 50, 1, 50);
 
             if (scope == "friends")
             {
@@ -352,7 +362,9 @@ public static class SocialEndpoints
         var sortedEntries = await redisDb.SortedSetRangeByRankWithScoresAsync(key, 0, maxLimit - 1, Order.Descending);
 
         var userIds = sortedEntries
-            .Select(e => Guid.Parse(e.Element.ToString()))
+            .Select(e => Guid.TryParse(e.Element.ToString(), out var id) ? id : (Guid?)null)
+            .Where(id => id.HasValue)
+            .Select(id => id!.Value)
             .ToList();
 
         var users = await db.Users
@@ -365,7 +377,10 @@ public static class SocialEndpoints
 
         var entries = sortedEntries.Select((e, i) =>
         {
-            var uid = Guid.Parse(e.Element.ToString());
+            if (!Guid.TryParse(e.Element.ToString(), out var uid))
+            {
+                return null;
+            }
             var u = users.GetValueOrDefault(uid);
             var xp = xpByUser.GetValueOrDefault(uid);
             var avatarUrl = AvatarHelper.GetAvatarUrl(u?.AvatarSeed, u?.Email ?? "");
@@ -373,7 +388,7 @@ public static class SocialEndpoints
                 i + 1, uid,
                 u?.Username ?? "", u?.DisplayName ?? "", avatarUrl,
                 (int)e.Score, xp?.CurrentLevel ?? 1);
-        }).ToList();
+        }).Where(e => e is not null).Cast<LeaderboardEntry>().ToList();
 
         var userRank = await redisDb.SortedSetRankAsync(key, userId.ToString(), Order.Descending);
         LeaderboardEntry? currentUserEntry = null;
@@ -404,8 +419,16 @@ public static class SocialEndpoints
             (int)totalEntries));
     }
 
-    private static Guid GetUserId(ClaimsPrincipal user) =>
-        Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    private static Guid GetUserId(ClaimsPrincipal user)
+    {
+        var idClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
+        {
+            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
+        }
+
+        return userId;
+    }
 }
 
 // Request / response DTOs

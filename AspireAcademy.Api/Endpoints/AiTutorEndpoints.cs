@@ -106,8 +106,16 @@ public static class AiTutorEndpoints
         return app;
     }
 
-    private static Guid GetUserId(ClaimsPrincipal user) =>
-        Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    private static Guid GetUserId(ClaimsPrincipal user)
+    {
+        var idClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
+        {
+            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
+        }
+
+        return userId;
+    }
 }
 
 // Request / response DTOs

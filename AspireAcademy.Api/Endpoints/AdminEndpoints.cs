@@ -160,7 +160,11 @@ public static class AdminEndpoints
 
         logger.LogWarning("Admin action: FlushRedis requested by {User}", principal.FindFirstValue(ClaimTypes.Name));
 
-        var server = redis.GetServers().First();
+        var server = redis.GetServers().FirstOrDefault();
+        if (server is null)
+        {
+            return Results.Json(new ErrorResponse("No Redis servers available."), statusCode: 503);
+        }
         await server.FlushAllDatabasesAsync();
 
         logger.LogWarning("Admin action: Redis flushed");
@@ -257,14 +261,22 @@ public static class AdminEndpoints
 
         logger.LogInformation("Admin action: SeedTestData requested by {User}", principal.FindFirstValue(ClaimTypes.Name));
 
+        var now = DateTime.UtcNow;
+
         // Check if test user already exists
         var existing = await db.Users.FirstOrDefaultAsync(u => u.Username == "testuser");
         if (existing is not null)
         {
+            // Still create admin user if missing, even when testuser exists
+            var adminExistsEarly = await db.Users.AnyAsync(u => u.Username == "admin");
+            if (!adminExistsEarly)
+            {
+                await CreateAdminUser(db, logger, now);
+            }
+
             return Results.Conflict(new ErrorResponse("Test user 'testuser' already exists."));
         }
 
-        var now = DateTime.UtcNow;
         var testUser = new User
         {
             Id = Guid.CreateVersion7(),
@@ -317,32 +329,36 @@ public static class AdminEndpoints
         var adminExists = await db.Users.AnyAsync(u => u.Username == "admin");
         if (!adminExists)
         {
-            var adminUser = new User
-            {
-                Id = Guid.CreateVersion7(),
-                Username = "admin",
-                Email = "admin@aspireacademy.dev",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("AdminPass1!"),
-                DisplayName = "Admin",
-                CreatedAt = now
-            };
-            db.Users.Add(adminUser);
-            db.UserXp.Add(new UserXp
-            {
-                UserId = adminUser.Id,
-                TotalXp = 0,
-                CurrentLevel = 1,
-                CurrentRank = "aspire-intern",
-                WeekStart = DateOnly.FromDateTime(now)
-            });
-            await db.SaveChangesAsync();
-            logger.LogInformation("Admin action: Admin user created (username=admin, password=AdminPass1!)");
+            await CreateAdminUser(db, logger, now);
         }
 
         return Results.Ok(new AdminActionResponse(
             $"Test user 'testuser' created (password: TestPass1) with {firstLessons.Count} completed lessons. " +
             "Admin user 'admin' available (password: AdminPass1!). " +
             "View all credentials at GET /api/admin/seeded-credentials"));
+    }
+    private static async Task CreateAdminUser(AcademyDbContext db, ILogger logger, DateTime now)
+    {
+        var adminUser = new User
+        {
+            Id = Guid.CreateVersion7(),
+            Username = "admin",
+            Email = "admin@aspireacademy.dev",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("AdminPass1!"),
+            DisplayName = "Admin",
+            CreatedAt = now
+        };
+        db.Users.Add(adminUser);
+        db.UserXp.Add(new UserXp
+        {
+            UserId = adminUser.Id,
+            TotalXp = 0,
+            CurrentLevel = 1,
+            CurrentRank = "aspire-intern",
+            WeekStart = DateOnly.FromDateTime(now)
+        });
+        await db.SaveChangesAsync();
+        logger.LogInformation("Admin action: Admin user created (username=admin, password=AdminPass1!)");
     }
 }
 

@@ -392,8 +392,16 @@ public static class CurriculumEndpoints
                completedLessonIds.Contains(lesson.UnlockAfterLessonId);
     }
 
-    private static Guid GetUserId(ClaimsPrincipal principal) =>
-        Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    private static Guid GetUserId(ClaimsPrincipal principal)
+    {
+        var idClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
+        {
+            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
+        }
+
+        return userId;
+    }
 }
 
 // --- DTOs ---

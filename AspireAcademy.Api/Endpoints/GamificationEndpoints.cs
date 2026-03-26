@@ -279,6 +279,11 @@ public static class GamificationEndpoints
         var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? user.FindFirst("sub")?.Value;
 
-        return Guid.Parse(idClaim!);
+        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
+        {
+            throw new BadHttpRequestException("Invalid or missing user identity.", StatusCodes.Status401Unauthorized);
+        }
+
+        return userId;
     }
 }
