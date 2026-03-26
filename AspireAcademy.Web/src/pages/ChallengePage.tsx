@@ -52,17 +52,42 @@ interface ChallengeData {
   nextLessonId?: string | null;
 }
 
-interface RunResponse {
-  output: string;
-  errors: string;
+// ── API response types (match backend DTOs) ─────────
+
+interface ChallengeStepDto {
+  id: string;
+  instructionsMarkdown: string;
+  starterCode: string;
+  hints: string[];
+  testCases: { id: string; name: string; type: string; expected?: string | null; description: string }[];
+  requiredPackages: string[];
+  stepTitle?: string | null;
 }
 
-interface SubmitResponse {
-  testResults: { testCaseId: string; passed: boolean; message?: string }[];
+interface LessonDetailResponse {
+  id: string;
+  title: string;
+  type: string;
+  nextLessonId?: string | null;
+  challengeSteps?: ChallengeStepDto[];
+}
+
+interface RunApiResponse {
+  compilationSuccess: boolean;
+  compilationOutput: string;
+  executionOutput: string;
+  executionTimeMs?: number;
+  error?: string | null;
+}
+
+interface SubmitApiResponse {
+  compilationSuccess: boolean;
+  compilationOutput: string;
+  executionOutput: string;
+  testResults: { testId: string; name: string; passed: boolean; description: string }[];
   allPassed: boolean;
   xpEarned: number;
-  output: string;
-  errors: string;
+  bonusXpEarned: number;
 }
 
 interface AiMessage {
@@ -118,11 +143,33 @@ export default function ChallengePage() {
   if (!fetched[0]) {
     fetched[1](true);
     api
-      .get<ChallengeData>(`/lessons/${lessonId}`)
+      .get<LessonDetailResponse>(`/lessons/${lessonId}`)
       .then((res) => {
-        setChallenge(res.data);
-        setCode(res.data.starterCode);
-        setTestCases(res.data.testCases);
+        const data = res.data;
+        const step = data.challengeSteps?.[0];
+        if (!step) {
+          setError('No challenge data available.');
+          setLoading(false);
+          return;
+        }
+        const mapped: ChallengeData = {
+          id: step.id,
+          title: data.title,
+          lessonId: data.id,
+          instructions: step.instructionsMarkdown,
+          starterCode: step.starterCode,
+          language: 'csharp',
+          testCases: step.testCases.map((tc) => ({
+            id: tc.id,
+            description: tc.description || tc.name,
+            status: 'pending' as const,
+          })),
+          hints: step.hints,
+          nextLessonId: data.nextLessonId,
+        };
+        setChallenge(mapped);
+        setCode(mapped.starterCode);
+        setTestCases(mapped.testCases);
         setLoading(false);
       })
       .catch(() => {
@@ -140,12 +187,12 @@ export default function ChallengePage() {
     setOutput('');
     setErrors('');
     try {
-      const res = await api.post<RunResponse>(
+      const res = await api.post<RunApiResponse>(
         `/challenges/${challenge.lessonId}/run`,
         { code }
       );
-      setOutput(res.data.output);
-      setErrors(res.data.errors);
+      setOutput(res.data.executionOutput ?? '');
+      setErrors(res.data.error || res.data.compilationOutput || '');
     } catch {
       console.error('[ChallengePage] Failed to execute code for challenge:', lessonId);
       setErrors('Failed to execute code. Please try again.');
@@ -164,16 +211,16 @@ export default function ChallengePage() {
     setOutput('');
     setErrors('');
     try {
-      const res = await api.post<SubmitResponse>(
+      const res = await api.post<SubmitApiResponse>(
         `/challenges/${challenge.lessonId}/submit`,
         { code }
       );
-      setOutput(res.data.output);
-      setErrors(res.data.errors);
+      setOutput(res.data.executionOutput ?? '');
+      setErrors(res.data.compilationOutput || '');
 
       setTestCases((prev) =>
         prev.map((tc) => {
-          const result = res.data.testResults.find((r) => r.testCaseId === tc.id);
+          const result = res.data.testResults.find((r) => r.testId === tc.id);
           return result
             ? { ...tc, status: result.passed ? 'passed' as const : 'failed' as const }
             : tc;

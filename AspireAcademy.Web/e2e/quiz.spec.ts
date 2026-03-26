@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { uniqueUser, registerUser, loginUser, loginAndGoToWorld, injectAuth, FAKE_USER } from './helpers';
+import { uniqueUser, registerUser, loginUser, loginAndGoToWorld, injectAuth, FAKE_USER, completeLearnLessonsViaApi } from './helpers';
 
 test.describe.serial('Quiz flow', () => {
   const username = uniqueUser('quiz');
@@ -7,28 +7,24 @@ test.describe.serial('Quiz flow', () => {
   test.beforeAll(async ({ browser }) => {
     const page = await browser.newPage();
     await registerUser(page, username);
+    // Complete prerequisites so quiz 1.1.3 is unlocked
+    await completeLearnLessonsViaApi(page, ['1.1.1', '1.1.2']);
     await page.close();
   });
 
   async function navigateToQuiz(page: import('@playwright/test').Page) {
-    await loginAndGoToWorld(page, username);
-
-    // Find quiz lesson items that are NOT locked
-    const quizItem = page.locator('[role="button"]').filter({ hasText: '🧪' });
-    const count = await quizItem.count();
-    for (let i = 0; i < count; i++) {
-      const text = await quizItem.nth(i).textContent();
-      if (text?.includes('🔒')) continue;
-      await quizItem.nth(i).click();
-      try {
-        await page.waitForURL(/\/quizzes\//, { timeout: 5_000 });
-        return true;
-      } catch {
-        // Navigation didn't work — lesson might be locked
-        continue;
-      }
+    await loginUser(page, username);
+    // Navigate directly to quiz 1.1.3 (prerequisites completed in beforeAll)
+    await page.goto('/quizzes/1.1.3');
+    try {
+      await page.waitForURL(/\/quizzes\//, { timeout: 5_000 });
+      // Wait for quiz content to load
+      const submitBtn = page.getByRole('button', { name: /submit answer/i });
+      await expect(submitBtn).toBeVisible({ timeout: 10_000 });
+      return true;
+    } catch {
+      return false;
     }
-    return false;
   }
 
   test('quiz page loads with question and disabled submit', async ({ page }) => {

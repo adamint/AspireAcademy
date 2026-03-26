@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { uniqueUser, registerUser, loginUser, loginAndGoToWorld } from './helpers';
+import { uniqueUser, registerUser, loginUser, loginAndGoToWorld, completeLearnLessonsViaApi, unlockFirstChallenge } from './helpers';
 
 test.describe.serial('Dashboard page', () => {
   const username = uniqueUser('dash');
@@ -40,6 +40,8 @@ test.describe.serial('World / Module page', () => {
   test.beforeAll(async ({ browser }) => {
     const page = await browser.newPage();
     await registerUser(page, username);
+    // Complete prerequisites so quiz and challenge lessons are unlocked
+    await unlockFirstChallenge(page);
     await page.close();
   });
 

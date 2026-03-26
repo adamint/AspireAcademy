@@ -1,124 +1,0 @@
-[?25l                             
-[38;5;11m⠋[0m 🔐 Checking certificates...
-                             [2A                             
-[38;5;11m⠙[0m 🔐 Checking certificates...
-                             [2A                             
-[38;5;11m⠚[0m 🔐 Checking certificates...
-                             [2A                             
-[38;5;11m⠞[0m 🔐 Checking certificates...
-                             [2A                             
-[38;5;11m⠞[0m 🔐 Checking certificates...
-                             [2K[1A[2K[1A[2K[?25h[?25l                                       
-[38;5;11m⠋[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠙[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠚[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠞[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠖[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠦[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠴[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠲[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠳[0m 🛠  Building apphost... ../apphost.cs
-                                       [2A                                       
-[38;5;11m⠳[0m 🛠  Building apphost... ../apphost.cs
-                                       [2K[1A[2K[1A[2K[?25h[?25l                          
-[38;5;11m⠋[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠙[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠚[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠞[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠖[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠦[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠴[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠲[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠳[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠓[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠋[0m Connecting to apphost...
-                          [2A                          
-[38;5;11m⠋[0m Connecting to apphost...
-                          [2K[1A[2K[1A[2K[?25h[?25l                       
-[38;5;11m⠋[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠙[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠚[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠞[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠖[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠦[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠴[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠲[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠳[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠓[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠋[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠙[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠚[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠞[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠖[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠦[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠴[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠲[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠳[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠓[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠋[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠙[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠚[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠞[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠖[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠦[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠴[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠲[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠳[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠓[0m Starting dashboard...
-                       [2A                       
-[38;5;11m⠓[0m Starting dashboard...
-                       [2K[1A[2K[1A[2K[?25h
-     [1;38;5;2mAppHost[0m:  ../apphost.cs                                                      
-                                                                                  
-   [1;38;5;2mDashboard[0m:  ]8;id=1401438416;https://localhost:17193/login?t=c434b622ab7cc1f1a7c8018f0c5bf574\https://localhost:17193/login?t=c434b622ab7cc1f1a7c8018f0c5bf574]8;;\   
-                                                                                  
-        [1;38;5;2mLogs[0m:  /Users/adamratzman/.aspire/logs/cli_20260326T072721_b1cfd9bc.log   
-                                                            
-               Press [1mCTRL+C[0m to stop the apphost and exit.   

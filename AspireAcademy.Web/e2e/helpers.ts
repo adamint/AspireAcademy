@@ -78,6 +78,90 @@ export const FAKE_USER = {
   createdAt: new Date().toISOString(),
 };
 
+/* ---------- API helpers ---------- */
+
+export async function getAuthToken(page: Page): Promise<string> {
+  const authJson = await page.evaluate(() => localStorage.getItem('aspire-academy-auth'));
+  const parsed = JSON.parse(authJson!);
+  return parsed.state.token;
+}
+
+export async function completeLearnLessonsViaApi(page: Page, lessonIds: string[]): Promise<void> {
+  const token = await getAuthToken(page);
+  for (const lessonId of lessonIds) {
+    const resp = await page.request.post('/api/progress/complete', {
+      headers: { Authorization: `Bearer ${token}` },
+      data: { lessonId },
+    });
+    if (!resp.ok()) {
+      console.warn(`Failed to complete lesson ${lessonId}: ${resp.status()}`);
+    }
+  }
+}
+
+export async function submitQuizViaApi(
+  page: Page,
+  lessonId: string,
+  correctOptionMap: Record<string, string[]>,
+): Promise<void> {
+  const token = await getAuthToken(page);
+  // Fetch lesson detail to get quiz question GUIDs
+  const lessonResp = await page.request.get(`/api/lessons/${lessonId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!lessonResp.ok()) {
+    console.warn(`Failed to fetch lesson ${lessonId}: ${lessonResp.status()}`);
+    return;
+  }
+  const lesson = await lessonResp.json();
+  const questions = lesson.quiz?.questions;
+  if (!questions?.length) return;
+
+  // Build answers by matching question text to correct options
+  const answers = questions.map((q: { id: string; questionText: string }) => {
+    // Find the correct answer for this question by checking each mapping
+    for (const [, optionIds] of Object.entries(correctOptionMap)) {
+      // Use the question index + 1 to match against ordered answers
+      const idx = questions.indexOf(q);
+      const orderedKeys = Object.keys(correctOptionMap);
+      if (idx < orderedKeys.length) {
+        return {
+          questionId: q.id,
+          selectedOptionIds: correctOptionMap[orderedKeys[idx]],
+        };
+      }
+    }
+    return { questionId: q.id, selectedOptionIds: ['a'] };
+  });
+
+  await page.request.post(`/api/quizzes/${lessonId}/submit`, {
+    headers: { Authorization: `Bearer ${token}` },
+    data: { answers },
+  });
+}
+
+/**
+ * Unlocks module 1.2 by completing all of module 1.1 (learn + quiz + boss)
+ * and then completes learn lessons in module 1.2 up to the challenge.
+ */
+export async function unlockFirstChallenge(page: Page): Promise<void> {
+  // Complete learn lessons in module 1.1
+  await completeLearnLessonsViaApi(page, ['1.1.1', '1.1.2']);
+
+  // Submit quiz 1.1.3 with correct answers (all correct: b, c, b, b)
+  await submitQuizViaApi(page, '1.1.3', {
+    q1: ['b'], q2: ['c'], q3: ['b'], q4: ['b'],
+  });
+
+  // Submit boss 1.1-boss with correct answers (all correct: b, b, b, b, c)
+  await submitQuizViaApi(page, '1.1-boss', {
+    q1: ['b'], q2: ['b'], q3: ['b'], q4: ['b'], q5: ['c'],
+  });
+
+  // Complete learn lessons in module 1.2
+  await completeLearnLessonsViaApi(page, ['1.2.1', '1.2.2', '1.2.3', '1.2.4']);
+}
+
 /* ---------- navigation helpers ---------- */
 
 export async function navigateToWorld(page: Page, worldName = 'Aspire Foundations'): Promise<void> {

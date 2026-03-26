@@ -153,14 +153,22 @@ test.describe('Error states', () => {
     await page.getByRole('main').getByText('Aspire Foundations').click();
     await page.waitForURL(/\/worlds\//);
 
+    // Wait for lessons to render
+    await expect(page.locator('[role="button"]').filter({ hasText: /XP/ }).first()).toBeVisible({ timeout: 10_000 });
+
     // Find an available (uncompleted) learn lesson
     const availableLearn = page.locator('[role="button"]').filter({ hasText: /○/ }).filter({ hasText: /📖/ });
     if ((await availableLearn.count()) === 0) {
-      test.skip(true, 'No uncompleted lessons to test error state');
-      return;
+      // Fallback: try any learn lesson that's not locked
+      const anyLearn = page.locator('[role="button"]').filter({ hasText: /📖/ }).filter({ hasNotText: /🔒/ });
+      if ((await anyLearn.count()) === 0) {
+        test.skip(true, 'No uncompleted lessons to test error state');
+        return;
+      }
+      await anyLearn.first().click();
+    } else {
+      await availableLearn.first().click();
     }
-
-    await availableLearn.first().click();
     await page.waitForURL(/\/lessons\//);
 
     // Mock completion endpoint to fail

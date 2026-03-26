@@ -14,6 +14,10 @@ public record QuizSubmitRequest(List<QuizAnswer> Answers);
 
 public record QuizAnswer(Guid QuestionId, List<string>? SelectedOptionIds, string? FreeTextAnswer);
 
+public record SingleAnswerRequest(Guid QuestionId, object? Answer);
+
+public record SingleAnswerResponse(bool Correct, string Explanation, int PointsAwarded, List<string>? CorrectOptionIds);
+
 public record QuizQuestionResult(Guid QuestionId, bool Correct, List<string>? CorrectOptionIds, string Explanation);
 
 public record QuizSubmitResponse(
@@ -41,8 +45,86 @@ public static class QuizEndpoints
         var group = app.MapGroup("/api/quizzes").RequireAuthorization();
 
         group.MapPost("/{lessonId}/submit", SubmitQuizAsync);
+        group.MapPost("/{lessonId}/answer", AnswerSingleQuestionAsync);
 
         return app;
+    }
+
+    /// <summary>
+    /// Grades a single quiz question and returns immediate feedback.
+    /// Does NOT record progress or award XP — that happens on /submit.
+    /// </summary>
+    private static async Task<IResult> AnswerSingleQuestionAsync(
+        string lessonId,
+        SingleAnswerRequest request,
+        AcademyDbContext db,
+        ClaimsPrincipal user)
+    {
+        if (!Guid.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        {
+            return Results.Unauthorized();
+        }
+
+        var question = await db.QuizQuestions
+            .FirstOrDefaultAsync(q => q.Id == request.QuestionId && q.LessonId == lessonId);
+
+        if (question is null)
+        {
+            return Results.NotFound(new { error = "Question not found" });
+        }
+
+        // Determine the answer based on what the frontend sends
+        List<string>? selectedOptionIds = null;
+        string? freeTextAnswer = null;
+
+        if (request.Answer is string strAnswer)
+        {
+            // Could be an option ID or free text
+            if (question.QuestionType is "fill-in-blank" or "fill_in_blank")
+            {
+                freeTextAnswer = strAnswer;
+            }
+            else
+            {
+                selectedOptionIds = [strAnswer];
+            }
+        }
+        else if (request.Answer is JsonElement jsonEl)
+        {
+            if (jsonEl.ValueKind == JsonValueKind.String)
+            {
+                var val = jsonEl.GetString() ?? "";
+                if (question.QuestionType is "fill-in-blank" or "fill_in_blank")
+                {
+                    freeTextAnswer = val;
+                }
+                else
+                {
+                    selectedOptionIds = [val];
+                }
+            }
+            else if (jsonEl.ValueKind == JsonValueKind.Array)
+            {
+                selectedOptionIds = [];
+                foreach (var item in jsonEl.EnumerateArray())
+                {
+                    selectedOptionIds.Add(item.GetString() ?? "");
+                }
+            }
+        }
+
+        var quizAnswer = new QuizAnswer(request.QuestionId, selectedOptionIds, freeTextAnswer);
+        var (isCorrect, correctOptionIds) = GradeQuestion(question, quizAnswer);
+
+        s_logger.LogInformation("Quiz answer for lesson {LessonId}, question {QuestionId}: correct={Correct}",
+            lessonId, request.QuestionId, isCorrect);
+
+        return Results.Ok(new SingleAnswerResponse(
+            Correct: isCorrect,
+            Explanation: question.Explanation,
+            PointsAwarded: isCorrect ? question.Points : 0,
+            CorrectOptionIds: correctOptionIds
+        ));
     }
 
     private static async Task<IResult> SubmitQuizAsync(

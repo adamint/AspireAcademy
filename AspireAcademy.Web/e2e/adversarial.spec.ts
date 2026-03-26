@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { registerUser, loginUser, uniqueUser, clearAuth } from './helpers';
+import { registerUser, loginUser, uniqueUser, clearAuth, completeLearnLessonsViaApi, navigateToWorld, navigateToFirstLearnLesson } from './helpers';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -39,30 +39,22 @@ test.describe('LessonPage — Mark Complete', () => {
   test('mark complete button is disabled after success (no double-submit)', async ({ page }) => {
     await loginUser(page, username);
 
-    // Navigate to dashboard, find first world, then first available lesson
+    // Navigate to world page and find the first learn lesson
     await page.goto('/dashboard');
     await expect(page.getByText(/welcome back/i)).toBeVisible({ timeout: 10_000 });
 
-    // Find any lesson link in sidebar or worlds
-    const worldCards = page.locator('[data-testid="world-card"], a[href*="/worlds/"]');
-    const worldCount = await worldCards.count();
-    if (worldCount === 0) {
-      test.skip(true, 'No worlds available to test lesson completion');
-      return;
-    }
-
-    await worldCards.first().click();
+    await page.getByRole('main').getByText('Aspire Foundations').click();
     await page.waitForURL(/\/worlds\//, { timeout: 10_000 });
 
-    // Find a learn-type lesson link
-    const lessonLinks = page.locator('a[href*="/lessons/"]');
-    const lessonCount = await lessonLinks.count();
+    // Find a learn-type lesson (📖) that is available or not yet completed
+    const learnLessons = page.locator('[role="button"]').filter({ hasText: '📖' });
+    const lessonCount = await learnLessons.count();
     if (lessonCount === 0) {
       test.skip(true, 'No available lessons to test completion');
       return;
     }
 
-    await lessonLinks.first().click();
+    await learnLessons.first().click();
     await page.waitForURL(/\/lessons\//, { timeout: 10_000 });
 
     // Find the mark complete button
@@ -92,22 +84,16 @@ test.describe('LessonPage — Mark Complete', () => {
     await page.goto('/dashboard');
     await expect(page.getByText(/welcome back/i)).toBeVisible({ timeout: 10_000 });
 
-    const worldCards = page.locator('[data-testid="world-card"], a[href*="/worlds/"]');
-    if ((await worldCards.count()) === 0) {
-      test.skip(true, 'No worlds available');
-      return;
-    }
-
-    await worldCards.first().click();
+    await page.getByRole('main').getByText('Aspire Foundations').click();
     await page.waitForURL(/\/worlds\//, { timeout: 10_000 });
 
-    const lessonLinks = page.locator('a[href*="/lessons/"]');
-    if ((await lessonLinks.count()) === 0) {
+    const learnLessons = page.locator('[role="button"]').filter({ hasText: '📖' });
+    if ((await learnLessons.count()) === 0) {
       test.skip(true, 'No lessons available');
       return;
     }
 
-    await lessonLinks.first().click();
+    await learnLessons.first().click();
     await page.waitForURL(/\/lessons\//, { timeout: 10_000 });
 
     const completeBtn = page.getByRole('button', { name: /mark complete|completed/i });
@@ -140,30 +126,15 @@ test.describe('QuizPage — validation', () => {
     const page = await ctx.newPage();
     username = uniqueUser('quiz');
     await registerUser(page, username);
+    // Complete prerequisites so quiz 1.1.3 is unlocked
+    await completeLearnLessonsViaApi(page, ['1.1.1', '1.1.2']);
     await ctx.close();
   });
 
   test('submit button is disabled when no answer is selected', async ({ page }) => {
     await loginUser(page, username);
-    await page.goto('/dashboard');
-    await expect(page.getByText(/welcome back/i)).toBeVisible({ timeout: 10_000 });
-
-    // Try to find a quiz lesson via sidebar or worlds
-    const quizLinks = page.locator('a[href*="/quizzes/"]');
-    // If no quiz links visible, navigate through worlds
-    const worldCards = page.locator('[data-testid="world-card"], a[href*="/worlds/"]');
-    if ((await worldCards.count()) > 0 && (await quizLinks.count()) === 0) {
-      await worldCards.first().click();
-      await page.waitForURL(/\/worlds\//, { timeout: 10_000 });
-    }
-
-    const quizLinksAfter = page.locator('a[href*="/quizzes/"]');
-    if ((await quizLinksAfter.count()) === 0) {
-      test.skip(true, 'No quiz lessons available');
-      return;
-    }
-
-    await quizLinksAfter.first().click();
+    // Navigate directly to the quiz lesson
+    await page.goto('/quizzes/1.1.3');
     await page.waitForURL(/\/quizzes\//, { timeout: 10_000 });
 
     // The Submit Answer button should be disabled without selecting
@@ -395,15 +366,8 @@ test.describe('LessonPage — navigation', () => {
     await page.goto('/dashboard');
     await expect(page.getByText(/welcome back/i)).toBeVisible({ timeout: 10_000 });
 
-    const worldCards = page.locator('[data-testid="world-card"], a[href*="/worlds/"]');
-    if ((await worldCards.count()) === 0) {
-      test.skip(true, 'No worlds available');
-      return;
-    }
-
-    await worldCards.first().click();
+    await page.getByRole('main').getByText('Aspire Foundations').click();
     await page.waitForURL(/\/worlds\//, { timeout: 10_000 });
-    const worldUrl = page.url();
 
     const lessonLinks = page.locator('[role="button"]').filter({ hasText: '📖' });
     if ((await lessonLinks.count()) === 0) {

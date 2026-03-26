@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { uniqueUser, registerUser, loginUser, loginAndGoToWorld, navigateToFirstLearnLesson } from './helpers';
+import { uniqueUser, registerUser, loginUser, loginAndGoToWorld, navigateToFirstLearnLesson, completeLearnLessonsViaApi } from './helpers';
 
 test.describe.serial('Lesson — Previous / Next navigation', () => {
   const username = uniqueUser('prevnext');
@@ -7,6 +7,8 @@ test.describe.serial('Lesson — Previous / Next navigation', () => {
   test.beforeAll(async ({ browser }) => {
     const page = await browser.newPage();
     await registerUser(page, username);
+    // Complete first lesson so 1.1.2 is unlocked and has a working Previous button
+    await completeLearnLessonsViaApi(page, ['1.1.1']);
     await page.close();
   });
 

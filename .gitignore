@@ -35,3 +35,16 @@ coverage/
 # Playwright
 playwright-report/
 test-results/
+
+# Aspire logs
+*.log
+aspire.log
+apphost.log
+
+# Playwright
+test-results/
+playwright-report/
+
+# OS
+.DS_Store
+Thumbs.db
