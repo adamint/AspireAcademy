@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { FiArrowLeft } from 'react-icons/fi';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
+import { ProgressStatus } from '../constants';
 import ModuleCard from '../components/curriculum/ModuleCard';
 import api from '../services/apiClient';
 import type { World } from '../types/curriculum';
@@ -50,12 +51,12 @@ export default function ModulePage() {
               estimatedMinutes: l.estimatedMinutes,
               xpReward: l.xpReward,
               score: l.score ?? undefined,
-              status: l.status === 'skipped'
-                ? 'skipped'
+              status: l.status === ProgressStatus.Skipped
+                ? ProgressStatus.Skipped
                 : !l.isUnlocked
-                  ? 'locked'
-                  : l.status === 'not-started'
-                    ? 'available'
+                  ? ProgressStatus.Locked
+                  : l.status === ProgressStatus.NotStarted
+                    ? ProgressStatus.Available
                     : l.status,
             })),
           };

@@ -98,7 +98,7 @@ export default function LoginPage() {
           </Box>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form data-testid="login-form" onSubmit={handleSubmit}>
           <Flex direction="column" gap="4">
             {/* Username / Email */}
             <Box>

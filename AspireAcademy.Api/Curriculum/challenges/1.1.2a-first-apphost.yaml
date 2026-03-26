@@ -1,0 +1,65 @@
+instructions: |
+  # Try It: Your First AppHost
+
+  Write a minimal Aspire AppHost that adds a container resource.
+
+  **What to do:**
+  1. Use `DistributedApplication.CreateBuilder(args)` to create the builder (already provided)
+  2. Add a container resource named `"myapp"` using the `"nginx"` image
+  3. The app should build and run with `builder.Build().Run()` (already provided)
+
+  **Key concepts:**
+  - `builder.AddContainer(name, image)` registers a container resource in the app model
+  - The first argument is the resource name used for service discovery
+  - The second argument is the Docker image to pull and run
+
+starterCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add a container resource named "myapp" using the image "nginx"
+
+  builder.Build().Run();
+
+solutionCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  builder.AddContainer("myapp", "nginx");
+
+  builder.Build().Run();
+
+testCases:
+  - id: tc1
+    name: Compiles successfully
+    type: compiles
+    expected: null
+    description: Code must compile without errors
+  - id: tc2
+    name: Uses AddContainer
+    type: code-contains
+    expected: AddContainer
+    description: Must use AddContainer to register a container resource
+  - id: tc3
+    name: Names the resource "myapp"
+    type: code-contains
+    expected: '"myapp"'
+    description: Container must be named 'myapp'
+  - id: tc4
+    name: Uses the nginx image
+    type: code-contains
+    expected: '"nginx"'
+    description: Must use the 'nginx' container image
+  - id: tc5
+    name: Builds and runs
+    type: code-contains
+    expected: Build().Run()
+    description: Code must call Build().Run() to start the application
+
+hints:
+  - "Use builder.AddContainer(\"myapp\", \"nginx\") to add the container"
+  - The AddContainer method takes a name and a Docker image as arguments
+  - Make sure Build().Run() is still called at the end
+
+requiredPackages:
+  - Aspire.Hosting
+
+sortOrder: 0

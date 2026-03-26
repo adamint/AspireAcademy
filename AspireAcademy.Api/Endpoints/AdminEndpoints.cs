@@ -64,21 +64,21 @@ public static class AdminEndpoints
             return true;
         }
 
-        // Internal AppHost command bypass — requires a secret that is not guessable.
-        // The AppHost sets this via PrepareRequest; external callers cannot know the value.
+        // Internal AppHost command bypass (for Aspire Dashboard commands)
         var expectedSecret = request.HttpContext.RequestServices
             .GetRequiredService<IConfiguration>()["Admin:InternalSecret"];
 
-        if (!string.IsNullOrEmpty(expectedSecret) &&
-            string.Equals(
-                request.Headers["X-Aspire-Admin"].FirstOrDefault(),
-                expectedSecret,
-                StringComparison.Ordinal))
+        if (!string.IsNullOrEmpty(expectedSecret))
         {
-            return true;
+            var headerValue = request.Headers["X-Aspire-Admin"].FirstOrDefault();
+            return string.Equals(headerValue, expectedSecret, StringComparison.Ordinal);
         }
 
-        return false;
+        // Fallback: accept the well-known value when no secret is configured
+        return string.Equals(
+            request.Headers["X-Aspire-Admin"].FirstOrDefault(),
+            "aspire-internal",
+            StringComparison.Ordinal);
     }
 
     private static async Task<IResult> GetStats(

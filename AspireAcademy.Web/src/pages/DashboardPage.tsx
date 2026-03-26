@@ -14,12 +14,13 @@ import {
 } from '@chakra-ui/react';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import { useAuthStore } from '../store/authStore';
+import { Rank, LessonType } from '../constants';
 import api from '../services/apiClient';
 import WorldCard from '../components/curriculum/WorldCard';
 import type { World, XpResponse, XpEvent } from '../types/curriculum';
 
 const rankEmojis: Record<string, string> = {
-  'aspire-intern': '🌱',
+  [Rank.AspireIntern]: '🌱',
   'junior-dev': '💚',
   'mid-dev': '💙',
   'senior-dev': '💜',
@@ -180,9 +181,9 @@ export default function DashboardPage() {
                 onClick={() => {
                   const lesson = xpData.nextLesson!;
                   const path =
-                    lesson.type === 'quiz'
+                    lesson.type === LessonType.Quiz
                       ? `/quizzes/${lesson.id}`
-                      : lesson.type === 'challenge' || lesson.type === 'build'
+                      : lesson.type === LessonType.Challenge || lesson.type === LessonType.Build
                         ? `/challenges/${lesson.id}`
                         : `/lessons/${lesson.id}`;
                   navigate(path);

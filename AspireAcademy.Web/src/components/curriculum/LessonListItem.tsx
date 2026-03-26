@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Flex, Text, Badge } from '@chakra-ui/react';
 import { pixelFontProps } from '../../theme/aspireTheme';
-import type { Lesson, LessonStatus, LessonType } from '../../types/curriculum';
+import { LessonType, ProgressStatus } from '../../constants';
+import type { Lesson, LessonStatus, LessonType as LessonTypeUnion } from '../../types/curriculum';
 
 interface LessonListItemProps {
   lesson: Lesson;
@@ -33,12 +34,12 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
   const handleClick = () => {
     if (!isClickable) return;
     switch (lesson.type) {
-      case 'quiz':
+      case LessonType.Quiz:
         navigate(`/quizzes/${lesson.id}`);
         break;
-      case 'challenge':
-      case 'build':
-      case 'boss':
+      case LessonType.Challenge:
+      case LessonType.Build:
+      case LessonType.Boss:
         navigate(`/challenges/${lesson.id}`);
         break;
       default:
@@ -48,26 +49,27 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
 
   const statusColor = (): string => {
     switch (lesson.status) {
-      case 'completed':
+      case ProgressStatus.Completed:
         return 'game.success';
-      case 'perfect':
+      case ProgressStatus.Perfect:
         return 'game.perfect';
-      case 'in_progress':
+      case ProgressStatus.InProgressUnderscore:
         return 'aspire.600';
-      case 'skipped':
+      case ProgressStatus.Skipped:
         return 'dark.muted';
-      case 'locked':
+      case ProgressStatus.Locked:
         return 'game.locked';
       default:
         return 'aspire.400';
     }
   };
 
-  const isLocked = lesson.status === 'locked';
-  const isSkipped = lesson.status === 'skipped';
+  const isLocked = lesson.status === ProgressStatus.Locked;
+  const isSkipped = lesson.status === ProgressStatus.Skipped;
 
   return (
     <Flex
+      data-testid={`lesson-${lesson.id}`}
       align="center"
       gap="2.5"
       px="3"

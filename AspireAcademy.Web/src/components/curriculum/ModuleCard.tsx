@@ -29,7 +29,7 @@ export default function ModuleCard({ module }: ModuleCardProps) {
   const skippedCount = module.skippedLessons ?? 0;
 
   return (
-    <Card.Root variant="outline" {...retroCardProps}>
+    <Card.Root data-testid={`module-card-${module.id}`} variant="outline" {...retroCardProps}>
       <Card.Body p="4">
         <Flex
           align="center"

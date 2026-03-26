@@ -351,6 +351,7 @@ export default function QuizPage() {
         <Flex mt={5} w="100%" maxW="720px" justify="flex-end">
           {!feedback ? (
             <Button
+              data-testid="quiz-submit"
               bg="aspire.600"
               color="white"
               _hover={{ bg: 'aspire.500' }}

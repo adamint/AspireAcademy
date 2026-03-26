@@ -274,7 +274,7 @@ public class ScenarioTests : TestFixture
     public async Task AdminStats_WithAdminHeader_Returns200()
     {
         using var authClient = CreateAuthenticatedClient(TestUserId);
-        authClient.DefaultRequestHeaders.Add("X-Aspire-Admin", "aspire-internal");
+        authClient.DefaultRequestHeaders.Add("X-Aspire-Admin", AcademyApiFactory.AdminInternalSecret);
 
         var response = await authClient.GetAsync("/api/admin/stats");
 

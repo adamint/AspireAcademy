@@ -24,6 +24,7 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
     // before WebApplicationFactory's ConfigureAppConfiguration runs.
     public const string JwtKey = "dev-secret-key-change-in-production-min-32-chars!!";
     public const string JwtIssuer = "AspireAcademy";
+    public const string AdminInternalSecret = "test-admin-secret-for-integration-tests";
 
     private readonly SqliteConnection _sqliteConnection;
 
@@ -49,6 +50,7 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
                 ["Jwt:Secret"] = JwtKey,
                 ["Jwt:Issuer"] = JwtIssuer,
                 ["Jwt:Audience"] = JwtIssuer,
+                ["Admin:InternalSecret"] = AdminInternalSecret,
                 // Dummy connection string to satisfy Aspire validation (won't be used)
                 ["ConnectionStrings:academydb"] = "Host=localhost;Database=fake",
                 ["ConnectionStrings:cache"] = "localhost:6379",

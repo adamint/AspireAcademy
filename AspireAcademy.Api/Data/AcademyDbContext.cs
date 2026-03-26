@@ -50,7 +50,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.HasKey(x => x.UserId);
             e.Property(x => x.TotalXp).HasDefaultValue(0).IsRequired();
             e.Property(x => x.CurrentLevel).HasDefaultValue(1).IsRequired();
-            e.Property(x => x.CurrentRank).HasMaxLength(30).HasDefaultValue("aspire-intern").IsRequired();
+            e.Property(x => x.CurrentRank).HasMaxLength(30).HasDefaultValue(Ranks.AspireIntern).IsRequired();
             e.Property(x => x.WeeklyXp).HasDefaultValue(0).IsRequired();
             e.Property(x => x.WeekStart).IsRequired();
 
@@ -186,7 +186,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.Property(p => p.Id).HasDefaultValueSql("gen_random_uuid()");
             e.Property(p => p.UserId).IsRequired();
             e.Property(p => p.LessonId).HasMaxLength(50).IsRequired();
-            e.Property(p => p.Status).HasMaxLength(20).HasDefaultValue("not-started").IsRequired();
+            e.Property(p => p.Status).HasMaxLength(20).HasDefaultValue(ProgressStatuses.NotStarted).IsRequired();
             e.Property(p => p.Attempts).HasDefaultValue(0).IsRequired();
             e.Property(p => p.XpEarned).HasDefaultValue(0).IsRequired();
 
@@ -279,7 +279,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.Property(f => f.Id).HasDefaultValueSql("gen_random_uuid()");
             e.Property(f => f.RequesterId).IsRequired();
             e.Property(f => f.AddresseeId).IsRequired();
-            e.Property(f => f.Status).HasMaxLength(20).HasDefaultValue("pending").IsRequired();
+            e.Property(f => f.Status).HasMaxLength(20).HasDefaultValue(FriendshipStatuses.Pending).IsRequired();
             e.Property(f => f.CreatedAt).HasDefaultValueSql("now()").IsRequired();
 
             e.HasOne(f => f.Requester)

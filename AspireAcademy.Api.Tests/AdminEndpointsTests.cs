@@ -161,7 +161,7 @@ public class AdminEndpointsTests : TestFixture
     public async Task AdminEndpoint_ViaAspireHeader_Succeeds()
     {
         using var client = CreateAuthenticatedClient(TestUserId);
-        client.DefaultRequestHeaders.Add("X-Aspire-Admin", "aspire-internal");
+        client.DefaultRequestHeaders.Add("X-Aspire-Admin", AcademyApiFactory.AdminInternalSecret);
 
         var response = await client.GetAsync("/api/admin/stats");
 

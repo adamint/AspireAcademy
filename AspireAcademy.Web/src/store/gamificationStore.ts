@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-
+import { Rank } from '../constants';
 interface LevelUp {
   newLevel: number;
   newRank: string;
@@ -39,7 +39,7 @@ interface GamificationStore {
 export const useGamificationStore = create<GamificationStore>()((set) => ({
   totalXp: 0,
   currentLevel: 1,
-  currentRank: 'aspire-intern',
+  currentRank: Rank.AspireIntern,
   weeklyXp: 0,
   loginStreakDays: 0,
   pendingLevelUp: null,

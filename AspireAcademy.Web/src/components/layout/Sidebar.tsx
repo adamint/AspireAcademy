@@ -203,6 +203,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           {worlds?.map((world) => (
             <Box key={world.id}>
               <Flex
+                data-testid={`sidebar-world-${world.id}`}
                 as="button"
                 align="center"
                 gap="2"

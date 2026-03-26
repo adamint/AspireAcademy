@@ -14,6 +14,7 @@ import {
 import { FiArrowLeft, FiArrowRight, FiClock, FiSkipForward } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { pixelFontProps } from '../theme/aspireTheme';
+import { LessonType, ProgressStatus } from '../constants';
 import api from '../services/apiClient';
 import { useGamificationStore } from '../store/gamificationStore';
 import type { LessonDetail, CompleteResponse } from '../types/curriculum';
@@ -121,11 +122,11 @@ export default function LessonPage() {
   const navigateToLesson = (id: string | undefined, type?: string) => {
     if (!id) return;
     switch (type) {
-      case 'quiz':
+      case LessonType.Quiz:
         navigate(`/quizzes/${id}`);
         break;
-      case 'challenge':
-      case 'build':
+      case LessonType.Challenge:
+      case LessonType.Build:
         navigate(`/challenges/${id}`);
         break;
       default:
@@ -153,7 +154,7 @@ export default function LessonPage() {
   }
 
   const typeInfo = lessonTypeLabel[lesson.type] ?? lessonTypeLabel.learn;
-  const isSkipped = lesson.status === 'skipped';
+  const isSkipped = lesson.status === ProgressStatus.Skipped;
   const isLocked = lesson.isLocked;
 
   const markdownComponents: Partial<Components> = {

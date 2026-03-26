@@ -166,7 +166,7 @@ export default function RegisterPage() {
           </Box>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form data-testid="register-form" onSubmit={handleSubmit}>
           <Flex direction="column" gap="3.5">
             {/* Username */}
             <Box>

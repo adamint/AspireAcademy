@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Rank } from '../constants';
 import { useGamificationStore } from './gamificationStore';
 import { useProgressStore } from './progressStore';
 
@@ -35,7 +36,7 @@ export const useAuthStore = create<AuthStore>()(
         set({ token: null, user: null });
         // Clear all user-scoped state to prevent leaks across account switches
         useGamificationStore.getState().syncFromServer({
-          totalXp: 0, currentLevel: 1, currentRank: 'aspire-intern', weeklyXp: 0, loginStreakDays: 0,
+          totalXp: 0, currentLevel: 1, currentRank: Rank.AspireIntern, weeklyXp: 0, loginStreakDays: 0,
         });
         useGamificationStore.getState().setPendingLevelUp(null);
         useProgressStore.setState({ worldProgress: {}, currentLesson: null });

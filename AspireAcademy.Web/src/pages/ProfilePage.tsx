@@ -269,7 +269,7 @@ export default function ProfilePage() {
       </Flex>
 
       {/* Stat Cards */}
-      <SimpleGrid columns={{ base: 2, md: 4 }} gap={4}>
+      <SimpleGrid data-testid="profile-stats" columns={{ base: 2, md: 4 }} gap={4}>
         <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
           <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
             {profile.totalXp.toLocaleString()}

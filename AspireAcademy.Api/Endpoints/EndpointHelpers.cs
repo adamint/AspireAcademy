@@ -40,6 +40,6 @@ internal static class EndpointHelpers
         var prereqProgress = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
 
-        return prereqProgress?.Status is "completed" or "perfect" or "skipped";
+        return prereqProgress?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect or ProgressStatuses.Skipped;
     }
 }

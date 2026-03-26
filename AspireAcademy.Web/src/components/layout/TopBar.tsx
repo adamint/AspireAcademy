@@ -78,6 +78,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
 
         {/* Theme toggle */}
         <IconButton
+          data-testid="theme-toggle"
           aria-label="Toggle color mode"
           variant="ghost"
           size="sm"

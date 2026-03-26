@@ -11,6 +11,7 @@ export function XPProgressBar() {
 
   return (
     <Flex
+      data-testid="xp-bar"
       align="center"
       gap="2.5"
       px="3"

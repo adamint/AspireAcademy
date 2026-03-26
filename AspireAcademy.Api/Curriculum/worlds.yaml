@@ -31,21 +31,31 @@ worlds:
             estimatedMinutes: 10
             unlockAfterLesson: "1.1.1"
             contentFile: world-1/1.1.2-aspires-solution.md
+          - id: "1.1.2a"
+            title: "Try It: Your First AppHost"
+            description: "Write a minimal AppHost with DistributedApplication.CreateBuilder and add a container resource."
+            type: challenge
+            sortOrder: 3
+            xpReward: 150
+            bonusXp: 75
+            estimatedMinutes: 10
+            unlockAfterLesson: "1.1.2"
+            challengeFile: 1.1.2a-first-apphost.yaml
           - id: "1.1.3"
             title: Aspire vs Docker Compose and Kubernetes
             description: "What makes Aspire different from other orchestration tools and when to use each."
             type: quiz
-            sortOrder: 3
+            sortOrder: 4
             xpReward: 100
             estimatedMinutes: 8
-            unlockAfterLesson: "1.1.2"
+            unlockAfterLesson: "1.1.2a"
             contentFile: world-1/1.1.3-aspire-vs-alternatives.md
             quizFile: 1.1.3-aspire-vs-alternatives.yaml
           - id: "1.1-boss"
             title: "Boss: Identify the Architecture"
             description: "Given a system diagram, identify which components are AppHost, ServiceDefaults, and service projects."
             type: boss-battle
-            sortOrder: 4
+            sortOrder: 5
             xpReward: 500
             bonusXp: 250
             estimatedMinutes: 15

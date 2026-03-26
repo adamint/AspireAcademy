@@ -583,6 +583,7 @@ export default function ChallengePage() {
             borderColor="game.pixelBorder"
           >
             <Button
+              data-testid="challenge-run"
               variant="outline"
               size="sm"
               borderColor="#555"
@@ -595,6 +596,7 @@ export default function ChallengePage() {
               {running ? 'Running...' : 'Run'}
             </Button>
             <Button
+              data-testid="challenge-submit"
               size="sm"
               bg="aspire.600"
               color="white"

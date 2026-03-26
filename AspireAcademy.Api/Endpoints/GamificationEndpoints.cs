@@ -146,6 +146,8 @@ public static class GamificationEndpoints
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == request.LessonId);
 
         if (existing?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect)
+        {
+            return Results.BadRequest(new ErrorResponse("Lesson already completed"));
         }
 
         // Create or update progress
@@ -162,6 +164,10 @@ public static class GamificationEndpoints
         }
 
         existing.Status = ProgressStatuses.Completed;
+        existing.CompletedAt = DateTime.UtcNow;
+        existing.Attempts = 1;
+
+        // Award XP — use execution strategy to support Npgsql retry with transactions
         var strategy = db.Database.CreateExecutionStrategy();
         var xpEarned = lesson.XpReward;
         XpAwardResult result = null!;

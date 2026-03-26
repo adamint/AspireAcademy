@@ -55,7 +55,7 @@ Task AddAdminHeader(HttpCommandRequestContext ctx)
 }
 
 // API resource commands
-api.WithHttpCommand("/api/admin/reload-curriculum", "Reload Curriculum", commandOptions: new HttpCommandOptions
+api.WithHttpCommand("/api/admin/reload-curriculum-internal", "Reload Curriculum", commandOptions: new HttpCommandOptions
 {
     Description = "Re-reads curriculum YAML/Markdown files from disk without restarting",
     ConfirmationMessage = "Reload all curriculum content from disk?",
@@ -63,14 +63,14 @@ api.WithHttpCommand("/api/admin/reload-curriculum", "Reload Curriculum", command
     PrepareRequest = AddAdminHeader
 });
 
-api.WithHttpCommand("/api/admin/seed-test-data", "Seed Test Data", commandOptions: new HttpCommandOptions
+api.WithHttpCommand("/api/admin/seed-test-data-internal", "Seed Test Data", commandOptions: new HttpCommandOptions
 {
     Description = "Creates a test user with sample progress for development",
     IconName = "PersonAdd",
     PrepareRequest = AddAdminHeader
 });
 
-api.WithHttpCommand("/api/admin/flush-db", "Flush Database", commandOptions: new HttpCommandOptions
+api.WithHttpCommand("/api/admin/flush-db-internal", "Flush Database", commandOptions: new HttpCommandOptions
 {
     Description = "Drops and recreates all tables, then reloads curriculum (dev only)",
     ConfirmationMessage = "⚠️ This will DELETE all data and recreate the schema. Continue?",
@@ -79,7 +79,7 @@ api.WithHttpCommand("/api/admin/flush-db", "Flush Database", commandOptions: new
 });
 
 // PostgreSQL resource command — resets data via the API's flush-db endpoint
-postgresServer.WithHttpCommand("/api/admin/flush-db", "Reset Data",
+postgresServer.WithHttpCommand("/api/admin/flush-db-internal", "Reset Data",
     endpointSelector: () => api.GetEndpoint("http"),
     commandOptions: new HttpCommandOptions
     {

@@ -28,6 +28,7 @@ export default function WorldCard({ world }: WorldCardProps) {
 
   return (
     <Card.Root
+      data-testid={`world-card-${world.id}`}
       variant="outline"
       {...retroCardProps}
       cursor={world.isLocked ? 'default' : 'pointer'}
