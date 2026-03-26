@@ -521,16 +521,26 @@ test.describe('ChallengePage — validation', () => {
     await page.route('**/api/lessons/*', (route) =>
       route.fulfill({
         status: 200,
+        contentType: 'application/json',
         body: JSON.stringify({
           id: 'test-challenge',
           title: 'Test Challenge',
-          lessonId: 'test-challenge',
-          instructions: '# Write some code',
-          starterCode: '',
-          language: 'csharp',
-          testCases: [{ id: 'tc1', description: 'Test case 1', status: 'pending' }],
-          hints: ['Hint 1'],
+          type: 'challenge',
+          challengeSteps: [
+            {
+              id: 'step-1',
+              starterCode: '',
+              instructionsMarkdown: '# Write some code',
+              testCases: JSON.stringify([
+                { id: 'tc1', name: 'Test case 1', type: 'output-equals', expected: 'test', description: 'Test case 1' },
+              ]),
+              hints: ['Hint 1'],
+              requiredPackages: null,
+              stepTitle: 'Step 1',
+            },
+          ],
           nextLessonId: null,
+          previousLessonId: null,
         }),
       }),
     );

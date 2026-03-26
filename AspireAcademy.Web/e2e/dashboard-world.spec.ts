@@ -49,7 +49,7 @@ test.describe.serial('World / Module page', () => {
     await loginAndGoToWorld(page, username);
 
     // Module name should be visible
-    await expect(page.getByText('What is Aspire?')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText('Why Aspire?')).toBeVisible({ timeout: 10_000 });
 
     // Lessons with XP badges should be visible
     const lessonItems = page.locator('[role="button"]').filter({ hasText: /XP/ });
@@ -60,7 +60,7 @@ test.describe.serial('World / Module page', () => {
     await loginAndGoToWorld(page, username);
 
     // Module header should be visible
-    const moduleHeader = page.getByText('What is Aspire?');
+    const moduleHeader = page.getByText('Why Aspire?');
     await expect(moduleHeader).toBeVisible({ timeout: 10_000 });
 
     // Click to collapse (module starts expanded by default if unlocked)
