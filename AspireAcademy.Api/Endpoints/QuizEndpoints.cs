@@ -31,8 +31,12 @@ public record AchievementUnlocked(string Id, string Name, string Icon, string Ra
 
 public static class QuizEndpoints
 {
+    private static ILogger s_logger = null!;
+
     public static WebApplication MapQuizEndpoints(this WebApplication app)
     {
+        s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("QuizEndpoints");
+
         var group = app.MapGroup("/api/quizzes").RequireAuthorization();
 
         group.MapPost("/{lessonId}/submit", SubmitQuizAsync);
@@ -108,6 +112,9 @@ public static class QuizEndpoints
         var passed = percentage >= 70;
         var isPerfect = percentage == 100;
         const int passingScore = 70;
+
+        s_logger.LogInformation("Quiz submit for LessonId={LessonId}, UserId={UserId}, score={Score}/{MaxScore}, passed={Passed}, isPerfect={IsPerfect}",
+            lessonId, userId, percentage, 100, passed, isPerfect);
 
         // Update or create progress
         var xpEarned = 0;

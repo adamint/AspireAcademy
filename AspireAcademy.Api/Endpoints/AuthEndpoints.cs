@@ -11,8 +11,12 @@ namespace AspireAcademy.Api.Endpoints;
 
 public static partial class AuthEndpoints
 {
+    private static ILogger s_logger = null!;
+
     public static WebApplication MapAuthEndpoints(this WebApplication app)
     {
+        s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("AuthEndpoints");
+
         var group = app.MapGroup("/api/auth").WithTags("Auth");
 
         group.MapPost("/register", Register).AllowAnonymous();
@@ -28,18 +32,23 @@ public static partial class AuthEndpoints
         AcademyDbContext db,
         IConfiguration config)
     {
+        s_logger.LogInformation("Register attempt for username={Username}, email={Email}", request.Username, request.Email);
+
         if (!UsernameRegex().IsMatch(request.Username ?? ""))
         {
+            s_logger.LogInformation("Register failed: invalid username format for {Username}", request.Username);
             return Results.BadRequest(new ErrorResponse("Username must be 3-30 characters (letters, digits, underscore)."));
         }
 
         if (!EmailRegex().IsMatch(request.Email ?? ""))
         {
+            s_logger.LogInformation("Register failed: invalid email for {Email}", request.Email);
             return Results.BadRequest(new ErrorResponse("Invalid email address."));
         }
 
         if (!PasswordRegex().IsMatch(request.Password ?? ""))
         {
+            s_logger.LogInformation("Register failed: invalid password format for {Username}", request.Username);
             return Results.BadRequest(new ErrorResponse("Password must be 8+ characters with at least 1 uppercase letter and 1 digit."));
         }
 
@@ -48,11 +57,13 @@ public static partial class AuthEndpoints
 
         if (await db.Users.AnyAsync(u => u.Username.ToLower() == usernameLower))
         {
+            s_logger.LogInformation("Register failed: username {Username} already taken", request.Username);
             return Results.Conflict(new ErrorResponse("Username is already taken."));
         }
 
         if (await db.Users.AnyAsync(u => u.Email.ToLower() == emailLower))
         {
+            s_logger.LogInformation("Register failed: email {Email} already taken", request.Email);
             return Results.Conflict(new ErrorResponse("Email is already taken."));
         }
 
@@ -85,6 +96,8 @@ public static partial class AuthEndpoints
         db.UserXp.Add(userXp);
         await db.SaveChangesAsync();
 
+        s_logger.LogInformation("Register succeeded for UserId={UserId}, Username={Username}", user.Id, user.Username);
+
         var token = GenerateJwtToken(user, config);
 
         return Results.Created("/api/auth/me", new AuthResponse(
@@ -99,9 +112,12 @@ public static partial class AuthEndpoints
         AcademyDbContext db,
         IConfiguration config)
     {
+        s_logger.LogInformation("Login attempt for {UsernameOrEmail}", request.UsernameOrEmail);
+
         if (string.IsNullOrWhiteSpace(request.UsernameOrEmail) ||
             string.IsNullOrWhiteSpace(request.Password))
         {
+            s_logger.LogInformation("Login failed: missing credentials");
             return Results.BadRequest(new ErrorResponse("Username/email and password are required."));
         }
 
@@ -112,6 +128,7 @@ public static partial class AuthEndpoints
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
+            s_logger.LogInformation("Login failed: invalid credentials for {UsernameOrEmail}", request.UsernameOrEmail);
             return Results.Json(new ErrorResponse("Invalid credentials."), statusCode: 401);
         }
 
@@ -139,6 +156,8 @@ public static partial class AuthEndpoints
 
         var token = GenerateJwtToken(user, config);
 
+        s_logger.LogInformation("Login succeeded for UserId={UserId}, Username={Username}", user.Id, user.Username);
+
         return Results.Ok(new AuthResponse(
             token,
             new AuthUserDto(
@@ -151,10 +170,12 @@ public static partial class AuthEndpoints
         AcademyDbContext db)
     {
         var userId = GetUserId(principal);
+        s_logger.LogInformation("GET /me for UserId={UserId}", userId);
 
         var user = await db.Users.FindAsync(userId);
         if (user is null)
         {
+            s_logger.LogWarning("GET /me: user not found for UserId={UserId}", userId);
             return Results.NotFound(new ErrorResponse("User not found."));
         }
 

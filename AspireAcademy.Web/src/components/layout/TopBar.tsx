@@ -29,9 +29,9 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
       align="center"
       h="56px"
       px="4"
-      bg="white"
-      borderBottom="1px solid"
-      borderColor="aspire.200"
+      bg="dark.sidebar"
+      borderBottom="2px solid"
+      borderColor="game.pixelBorder"
       gap="3"
       position="sticky"
       top="0"
@@ -105,17 +105,17 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                 position="absolute"
                 right="0"
                 top="40px"
-                bg="white"
+                bg="dark.card"
                 border="2px solid"
-                borderColor="aspire.200"
+                borderColor="game.pixelBorder"
                 borderRadius="md"
                 boxShadow="lg"
                 zIndex={200}
                 minW="180px"
                 py="2"
               >
-                <Box px="3" pb="2" borderBottom="1px solid" borderColor="aspire.100">
-                  <Text fontWeight="600" fontSize="sm">
+                <Box px="3" pb="2" borderBottom="1px solid" borderColor="game.pixelBorder">
+                  <Text fontWeight="600" fontSize="sm" color="dark.text">
                     {user?.displayName ?? user?.username}
                   </Text>
                   <Text
@@ -138,7 +138,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                   bg="transparent"
                   border="none"
                   cursor="pointer"
-                  _hover={{ bg: 'aspire.50' }}
+                  color="dark.text"
+                  _hover={{ bg: 'whiteAlpha.100' }}
                   onClick={() => {
                     setMenuOpen(false);
                     navigate('/profile');
@@ -158,7 +159,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                   border="none"
                   cursor="pointer"
                   color="game.error"
-                  _hover={{ bg: 'red.50' }}
+                  _hover={{ bg: 'whiteAlpha.100' }}
                   onClick={handleLogout}
                 >
                   <FiLogOut /> Log Out

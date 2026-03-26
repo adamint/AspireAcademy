@@ -8,13 +8,18 @@ namespace AspireAcademy.Api.Endpoints;
 
 public static class SocialEndpoints
 {
+    private static ILogger s_logger = null!;
+
     public static WebApplication MapSocialEndpoints(this WebApplication app)
     {
+        s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("SocialEndpoints");
+
         var group = app.MapGroup("/api").RequireAuthorization();
 
         group.MapGet("/friends", async (AcademyDbContext db, ClaimsPrincipal user) =>
         {
             var userId = GetUserId(user);
+            s_logger.LogInformation("GET /friends for UserId={UserId}", userId);
 
             // Accepted friends where current user is the requester
             var friendsAsRequester = await db.Friendships
@@ -62,6 +67,7 @@ public static class SocialEndpoints
         group.MapPost("/friends/request", async (FriendRequestDto request, AcademyDbContext db, ClaimsPrincipal user) =>
         {
             var userId = GetUserId(user);
+            s_logger.LogInformation("Friend request from UserId={UserId} to Username={Username}", userId, request.Username);
 
             var targetUser = await db.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
             if (targetUser is null)
@@ -98,6 +104,9 @@ public static class SocialEndpoints
             db.Friendships.Add(friendship);
             await db.SaveChangesAsync();
 
+            s_logger.LogInformation("Friend request created: FriendshipId={FriendshipId} from {RequesterId} to {AddresseeId}",
+                friendship.Id, userId, targetUser.Id);
+
             return Results.Created($"/api/friends/{friendship.Id}", new { friendshipId = friendship.Id });
         });
 
@@ -123,6 +132,8 @@ public static class SocialEndpoints
 
             friendship.Status = "accepted";
             await db.SaveChangesAsync();
+
+            s_logger.LogInformation("Friend accepted: FriendshipId={FriendshipId}", friendshipId);
 
             return Results.Ok(new { success = true });
         });

@@ -59,12 +59,62 @@ var app = builder.Build();
 // Auto-migrate and load curriculum in Development
 if (app.Environment.IsDevelopment())
 {
-    await using var scope = app.Services.CreateAsyncScope();
-    var db = scope.ServiceProvider.GetRequiredService<AcademyDbContext>();
-    await db.Database.MigrateAsync();
+    try
+    {
+        app.Logger.LogInformation("Starting database initialization...");
+        await using var scope = app.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<AcademyDbContext>();
 
-    var loader = scope.ServiceProvider.GetRequiredService<CurriculumLoader>();
-    await loader.LoadAsync();
+        app.Logger.LogInformation("Database connection string: {ConnStr}",
+            db.Database.GetConnectionString()?[..Math.Min(80, db.Database.GetConnectionString()?.Length ?? 0)] + "...");
+
+        // EnsureCreated works for new DBs; for existing ones with missing tables,
+        // drop and recreate (dev only — production would use migrations)
+        app.Logger.LogInformation("Calling EnsureCreatedAsync...");
+        var created = await db.Database.EnsureCreatedAsync();
+        app.Logger.LogInformation("EnsureCreatedAsync returned created={Created}", created);
+
+        if (!created)
+        {
+            // DB exists but might be missing tables — check by trying a simple query
+            try
+            {
+                await db.Worlds.AnyAsync();
+                app.Logger.LogInformation("Worlds table exists, schema is intact");
+            }
+            catch (Exception schemaEx)
+            {
+                app.Logger.LogWarning(schemaEx, "Worlds table query failed — recreating schema");
+                // Tables don't exist — recreate schema
+                await db.Database.EnsureDeletedAsync();
+                await db.Database.EnsureCreatedAsync();
+                app.Logger.LogInformation("Schema recreated successfully");
+            }
+        }
+
+        app.Logger.LogInformation("Running CurriculumLoader...");
+        var loader = scope.ServiceProvider.GetRequiredService<CurriculumLoader>();
+        await loader.LoadAsync();
+
+        // Verify what was loaded
+        var worldCount = await db.Worlds.CountAsync();
+        var moduleCount = await db.Modules.CountAsync();
+        var lessonCount = await db.Lessons.CountAsync();
+        app.Logger.LogInformation("Curriculum load complete: {WorldCount} worlds, {ModuleCount} modules, {LessonCount} lessons",
+            worldCount, moduleCount, lessonCount);
+
+        if (worldCount == 0)
+        {
+            app.Logger.LogWarning(
+                "WARNING: 0 worlds loaded! Check that worlds.yaml exists at {Path} and contains valid YAML with a 'worlds:' root key",
+                Path.Combine(app.Environment.ContentRootPath, "Curriculum", "worlds.yaml"));
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Failed to initialize database or load curriculum. The app will start but data may be missing. Exception: {Message}\n{StackTrace}",
+            ex.Message, ex.StackTrace);
+    }
 
     app.MapOpenApi();
 }
@@ -83,6 +133,7 @@ app.MapChallengeEndpoints();
 app.MapGamificationEndpoints();
 app.MapSocialEndpoints();
 app.MapAiTutorEndpoints();
+app.MapAdminEndpoints();
 
 app.Run();
 

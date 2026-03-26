@@ -37,8 +37,11 @@ export default function LoginPage() {
       });
       navigate('/dashboard');
     } catch (err: unknown) {
+      console.error('[LoginPage] Login failed:', err);
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        axiosErr?.response?.data?.error ??
+        axiosErr?.response?.data?.message ??
         'Login failed. Please check your credentials.';
       setError(msg);
     } finally {
@@ -57,11 +60,12 @@ export default function LoginPage() {
       <Box
         w="100%"
         maxW="420px"
-        bg="white"
+        bg="dark.card"
         px="8"
         py="10"
         {...retroCardProps}
         boxShadow="6px 6px 0 #2B1260"
+        borderColor="aspire.600"
       >
         {/* Pixel art title */}
         <Text
@@ -73,14 +77,14 @@ export default function LoginPage() {
         >
           Aspire Academy
         </Text>
-        <Text textAlign="center" color="gray.500" mb="6" fontSize="sm">
+        <Text textAlign="center" color="dark.muted" mb="6" fontSize="sm">
           Welcome back, adventurer!
         </Text>
 
         {/* Error message */}
         {error && (
           <Box
-            bg="red.50"
+            bg="rgba(209, 52, 56, 0.15)"
             border="2px solid"
             borderColor="game.error"
             borderRadius="sm"
@@ -98,7 +102,7 @@ export default function LoginPage() {
           <Flex direction="column" gap="4">
             {/* Username / Email */}
             <Box>
-              <Text as="label" htmlFor="login-user" fontSize="sm" fontWeight="600" mb="1" display="block">
+              <Text as="label" htmlFor="login-user" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Username or Email <Text as="span" color="game.error">*</Text>
               </Text>
               <Input
@@ -109,14 +113,17 @@ export default function LoginPage() {
                 autoComplete="username"
                 required
                 size="md"
-                borderColor="aspire.300"
+                bg="dark.surface"
+                borderColor="game.pixelBorder"
+                color="dark.text"
+                _placeholder={{ color: 'dark.muted' }}
                 _focus={{ borderColor: 'aspire.600', boxShadow: '0 0 0 1px var(--chakra-colors-aspire-600)' }}
               />
             </Box>
 
             {/* Password */}
             <Box>
-              <Text as="label" htmlFor="login-pass" fontSize="sm" fontWeight="600" mb="1" display="block">
+              <Text as="label" htmlFor="login-pass" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Password <Text as="span" color="game.error">*</Text>
               </Text>
               <Input
@@ -128,7 +135,10 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 required
                 size="md"
-                borderColor="aspire.300"
+                bg="dark.surface"
+                borderColor="game.pixelBorder"
+                color="dark.text"
+                _placeholder={{ color: 'dark.muted' }}
                 _focus={{ borderColor: 'aspire.600', boxShadow: '0 0 0 1px var(--chakra-colors-aspire-600)' }}
               />
             </Box>
@@ -155,9 +165,9 @@ export default function LoginPage() {
           </Flex>
         </form>
 
-        <Text textAlign="center" mt="5" fontSize="sm" color="gray.600">
+        <Text textAlign="center" mt="5" fontSize="sm" color="dark.muted">
           Don&apos;t have an account?{' '}
-          <Link to="/register" style={{ color: '#6B4FBB', fontWeight: 600 }}>
+          <Link to="/register" style={{ color: '#9185D1', fontWeight: 600 }}>
             Register
           </Link>
         </Text>

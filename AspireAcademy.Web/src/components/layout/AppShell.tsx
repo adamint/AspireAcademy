@@ -22,7 +22,7 @@ export function AppShell() {
           overflowY="auto"
           p={{ base: '3', md: '6' }}
           maxH="calc(100vh - 56px)"
-          bg="#F0ECF6"
+          bg="dark.bg"
         >
           <ErrorBoundary>
             <Outlet />

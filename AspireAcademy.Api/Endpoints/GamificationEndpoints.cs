@@ -58,6 +58,8 @@ public record AvatarUpdateRequest(string Base, List<string> Accessories, string 
 
 public static class GamificationEndpoints
 {
+    private static ILogger s_logger = null!;
+
     // ── Static avatar data ──
 
     private static readonly List<string> s_allBases = ["developer", "architect", "devops", "data-engineer"];
@@ -94,6 +96,8 @@ public static class GamificationEndpoints
 
     public static WebApplication MapGamificationEndpoints(this WebApplication app)
     {
+        s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("GamificationEndpoints");
+
         var group = app.MapGroup("/api").RequireAuthorization();
 
         group.MapGet("/xp", GetXpStatsAsync);
@@ -152,6 +156,7 @@ public static class GamificationEndpoints
         ClaimsPrincipal user)
     {
         var userId = GetUserId(user);
+        s_logger.LogInformation("Complete lesson request for LessonId={LessonId}, UserId={UserId}", request.LessonId, userId);
 
         var lesson = await db.Lessons.FindAsync(request.LessonId);
         if (lesson is null)

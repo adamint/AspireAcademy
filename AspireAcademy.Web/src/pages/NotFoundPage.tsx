@@ -11,7 +11,7 @@ export default function NotFoundPage() {
       alignItems="center"
       justifyContent="center"
       minH="100vh"
-      bg="#F0ECF6"
+      bg="dark.bg"
       p="6"
     >
       <Box

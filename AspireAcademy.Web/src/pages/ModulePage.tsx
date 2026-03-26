@@ -21,7 +21,57 @@ export default function ModulePage() {
 
   const { data: world, isLoading } = useQuery<World>({
     queryKey: ['world', worldId],
-    queryFn: () => api.get(`/worlds/${worldId}`).then((r) => r.data),
+    queryFn: async () => {
+      // The API has no GET /worlds/:id endpoint; compose from list + modules + lessons
+      const [worldsRes, modulesRes] = await Promise.all([
+        api.get('/worlds'),
+        api.get(`/worlds/${worldId}/modules`),
+      ]);
+
+      const worldDto = worldsRes.data.find((w: Record<string, unknown>) => w.id === worldId);
+      if (!worldDto) throw new Error('World not found');
+
+      const modules = await Promise.all(
+        modulesRes.data.map(async (mod: Record<string, unknown>) => {
+          const lessonsRes = await api.get(`/modules/${mod.id}/lessons`);
+          return {
+            id: mod.id,
+            name: mod.name,
+            sortOrder: mod.sortOrder,
+            isLocked: !mod.isUnlocked,
+            completedLessons: mod.completedLessonCount ?? 0,
+            totalLessons: mod.lessonCount ?? 0,
+            lessons: lessonsRes.data.map((l: Record<string, unknown>) => ({
+              id: l.id,
+              title: l.title,
+              type: l.type,
+              sortOrder: l.sortOrder,
+              estimatedMinutes: l.estimatedMinutes,
+              xpReward: l.xpReward,
+              score: l.score ?? undefined,
+              status: !l.isUnlocked
+                ? 'locked'
+                : l.status === 'not-started'
+                  ? 'available'
+                  : l.status,
+            })),
+          };
+        }),
+      );
+
+      return {
+        id: worldDto.id,
+        name: worldDto.name,
+        description: worldDto.description,
+        icon: worldDto.icon,
+        sortOrder: worldDto.sortOrder,
+        isLocked: !worldDto.isUnlocked,
+        modules,
+        completedLessons: worldDto.completedLessons ?? 0,
+        totalLessons: worldDto.totalLessons ?? 0,
+        completionPercentage: worldDto.completionPercentage ?? 0,
+      } as World;
+    },
     enabled: !!worldId,
   });
 
@@ -56,7 +106,7 @@ export default function ModulePage() {
         align="center"
         gap="1"
         cursor="pointer"
-        color="aspire.600"
+        color="aspire.400"
         fontSize="sm"
         bg="transparent"
         border="none"

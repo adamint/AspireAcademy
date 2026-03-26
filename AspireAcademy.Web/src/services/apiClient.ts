@@ -16,6 +16,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const url = error.config?.url ?? 'unknown';
+    const method = error.config?.method?.toUpperCase() ?? 'UNKNOWN';
+    const status = error.response?.status ?? 'no response';
+    const body = error.response?.data ?? null;
+    console.error(`[API Error] ${method} ${url} → ${status}`, body);
+
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();
     }

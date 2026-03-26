@@ -15,7 +15,7 @@ export function XPProgressBar() {
       gap="2.5"
       px="3"
       py="1"
-      bg="white"
+      bg="dark.card"
       {...retroCardProps}
     >
       {/* Level label */}

@@ -12,12 +12,12 @@ import AvatarDisplay from '../components/gamification/AvatarDisplay';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 
 interface UserProfile extends User {
-  lessonsCompleted: number;
+  completedLessons: number;
   totalLessons: number;
-  achievementsUnlocked: number;
-  totalAchievements: number;
+  achievementCount: number;
   showcaseAchievements: { id: string; name: string; icon: string; rarity: string; unlockedAt: string }[];
-  friendStatus: 'none' | 'friends' | 'pending_sent' | 'pending_received';
+  isFriend: boolean;
+  friendshipId: string | null;
 }
 
 const rarityColors: Record<string, string> = {
@@ -40,12 +40,17 @@ export default function ProfilePage() {
   const isOwnProfile = !userId || userId === currentUser?.id;
   const profileId = isOwnProfile ? currentUser?.id : userId;
 
-  const { data: profile, isLoading } = useQuery<UserProfile>({
+  const { data: profile, isLoading, error: queryError } = useQuery<UserProfile>({
     queryKey: ['profile', profileId],
     queryFn: async () => {
-      const endpoint = isOwnProfile ? '/users/me' : `/users/${profileId}`;
-      const { data } = await api.get(endpoint);
-      return data;
+      const endpoint = `/users/${profileId}/profile`;
+      try {
+        const { data } = await api.get(endpoint);
+        return data;
+      } catch (err) {
+        console.error(`[ProfilePage] Failed to fetch profile from ${endpoint}:`, err);
+        throw err;
+      }
     },
     enabled: !!profileId,
   });
@@ -61,6 +66,9 @@ export default function ProfilePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] });
     },
+    onError: (err) => {
+      console.error('[ProfilePage] Friend action failed:', err);
+    },
   });
 
   const editMutation = useMutation({
@@ -72,6 +80,9 @@ export default function ProfilePage() {
       updateUser(data);
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] });
       setEditOpen(false);
+    },
+    onError: (err) => {
+      console.error('[ProfilePage] Edit profile failed:', err);
     },
   });
 
@@ -91,10 +102,25 @@ export default function ProfilePage() {
     );
   }
 
+  if (queryError) {
+    return (
+      <Box maxW="800px" mx="auto" p={6}>
+        <Box {...retroCardProps} bg="dark.card" p={6} textAlign="center">
+          <Text fontSize="xl" color="game.error" mb={2}>Failed to load profile</Text>
+          <Text fontSize="sm" color="dark.muted">
+            {(queryError as { response?: { status?: number } })?.response?.status === 404
+              ? 'User not found.'
+              : 'Something went wrong. Please try again later.'}
+          </Text>
+        </Box>
+      </Box>
+    );
+  }
+
   if (!profile) {
     return (
       <Box maxW="800px" mx="auto" p={6}>
-        <Text fontSize="xl">User not found.</Text>
+        <Text fontSize="xl" color="dark.text">User not found.</Text>
       </Box>
     );
   }
@@ -110,7 +136,7 @@ export default function ProfilePage() {
           name={profile.displayName}
         />
         <VStack align="flex-start" flex={1} minW="200px" gap={1}>
-          <Text fontSize="2xl" fontWeight="bold">
+          <Text fontSize="2xl" fontWeight="bold" color="dark.text">
             {profile.displayName || profile.username}
           </Text>
           <Flex gap={2} align="center" flexWrap="wrap">
@@ -122,27 +148,27 @@ export default function ProfilePage() {
             </Text>
           </Flex>
           {profile.bio && (
-            <Text fontSize="sm" color="gray.500" fontStyle="italic" mt={1}>
+            <Text fontSize="sm" color="dark.muted" fontStyle="italic" mt={1}>
               &ldquo;{profile.bio}&rdquo;
             </Text>
           )}
-          <Text fontSize="xs" color="gray.400" mt={1}>
+          <Text fontSize="xs" color="dark.muted" mt={1}>
             Member since {new Date(profile.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
           </Text>
 
           <Flex gap={3} mt={2}>
             {isOwnProfile ? (
               <>
-                <Button variant="outline" size="sm" onClick={openEditDialog}>
+                <Button variant="outline" size="sm" borderColor="game.pixelBorder" color="dark.text" _hover={{ bg: 'whiteAlpha.100' }} onClick={openEditDialog}>
                   <FiEdit2 /> Edit Profile
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" borderColor="game.pixelBorder" color="dark.text" _hover={{ bg: 'whiteAlpha.100' }}>
                   <FiImage /> Customize Avatar
                 </Button>
               </>
             ) : (
               <>
-                {profile.friendStatus === 'none' && (
+                {!profile.isFriend && (
                   <Button
                     colorPalette="purple"
                     size="sm"
@@ -152,27 +178,17 @@ export default function ProfilePage() {
                     <FiUserPlus /> Add Friend
                   </Button>
                 )}
-                {profile.friendStatus === 'friends' && (
+                {profile.isFriend && (
                   <Button
                     variant="outline"
                     size="sm"
+                    borderColor="game.pixelBorder"
+                    color="dark.text"
+                    _hover={{ bg: 'whiteAlpha.100' }}
                     onClick={() => friendMutation.mutate('remove')}
                     disabled={friendMutation.isPending}
                   >
                     <FiUserMinus /> Remove Friend
-                  </Button>
-                )}
-                {profile.friendStatus === 'pending_sent' && (
-                  <Button variant="outline" size="sm" disabled>Friend Request Sent</Button>
-                )}
-                {profile.friendStatus === 'pending_received' && (
-                  <Button
-                    colorPalette="purple"
-                    size="sm"
-                    onClick={() => friendMutation.mutate('add')}
-                    disabled={friendMutation.isPending}
-                  >
-                    Accept Request
                   </Button>
                 )}
               </>
@@ -183,36 +199,36 @@ export default function ProfilePage() {
 
       {/* Stat Cards */}
       <SimpleGrid columns={{ base: 2, md: 4 }} gap={4}>
-        <Box {...retroCardProps} p={4} textAlign="center">
+        <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
           <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
             {profile.totalXp.toLocaleString()}
           </Text>
-          <Text fontSize="xs" color="gray.500" mt={1}>Total XP</Text>
+          <Text fontSize="xs" color="dark.muted" mt={1}>Total XP</Text>
         </Box>
-        <Box {...retroCardProps} p={4} textAlign="center">
+        <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
           <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
-            {profile.lessonsCompleted}/{profile.totalLessons}
+            {profile.completedLessons}/{profile.totalLessons}
           </Text>
-          <Text fontSize="xs" color="gray.500" mt={1}>Lessons</Text>
+          <Text fontSize="xs" color="dark.muted" mt={1}>Lessons</Text>
         </Box>
-        <Box {...retroCardProps} p={4} textAlign="center">
+        <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
           <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
-            {profile.achievementsUnlocked}
+            {profile.achievementCount}
           </Text>
-          <Text fontSize="xs" color="gray.500" mt={1}>Achievements</Text>
+          <Text fontSize="xs" color="dark.muted" mt={1}>Achievements</Text>
         </Box>
-        <Box {...retroCardProps} p={4} textAlign="center">
+        <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
           <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
             {profile.loginStreakDays}🔥
           </Text>
-          <Text fontSize="xs" color="gray.500" mt={1}>Day Streak</Text>
+          <Text fontSize="xs" color="dark.muted" mt={1}>Day Streak</Text>
         </Box>
       </SimpleGrid>
 
       {/* Achievement Showcase */}
       {profile.showcaseAchievements.length > 0 && (
-        <Box {...retroCardProps} p={4}>
-          <Text {...pixelFontProps} fontSize="md" fontWeight="bold" mb={3}>Showcase</Text>
+        <Box {...retroCardProps} p={4} bg="dark.card">
+          <Text {...pixelFontProps} fontSize="md" fontWeight="bold" mb={3} color="dark.text">Showcase</Text>
           <Flex gap={4} flexWrap="wrap">
             {profile.showcaseAchievements.slice(0, 5).map((ach) => (
               <Tooltip key={ach.id} content={`Unlocked ${new Date(ach.unlockedAt).toLocaleDateString()}`}>
@@ -225,7 +241,7 @@ export default function ProfilePage() {
                   cursor="default"
                 >
                   <Text fontSize="28px" lineHeight="1">{ach.icon}</Text>
-                  <Text {...pixelFontProps} fontSize="8px">{ach.name}</Text>
+                  <Text {...pixelFontProps} fontSize="8px" color="dark.text">{ach.name}</Text>
                 </VStack>
               </Tooltip>
             ))}
@@ -237,33 +253,39 @@ export default function ProfilePage() {
       <Dialog.Root open={editOpen} onOpenChange={(e) => setEditOpen(e.open)}>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          <Dialog.Content bg="dark.card" color="dark.text">
             <Dialog.Header>
-              <Dialog.Title>Edit Profile</Dialog.Title>
+              <Dialog.Title color="dark.text">Edit Profile</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
               <VStack gap={4}>
                 <Field.Root>
-                  <Field.Label>Display Name</Field.Label>
+                  <Field.Label color="dark.text">Display Name</Field.Label>
                   <Input
                     value={editDisplayName}
                     onChange={(e) => setEditDisplayName(e.target.value)}
                     maxLength={30}
+                    bg="dark.surface"
+                    borderColor="game.pixelBorder"
+                    color="dark.text"
                   />
                 </Field.Root>
                 <Field.Root>
-                  <Field.Label>Bio</Field.Label>
+                  <Field.Label color="dark.text">Bio</Field.Label>
                   <Textarea
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
                     maxLength={200}
                     rows={3}
+                    bg="dark.surface"
+                    borderColor="game.pixelBorder"
+                    color="dark.text"
                   />
                 </Field.Root>
               </VStack>
             </Dialog.Body>
             <Dialog.Footer>
-              <Button variant="outline" mr={3} onClick={() => setEditOpen(false)}>Cancel</Button>
+              <Button variant="outline" mr={3} onClick={() => setEditOpen(false)} borderColor="game.pixelBorder" color="dark.text">Cancel</Button>
               <Button
                 colorPalette="purple"
                 onClick={() => editMutation.mutate({ displayName: editDisplayName, bio: editBio })}

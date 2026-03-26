@@ -91,6 +91,7 @@ export default function QuizPage() {
         setLoading(false);
       })
       .catch(() => {
+        console.error('[QuizPage] Failed to load quiz for lesson:', lessonId);
         setError('Failed to load quiz. Please try again.');
         setLoading(false);
       });
@@ -125,6 +126,7 @@ export default function QuizPage() {
         },
       ]);
     } catch {
+      console.error('[QuizPage] Failed to submit answer for question:', currentQuestion.id);
       setFeedback({
         correct: false,
         explanation: 'Something went wrong submitting your answer.',
@@ -156,6 +158,7 @@ export default function QuizPage() {
           });
         }
       } catch {
+        console.error('[QuizPage] Failed to submit quiz for lesson:', lessonId);
         setQuizResult({
           score: runningScore,
           maxScore,

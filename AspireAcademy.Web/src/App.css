@@ -9,8 +9,8 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: #F0ECF6;
-  color: #1a1a2e;
+  background: #0D0B1A;
+  color: #E8E0F0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -39,7 +39,7 @@ body {
 
 /* ─── Chunky segmented progress bar ─── */
 .xp-bar-track {
-  background: #E8E0F0;
+  background: #2A2445;
   border-radius: 4px;
   height: 20px;
   border: 2px solid #2B1260;
@@ -60,27 +60,27 @@ body {
   transition: width 0.6s ease-out;
 }
 
-/* ─── Scrollbar styling ─── */
+/* ─── Scrollbar styling (dark) ─── */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F0ECF6;
+  background: #0D0B1A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #B5B7E7;
+  background: #391578;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9185D1;
+  background: #551CA9;
 }
 
 /* Dark sidebar scrollbar */
 .dark-scrollbar::-webkit-scrollbar-track {
-  background: #1A0B2E;
+  background: #0A0818;
 }
 
 .dark-scrollbar::-webkit-scrollbar-thumb {

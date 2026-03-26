@@ -9,6 +9,8 @@ namespace AspireAcademy.Api.Endpoints;
 
 public static class AiTutorEndpoints
 {
+    private static ILogger s_logger = null!;
+
     private static readonly JsonSerializerOptions s_jsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -16,11 +18,15 @@ public static class AiTutorEndpoints
 
     public static WebApplication MapAiTutorEndpoints(this WebApplication app)
     {
+        s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("AiTutorEndpoints");
+
         var group = app.MapGroup("/api/ai").RequireAuthorization();
 
         group.MapPost("/chat", async (AiChatRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user, HttpContext httpContext) =>
         {
             var userId = GetUserId(user);
+            s_logger.LogInformation("AI chat for UserId={UserId}, lessonId={LessonId}",
+                userId, request.Context?.CurrentLessonId);
             var currentUser = await db.Users.FindAsync(userId);
 
             if (currentUser is null)
@@ -62,6 +68,7 @@ public static class AiTutorEndpoints
         group.MapPost("/hint", async (AiHintRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user) =>
         {
             _ = GetUserId(user);
+            s_logger.LogInformation("AI hint level={HintLevel} for ChallengeId={ChallengeId}", request.HintLevel, request.ChallengeId);
 
             if (request.HintLevel is < 1 or > 3)
             {

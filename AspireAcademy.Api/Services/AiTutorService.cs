@@ -18,19 +18,23 @@ public sealed class AiTutorService
 
     private readonly ChatClient? _chatClient;
     private readonly string? _configError;
+    private readonly ILogger<AiTutorService> _logger;
 
-    public AiTutorService(IConfiguration configuration)
+    public AiTutorService(IConfiguration configuration, ILogger<AiTutorService> logger)
     {
+        _logger = logger;
         var connectionString = configuration.GetConnectionString("openai");
         if (string.IsNullOrWhiteSpace(connectionString))
         {
             _configError = "OpenAI connection string 'openai' is not configured. Set it via: aspire secret set ConnectionStrings:openai \"Key=sk-...\"";
+            _logger.LogWarning("OpenAI not configured: {Reason}", _configError);
             return;
         }
 
         try
         {
             var (endpoint, apiKey) = ParseConnectionString(connectionString);
+            _logger.LogInformation("OpenAI client initialized with endpoint={Endpoint}", endpoint ?? "(default)");
             var client = endpoint is not null
                 ? new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) })
                 : new OpenAIClient(apiKey);
@@ -39,6 +43,7 @@ public sealed class AiTutorService
         catch (Exception ex)
         {
             _configError = $"Failed to initialize OpenAI client: {ex.Message}";
+            _logger.LogError(ex, "OpenAI client initialization failed: {Message}", ex.Message);
         }
     }
 
@@ -77,6 +82,8 @@ public sealed class AiTutorService
         }
 
         messages.Add(ChatMessage.CreateUserMessage(message));
+
+        _logger.LogInformation("AI chat request, model=gpt-4o, messageCount={MessageCount}", messages.Count);
 
         var updates = GetClientOrThrow().CompleteChatStreamingAsync(messages, cancellationToken: cancellationToken);
 

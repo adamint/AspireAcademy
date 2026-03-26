@@ -10,9 +10,12 @@ public static class CurriculumEndpoints
 {
     private const int PassingScorePercent = 70;
     private static readonly string[] CompletedStatuses = ["completed", "perfect"];
+    private static ILogger s_logger = null!;
 
     public static WebApplication MapCurriculumEndpoints(this WebApplication app)
     {
+        s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("CurriculumEndpoints");
+
         var group = app.MapGroup("/api").WithTags("Curriculum").RequireAuthorization();
 
         group.MapGet("/worlds", GetWorlds);
@@ -30,6 +33,8 @@ public static class CurriculumEndpoints
         var userId = GetUserId(principal);
 
         var worlds = await db.Worlds.OrderBy(w => w.SortOrder).ToListAsync();
+
+        s_logger.LogInformation("GET /worlds for UserId={UserId}, returning {Count} worlds", userId, worlds.Count);
         var modules = await db.Modules.ToListAsync();
         var lessons = await db.Lessons.ToListAsync();
         var userProgress = await db.UserProgress
@@ -95,6 +100,7 @@ public static class CurriculumEndpoints
         var world = await db.Worlds.FindAsync(worldId);
         if (world is null)
         {
+            s_logger.LogWarning("GET /worlds/{WorldId}/modules: world not found", worldId);
             return Results.NotFound(new ErrorResponse("World not found."));
         }
 
@@ -104,6 +110,9 @@ public static class CurriculumEndpoints
             .Where(m => m.WorldId == worldId)
             .OrderBy(m => m.SortOrder)
             .ToListAsync();
+
+        s_logger.LogInformation("GET /worlds/{WorldId}/modules for UserId={UserId}, returning {Count} modules",
+            worldId, userId, modules.Count);
 
         var moduleIds = modules.Select(m => m.Id).ToList();
 
@@ -207,21 +216,27 @@ public static class CurriculumEndpoints
         var lesson = await db.Lessons.FirstOrDefaultAsync(l => l.Id == lessonId);
         if (lesson is null)
         {
+            s_logger.LogWarning("GET /lessons/{LessonId}: lesson not found", lessonId);
             return Results.NotFound(new ErrorResponse("Lesson not found."));
         }
 
         var userId = GetUserId(principal);
 
         // Check if lesson is unlocked before returning content
+        UserProgress? prereqProgress = null;
         if (lesson.UnlockAfterLessonId is not null)
         {
-            var prereqProgress = await db.UserProgress
+            prereqProgress = await db.UserProgress
                 .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
+        }
 
-            if (prereqProgress?.Status is not ("completed" or "perfect"))
-            {
-                return Results.Json(new ErrorResponse("Lesson is locked."), statusCode: 403);
-            }
+        var isUnlocked = lesson.UnlockAfterLessonId is null || prereqProgress?.Status is "completed" or "perfect";
+        s_logger.LogInformation("GET /lessons/{LessonId} — type={LessonType}, unlocked={IsUnlocked}, userId={UserId}",
+            lessonId, lesson.Type, isUnlocked, userId);
+
+        if (!isUnlocked)
+        {
+            return Results.Json(new ErrorResponse("Lesson is locked."), statusCode: 403);
         }
 
         var progress = await db.UserProgress

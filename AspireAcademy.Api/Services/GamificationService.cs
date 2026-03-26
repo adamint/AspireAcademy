@@ -10,10 +10,13 @@ public record LevelUpInfo(int PreviousLevel, string PreviousRank, int NewLevel, 
 
 public record XpAwardResult(int XpAwarded, int TotalXp, int CurrentLevel, string CurrentRank, LevelUpInfo? LevelUp);
 
-public class GamificationService(AcademyDbContext db, IConnectionMultiplexer redis)
+public class GamificationService(AcademyDbContext db, IConnectionMultiplexer redis, ILogger<GamificationService> logger)
 {
     public async Task<XpAwardResult> AwardXpAsync(Guid userId, int amount, string sourceType, string? sourceId)
     {
+        logger.LogInformation("XP awarded: +{Amount} to UserId={UserId}, source={SourceType}/{SourceId}",
+            amount, userId, sourceType, sourceId);
+
         var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
 
         if (userXp is null)
@@ -68,6 +71,8 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
         if (newLevel > previousLevel)
         {
             levelUp = new LevelUpInfo(previousLevel, previousRank, newLevel, newRank);
+            logger.LogInformation("Level up! {OldLevel} ({OldRank}) → {NewLevel} ({NewRank}) for UserId={UserId}",
+                previousLevel, previousRank, newLevel, newRank, userId);
         }
 
         return new XpAwardResult(amount, userXp.TotalXp, newLevel, newRank, levelUp);
@@ -143,6 +148,8 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
             .Where(a => !unlockedIds.Contains(a.Id))
             .ToListAsync();
 
+        logger.LogInformation("Checking {Count} locked achievements for UserId={UserId}", lockedAchievements.Count, userId);
+
         var newlyUnlocked = new List<Achievement>();
 
         foreach (var achievement in lockedAchievements)
@@ -168,6 +175,9 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
 
             if (triggered)
             {
+                logger.LogInformation("Achievement triggered: {AchievementId} ({AchievementName}) for UserId={UserId}",
+                    achievement.Id, achievement.Name, userId);
+
                 newlyUnlocked.Add(achievement);
 
                 db.UserAchievements.Add(new UserAchievement

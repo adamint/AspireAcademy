@@ -36,8 +36,13 @@ export default function LeaderboardPage() {
   const { data, isLoading } = useQuery<LeaderboardData>({
     queryKey: ['leaderboard', tab],
     queryFn: async () => {
-      const { data } = await api.get(`/leaderboard?type=${tab}`);
-      return data;
+      try {
+        const { data } = await api.get(`/leaderboard?type=${tab}`);
+        return data;
+      } catch (err) {
+        console.error('[LeaderboardPage] Failed to fetch leaderboard:', err);
+        throw err;
+      }
     },
   });
 
@@ -58,7 +63,7 @@ export default function LeaderboardPage() {
       </Tabs.Root>
 
       {tab === 'weekly' && (
-        <Text fontSize="xs" color="gray.500" fontStyle="italic">Resets Monday</Text>
+        <Text fontSize="xs" color="dark.muted" fontStyle="italic">Resets Monday</Text>
       )}
 
       {isLoading && (
@@ -75,7 +80,7 @@ export default function LeaderboardPage() {
             {tab === 'friends' ? 'No friends yet' : 'No data available'}
           </Text>
           {tab === 'friends' && (
-            <Text fontSize="sm" color="gray.500" mt={2}>Add friends to see their rankings!</Text>
+            <Text fontSize="sm" color="dark.muted" mt={2}>Add friends to see their rankings!</Text>
           )}
         </Box>
       )}

@@ -88,6 +88,7 @@ export default function AiTutorSidebar() {
         }
       }
     } catch {
+      console.error('[AiTutorSidebar] Failed to stream AI chat response');
       setMessages((prev) => {
         const updated = [...prev];
         updated[updated.length - 1] = {
@@ -147,7 +148,7 @@ export default function AiTutorSidebar() {
       >
         <Drawer.Backdrop />
         <Drawer.Positioner>
-          <Drawer.Content maxW="400px" w="100%">
+          <Drawer.Content maxW="400px" w="100%" bg="dark.card" color="dark.text">
             {/* Header */}
             <Drawer.Header bg="game.retroBg" py={3} px={4}>
               <Flex align="center" justify="space-between" w="100%">
@@ -214,7 +215,7 @@ export default function AiTutorSidebar() {
             </Drawer.Body>
 
             {/* Input */}
-            <Drawer.Footer borderTop="1px solid" borderColor="gray.200" p={3}>
+            <Drawer.Footer borderTop="1px solid" borderColor="dark.border" p={3}>
               <Flex gap={2} w="100%">
                 <Input
                   flex={1}
@@ -224,6 +225,10 @@ export default function AiTutorSidebar() {
                   onKeyDown={handleKeyDown}
                   disabled={streaming}
                   size="sm"
+                  bg="dark.surface"
+                  color="dark.text"
+                  borderColor="dark.border"
+                  _placeholder={{ color: 'dark.muted' }}
                 />
                 <Button
                   colorPalette="purple"

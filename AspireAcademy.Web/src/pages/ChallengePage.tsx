@@ -125,6 +125,7 @@ export default function ChallengePage() {
         setLoading(false);
       })
       .catch(() => {
+        console.error('[ChallengePage] Failed to load challenge:', challengeId);
         setError('Failed to load challenge. Please try again.');
         setLoading(false);
       });
@@ -145,6 +146,7 @@ export default function ChallengePage() {
       setOutput(res.data.output);
       setErrors(res.data.errors);
     } catch {
+      console.error('[ChallengePage] Failed to execute code for challenge:', challengeId);
       setErrors('Failed to execute code. Please try again.');
     } finally {
       setRunning(false);
@@ -188,6 +190,7 @@ export default function ChallengePage() {
         }
       }
     } catch {
+      console.error('[ChallengePage] Failed to submit challenge:', challengeId);
       setErrors('Submission failed. Please try again.');
     } finally {
       setSubmitting(false);
@@ -217,6 +220,7 @@ export default function ChallengePage() {
         { role: 'assistant', content: res.data.reply },
       ]);
     } catch {
+      console.error('[ChallengePage] Failed to get AI hint for challenge:', challengeId);
       setAiMessages((prev) => [
         ...prev,
         { role: 'assistant', content: 'Sorry, I could not process your request right now.' },
@@ -407,12 +411,11 @@ export default function ChallengePage() {
               fontSize="xs"
               fontWeight="bold"
               textTransform="uppercase"
-              color="gray.500"
+              color="dark.muted"
               mb={2}
               letterSpacing="0.05em"
             >
-              Tests
-            </Text>
+              Tests</Text>
             <VStack align="stretch" gap={1}>
               {testCases.map((tc) => (
                 <HStack key={tc.id} gap={2} py={1}>
@@ -572,7 +575,7 @@ export default function ChallengePage() {
                 overflowY="auto"
               >
                 {aiMessages.length === 0 && (
-                  <Text color="gray.500" p={3} fontStyle="italic" fontSize="sm">
+                  <Text color="dark.muted" p={3} fontStyle="italic" fontSize="sm">
                     Ask me for hints about this challenge!
                   </Text>
                 )}
@@ -618,7 +621,7 @@ export default function ChallengePage() {
                   border="2px solid"
                   borderColor="game.pixelBorder"
                   color="gray.100"
-                  _placeholder={{ color: 'gray.500' }}
+                  _placeholder={{ color: 'dark.muted' }}
                   _focus={{ borderColor: 'aspire.500' }}
                   size="sm"
                 />

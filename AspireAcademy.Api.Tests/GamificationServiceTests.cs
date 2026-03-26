@@ -4,6 +4,7 @@ using AspireAcademy.Api.Services;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AspireAcademy.Api.Tests;
 
@@ -28,7 +29,7 @@ public class GamificationServiceTests : IDisposable
         _db = new TestAcademyDbContext(options);
         _db.Database.EnsureCreated();
         _fakeRedis = new FakeRedis();
-        _service = new GamificationService(_db, _fakeRedis.Multiplexer);
+        _service = new GamificationService(_db, _fakeRedis.Multiplexer, NullLogger<GamificationService>.Instance);
 
         SeedUser();
     }

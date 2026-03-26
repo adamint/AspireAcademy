@@ -17,6 +17,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const FriendsPage = lazy(() => import('./pages/FriendsPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
 
 function LazyFallback() {
   return (
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="/friends" element={<FriendsPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />

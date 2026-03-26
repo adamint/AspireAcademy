@@ -15,7 +15,7 @@ interface AchievementItem {
   category: string;
   rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
   xpReward: number;
-  unlocked: boolean;
+  isUnlocked: boolean;
   unlockedAt: string | null;
 }
 
@@ -38,16 +38,21 @@ export default function AchievementsPage() {
   const { data: achievements, isLoading } = useQuery<AchievementItem[]>({
     queryKey: ['achievements'],
     queryFn: async () => {
-      const { data } = await api.get('/achievements');
-      return data;
+      try {
+        const { data } = await api.get('/achievements');
+        return data;
+      } catch (err) {
+        console.error('[AchievementsPage] Failed to fetch achievements:', err);
+        throw err;
+      }
     },
   });
 
   const filtered = (achievements ?? []).filter(
-    (a) => category === 'All' || a.category === category
+    (a) => category === 'All' || a.category.toLowerCase() === category.toLowerCase()
   );
 
-  const unlockedCount = (achievements ?? []).filter((a) => a.unlocked).length;
+  const unlockedCount = (achievements ?? []).filter((a) => a.isUnlocked).length;
   const totalCount = (achievements ?? []).length;
 
   return (
@@ -57,7 +62,7 @@ export default function AchievementsPage() {
         <Text {...pixelFontProps} fontSize="xl" fontWeight="bold">
           🎖️ Achievements
         </Text>
-        <Text {...pixelFontProps} fontSize="xs" color="gray.500">
+        <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
           {unlockedCount} of {totalCount} unlocked
         </Text>
       </Flex>
@@ -84,52 +89,59 @@ export default function AchievementsPage() {
           <Text {...pixelFontProps} fontSize="sm">
             {category === 'All' ? 'No achievements yet' : `No ${category} achievements`}
           </Text>
-          <Text fontSize="sm" color="gray.500" mt={2}>Complete lessons to earn achievements!</Text>
+          <Text fontSize="sm" color="dark.muted" mt={2}>Complete lessons to earn achievements!</Text>
         </Box>
       )}
 
       {!isLoading && filtered.length > 0 && (
         <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} gap={4}>
           {filtered.map((ach) => (
-            <Tooltip key={ach.id} content={ach.unlocked ? ach.description : 'Keep learning to unlock!'}>
-              <Box
-                {...retroCardProps}
-                p={4}
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                gap={2}
-                textAlign="center"
-                cursor={ach.unlocked ? 'pointer' : 'default'}
-                transition="transform 0.15s ease"
-                _hover={ach.unlocked ? { transform: 'translateY(-2px)' } : undefined}
-                position="relative"
-                borderColor={rarityBorderColors[ach.rarity]}
-                filter={ach.unlocked ? undefined : 'grayscale(100%)'}
-                opacity={ach.unlocked ? 1 : 0.6}
-                onClick={() => ach.unlocked && setSelected(ach)}
-              >
-                {/* Lock overlay for locked achievements */}
-                {!ach.unlocked && (
-                  <Box position="absolute" top={2} right={2} color="game.locked">
-                    <FiLock />
-                  </Box>
-                )}
+            <Tooltip.Root key={ach.id} openDelay={300} closeDelay={100}>
+              <Tooltip.Trigger asChild>
+                <Box
+                  {...retroCardProps}
+                  p={4}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  gap={2}
+                  textAlign="center"
+                  cursor={ach.isUnlocked ? 'pointer' : 'default'}
+                  transition="transform 0.15s ease"
+                  _hover={ach.isUnlocked ? { transform: 'translateY(-2px)' } : undefined}
+                  position="relative"
+                  borderColor={rarityBorderColors[ach.rarity]}
+                  filter={ach.isUnlocked ? undefined : 'grayscale(100%)'}
+                  opacity={ach.isUnlocked ? 1 : 0.6}
+                  onClick={() => ach.isUnlocked && setSelected(ach)}
+                >
+                  {/* Lock overlay for locked achievements */}
+                  {!ach.isUnlocked && (
+                    <Box position="absolute" top={2} right={2} color="game.locked">
+                      <FiLock />
+                    </Box>
+                  )}
 
-                <Text fontSize="40px" lineHeight="1">{ach.icon}</Text>
-                <Text {...pixelFontProps} fontSize="8px" fontWeight="bold">
-                  {ach.unlocked ? ach.name : '???'}
-                </Text>
-                {ach.unlocked && (
-                  <Text fontSize="xs" color="game.xpGold">+{ach.xpReward} XP</Text>
-                )}
-                {ach.unlocked && ach.unlockedAt && (
-                  <Text fontSize="2xs" color="gray.500">
-                    {new Date(ach.unlockedAt).toLocaleDateString()}
+                  <Text fontSize="40px" lineHeight="1">{ach.icon}</Text>
+                  <Text {...pixelFontProps} fontSize="8px" fontWeight="bold">
+                    {ach.isUnlocked ? ach.name : '???'}
                   </Text>
-                )}
-              </Box>
-            </Tooltip>
+                  {ach.isUnlocked && (
+                    <Text fontSize="xs" color="game.xpGold">+{ach.xpReward} XP</Text>
+                  )}
+                  {ach.isUnlocked && ach.unlockedAt && (
+                    <Text fontSize="2xs" color="dark.muted">
+                      {new Date(ach.unlockedAt).toLocaleDateString()}
+                    </Text>
+                  )}
+                </Box>
+              </Tooltip.Trigger>
+              <Tooltip.Positioner>
+                <Tooltip.Content>
+                  {ach.isUnlocked ? ach.description : 'Keep learning to unlock!'}
+                </Tooltip.Content>
+              </Tooltip.Positioner>
+            </Tooltip.Root>
           ))}
         </SimpleGrid>
       )}
@@ -138,7 +150,7 @@ export default function AchievementsPage() {
       <Dialog.Root open={!!selected} onOpenChange={(e) => { if (!e.open) setSelected(null); }}>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          <Dialog.Content bg="dark.card" color="dark.text">
             <Dialog.Header>
               <Dialog.Title>{selected?.name}</Dialog.Title>
             </Dialog.Header>
@@ -147,7 +159,7 @@ export default function AchievementsPage() {
                 <Text fontSize="64px" lineHeight="1">{selected?.icon}</Text>
                 <Text fontSize="md">{selected?.description}</Text>
                 <Flex gap={4} mt={2}>
-                  <Text fontSize="sm" color="gray.500">
+                  <Text fontSize="sm" color="dark.muted">
                     Rarity:{' '}
                     <Text as="span" fontWeight="bold" color={rarityBorderColors[selected?.rarity ?? 'common']}>
                       {selected?.rarity}
@@ -158,7 +170,7 @@ export default function AchievementsPage() {
                   </Text>
                 </Flex>
                 {selected?.unlockedAt && (
-                  <Text fontSize="sm" color="gray.500">
+                  <Text fontSize="sm" color="dark.muted">
                     Unlocked {new Date(selected.unlockedAt).toLocaleDateString()}
                   </Text>
                 )}

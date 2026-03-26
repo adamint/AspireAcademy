@@ -42,9 +42,12 @@ public record ChallengeSubmitResponse(
 public static class ChallengeEndpoints
 {
     private const int MaxRunsPerMinute = 10;
+    private static ILogger s_logger = null!;
 
     public static WebApplication MapChallengeEndpoints(this WebApplication app)
     {
+        s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("ChallengeEndpoints");
+
         var group = app.MapGroup("/api/challenges").RequireAuthorization();
 
         group.MapPost("/{lessonId}/run", RunCodeAsync);
@@ -62,6 +65,7 @@ public static class ChallengeEndpoints
         ClaimsPrincipal user)
     {
         var userId = GetUserId(user);
+        s_logger.LogInformation("Code run for LessonId={LessonId}, UserId={UserId}", lessonId, userId);
 
         // Rate limiting
         if (!await CheckRateLimitAsync(redis, userId))
@@ -113,6 +117,7 @@ public static class ChallengeEndpoints
         ClaimsPrincipal user)
     {
         var userId = GetUserId(user);
+        s_logger.LogInformation("Code submit for LessonId={LessonId}, UserId={UserId}", lessonId, userId);
 
         // Validate lesson
         var lesson = await db.Lessons
@@ -145,6 +150,10 @@ public static class ChallengeEndpoints
         // Validate against test cases
         var testResults = ValidateTestCases(challenge.TestCases, request.Code, compilationSuccess, executionOutput);
         var allPassed = testResults.Count > 0 && testResults.All(t => t.Passed);
+
+        s_logger.LogInformation("Code submit result for LessonId={LessonId}: compilation={CompilationSuccess}, allPassed={AllPassed}, tests={PassedCount}/{TotalCount}",
+            lessonId, compilationSuccess, allPassed,
+            testResults.Count(t => t.Passed), testResults.Count);
 
         // Record submission
         var submission = new CodeSubmission
@@ -242,18 +251,25 @@ public static class ChallengeEndpoints
                 .Select(e => e.GetString()!)
                 .ToArray();
 
+            var url = $"{client.BaseAddress}execute";
+            s_logger.LogInformation("CodeRunner HTTP call to {Url}", url);
+
             var payload = new { Code = code, Packages = packages, TimeoutSeconds = 30 };
             var response = await client.PostAsJsonAsync("/execute", payload);
 
+            s_logger.LogInformation("CodeRunner response: {StatusCode}", response.StatusCode);
+
             if (!response.IsSuccessStatusCode)
             {
+                s_logger.LogWarning("CodeRunner returned non-success status: {StatusCode}", response.StatusCode);
                 return null;
             }
 
             return await response.Content.ReadFromJsonAsync<CodeRunnerResponse>();
         }
-        catch
+        catch (Exception ex)
         {
+            s_logger.LogError(ex, "CodeRunner call failed: {Message}", ex.Message);
             return null;
         }
     }

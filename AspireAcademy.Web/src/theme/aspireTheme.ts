@@ -5,9 +5,9 @@ const config = defineConfig({
     tokens: {
       colors: {
         aspire: {
-          50: { value: '#F6F9FE' },
-          100: { value: '#ECF2FD' },
-          200: { value: '#D9E5FA' },
+          50: { value: '#2A2445' },
+          100: { value: '#342D52' },
+          200: { value: '#3E3660' },
           300: { value: '#C7CFF1' },
           400: { value: '#B5B7E7' },
           500: { value: '#9185D1' },
@@ -27,6 +27,15 @@ const config = defineConfig({
           perfect: { value: '#6B4FBB' },
           pixelBorder: { value: '#2B1260' },
           retroBg: { value: '#1A0B2E' },
+        },
+        dark: {
+          bg: { value: '#0D0B1A' },
+          card: { value: '#1A1630' },
+          sidebar: { value: '#0A0818' },
+          surface: { value: '#151224' },
+          text: { value: '#E8E0F0' },
+          muted: { value: '#9B93B0' },
+          border: { value: '#2B1260' },
         },
       },
       fonts: {

@@ -51,7 +51,10 @@ export default function LessonPage() {
 
   const { data: lesson, isLoading } = useQuery<LessonDetail>({
     queryKey: ['lesson', lessonId],
-    queryFn: () => api.get(`/lessons/${lessonId}`).then((r) => r.data),
+    queryFn: () => api.get(`/lessons/${lessonId}`).then((r) => r.data).catch((err) => {
+      console.error('[LessonPage] Failed to fetch lesson:', err);
+      throw err;
+    }),
     enabled: !!lessonId,
   });
 
@@ -79,6 +82,9 @@ export default function LessonPage() {
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       queryClient.invalidateQueries({ queryKey: ['worlds'] });
       queryClient.invalidateQueries({ queryKey: ['xp'] });
+    },
+    onError: (err) => {
+      console.error('[LessonPage] Failed to complete lesson:', err);
     },
   });
 
@@ -171,7 +177,7 @@ export default function LessonPage() {
           <Box
             borderLeft="4px solid"
             borderColor="game.error"
-            bg="red.50"
+            bg="rgba(209, 52, 56, 0.15)"
             p="4"
             borderRadius="sm"
             mb="4"
@@ -235,7 +241,7 @@ export default function LessonPage() {
         align="center"
         gap="1"
         cursor="pointer"
-        color="aspire.600"
+        color="aspire.400"
         fontSize="sm"
         bg="transparent"
         border="none"
@@ -303,7 +309,7 @@ export default function LessonPage() {
       </Flex>
 
       {completeMutation.isError && (
-        <Box bg="red.50" color="game.error" p="3" borderRadius="sm" textAlign="center">
+        <Box bg="rgba(209, 52, 56, 0.15)" color="game.error" p="3" borderRadius="sm" textAlign="center">
           Failed to mark complete. Please try again.
         </Box>
       )}
@@ -314,7 +320,7 @@ export default function LessonPage() {
         align="center"
         pt="4"
         borderTop="1px solid"
-        borderColor="aspire.200"
+        borderColor="game.pixelBorder"
       >
         <Button
           variant="ghost"

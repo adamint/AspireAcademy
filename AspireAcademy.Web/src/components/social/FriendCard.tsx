@@ -49,7 +49,7 @@ export default function FriendCard({ user, actions }: FriendCardProps) {
           <Badge {...pixelFontProps} fontSize="8px" colorPalette="purple" variant="solid">
             Lvl {user.currentLevel}
           </Badge>
-          <Text fontSize="xs" color="gray.500">{user.currentRank}</Text>
+          <Text fontSize="xs" color="dark.muted">{user.currentRank}</Text>
           {user.loginStreakDays > 0 && (
             <Text fontSize="xs" color="game.streak">🔥 {user.loginStreakDays}</Text>
           )}

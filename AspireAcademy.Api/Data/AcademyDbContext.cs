@@ -305,7 +305,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.HasIndex(f => f.RequesterId).HasDatabaseName("ix_friendships_requester");
             e.HasIndex(f => f.AddresseeId).HasDatabaseName("ix_friendships_addressee");
 
-            e.ToTable(t => t.HasCheckConstraint("ck_friendships_no_self", "requester_id != addressee_id"));
+            e.ToTable(t => t.HasCheckConstraint("ck_friendships_no_self", "\"RequesterId\" != \"AddresseeId\""));
         });
 
         // ── XpEvents ──

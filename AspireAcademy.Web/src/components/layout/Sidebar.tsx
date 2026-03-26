@@ -10,11 +10,13 @@ import {
   FiChevronDown,
   FiChevronRight,
   FiLock,
+  FiShield,
 } from 'react-icons/fi';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 import api from '../../services/apiClient';
+import { useAuthStore } from '../../store/authStore';
 import type { World } from '../../types';
 
 interface SidebarProps {
@@ -64,11 +66,20 @@ function SideNavLink({
 
 export function Sidebar({ open, onClose }: SidebarProps) {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+  const isAdmin = user?.username?.toLowerCase() === 'admin';
   const [expandedWorlds, setExpandedWorlds] = useState<Set<string>>(new Set());
 
   const { data: worlds } = useQuery<World[]>({
     queryKey: ['worlds'],
-    queryFn: async () => (await api.get('/worlds')).data,
+    queryFn: async () => {
+      try {
+        return (await api.get('/worlds')).data;
+      } catch (err) {
+        console.error('[Sidebar] Failed to fetch worlds:', err);
+        throw err;
+      }
+    },
     staleTime: 1000 * 60 * 5,
   });
 
@@ -108,7 +119,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         as="nav"
         w="250px"
         minW="250px"
-        bg="game.retroBg"
+        bg="dark.sidebar"
         h="100%"
         overflowY="auto"
         display={{
@@ -238,6 +249,28 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             Achievements
           </SideNavLink>
         </Box>
+
+        {/* Admin */}
+        {isAdmin && (
+          <Box px="2" mt="2">
+            <Text
+              fontSize="10px"
+              fontWeight="700"
+              color="whiteAlpha.500"
+              textTransform="uppercase"
+              letterSpacing="0.5px"
+              px="3"
+              pt="3"
+              pb="1"
+              fontFamily="pixel"
+            >
+              Admin
+            </Text>
+            <SideNavLink to="/admin" icon={<FiShield size={16} />} onClose={onClose}>
+              Admin Panel
+            </SideNavLink>
+          </Box>
+        )}
       </Box>
     </>
   );

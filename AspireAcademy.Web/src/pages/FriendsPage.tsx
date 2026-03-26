@@ -40,16 +40,26 @@ export default function FriendsPage() {
   const { data: friendsData, isLoading } = useQuery<FriendsData>({
     queryKey: ['friends'],
     queryFn: async () => {
-      const { data } = await api.get('/friends');
-      return data;
+      try {
+        const { data } = await api.get('/friends');
+        return data;
+      } catch (err) {
+        console.error('[FriendsPage] Failed to fetch friends:', err);
+        throw err;
+      }
     },
   });
 
   const { data: searchResults, isFetching: searchLoading } = useQuery<FriendCardUser[]>({
     queryKey: ['userSearch', debouncedQuery],
     queryFn: async () => {
-      const { data } = await api.get(`/users/search?q=${encodeURIComponent(debouncedQuery)}`);
-      return data;
+      try {
+        const { data } = await api.get(`/users/search?q=${encodeURIComponent(debouncedQuery)}`);
+        return data;
+      } catch (err) {
+        console.error('[FriendsPage] Failed to search users:', err);
+        throw err;
+      }
     },
     enabled: debouncedQuery.length >= 2,
   });
@@ -78,6 +88,9 @@ export default function FriendsPage() {
       queryClient.invalidateQueries({ queryKey: ['friends'] });
       queryClient.invalidateQueries({ queryKey: ['userSearch'] });
     },
+    onError: (err) => {
+      console.error('[FriendsPage] Friend action failed:', err);
+    },
   });
 
   const friends = friendsData?.friends ?? [];
@@ -100,6 +113,10 @@ export default function FriendsPage() {
           value={searchQuery}
           onChange={(e) => handleSearchChange(e.target.value)}
           flex={1}
+          bg="dark.surface"
+          color="dark.text"
+          borderColor="dark.border"
+          _placeholder={{ color: 'dark.muted' }}
         />
       </Flex>
 
@@ -111,7 +128,7 @@ export default function FriendsPage() {
             <Skeleton key={i} h="72px" borderRadius="sm" />
           ))}
           {!searchLoading && searchResults && searchResults.length === 0 && (
-            <Text color="gray.500" fontSize="sm">No users found.</Text>
+            <Text color="dark.muted" fontSize="sm">No users found.</Text>
           )}
           {!searchLoading && searchResults?.map((user) => (
             <FriendCard
@@ -156,7 +173,7 @@ export default function FriendsPage() {
               {friends.length === 0 ? (
                 <Box textAlign="center" py={12}>
                   <Text {...pixelFontProps} fontSize="sm">No friends yet</Text>
-                  <Text fontSize="sm" color="gray.500" mt={2}>Search for friends to compete with!</Text>
+                  <Text fontSize="sm" color="dark.muted" mt={2}>Search for friends to compete with!</Text>
                 </Box>
               ) : (
                 <SimpleGrid columns={{ base: 1, md: 2 }} gap={3}>
@@ -238,7 +255,7 @@ export default function FriendsPage() {
               )}
               {pending.length === 0 && (
                 <Box textAlign="center" py={8}>
-                  <Text fontSize="sm" color="gray.500">No pending requests.</Text>
+                  <Text fontSize="sm" color="dark.muted">No pending requests.</Text>
                 </Box>
               )}
             </VStack>

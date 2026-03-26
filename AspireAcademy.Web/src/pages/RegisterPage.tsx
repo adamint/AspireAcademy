@@ -87,8 +87,11 @@ export default function RegisterPage() {
       });
       navigate('/dashboard');
     } catch (err: unknown) {
+      console.error('[RegisterPage] Registration failed:', err);
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        axiosErr?.response?.data?.error ??
+        axiosErr?.response?.data?.message ??
         'Registration failed. Please try again.';
       setServerError(msg);
     } finally {
@@ -97,7 +100,10 @@ export default function RegisterPage() {
   };
 
   const inputStyles = {
-    borderColor: 'aspire.300',
+    bg: 'dark.surface',
+    borderColor: 'game.pixelBorder',
+    color: 'dark.text',
+    _placeholder: { color: 'dark.muted' },
     _focus: { borderColor: 'aspire.600', boxShadow: '0 0 0 1px var(--chakra-colors-aspire-600)' },
   } as const;
 
@@ -112,11 +118,12 @@ export default function RegisterPage() {
       <Box
         w="100%"
         maxW="460px"
-        bg="white"
+        bg="dark.card"
         px="8"
         py="9"
         {...retroCardProps}
         boxShadow="6px 6px 0 #2B1260"
+        borderColor="aspire.600"
       >
         {/* Pixel art title */}
         <Text
@@ -128,14 +135,14 @@ export default function RegisterPage() {
         >
           Aspire Academy
         </Text>
-        <Text textAlign="center" color="gray.500" mb="6" fontSize="sm">
+        <Text textAlign="center" color="dark.muted" mb="6" fontSize="sm">
           Create your hero account
         </Text>
 
         {/* Server error */}
         {serverError && (
           <Box
-            bg="red.50"
+            bg="rgba(209, 52, 56, 0.15)"
             border="2px solid"
             borderColor="game.error"
             borderRadius="sm"
@@ -153,7 +160,7 @@ export default function RegisterPage() {
           <Flex direction="column" gap="3.5">
             {/* Username */}
             <Box>
-              <Text as="label" htmlFor="reg-user" fontSize="sm" fontWeight="600" mb="1" display="block">
+              <Text as="label" htmlFor="reg-user" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Username <Text as="span" color="game.error">*</Text>
               </Text>
               <Input
@@ -170,7 +177,7 @@ export default function RegisterPage() {
 
             {/* Email */}
             <Box>
-              <Text as="label" htmlFor="reg-email" fontSize="sm" fontWeight="600" mb="1" display="block">
+              <Text as="label" htmlFor="reg-email" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Email <Text as="span" color="game.error">*</Text>
               </Text>
               <Input
@@ -188,7 +195,7 @@ export default function RegisterPage() {
 
             {/* Display Name */}
             <Box>
-              <Text as="label" htmlFor="reg-display" fontSize="sm" fontWeight="600" mb="1" display="block">
+              <Text as="label" htmlFor="reg-display" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Display Name
               </Text>
               <Input
@@ -203,7 +210,7 @@ export default function RegisterPage() {
 
             {/* Password */}
             <Box>
-              <Text as="label" htmlFor="reg-pass" fontSize="sm" fontWeight="600" mb="1" display="block">
+              <Text as="label" htmlFor="reg-pass" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Password <Text as="span" color="game.error">*</Text>
               </Text>
               <Input
@@ -221,7 +228,7 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <Box>
-              <Text as="label" htmlFor="reg-confirm" fontSize="sm" fontWeight="600" mb="1" display="block">
+              <Text as="label" htmlFor="reg-confirm" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Confirm Password <Text as="span" color="game.error">*</Text>
               </Text>
               <Input
@@ -259,9 +266,9 @@ export default function RegisterPage() {
           </Flex>
         </form>
 
-        <Text textAlign="center" mt="5" fontSize="sm" color="gray.600">
+        <Text textAlign="center" mt="5" fontSize="sm" color="dark.muted">
           Already have an account?{' '}
-          <Link to="/login" style={{ color: '#6B4FBB', fontWeight: 600 }}>
+          <Link to="/login" style={{ color: '#9185D1', fontWeight: 600 }}>
             Log In
           </Link>
         </Text>

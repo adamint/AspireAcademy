@@ -61,12 +61,18 @@ export default function DashboardPage() {
 
   const { data: worlds, isLoading: worldsLoading } = useQuery<World[]>({
     queryKey: ['worlds'],
-    queryFn: () => api.get('/worlds').then((r) => r.data),
+    queryFn: () => api.get('/worlds').then((r) => r.data).catch((err) => {
+      console.error('[DashboardPage] Failed to fetch worlds:', err);
+      throw err;
+    }),
   });
 
   const { data: xpData, isLoading: xpLoading } = useQuery<XpResponse>({
     queryKey: ['xp'],
-    queryFn: () => api.get('/xp').then((r) => r.data),
+    queryFn: () => api.get('/xp').then((r) => r.data).catch((err) => {
+      console.error('[DashboardPage] Failed to fetch XP data:', err);
+      throw err;
+    }),
   });
 
   const isLoading = worldsLoading || xpLoading;
@@ -98,7 +104,7 @@ export default function DashboardPage() {
   return (
     <Box maxW="1100px" mx="auto" p="6" display="flex" flexDirection="column" gap="6">
       {/* Welcome */}
-      <Heading as="h1" size="2xl" color="aspire.700">
+      <Heading as="h1" size="2xl" color="dark.text">
         Welcome back, {user?.displayName ?? user?.username ?? 'Learner'}!
       </Heading>
 
@@ -161,7 +167,7 @@ export default function DashboardPage() {
           <Card.Body p="5">
             <Flex justify="space-between" align="center" flexWrap="wrap" gap="3">
               <Box>
-                <Text fontWeight="semibold" fontSize="md" mb="1">
+                <Text fontWeight="semibold" fontSize="md" mb="1" color="dark.text">
                   📚 Continue Learning
                 </Text>
                 <Text fontSize="sm" color="aspire.500">
@@ -190,7 +196,7 @@ export default function DashboardPage() {
       )}
 
       {/* Worlds */}
-      <Heading as="h2" size="lg" color="aspire.700">
+      <Heading as="h2" size="lg" color="dark.text">
         🌍 Your Worlds
       </Heading>
       <SimpleGrid columns={{ base: 1, md: 3 }} gap="4">
@@ -202,7 +208,7 @@ export default function DashboardPage() {
       {/* Recent Activity */}
       {xpData?.recentEvents && xpData.recentEvents.length > 0 && (
         <>
-          <Heading as="h2" size="lg" color="aspire.700">
+          <Heading as="h2" size="lg" color="dark.text">
             📋 Recent Activity
           </Heading>
           <Card.Root variant="outline" {...retroCardProps}>
@@ -215,7 +221,7 @@ export default function DashboardPage() {
                   px="3"
                   py="2"
                   borderRadius="sm"
-                  _hover={{ bg: 'aspire.50' }}
+                  _hover={{ bg: 'whiteAlpha.100' }}
                 >
                   <Flex align="center" gap="2">
                     <Text fontSize="sm">{xpEventIcons[event.type] ?? '✅'}</Text>
