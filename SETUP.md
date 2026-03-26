@@ -9,22 +9,24 @@
 
 ## Required Configuration
 
-### 1. OpenAI API Key (Required for AI Tutor)
+### 1. AI Provider — OpenAI or Azure AI Foundry (Required for AI Tutor)
 
-The AI tutor feature needs an OpenAI API key. Set it as a connection string for the AppHost:
+The AI tutor needs an API key for chat completions. Supports **OpenAI**, **Azure OpenAI**, or **Azure AI Foundry**:
 
 ```bash
-# Option A: Set via Aspire user secrets
-cd ~/source/repos/AspireAcademy
+# Option A: OpenAI directly
 aspire secret set ConnectionStrings:openai "Key=sk-your-openai-api-key-here"
 
-# Option B: Set as environment variable
-export ConnectionStrings__openai="Key=sk-your-openai-api-key-here"
+# Option B: Azure OpenAI / Azure AI Foundry
+aspire secret set ConnectionStrings:openai "Endpoint=https://your-resource.openai.azure.com;Key=your-key-here"
+
+# Option C: Any OpenAI-compatible endpoint (Foundry, Ollama, etc.)
+aspire secret set ConnectionStrings:openai "Endpoint=https://your-endpoint.example.com/v1;Key=your-key"
 ```
 
-**Connection string format:** `Key=sk-...` (just the API key) or `Endpoint=https://your-endpoint.openai.azure.com;Key=sk-...` (for Azure OpenAI or custom endpoints).
+The AI tutor uses `gpt-4o` by default. The connection string format is `Key=...` (direct OpenAI) or `Endpoint=...;Key=...` (custom endpoint).
 
-**Without this:** The app will start but the AI Tutor (chat, hints, code review) will throw errors. All other features work fine.
+**Without this:** The app starts but AI Tutor (chat, hints, code review) won't work. All other features are unaffected.
 
 ### 2. JWT Secret Key (Optional — has dev default)
 
