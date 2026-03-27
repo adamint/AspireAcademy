@@ -159,19 +159,22 @@ export function registerAspireCompletions(monacoInstance: Monaco): void {
 
   // Validation markers for unknown method names
   const knownMethodNames = new Set(allMethods.map((m) => m.label));
-  // Match calls like .MethodName( or builder.MethodName(
   const methodCallPattern = /\.(\w+)\s*\(/g;
 
-  monacoInstance.editor.onDidCreateModel((model) => {
-    validateModel(model, monacoInstance, knownMethodNames, methodCallPattern);
-    model.onDidChangeContent(() => {
+  try {
+    monacoInstance.editor.onDidCreateModel((model) => {
       validateModel(model, monacoInstance, knownMethodNames, methodCallPattern);
+      model.onDidChangeContent(() => {
+        validateModel(model, monacoInstance, knownMethodNames, methodCallPattern);
+      });
     });
-  });
 
-  // Validate any already-open models
-  for (const model of monacoInstance.editor.getModels()) {
-    validateModel(model, monacoInstance, knownMethodNames, methodCallPattern);
+    for (const model of monacoInstance.editor.getModels()) {
+      validateModel(model, monacoInstance, knownMethodNames, methodCallPattern);
+    }
+  } catch {
+    // Monaco API may not support all methods in all versions — fail silently
+    console.warn('[aspireCompletions] Validation markers not available');
   }
 }
 
