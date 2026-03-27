@@ -30,7 +30,19 @@ public record QuizSubmitResponse(
     bool IsPerfect,
     List<QuizQuestionResult> Results,
     LevelUpInfo? LevelUp,
-    List<AchievementUnlocked> AchievementsUnlocked);
+    List<AchievementUnlocked> AchievementsUnlocked,
+    int AttemptNumber);
+
+public record QuizAttemptDto(
+    Guid Id,
+    int Score,
+    int MaxScore,
+    bool Passed,
+    bool IsPerfect,
+    int XpEarned,
+    int BonusXpEarned,
+    int AttemptNumber,
+    DateTime CompletedAt);
 
 public record AchievementUnlocked(string Id, string Name, string Icon, string Rarity, int XpReward);
 
@@ -46,6 +58,7 @@ public static class QuizEndpoints
 
         group.MapPost("/{lessonId}/submit", SubmitQuizAsync);
         group.MapPost("/{lessonId}/answer", AnswerSingleQuestionAsync);
+        group.MapGet("/{lessonId}/history", GetQuizHistoryAsync);
 
         return app;
     }
@@ -159,14 +172,8 @@ public static class QuizEndpoints
             return Results.Forbid();
         }
 
-        // Check if already completed with perfect score
         var existingProgress = await db.UserProgress
             .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lessonId);
-
-        if (existingProgress?.Status == ProgressStatuses.Perfect)
-        {
-            return Results.BadRequest(new ErrorResponse("Already completed with perfect score"));
-        }
 
         // Score the quiz
         var results = new List<QuizQuestionResult>();
@@ -193,8 +200,11 @@ public static class QuizEndpoints
         var isPerfect = percentage == 100;
         const int passingScore = 70;
 
-        s_logger.LogInformation("Quiz submit for LessonId={LessonId}, UserId={UserId}, score={Score}/{MaxScore}, passed={Passed}, isPerfect={IsPerfect}",
-            lessonId, userId, percentage, 100, passed, isPerfect);
+        var attemptNumber = (existingProgress?.Attempts ?? 0) + 1;
+        var alreadyPassed = existingProgress?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect;
+
+        s_logger.LogInformation("Quiz submit for LessonId={LessonId}, UserId={UserId}, score={Score}/{MaxScore}, passed={Passed}, isPerfect={IsPerfect}, attempt={Attempt}",
+            lessonId, userId, percentage, 100, passed, isPerfect, attemptNumber);
 
         AcademyMetrics.QuizzesSubmitted.Add(1);
         AcademyMetrics.QuizScorePercent.Record(
@@ -221,7 +231,6 @@ public static class QuizEndpoints
         }
 
         existingProgress.Attempts++;
-        existingProgress.Score = percentage;
         existingProgress.MaxScore = 100;
 
         if (passed && existingProgress.Status is ProgressStatuses.NotStarted or ProgressStatuses.InProgress)
@@ -229,7 +238,7 @@ public static class QuizEndpoints
             existingProgress.Status = isPerfect ? ProgressStatuses.Perfect : ProgressStatuses.Completed;
             existingProgress.CompletedAt = DateTime.UtcNow;
 
-            // Award base XP
+            // Award base XP on first pass
             xpEarned = lesson.XpReward;
             var result = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", lessonId);
             levelUp = result.LevelUp;
@@ -257,11 +266,36 @@ public static class QuizEndpoints
                 existingProgress.XpEarned += bonusXpEarned;
             }
         }
+        // Already perfect — retake allowed but no additional XP
+
+        // Update best score if this attempt is higher
+        if (percentage > (existingProgress.Score ?? 0))
+        {
+            existingProgress.Score = percentage;
+        }
+
+        // Save quiz attempt record
+        var attempt = new QuizAttempt
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            LessonId = lessonId,
+            Score = percentage,
+            MaxScore = 100,
+            Passed = passed,
+            IsPerfect = isPerfect,
+            XpEarned = xpEarned,
+            BonusXpEarned = bonusXpEarned,
+            AttemptNumber = attemptNumber,
+            Results = JsonSerializer.SerializeToDocument(results),
+            CompletedAt = DateTime.UtcNow
+        };
+        db.QuizAttempts.Add(attempt);
 
         await db.SaveChangesAsync();
 
-        // Check achievements
-        var achievements = passed
+        // Check achievements (only on first pass — not on retakes of already-passed quizzes)
+        var achievements = passed && !alreadyPassed
             ? await gamification.CheckAchievementsAsync(userId)
             : [];
 
@@ -276,7 +310,36 @@ public static class QuizEndpoints
             Results: results,
             LevelUp: levelUp,
             AchievementsUnlocked: achievements.Select(a =>
-                new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));
+                new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList(),
+            AttemptNumber: attemptNumber));
+    }
+
+    /// <summary>
+    /// Returns the user's quiz attempt history for a lesson, ordered by most recent first.
+    /// </summary>
+    private static async Task<IResult> GetQuizHistoryAsync(
+        string lessonId,
+        AcademyDbContext db,
+        ClaimsPrincipal user)
+    {
+        var userId = EndpointHelpers.GetUserId(user);
+
+        var attempts = await db.QuizAttempts
+            .Where(a => a.UserId == userId && a.LessonId == lessonId)
+            .OrderByDescending(a => a.CompletedAt)
+            .Select(a => new QuizAttemptDto(
+                a.Id,
+                a.Score,
+                a.MaxScore,
+                a.Passed,
+                a.IsPerfect,
+                a.XpEarned,
+                a.BonusXpEarned,
+                a.AttemptNumber,
+                a.CompletedAt))
+            .ToListAsync();
+
+        return Results.Ok(attempts);
     }
 
     private static (bool IsCorrect, List<string>? CorrectOptionIds) GradeQuestion(QuizQuestion question, QuizAnswer? answer)

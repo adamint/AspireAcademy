@@ -13,6 +13,8 @@ interface QuizResultsProps {
   xpEarned: number;
   results: QuestionResult[];
   nextLessonId?: string | null;
+  lessonId: string;
+  attemptNumber?: number;
   onReview?: () => void;
 }
 
@@ -24,6 +26,8 @@ export default function QuizResults({
   xpEarned,
   results,
   nextLessonId,
+  lessonId,
+  attemptNumber,
   onReview,
 }: QuizResultsProps) {
   const navigate = useNavigate();
@@ -134,6 +138,13 @@ export default function QuizResults({
           ))}
         </Flex>
 
+        {/* Attempt number */}
+        {attemptNumber && attemptNumber > 1 && (
+          <Text fontSize="xs" color="dark.muted" mb={4}>
+            Attempt #{attemptNumber}
+          </Text>
+        )}
+
         {/* Actions */}
         <HStack gap={3} justify="flex-end" wrap="wrap">
           {onReview && (
@@ -148,14 +159,41 @@ export default function QuizResults({
               Review Answers
             </Button>
           )}
-          {nextLessonId && (
+          <Button
+            data-testid="quiz-retake"
+            variant="outline"
+            borderColor="game.pixelBorder"
+            color="dark.text"
+            _hover={{ bg: 'content.hover' }}
+            onClick={() => {
+              // Force remount by navigating with state change
+              navigate(`/quizzes/${lessonId}`, { state: { retake: Date.now() } });
+              navigate(0); // Reload the route
+            }}
+          >
+            <FiRotateCcw />
+            Retake Quiz
+          </Button>
+          {nextLessonId ? (
             <Button
+              data-testid="quiz-continue"
               bg="aspire.600"
               color="white"
               _hover={{ bg: 'aspire.500' }}
               onClick={() => navigate(`/lessons/${nextLessonId}`)}
             >
               Continue
+              <FiArrowRight />
+            </Button>
+          ) : (
+            <Button
+              data-testid="quiz-back-to-lesson"
+              bg="aspire.600"
+              color="white"
+              _hover={{ bg: 'aspire.500' }}
+              onClick={() => navigate(`/lessons/${lessonId}`)}
+            >
+              Back to Lesson
               <FiArrowRight />
             </Button>
           )}

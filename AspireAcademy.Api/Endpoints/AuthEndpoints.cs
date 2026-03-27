@@ -267,10 +267,10 @@ public static partial class AuthEndpoints
                 ValidateLifetime = false, // allow expired tokens for refresh
             }, out var validatedToken);
 
-            // Reject tokens that expired more than 7 days ago to prevent
-            // indefinite reuse of very old tokens.
+            // Reject tokens that expired more than 2 days ago to limit
+            // the window for reusing stolen expired tokens.
             if (validatedToken is JwtSecurityToken jwt &&
-                jwt.ValidTo < DateTime.UtcNow.AddDays(-7))
+                jwt.ValidTo < DateTime.UtcNow.AddDays(-2))
             {
                 return null;
             }

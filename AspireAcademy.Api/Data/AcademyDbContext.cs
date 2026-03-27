@@ -19,6 +19,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
     public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
     public DbSet<Friendship> Friendships => Set<Friendship>();
     public DbSet<XpEvent> XpEvents => Set<XpEvent>();
+    public DbSet<QuizAttempt> QuizAttempts => Set<QuizAttempt>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -324,6 +325,37 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
 
             e.HasIndex(x => x.UserId).HasDatabaseName("ix_xp_events_user_id");
             e.HasIndex(x => x.CreatedAt).HasDatabaseName("ix_xp_events_created_at");
+        });
+
+        // ── QuizAttempts ──
+        modelBuilder.Entity<QuizAttempt>(e =>
+        {
+            e.ToTable("quiz_attempts");
+            e.HasKey(a => a.Id);
+            e.Property(a => a.Id).HasDefaultValueSql("gen_random_uuid()");
+            e.Property(a => a.UserId).IsRequired();
+            e.Property(a => a.LessonId).HasMaxLength(50).IsRequired();
+            e.Property(a => a.Score).IsRequired();
+            e.Property(a => a.MaxScore).HasDefaultValue(100).IsRequired();
+            e.Property(a => a.Passed).IsRequired();
+            e.Property(a => a.IsPerfect).IsRequired();
+            e.Property(a => a.XpEarned).HasDefaultValue(0).IsRequired();
+            e.Property(a => a.BonusXpEarned).HasDefaultValue(0).IsRequired();
+            e.Property(a => a.AttemptNumber).IsRequired();
+            e.Property(a => a.Results).HasColumnType("jsonb").IsRequired();
+            e.Property(a => a.CompletedAt).HasDefaultValueSql("now()").IsRequired();
+
+            e.HasOne(a => a.User)
+                .WithMany(u => u.QuizAttempts)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(a => a.Lesson)
+                .WithMany(l => l.QuizAttempts)
+                .HasForeignKey(a => a.LessonId);
+
+            e.HasIndex(a => new { a.UserId, a.LessonId }).HasDatabaseName("ix_quiz_attempts_user_lesson");
+            e.HasIndex(a => a.CompletedAt).HasDatabaseName("ix_quiz_attempts_completed_at");
         });
     }
 }

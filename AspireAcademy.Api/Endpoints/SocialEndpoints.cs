@@ -97,7 +97,7 @@ public static class SocialEndpoints
             var targetUser = await db.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
             if (targetUser is null)
             {
-                return Results.NotFound(new ErrorResponse("User not found."));
+                return Results.BadRequest(new ErrorResponse("Friend request could not be sent."));
             }
 
             if (targetUser.Id == userId)
@@ -133,7 +133,7 @@ public static class SocialEndpoints
                 friendship.Id, userId, targetUser.Id);
 
             return Results.Created($"/api/friends/{friendship.Id}", new { friendshipId = friendship.Id });
-        });
+        }).RequireRateLimiting("social-write");
 
         group.MapPost("/friends/{friendshipId:guid}/accept", async (Guid friendshipId, AcademyDbContext db, ClaimsPrincipal user) =>
         {
@@ -207,10 +207,10 @@ public static class SocialEndpoints
 
             if (!string.IsNullOrWhiteSpace(request.DisplayName))
             {
-                dbUser.DisplayName = request.DisplayName.Trim();
+                dbUser.DisplayName = SocialHelpers.SanitizeText(request.DisplayName.Trim());
             }
 
-            dbUser.Bio = request.Bio?.Trim();
+            dbUser.Bio = request.Bio is not null ? SocialHelpers.SanitizeText(request.Bio.Trim()) : null;
             dbUser.GitHubUsername = request.GitHubUsername?.Trim();
 
             await db.SaveChangesAsync();
@@ -568,6 +568,16 @@ file record LeaderboardResponse(
     int TotalEntries);
 
 file record ActivityDay(string Date, int Count);
+
+// Strip HTML/script tags from user-supplied text to prevent stored XSS
+file static class SocialHelpers
+{
+    private static readonly System.Text.RegularExpressions.Regex s_htmlTagRegex =
+        new(@"<[^>]+>", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    internal static string SanitizeText(string input) =>
+        s_htmlTagRegex.Replace(input, string.Empty);
+}
 
 file record ActivityHeatmapResponse(List<ActivityDay> Days);
 

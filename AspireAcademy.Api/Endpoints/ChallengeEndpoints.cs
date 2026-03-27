@@ -47,7 +47,7 @@ public static class ChallengeEndpoints
         var group = app.MapGroup("/api/challenges").RequireAuthorization();
 
         group.MapPost("/{lessonId}/run", RunCodeAsync);
-        group.MapPost("/{lessonId}/submit", SubmitChallengeAsync);
+        group.MapPost("/{lessonId}/submit", SubmitChallengeAsync).RequireRateLimiting("social-write");
 
         return app;
     }

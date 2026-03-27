@@ -26,4 +26,5 @@ public class User
     public ICollection<XpEvent> XpEvents { get; set; } = [];
     public ICollection<Friendship> SentFriendRequests { get; set; } = [];
     public ICollection<Friendship> ReceivedFriendRequests { get; set; } = [];
+    public ICollection<QuizAttempt> QuizAttempts { get; set; } = [];
 }

@@ -24,4 +24,5 @@ public class Lesson
     public ICollection<QuizQuestion> QuizQuestions { get; set; } = [];
     public ICollection<CodeChallenge> CodeChallenges { get; set; } = [];
     public ICollection<UserProgress> UserProgress { get; set; } = [];
+    public ICollection<QuizAttempt> QuizAttempts { get; set; } = [];
 }

@@ -65,6 +65,7 @@ interface QuizSubmitResponse {
   passed: boolean;
   xpEarned: number;
   results: QuestionResult[];
+  attemptNumber?: number;
 }
 
 // ── Component ────────────────────────────────────────
@@ -287,6 +288,8 @@ export default function QuizPage() {
           xpEarned={quizResult.xpEarned}
           results={quizResult.results}
           nextLessonId={quiz.nextLessonId}
+          lessonId={lessonId!}
+          attemptNumber={quizResult.attemptNumber}
         />
       </Flex>
     );

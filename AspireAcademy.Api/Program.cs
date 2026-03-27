@@ -73,7 +73,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Rate limiting on auth endpoints
+// Rate limiting on auth endpoints and abuse-prone endpoints
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -101,6 +101,31 @@ builder.Services.AddRateLimiter(options =>
                 {
                     PermitLimit = 10,
                     Window = TimeSpan.FromMinutes(1)
+                }));
+
+    // AI chat: 20 requests per 5 minutes per user (cost control)
+    options.AddPolicy("ai-chat", httpContext =>
+        isDev && httpContext.Request.Headers.ContainsKey("X-Test-Client")
+            ? RateLimitPartition.GetNoLimiter(string.Empty)
+            : RateLimitPartition.GetSlidingWindowLimiter(
+                httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new SlidingWindowRateLimiterOptions
+                {
+                    PermitLimit = 20,
+                    Window = TimeSpan.FromMinutes(5),
+                    SegmentsPerWindow = 5
+                }));
+
+    // Friend requests: 10 per 5 minutes per user (spam prevention)
+    options.AddPolicy("social-write", httpContext =>
+        isDev && httpContext.Request.Headers.ContainsKey("X-Test-Client")
+            ? RateLimitPartition.GetNoLimiter(string.Empty)
+            : RateLimitPartition.GetFixedWindowLimiter(
+                httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 10,
+                    Window = TimeSpan.FromMinutes(5)
                 }));
 });
 

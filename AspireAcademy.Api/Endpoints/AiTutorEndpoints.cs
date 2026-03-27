@@ -21,7 +21,7 @@ public static class AiTutorEndpoints
     {
         s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("AiTutorEndpoints");
 
-        var group = app.MapGroup("/api/ai").RequireAuthorization();
+        var group = app.MapGroup("/api/ai").RequireAuthorization().RequireRateLimiting("ai-chat");
 
         group.MapPost("/chat", async ([FromBody] AiChatRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user, HttpContext httpContext) =>
         {
