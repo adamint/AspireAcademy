@@ -15,6 +15,9 @@ public class Lesson
     public string? UnlockAfterLessonId { get; set; }
     public bool IsBoss { get; set; }
 
+    /// <summary>Per-persona relevance loaded from YAML. Not persisted to DB.</summary>
+    public Dictionary<string, string>? PersonaRelevance { get; set; }
+
     // Navigation
     public Module Module { get; set; } = null!;
     public Lesson? UnlockAfterLesson { get; set; }

@@ -14,9 +14,7 @@ questions:
   - id: d
     text: WebSocket with Protocol Buffers
     isCorrect: false
-  explanation: The RemoteHost bridge uses JSON-RPC 2.0 over Unix domain sockets (or
-    named pipes on Windows). This provides low-latency local communication with a
-    simple text-based protocol.
+  explanation: The RemoteHost bridge uses JSON-RPC 2.0 over Unix domain sockets. Local communication with microsecond latency.
 - text: What are the three type categories in the Application Type System (ATS)?
   type: multiple-choice
   options:
@@ -32,6 +30,38 @@ questions:
   - id: d
     text: Input types, output types, and error types
     isCorrect: false
-  explanation: 'ATS categorizes types into: Handle types (passed by reference with
-    opaque IDs, marked with [AspireExport]), DTO types (passed by value as JSON, marked
-    with [AspireDto]), and Enum types (serialized as strings).'
+  explanation: 'ATS categorizes types into: Handle types (passed by reference via opaque IDs, [AspireExport]), DTO types (passed by value as JSON, [AspireDto]), and Enum types (serialized as strings).'
+- text: What happens when a TypeScript AppHost calls builder.addRedis("cache")?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Redis is installed via npm
+    isCorrect: false
+  - id: b
+    text: A JSON-RPC message is sent to RemoteHost, which calls the .NET AddRedis extension method and returns a handle ID
+    isCorrect: true
+  - id: c
+    text: A Redis container is started immediately
+    isCorrect: false
+  - id: d
+    text: The TypeScript SDK creates a RedisResource object locally
+    isCorrect: false
+  explanation: The generated .modules/aspire.js proxy sends invokeCapability("addRedis", {builderHandle, name}) over the Unix socket. RemoteHost routes it to the .NET AddRedis method, registers the result
+    in HandleRegistry, and returns the handle ID.
+- text: Why does Aspire generate language-specific SDKs instead of reimplementing the hosting SDK in each language?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Generated SDKs are smaller
+    isCorrect: false
+  - id: b
+    text: One .NET implementation ensures all languages get the same features immediately; generated SDKs provide type safety without duplication
+    isCorrect: true
+  - id: c
+    text: Other languages cannot implement the resource model
+    isCorrect: false
+  - id: d
+    text: The ATS specification requires code generation
+    isCorrect: false
+  explanation: Reimplementing the hosting SDK in 6 languages would mean maintaining 6 copies and keeping them in sync. The RemoteHost bridge lets every language use the one .NET SDK. Code generation provides
+    type safety and IDE autocomplete in each language.

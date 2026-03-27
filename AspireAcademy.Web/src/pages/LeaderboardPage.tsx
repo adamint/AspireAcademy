@@ -138,7 +138,7 @@ export default function LeaderboardPage() {
                   {/* Rank */}
                   <Box w="48px" textAlign="center" flexShrink={0}>
                     {medals[entry.rank] ? (
-                      <Text fontSize="24px" lineHeight="1">{medals[entry.rank]}</Text>
+                      <Text fontSize="24px" lineHeight="1" aria-hidden="true">{medals[entry.rank]}</Text>
                     ) : (
                       <Text {...pixelFontProps} fontSize="12px" fontWeight="bold">
                         #{entry.rank}

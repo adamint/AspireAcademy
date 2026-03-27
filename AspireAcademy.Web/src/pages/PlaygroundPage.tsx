@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -11,6 +11,7 @@ import {
   Badge,
   Tabs,
   SimpleGrid,
+  Textarea,
 } from '@chakra-ui/react';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import {
@@ -38,6 +39,8 @@ import {
   TbCloud,
   TbLock,
   TbVariable,
+  TbDownload,
+  TbUpload,
 } from 'react-icons/tb';
 import type { IconType } from 'react-icons';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -671,15 +674,114 @@ function makeCSharpScaffold(name: string, refs: PlaygroundResource[]): ProjectSc
   ];
 }
 
+// ─── Import parser ───────────────────────────────────────────────────────────
+
+const METHOD_TO_TYPE: Record<string, ResourceType> = {
+  AddPostgres: 'postgres', AddRedis: 'redis', AddSqlServer: 'sqlserver',
+  AddMongoDB: 'mongodb', AddRabbitMQ: 'rabbitmq', AddKafka: 'kafka',
+  AddProject: 'project', AddContainer: 'container',
+  AddViteApp: 'npmapp', AddJavaScriptApp: 'npmapp', AddNodeApp: 'npmapp',
+  AddUvicornApp: 'pythonapp', AddUvApp: 'pythonapp',
+  AddAzureStorage: 'azurestorage', AddAzureKeyVault: 'keyvault',
+  AddParameter: 'parameter',
+};
+
+function parseAppHostCode(code: string): PlaygroundResource[] {
+  const resources: PlaygroundResource[] = [];
+  const varToId = new Map<string, string>();
+
+  // Match: var <varName> = builder.<Method>("<name>"...)
+  const addRegex = /(?:var|const)\s+(\w+)\s*=\s*builder\.(\w+)\s*(?:<[^>]+>)?\s*\("([^"]+)"(?:\s*,\s*"([^"]*)")?/g;
+  let match;
+  while ((match = addRegex.exec(code)) !== null) {
+    const [, varName, method, name, secondArg] = match;
+    const type = METHOD_TO_TYPE[method];
+    if (!type) continue;
+
+    const id = makeId();
+    varToId.set(varName, id);
+
+    const r = makeResource({ id, type, name });
+    if (type === 'container' && secondArg) r.image = secondArg;
+    if ((type === 'npmapp') && secondArg) r.projectPath = secondArg;
+    if (type === 'pythonapp' && secondArg) r.projectPath = secondArg;
+    if (type === 'parameter' && code.includes(`${varName}`) && /secret\s*:\s*true/i.test(code.substring(match.index, match.index + 200))) {
+      r.isSecret = true;
+    }
+    resources.push(r);
+  }
+
+  // Match: .AddDatabase("<name>")
+  const dbRegex = /(\w+)\.AddDatabase\s*\("([^"]+)"\)/g;
+  while ((match = dbRegex.exec(code)) !== null) {
+    const [, parentVar, dbName] = match;
+    const parentId = varToId.get(parentVar);
+    if (parentId) {
+      const parent = resources.find((r) => r.id === parentId);
+      if (parent) parent.databases.push(dbName);
+    }
+  }
+
+  // Match: .WithReference(<var>) and .WaitFor(<var>)
+  const chainRegex = /(\w+)(?:\.[\w<>]+\([^)]*\))*\.(WithReference|WaitFor)\((\w+)\)/g;
+  while ((match = chainRegex.exec(code)) !== null) {
+    const [, consumerVar, method, depVar] = match;
+    const consumerId = varToId.get(consumerVar);
+    const depId = varToId.get(depVar);
+    if (!consumerId || !depId) continue;
+    const consumer = resources.find((r) => r.id === consumerId);
+    if (!consumer) continue;
+    if (method === 'WithReference' && !consumer.references.includes(depId)) {
+      consumer.references.push(depId);
+    }
+    if (method === 'WaitFor' && !consumer.waitFor.includes(depId)) {
+      consumer.waitFor.push(depId);
+    }
+  }
+
+  // Match: .WithDataVolume()
+  for (const r of resources) {
+    const varName = [...varToId.entries()].find(([, id]) => id === r.id)?.[0];
+    if (varName && new RegExp(`${varName}[^;]*\\.WithDataVolume`).test(code)) r.hasDataVolume = true;
+    if (varName && new RegExp(`${varName}[^;]*\\.WithLifetime\\(ContainerLifetime\\.Persistent\\)`).test(code)) r.isPersistent = true;
+    if (varName && new RegExp(`${varName}[^;]*\\.WithExternalHttpEndpoints`).test(code)) r.hasExternalEndpoints = true;
+    if (varName && new RegExp(`${varName}[^;]*\\.WithHttpEndpoint`).test(code)) r.hasExternalEndpoints = true;
+  }
+
+  return resources;
+}
+
+// ─── localStorage persistence ────────────────────────────────────────────────
+
+const STORAGE_KEY = 'aspire-playground-resources';
+
+function saveToStorage(resources: PlaygroundResource[]): void {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(resources)); } catch { /* quota */ }
+}
+
+function loadFromStorage(): PlaygroundResource[] | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch { return null; }
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function PlaygroundPage() {
-  const [resources, setResources] = useState<PlaygroundResource[]>([]);
+  const [resources, setResources] = useState<PlaygroundResource[]>(() => loadFromStorage() ?? []);
   const [connectingFrom, setConnectingFrom] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [activeLanguage, setActiveLanguage] = useState<CodeLanguage>('csharp');
   const [showScaffolds, setShowScaffolds] = useState(false);
   const [activeTab, setActiveTab] = useState('canvas');
+  const [importText, setImportText] = useState('');
+  const [showImport, setShowImport] = useState(false);
+
+  // Persist to localStorage on every change
+  useEffect(() => { saveToStorage(resources); }, [resources]);
 
   const examples = useMemo(() => buildExamples(), []);
 
@@ -727,8 +829,15 @@ export default function PlaygroundPage() {
       return {
         ...r,
         references: hasRef ? r.references.filter((x) => x !== toId) : [...r.references, toId],
-        waitFor: hasRef ? r.waitFor.filter((x) => x !== toId) : [...r.waitFor, toId],
       };
+    }));
+  }, []);
+
+  const toggleWaitFor = useCallback((fromId: string, toId: string) => {
+    setResources((prev) => prev.map((r) => {
+      if (r.id !== fromId) return r;
+      const has = r.waitFor.includes(toId);
+      return { ...r, waitFor: has ? r.waitFor.filter((x) => x !== toId) : [...r.waitFor, toId] };
     }));
   }, []);
 
@@ -799,14 +908,50 @@ export default function PlaygroundPage() {
   const handleConnect = useCallback((resourceId: string) => {
     if (connectingFrom === null) setConnectingFrom(resourceId);
     else if (connectingFrom === resourceId) setConnectingFrom(null);
-    else { toggleReference(connectingFrom, resourceId); setConnectingFrom(null); }
-  }, [connectingFrom, toggleReference]);
+    else {
+      // Connect adds both WithReference and WaitFor by default
+      toggleReference(connectingFrom, resourceId);
+      toggleWaitFor(connectingFrom, resourceId);
+      setConnectingFrom(null);
+    }
+  }, [connectingFrom, toggleReference, toggleWaitFor]);
 
   const getResourceName = useCallback((id: string) =>
     resources.find((r) => r.id === id)?.name ?? id, [resources]);
 
   const findTemplate = useCallback((type: ResourceType) =>
     RESOURCE_TEMPLATES.find((t) => t.type === type)!, []);
+
+  const nameWarnings = useMemo(() => {
+    const warnings: string[] = [];
+    const names = resources.map((r) => r.name);
+    for (const r of resources) {
+      if (!r.name.trim()) warnings.push(`Resource has an empty name`);
+      if (names.filter((n) => n === r.name).length > 1) warnings.push(`Duplicate name: "${r.name}"`);
+    }
+    return [...new Set(warnings)];
+  }, [resources]);
+
+  const downloadCode = useCallback(() => {
+    const filename = activeLanguage === 'typescript' ? 'apphost.ts' : 'Program.cs';
+    const blob = new Blob([generatedCode], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [generatedCode, activeLanguage]);
+
+  const handleImport = useCallback(() => {
+    const parsed = parseAppHostCode(importText);
+    if (parsed.length > 0) {
+      setResources(parsed);
+      setShowImport(false);
+      setImportText('');
+      setActiveTab('canvas');
+    }
+  }, [importText]);
 
   return (
     <Box maxW="1600px" mx="auto" px={{ base: '4', md: '6' }} py="6" data-testid="playground-page">
@@ -1095,22 +1240,83 @@ export default function PlaygroundPage() {
                         </Box>
                       )}
 
+                      {/* Environment variables */}
+                      {resource.type !== 'parameter' && resource.envVars.length > 0 && (
+                        <Box>
+                          <Text fontSize="2xs" color="dark.muted" fontWeight="bold" mb="1">Env</Text>
+                          {resource.envVars.map((env, idx) => (
+                            <Flex key={idx} gap="1" mb="1" align="center">
+                              <Input size="xs" value={env.key} placeholder="KEY" flex="1"
+                                onChange={(e) => updateEnvVar(resource.id, idx, 'key', e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label={`Environment variable key ${idx + 1}`}
+                              />
+                              <Text fontSize="2xs" color="dark.muted">=</Text>
+                              <Input size="xs" value={env.value} placeholder="val" flex="1"
+                                onChange={(e) => updateEnvVar(resource.id, idx, 'value', e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label={`Environment variable value ${idx + 1}`}
+                              />
+                              <IconButton aria-label={`Remove env var ${env.key}`} size="xs" variant="ghost" colorPalette="red"
+                                onClick={(e) => { e.stopPropagation(); removeEnvVar(resource.id, idx); }}
+                              >
+                                <TbTrash />
+                              </IconButton>
+                            </Flex>
+                          ))}
+                        </Box>
+                      )}
+                      {resource.type !== 'parameter' && (
+                        <Button size="xs" variant="ghost" colorPalette="purple"
+                          onClick={(e) => { e.stopPropagation(); addEnvVar(resource.id); }}
+                          aria-label={`Add environment variable to ${resource.name}`}
+                        >
+                          <TbPlus /> Env
+                        </Button>
+                      )}
+
                       {/* References */}
                       {resource.references.length > 0 && (
-                        <Flex gap="1.5" flexWrap="wrap" role="list" aria-label="Referenced resources">
-                          {resource.references.map((refId) => (
-                            <Badge key={refId} colorPalette="purple" variant="subtle" fontSize="2xs"
-                              cursor="pointer" role="listitem"
-                              tabIndex={0}
-                              onClick={(e) => { e.stopPropagation(); toggleReference(resource.id, refId); }}
-                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleReference(resource.id, refId); } }}
-                              aria-label={`Remove reference to ${getResourceName(refId)}`}
-                              data-testid={`ref-badge-${resource.name}-${getResourceName(refId)}`}
-                            >
-                              🔗 {getResourceName(refId)} ✕
-                            </Badge>
-                          ))}
-                        </Flex>
+                        <Box>
+                          <Text fontSize="2xs" color="dark.muted" mb="1">Refs</Text>
+                          <Flex gap="1.5" flexWrap="wrap" role="list" aria-label="Referenced resources">
+                            {resource.references.map((refId) => (
+                              <Badge key={refId} colorPalette="purple" variant="subtle" fontSize="2xs"
+                                cursor="pointer" role="listitem" tabIndex={0}
+                                onClick={(e) => { e.stopPropagation(); toggleReference(resource.id, refId); }}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleReference(resource.id, refId); } }}
+                                aria-label={`Remove reference to ${getResourceName(refId)}`}
+                                data-testid={`ref-badge-${resource.name}-${getResourceName(refId)}`}
+                              >
+                                🔗 {getResourceName(refId)} ✕
+                              </Badge>
+                            ))}
+                          </Flex>
+                        </Box>
+                      )}
+
+                      {/* WaitFor */}
+                      {resource.waitFor.length > 0 && (
+                        <Box>
+                          <Text fontSize="2xs" color="dark.muted" mb="1">WaitFor</Text>
+                          <Flex gap="1.5" flexWrap="wrap" role="list" aria-label="WaitFor dependencies">
+                            {resource.waitFor.map((wfId) => (
+                              <Badge key={wfId} colorPalette="blue" variant="subtle" fontSize="2xs"
+                                cursor="pointer" role="listitem" tabIndex={0}
+                                onClick={(e) => { e.stopPropagation(); toggleWaitFor(resource.id, wfId); }}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleWaitFor(resource.id, wfId); } }}
+                                aria-label={`Remove WaitFor on ${getResourceName(wfId)}`}
+                              >
+                                ⏳ {getResourceName(wfId)} ✕
+                              </Badge>
+                            ))}
+                          </Flex>
+                        </Box>
+                      )}
+
+                      {/* Name validation warning */}
+                      {!resource.name.trim() && (
+                        <Text fontSize="2xs" color="red.400">Name cannot be empty</Text>
                       )}
                     </Card.Body>
                   </Card.Root>
@@ -1139,13 +1345,62 @@ export default function PlaygroundPage() {
                     ))}
                   </Tabs.List>
                 </Tabs.Root>
-                <Button size="xs" variant="outline"
-                  colorPalette={copied ? 'green' : 'purple'}
-                  onClick={copyCode} data-testid="copy-code-btn"
-                >
-                  <TbCopy /> {copied ? 'Copied!' : 'Copy'}
-                </Button>
+                <Flex gap="2">
+                  <Button size="xs" variant="outline"
+                    colorPalette={copied ? 'green' : 'purple'}
+                    onClick={copyCode} data-testid="copy-code-btn"
+                  >
+                    <TbCopy /> {copied ? 'Copied!' : 'Copy'}
+                  </Button>
+                  <Button size="xs" variant="outline" colorPalette="purple"
+                    onClick={downloadCode} aria-label="Download code file"
+                  >
+                    <TbDownload /> Download
+                  </Button>
+                  <Button size="xs" variant={showImport ? 'solid' : 'outline'} colorPalette="purple"
+                    onClick={() => setShowImport(!showImport)} aria-label="Import AppHost code"
+                  >
+                    <TbUpload /> Import
+                  </Button>
+                </Flex>
               </Flex>
+
+              {/* Import panel */}
+              {showImport && (
+                <Box mb="4" p="3" bg="dark.surface" borderRadius="sm" border="1px solid" borderColor="dark.border">
+                  <Text fontSize="xs" color="dark.muted" mb="2">
+                    Paste C# AppHost code to import resources:
+                  </Text>
+                  <Textarea
+                    size="sm" value={importText}
+                    onChange={(e) => setImportText(e.target.value)}
+                    placeholder="var builder = DistributedApplication.CreateBuilder(args);&#10;var postgres = builder.AddPostgres(&quot;pg&quot;);&#10;..."
+                    rows={6}
+                    fontFamily="mono" fontSize="12px"
+                    bg="#0D0B1A" color="dark.text"
+                    aria-label="AppHost code to import"
+                  />
+                  <Flex gap="2" mt="2">
+                    <Button size="xs" colorPalette="purple" onClick={handleImport}
+                      disabled={!importText.trim()}
+                    >
+                      Import Resources
+                    </Button>
+                    <Button size="xs" variant="ghost" onClick={() => { setShowImport(false); setImportText(''); }}>
+                      Cancel
+                    </Button>
+                  </Flex>
+                </Box>
+              )}
+
+              {/* Name warnings */}
+              {nameWarnings.length > 0 && (
+                <Box mb="3" p="2" bg="red.950" borderRadius="sm" border="1px solid" borderColor="red.700">
+                  {nameWarnings.map((w, i) => (
+                    <Text key={i} fontSize="xs" color="red.300">⚠️ {w}</Text>
+                  ))}
+                </Box>
+              )}
 
               <Box borderRadius="sm" overflow="auto" maxH="600px" role="region" aria-label="Generated AppHost code"
                 css={{ '& pre': { margin: 0, borderRadius: '4px', fontSize: '13px !important' } }}

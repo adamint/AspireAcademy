@@ -52,16 +52,16 @@ export const changelog: ChangelogEntry[] = [
       { type: 'feature', text: 'Retro pixel-art game aesthetic with "Press Start 2P" font' },
       { type: 'feature', text: 'DiceBear pixel-art avatar randomizer' },
       { type: 'improvement', text: 'WCAG AA contrast compliance' },
-      { type: 'content', text: 'Curriculum expanded to 8 worlds with 174 lessons' },
+      { type: 'content', text: 'Curriculum expanded to 13 worlds with 153 lessons' },
     ]
   },
   {
     version: '1.0.0',
     date: '2026-03-15',
     title: '🚀 Launch',
-    highlights: ['8 worlds', 'Code challenges', 'Gamification'],
+    highlights: ['13 worlds', 'Code challenges', 'Gamification'],
     entries: [
-      { type: 'feature', text: 'Initial release with 8 worlds of Aspire content' },
+      { type: 'feature', text: 'Initial release with 13 worlds of Aspire content' },
       { type: 'feature', text: 'Interactive code challenges with static checker' },
       { type: 'feature', text: 'XP, levels, ranks, streaks, and achievements' },
       { type: 'feature', text: 'Leaderboard and friends system' },

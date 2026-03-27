@@ -14,11 +14,13 @@ export function AppShell() {
 
   return (
     <Flex direction="column" h="100vh" overflow="hidden">
+      <a href="#main-content" className="skip-to-main">Skip to main content</a>
       <TopBar onToggleSidebar={toggleSidebar} />
       <DailyRewardPopup />
       <Flex flexGrow={1} overflow="hidden">
         <Sidebar open={sidebarOpen} onClose={closeSidebar} />
         <Box
+          id="main-content"
           as="main"
           flexGrow={1}
           overflowY="auto"

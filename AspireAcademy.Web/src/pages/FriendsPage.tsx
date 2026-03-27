@@ -8,6 +8,7 @@ import api from '../services/apiClient';
 import { useAuthStore } from '../store/authStore';
 import FriendCard, { type FriendCardUser } from '../components/social/FriendCard';
 import ChallengeButton from '../components/social/ChallengeButton';
+import { extractErrorMessage } from '../utils/errorHandler';
 import { pixelFontProps } from '../theme/aspireTheme';
 
 interface FriendRequest {
@@ -95,12 +96,7 @@ export default function FriendsPage() {
     },
     onError: (err) => {
       console.error('[FriendsPage] Friend action failed:', err);
-      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
-      setActionError(
-        axiosErr?.response?.data?.error ??
-        axiosErr?.response?.data?.message ??
-        'Action failed. Please try again.'
-      );
+      setActionError(extractErrorMessage(err, 'Action failed. Please try again.'));
     },
   });
 
@@ -118,14 +114,14 @@ export default function FriendsPage() {
 
       {/* Error feedback */}
       {actionError && (
-        <Box bg="rgba(209, 52, 56, 0.15)" border="2px solid" borderColor="game.error" borderRadius="sm" px="3" py="2">
+        <Box role="alert" bg="rgba(209, 52, 56, 0.15)" border="2px solid" borderColor="game.error" borderRadius="sm" px="3" py="2">
           <Text color="game.error" fontSize="sm">{actionError}</Text>
         </Box>
       )}
 
       {/* Search */}
       <Flex align="center" gap={2} maxW="400px">
-        <Box color="dark.muted"><FiSearch /></Box>
+        <Box color="dark.muted" aria-hidden="true"><FiSearch /></Box>
         <Input
           placeholder="Search users..."
           value={searchQuery}
@@ -135,6 +131,7 @@ export default function FriendsPage() {
           color="dark.text"
           borderColor="dark.border"
           _placeholder={{ color: 'dark.muted' }}
+          aria-label="Search for users to add as friends"
         />
       </Flex>
 

@@ -1,28 +1,24 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Box, Flex, Text, Heading, Button, SimpleGrid, Card } from '@chakra-ui/react';
 import { useAuthStore } from '../store/authStore';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
+import api from '../services/apiClient';
+import type { World } from '../types/curriculum';
 
 /* ───────────────────────────── constants ───────────────────────────── */
 
-const WORLDS = [
-  { icon: '🌌', name: 'Cloud Foundations', desc: 'Azure basics & cloud-native concepts' },
-  { icon: '🏗️', name: 'App Host Mastery', desc: 'Orchestrate your first distributed app' },
-  { icon: '🔌', name: 'Service Discovery', desc: 'Connect services seamlessly' },
-  { icon: '🗄️', name: 'Data & Storage', desc: 'Databases, caches, and state' },
-  { icon: '📡', name: 'Messaging & Events', desc: 'Queues, topics, and event-driven design' },
-  { icon: '📊', name: 'Observability', desc: 'Logging, tracing, and metrics' },
-  { icon: '🚀', name: 'Deployment', desc: 'Ship to Azure with confidence' },
-  { icon: '🏆', name: 'Boss Challenges', desc: 'Prove your mastery end-to-end' },
-] as const;
-
-const STATS: { label: string; value: string; num: number }[] = [
-  { label: 'Worlds', value: '8', num: 8 },
-  { label: 'Lessons', value: '174', num: 174 },
-  { label: 'Code Challenges', value: '27', num: 27 },
-  { label: 'Fun', value: '∞', num: -1 },
-];
+function buildStats(worlds: World[] | undefined) {
+  const worldCount = worlds?.length ?? 13;
+  const lessonCount = worlds?.reduce((sum, w) => sum + w.totalLessons, 0) ?? 174;
+  return [
+    { label: 'Worlds', value: String(worldCount), num: worldCount },
+    { label: 'Lessons', value: String(lessonCount), num: lessonCount },
+    { label: 'Code Challenges', value: '27', num: 27 },
+    { label: 'Fun', value: '∞', num: -1 },
+  ];
+}
 
 const HOW_IT_WORKS = [
   { step: '1', icon: '📖', title: 'Learn', desc: 'Bite-sized lessons on every Aspire concept' },
@@ -30,19 +26,7 @@ const HOW_IT_WORKS = [
   { step: '3', icon: '⭐', title: 'Master', desc: 'Earn XP, rank up, and unlock achievements' },
 ];
 
-const SAMPLE_ACHIEVEMENTS = [
-  { icon: '🌱', name: 'First Steps', desc: 'Complete your first lesson' },
-  { icon: '🔥', name: 'On Fire', desc: '7-day login streak' },
-  { icon: '💎', name: 'Perfectionist', desc: 'Score 100% on any quiz' },
-  { icon: '🏗️', name: 'Architect', desc: 'Complete all 8 worlds' },
-];
 
-const MOCK_LEADERBOARD = [
-  { rank: 1, name: 'CloudNinja42', xp: 12_450, badge: '👑' },
-  { rank: 2, name: 'AspireHero', xp: 11_200, badge: '🥈' },
-  { rank: 3, name: 'DevQuester', xp: 10_800, badge: '🥉' },
-  { rank: 4, name: 'You?', xp: 0, badge: '🎯' },
-];
 
 /* ───────────────────────── CSS keyframes ───────────────────────── */
 
@@ -175,6 +159,8 @@ function NetworkCanvas() {
       h="100%"
       pointerEvents="none"
       zIndex={0}
+      aria-hidden="true"
+      role="presentation"
     />
   );
 }
@@ -293,6 +279,30 @@ export default function HomePage() {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const isLoggedIn = !!token;
+
+  const { data: worlds } = useQuery<World[]>({
+    queryKey: ['worlds'],
+    queryFn: () => api.get('/worlds').then((r) => r.data),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: achievements } = useQuery<{ id: string; name: string; description: string; icon: string }[]>({
+    queryKey: ['achievements-preview'],
+    queryFn: () => api.get('/achievements').then((r) => r.data),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: leaderboardData } = useQuery<{ entries: { rank: number; username: string; xp: number }[] }>({
+    queryKey: ['leaderboard-preview'],
+    queryFn: () => api.get('/leaderboard?scope=all-time&limit=3').then((r) => r.data),
+    staleTime: 5 * 60_000,
+  });
+
+  const topAchievements = (achievements ?? []).slice(0, 4);
+  const topLeaders = leaderboardData?.entries?.slice(0, 3) ?? [];
+  const medals: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+
+  const stats = buildStats(worlds);
 
   const tagline = useTypewriter('Master Aspire through play', 55);
 
@@ -563,7 +573,7 @@ export default function HomePage() {
               maxW="900px"
               mx="auto"
             >
-              {STATS.map((s) => (
+              {stats.map((s) => (
                 <Flex
                   key={s.label}
                   direction="column"
@@ -603,7 +613,7 @@ export default function HomePage() {
               🗺️ Choose Your World
             </Heading>
             <Text textAlign="center" color="whiteAlpha.600" mb="10" maxW="600px" mx="auto">
-              Eight themed worlds take you from cloud fundamentals to production-ready distributed apps
+              {worlds ? `${worlds.length} themed worlds` : 'Themed worlds'} take you from cloud fundamentals to production-ready distributed apps
             </Text>
           </FadeInSection>
 
@@ -614,8 +624,8 @@ export default function HomePage() {
             maxW="1000px"
             mx="auto"
           >
-            {WORLDS.map((w, i) => (
-              <FadeInSection key={w.name} delay={i * 0.08}>
+            {(worlds ?? []).map((w, i) => (
+              <FadeInSection key={w.id} delay={i * 0.08}>
                 <Card.Root
                   {...retroCardProps}
                   bg="rgba(26,11,46,0.7)"
@@ -628,7 +638,7 @@ export default function HomePage() {
                     borderColor: 'aspire.600',
                   }}
                   style={{ animation: 'card-glow 4s ease-in-out infinite' }}
-                  onClick={() => navigate(`/worlds/world-${i + 1}`)}
+                  onClick={() => navigate(`/worlds/${w.id}`)}
                 >
                   <Text fontSize="36px" mb="2">{w.icon}</Text>
                   <Text
@@ -640,7 +650,7 @@ export default function HomePage() {
                     {w.name}
                   </Text>
                   <Text fontSize="xs" color="whiteAlpha.600" lineHeight="1.5">
-                    {w.desc}
+                    {w.description}
                   </Text>
                 </Card.Root>
               </FadeInSection>
@@ -740,8 +750,8 @@ export default function HomePage() {
                   🎖️ Achievements
                 </Text>
                 <Flex direction="column" gap="3">
-                  {SAMPLE_ACHIEVEMENTS.map((a) => (
-                    <Flex key={a.name} align="center" gap="3">
+                  {topAchievements.map((a) => (
+                    <Flex key={a.id} align="center" gap="3">
                       <Flex
                         align="center"
                         justify="center"
@@ -758,7 +768,7 @@ export default function HomePage() {
                         <Text {...pixelFontProps} fontSize="9px" color="aspire.300">
                           {a.name}
                         </Text>
-                        <Text fontSize="xs" color="whiteAlpha.600">{a.desc}</Text>
+                        <Text fontSize="xs" color="whiteAlpha.600">{a.description}</Text>
                       </Box>
                     </Flex>
                   ))}
@@ -774,33 +784,35 @@ export default function HomePage() {
                     📊 Leaderboard
                   </Text>
                   <Flex direction="column" gap="2">
-                    {MOCK_LEADERBOARD.map((entry) => (
+                    {topLeaders.map((entry) => (
                       <Flex
                         key={entry.rank}
                         align="center"
                         justify="space-between"
                         px="3"
                         py="2"
-                        bg={entry.rank === 4 ? 'rgba(107,79,187,0.15)' : 'transparent'}
-                        border={entry.rank === 4 ? '1px dashed' : 'none'}
-                        borderColor="aspire.600"
                         borderRadius="sm"
                       >
                         <Flex align="center" gap="2">
-                          <Text fontSize="sm">{entry.badge}</Text>
+                          <Text fontSize="sm">{medals[entry.rank] ?? `#${entry.rank}`}</Text>
                           <Text
                             {...pixelFontProps}
                             fontSize="9px"
-                            color={entry.rank === 4 ? 'game.xpGold' : 'whiteAlpha.800'}
+                            color="whiteAlpha.800"
                           >
-                            {entry.name}
+                            {entry.username}
                           </Text>
                         </Flex>
                         <Text {...pixelFontProps} fontSize="9px" color="game.xpGold">
-                          {entry.rank === 4 ? '???' : entry.xp.toLocaleString()} XP
+                          {entry.xp.toLocaleString()} XP
                         </Text>
                       </Flex>
                     ))}
+                    {topLeaders.length === 0 && (
+                      <Text fontSize="xs" color="whiteAlpha.500" textAlign="center" py="2">
+                        No entries yet — be the first!
+                      </Text>
+                    )}
                   </Flex>
                 </Box>
 

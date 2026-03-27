@@ -10,6 +10,12 @@ namespace AspireAcademy.Api.Endpoints;
 /// </summary>
 internal static class EndpointHelpers
 {
+    /// <summary>Statuses that count as "completed" (no skipped).</summary>
+    internal static readonly string[] CompletedStatuses = [ProgressStatuses.Completed, ProgressStatuses.Perfect];
+
+    /// <summary>Statuses that count as "done" (completed + skipped).</summary>
+    internal static readonly string[] DoneStatuses = [ProgressStatuses.Completed, ProgressStatuses.Perfect, ProgressStatuses.Skipped];
+
     /// <summary>
     /// Extracts the authenticated user's ID from the claims principal.
     /// Supports both <see cref="ClaimTypes.NameIdentifier"/> and the "sub" claim.

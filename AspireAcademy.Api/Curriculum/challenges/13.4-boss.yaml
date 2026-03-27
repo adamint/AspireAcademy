@@ -1,10 +1,143 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// FINAL BOSS: Trace what happens when you write:
+
+  //   var db = builder.AddPostgres("pg").AddDatabase("atlas-db");
+
+  //   builder.AddProject<Projects.Api>("api").WithReference(db);
+
+  //
+
+  // Trace through the ENTIRE stack — from the builder call to how the API
+
+  // actually receives the connection string at runtime.
+
+  //
+
+  // Describe each layer:
+
+  // 1. Builder layer (what AddPostgres and WithReference do)
+
+  // 2. Annotation layer (what annotations are created)
+
+  // 3. DCP layer (how the resource is submitted)
+
+  // 4. Environment variable layer (how the connection string becomes an env var)
+
+  // 5. Service discovery layer (how the API reads the connection string)
+
+  // 6. Dashboard layer (how the resource appears in the UI)
+
+
+  // Layer 1 - Builder: TODO
+
+  // Layer 2 - Annotations: TODO
+
+  // Layer 3 - DCP: TODO
+
+  // Layer 4 - Environment Variables: TODO
+
+  // Layer 5 - Service Discovery: TODO
+
+  // Layer 6 - Dashboard: TODO'
+solutionCode: '// Layer 1 - Builder:
+
+  // AddPostgres("pg") creates a PostgresServerResource (ContainerResource) and adds it to builder.Resources.
+
+  // .AddDatabase("atlas-db") creates a PostgresDatabaseResource linked to the server.
+
+  // AddProject<Projects.Api>("api") creates a ProjectResource.
+
+  // .WithReference(db) adds a ConnectionStringRedirectAnnotation to the API resource,
+
+  // pointing to the database''s IResourceWithConnectionString implementation.
+
+
+  // Layer 2 - Annotations:
+
+  // PostgresServerResource gets: EndpointAnnotation (port 5432), HealthCheckAnnotation (pg_isready),
+
+  // ContainerImageAnnotation (postgres:17), EnvironmentCallbackAnnotation (POSTGRES_PASSWORD).
+
+  // PostgresDatabaseResource gets: connection string format referencing the server''s endpoint.
+
+  // API ProjectResource gets: ConnectionStringRedirectAnnotation pointing to atlas-db,
+
+  // WaitAnnotation (if WaitFor was called), EndpointAnnotation for its HTTP endpoint.
+
+
+  // Layer 3 - DCP:
+
+  // DcpExecutor.RunApplicationAsync() iterates model.Resources.
+
+  // PostgresServerResource -> KubernetesService.CreateAsync<Container>(new Container { Spec = { Image = "postgres:17", Ports = [5432], Env = [POSTGRES_PASSWORD=...] } })
+
+  // API ProjectResource -> KubernetesService.CreateAsync<Executable>(new Executable { Spec = { ExecutablePath = "dotnet", Args = ["run", "--project", "..."] } })
+
+  // DCP pulls the postgres image, starts the container, allocates a host port (e.g., 63211).
+
+
+  // Layer 4 - Environment Variables:
+
+  // DcpExecutor resolves all annotations for the API resource before starting it.
+
+  // ConnectionStringRedirectAnnotation -> resolves the database''s ConnectionStringExpression:
+
+  //   "Host={pg.bindings.tcp.host};Port={pg.bindings.tcp.port};Username=postgres;Password={pw};Database=atlas-db"
+
+  // Placeholders are replaced with actual values from DCP: Host=localhost, Port=63211
+
+  // Final env var injected: ConnectionStrings__atlas-db=Host=localhost;Port=63211;Username=postgres;Password=abc123;Database=atlas-db
+
+
+  // Layer 5 - Service Discovery:
+
+  // The API''s Program.cs calls builder.AddNpgsqlDataSource("atlas-db") (client integration).
+
+  // This reads Configuration.GetConnectionString("atlas-db") which resolves to the env var.
+
+  // NpgsqlDataSource is registered in DI with the full connection string.
+
+  // The API can now query PostgreSQL.
+
+
+  // Layer 6 - Dashboard:
+
+  // ResourceNotificationService receives state updates from DcpExecutor.
+
+  // It publishes CustomResourceSnapshot records for both "pg" and "api" resources.
+
+  // The Dashboard subscribes via gRPC and renders:
+
+  //   pg: Running (green), endpoints: tcp://localhost:63211
+
+  //   atlas-db: Running (linked to pg)
+
+  //   api: Running (green), endpoints: http://localhost:5001
+
+  // The connection string appears in the resource properties panel (masked for secrets).'
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must describe builder layer
+  value: PostgresServerResource
+- type: code-contains
+  description: Must describe annotations
+  value: ConnectionStringRedirectAnnotation
+- type: code-contains
+  description: Must describe DCP submission
+  value: CreateAsync
+- type: code-contains
+  description: Must describe env var resolution
+  value: ConnectionStrings__
+- type: code-contains
+  description: Must describe service discovery
+  value: GetConnectionString
+- type: code-contains
+  description: Must describe Dashboard
+  value: ResourceNotificationService
 hints:
-  - "Start by reading the instructions carefully"
+- AddPostgres creates a ContainerResource with image, port, and health check annotations
+- WithReference adds ConnectionStringRedirectAnnotation pointing to the database
+- DcpExecutor submits Container and Executable CRDs via IKubernetesService
+- DCP resolves ReferenceExpression placeholders into actual host:port values
+- The API reads ConnectionStrings__atlas-db from environment variables via IConfiguration
+- ResourceNotificationService pushes CustomResourceSnapshot updates to the Dashboard via gRPC
 requiredPackages: []

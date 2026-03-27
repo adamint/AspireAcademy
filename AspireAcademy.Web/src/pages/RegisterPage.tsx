@@ -6,6 +6,7 @@ import { useGamificationStore } from '../store/gamificationStore';
 import api from '../services/apiClient';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import type { AuthResponse } from '../types';
+import { extractErrorMessage } from '../utils/errorHandler';
 
 interface FormErrors {
   username?: string;
@@ -17,7 +18,7 @@ interface FormErrors {
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <Text fontSize="xs" color="game.error" mt="1">
+    <Text fontSize="xs" color="game.error" mt="1" role="alert">
       {message}
     </Text>
   );
@@ -98,12 +99,7 @@ export default function RegisterPage() {
       navigate('/dashboard');
     } catch (err: unknown) {
       console.error('[RegisterPage] Registration failed:', err);
-      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
-      const msg =
-        axiosErr?.response?.data?.error ??
-        axiosErr?.response?.data?.message ??
-        'Registration failed. Please try again.';
-      setServerError(msg);
+      setServerError(extractErrorMessage(err, 'Registration failed. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -152,6 +148,8 @@ export default function RegisterPage() {
         {/* Server error */}
         {serverError && (
           <Box
+            id="register-error"
+            role="alert"
             bg="rgba(209, 52, 56, 0.15)"
             border="2px solid"
             borderColor="game.error"
@@ -180,7 +178,8 @@ export default function RegisterPage() {
                 placeholder="hero_dev"
                 autoComplete="username"
                 size="md"
-                aria-required="true"
+                required
+                aria-invalid={!!fieldErrors.username}
                 {...inputStyles}
               />
               <FieldError message={fieldErrors.username} />
@@ -199,7 +198,8 @@ export default function RegisterPage() {
                 placeholder="hero@aspire.dev"
                 autoComplete="email"
                 size="md"
-                aria-required="true"
+                required
+                aria-invalid={!!fieldErrors.email}
                 {...inputStyles}
               />
               <FieldError message={fieldErrors.email} />
@@ -233,7 +233,8 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 autoComplete="new-password"
                 size="md"
-                aria-required="true"
+                required
+                aria-invalid={!!fieldErrors.password}
                 {...inputStyles}
               />
               <FieldError message={fieldErrors.password} />
@@ -252,7 +253,8 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 autoComplete="new-password"
                 size="md"
-                aria-required="true"
+                required
+                aria-invalid={!!fieldErrors.confirmPassword}
                 {...inputStyles}
               />
               <FieldError message={fieldErrors.confirmPassword} />

@@ -14,8 +14,7 @@ questions:
   - id: d
     text: A Docker network name
     isCorrect: false
-  explanation: For database resources, WithReference injects a full connection string
-    as ConnectionStrings__<name>. This includes host, port, database name, and credentials.
+  explanation: For database resources, WithReference injects a full connection string as ConnectionStrings__<name>. This includes host, port, database name, and credentials.
 - text: What does WithReference inject for a service resource (like an API)?
   type: multiple-choice
   options:
@@ -32,4 +31,35 @@ questions:
     text: A gRPC channel
     isCorrect: false
   explanation: For service resources, WithReference injects the endpoint URL as services__<name>__<scheme>__<index>.
-    This is how service discovery works in Aspire.
+- text: In C#, how does service discovery resolve http://api to an actual URL?
+  type: multiple-choice
+  options:
+  - id: a
+    text: DNS lookup
+    isCorrect: false
+  - id: b
+    text: The ServiceDefaults service discovery middleware reads services__api__http__0 from environment variables
+    isCorrect: true
+  - id: c
+    text: It queries the Aspire Dashboard
+    isCorrect: false
+  - id: d
+    text: It reads from appsettings.json
+    isCorrect: false
+  explanation: AddServiceDefaults registers a service discovery provider that reads services__* environment variables. When HttpClient sees http://api, it resolves api to the URL from services__api__http__0.
+- text: Can a Go service use Aspire service discovery?
+  type: multiple-choice
+  options:
+  - id: a
+    text: No, service discovery is .NET only
+    isCorrect: false
+  - id: b
+    text: Yes, but it reads the endpoint URL directly from the environment variable instead of using hostname resolution
+    isCorrect: true
+  - id: c
+    text: Yes, via a Go module
+    isCorrect: false
+  - id: d
+    text: Only if the Go service runs in a container
+    isCorrect: false
+  explanation: Go services read the full endpoint URL from os.Getenv("services__api__http__0"). There is no automatic hostname resolution like in .NET — the environment variable contains the complete URL.

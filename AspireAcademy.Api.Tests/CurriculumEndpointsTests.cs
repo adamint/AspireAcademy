@@ -138,10 +138,15 @@ public class CurriculumEndpointsTests : TestFixture
     }
 
     [Fact]
-    public async Task GetWorlds_WithoutAuth_Returns401()
+    public async Task GetWorlds_WithoutAuth_ReturnsWorldsWithAllUnlocked()
     {
         var response = await Client.GetAsync("/api/worlds");
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var worlds = await ReadJsonAsync<List<WorldDto>>(response);
+        worlds.Should().NotBeNull();
+        worlds.Should().HaveCount(2);
+        worlds!.Should().AllSatisfy(w => w.IsUnlocked.Should().BeTrue(),
+            "anonymous users should see all worlds as unlocked");
     }
 }

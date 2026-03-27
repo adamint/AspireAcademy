@@ -41,7 +41,7 @@ interface ConceptNode {
 const CONCEPTS: ConceptNode[] = [
   // Core
   { id: 'AppHost', label: 'AppHost', layer: 'core', description: 'The heart of every Aspire app — orchestrates all resources and services.', lessonId: '1.2.3', emoji: '🏠' },
-  { id: 'DistributedApplication', label: 'DistributedApplication', layer: 'core', description: 'The entry point: DistributedApplication.CreateBuilder() sets up the app model.', lessonId: '1.2.4', emoji: '🌐' },
+  { id: 'DistributedApplication', label: 'DistributedApplication', layer: 'core', description: 'The entry point: DistributedApplication.CreateBuilder() sets up the app model.', lessonId: '2.1.1', emoji: '🌐' },
   // Resources
   { id: 'PostgreSQL', label: 'PostgreSQL', layer: 'resource', description: 'Add a PostgreSQL server with AddPostgres() and databases with AddDatabase().', lessonId: '4.1.1', emoji: '🐘' },
   { id: 'Redis', label: 'Redis', layer: 'resource', description: 'Add a Redis cache with AddRedis() — blazing-fast in-memory data store.', lessonId: '4.2.1', emoji: '⚡' },
@@ -55,20 +55,20 @@ const CONCEPTS: ConceptNode[] = [
   { id: 'ConnectionString', label: 'ConnectionString', layer: 'resource', description: 'Reference external resources with AddConnectionString() for pre-existing services.', lessonId: '2.7.3', emoji: '🔗' },
   // Configuration
   { id: 'WithReference', label: 'WithReference', layer: 'config', description: 'Wire services together — injects connection strings or endpoint references.', lessonId: '3.1.1', emoji: '🔌' },
-  { id: 'WaitFor', label: 'WaitFor', layer: 'config', description: 'Control startup order — wait for dependencies to be healthy before starting.', lessonId: '2.9.1', emoji: '⏳' },
-  { id: 'WithEnvironment', label: 'WithEnvironment', layer: 'config', description: 'Set environment variables with static strings, expressions, or callbacks.', lessonId: '2.8.1', emoji: '🌿' },
-  { id: 'WithEndpoint', label: 'WithEndpoint', layer: 'config', description: 'Define custom endpoints with full protocol control and named endpoints.', lessonId: '2.6.2', emoji: '🎯' },
+  { id: 'WaitFor', label: 'WaitFor', layer: 'config', description: 'Control startup order — wait for dependencies to be healthy before starting.', lessonId: '4.2.1', emoji: '⏳' },
+  { id: 'WithEnvironment', label: 'WithEnvironment', layer: 'config', description: 'Set environment variables with static strings, expressions, or callbacks.', lessonId: '2.2.3', emoji: '🌿' },
+  { id: 'WithEndpoint', label: 'WithEndpoint', layer: 'config', description: 'Define custom endpoints with full protocol control and named endpoints.', lessonId: '4.3.1', emoji: '🎯' },
   { id: 'WithDataVolume', label: 'WithDataVolume', layer: 'config', description: 'Attach persistent volumes to containers for data that survives restarts.', lessonId: '2.3.2', emoji: '💾' },
   { id: 'WithArgs', label: 'WithArgs', layer: 'config', description: 'Pass CLI arguments, scale with replicas, and expose external endpoints.', lessonId: '2.1.3', emoji: '📝' },
   // Infrastructure
-  { id: 'ServiceDefaults', label: 'ServiceDefaults', layer: 'infra', description: 'Shared project that configures OpenTelemetry, health checks, and resilience.', lessonId: '1.5.1', emoji: '🛡️' },
+  { id: 'ServiceDefaults', label: 'ServiceDefaults', layer: 'infra', description: 'Shared project that configures OpenTelemetry, health checks, and resilience.', lessonId: '6.3.1', emoji: '🛡️' },
   { id: 'OpenTelemetry', label: 'OpenTelemetry', layer: 'infra', description: 'Distributed tracing, structured logging, and metrics with OTLP export.', lessonId: '5.4.1', emoji: '📊' },
   { id: 'HealthChecks', label: 'HealthChecks', layer: 'infra', description: 'IHealthCheck registration and monitoring — how Aspire knows your services are ready.', lessonId: '5.5.1', emoji: '❤️' },
-  { id: 'Resilience', label: 'Resilience', layer: 'infra', description: 'Retry policies, circuit breakers, and timeout strategies for robust services.', lessonId: '1.5.5', emoji: '🔄' },
+  { id: 'Resilience', label: 'Resilience', layer: 'infra', description: 'Retry policies, circuit breakers, and timeout strategies for robust services.', lessonId: '6.3.3', emoji: '🔄' },
   { id: 'ServiceDiscovery', label: 'ServiceDiscovery', layer: 'infra', description: 'How services find each other at runtime — HttpClient integration and config-based resolution.', lessonId: '3.2.1', emoji: '🔍' },
   // Deployment
   { id: 'DockerCompose', label: 'Docker Compose', layer: 'deploy', description: 'Generate docker-compose.yaml from the Aspire app model.', lessonId: '6.3.1', emoji: '🐋' },
-  { id: 'Kubernetes', label: 'Kubernetes', layer: 'deploy', description: 'Generate Kubernetes manifests and Helm charts from the Aspire app model.', lessonId: '6.4.1', emoji: '☸️' },
+  { id: 'Kubernetes', label: 'Kubernetes', layer: 'deploy', description: 'Generate Kubernetes manifests and Helm charts from the Aspire app model.', lessonId: '10.3.2', emoji: '☸️' },
   { id: 'PublishAs', label: 'PublishAs*', layer: 'deploy', description: 'Per-resource publishing customization — PublishAsDockerComposeService, PublishAsKubernetesService.', lessonId: '6.3.2', emoji: '📤' },
   // Polyglot
   { id: 'CSharpApps', label: 'C# Apps', layer: 'polyglot', description: 'Add C# apps by path with AddCSharpApp() — an alternative to project references.', lessonId: '2.2.1', emoji: '🟣' },
@@ -157,6 +157,7 @@ export default function ConceptMapPage() {
           color="dark.text"
           borderColor="dark.border"
           _placeholder={{ color: 'dark.muted' }}
+          aria-label="Search Aspire concepts by name or description"
           {...pixelFontProps}
           fontSize="2xs"
         />
@@ -217,6 +218,15 @@ export default function ConceptMapPage() {
                         borderColor: layer.color,
                       }}
                       onClick={() => !locked && navigate(`/lessons/${concept.lessonId}`)}
+                      role={locked ? undefined : 'button'}
+                      tabIndex={locked ? -1 : 0}
+                      aria-label={locked ? `${concept.label} - Locked` : `${concept.label} - ${concept.description}`}
+                      onKeyDown={(e) => {
+                        if (!locked && (e.key === 'Enter' || e.key === ' ')) {
+                          e.preventDefault();
+                          navigate(`/lessons/${concept.lessonId}`);
+                        }
+                      }}
                     >
                       <Flex align="center" gap={2} mb={1}>
                         <Text fontSize="lg">

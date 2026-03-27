@@ -1,10 +1,35 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: "// Write an integration test that:\n// 1. Creates an AppHost using DistributedApplicationTestingBuilder\n// 2. Starts the application\n// 3. Gets an HttpClient for the \"api\" resource\n//\
+  \ 4. Calls GET /health and asserts 200 OK\n// 5. Calls GET /api/search?q=test and asserts a valid response\n\npublic class AtlasApiTests : IAsyncLifetime\n{\n    private DistributedApplication _app =\
+  \ null!;\n\n    public async Task InitializeAsync()\n    {\n        // TODO: Create and start the app\n    }\n\n    public async Task DisposeAsync()\n    {\n        // TODO: Clean up\n    }\n\n    [Fact]\n\
+  \    public async Task HealthEndpointReturns200()\n    {\n        // TODO: Test health endpoint\n    }\n}"
+solutionCode: "public class AtlasApiTests : IAsyncLifetime\n{\n    private DistributedApplication _app = null!;\n\n    public async Task InitializeAsync()\n    {\n        var builder = await DistributedApplicationTestingBuilder\n\
+  \            .CreateAsync<Projects.AtlasAppHost>();\n        _app = await builder.BuildAsync();\n        await _app.StartAsync();\n\n        var rns = _app.Services.GetRequiredService<ResourceNotificationService>();\n\
+  \        await rns.WaitForResourceAsync(\"api\", KnownResourceStates.Running);\n    }\n\n    public async Task DisposeAsync()\n    {\n        await _app.DisposeAsync();\n    }\n\n    [Fact]\n    public\
+  \ async Task HealthEndpointReturns200()\n    {\n        var client = _app.CreateHttpClient(\"api\");\n        var response = await client.GetAsync(\"/health\");\n        response.StatusCode.Should().Be(HttpStatusCode.OK);\n\
+  \    }\n}"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must use DistributedApplicationTestingBuilder
+  value: DistributedApplicationTestingBuilder
+- type: code-contains
+  description: Must call BuildAsync
+  value: BuildAsync
+- type: code-contains
+  description: Must call StartAsync
+  value: StartAsync
+- type: code-contains
+  description: Must create HttpClient for api
+  value: CreateHttpClient
+- type: code-contains
+  description: Must assert status code
+  value: StatusCode
+- type: code-contains
+  description: Must dispose the app
+  value: DisposeAsync
 hints:
-  - "Start by reading the instructions carefully"
+- Use DistributedApplicationTestingBuilder.CreateAsync<Projects.AtlasAppHost>()
+- Call BuildAsync() then StartAsync() to start the AppHost
+- Wait for the API to be ready with WaitForResourceAsync
+- Use _app.CreateHttpClient("api") to get an HTTP client
+- Assert response.StatusCode is HttpStatusCode.OK
 requiredPackages: []

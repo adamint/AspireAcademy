@@ -103,6 +103,13 @@ function WorldModules({
       onClick={() => mod.isUnlocked && onNav(`/worlds/${worldId}`)}
       role="button"
       tabIndex={mod.isUnlocked ? 0 : -1}
+      aria-label={mod.isUnlocked ? mod.name : `${mod.name} - Locked`}
+      onKeyDown={(e) => {
+        if (mod.isUnlocked && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onNav(`/worlds/${worldId}`);
+        }
+      }}
     >
       {!mod.isUnlocked && <FiLock size={10} />}
       {mod.name}
@@ -229,6 +236,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 onClick={() => world.isUnlocked && toggleWorld(world.id)}
                 title={world.isUnlocked ? `Toggle ${world.name} world` : `${world.name} - Locked`}
                 aria-label={world.isUnlocked ? `Toggle ${world.name} world` : `${world.name} world - Locked`}
+                aria-expanded={world.isUnlocked ? expandedWorlds.has(world.id) : undefined}
               >
                 <FiGlobe size={14} />
                 <Text as="span" flex="1" truncate>

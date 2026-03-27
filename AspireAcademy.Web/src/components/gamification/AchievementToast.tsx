@@ -3,14 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Box, Flex, Text, Badge } from '@chakra-ui/react';
 import { useGamificationStore } from '../../store/gamificationStore';
 import { retroCardProps, pixelFontProps } from '../../theme/aspireTheme';
-
-const rarityColors: Record<string, string> = {
-  common: '#8A8886',
-  uncommon: '#107C10',
-  rare: '#2196F3',
-  epic: '#6B4FBB',
-  legendary: '#FFD700',
-};
+import { rarityColors } from '../../utils/constants';
 
 interface QueuedAchievement {
   id: string;
@@ -28,17 +21,7 @@ export default function AchievementToast() {
   const shownRef = useRef<Set<string>>(new Set());
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  // Generate confetti positions once per toast
-  const confettiEmojis = useMemo(() => {
-    if (!current) return [];
-    const emojis = ['🎉', '✨', '🌟', '⭐', '🏆', '💫'];
-    return Array.from({ length: 10 }, (_, i) => ({
-      id: i,
-      emoji: emojis[i % emojis.length],
-      x: (Math.random() - 0.5) * 200,
-      delay: Math.random() * 0.4,
-    }));
-  }, [current?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const showNextRef = useRef<() => void>();
 
   const showNext = useCallback(() => {
     if (queueRef.current.length > 0) {
@@ -48,10 +31,27 @@ export default function AchievementToast() {
       timerRef.current = setTimeout(() => {
         setCurrent(null);
         clearPendingAchievement(next.id);
-        timerRef.current = setTimeout(() => showNext(), 1000);
+        timerRef.current = setTimeout(() => showNextRef.current?.(), 1000);
       }, 5000);
     }
   }, [clearPendingAchievement]);
+
+  useEffect(() => {
+    showNextRef.current = showNext;
+  });
+
+  // Generate confetti positions once per toast
+  const confettiEmojis = useMemo(() => {
+    if (!current) return [];
+    const emojis = ['🎉', '✨', '🌟', '⭐', '🏆', '💫'];
+    const seed = current.id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    return Array.from({ length: 10 }, (_, i) => ({
+      id: i,
+      emoji: emojis[i % emojis.length],
+      x: ((((seed * (i + 1) * 9301 + 49297) % 233280) / 233280) - 0.5) * 200,
+      delay: (((seed * (i + 1) * 49297 + 9301) % 233280) / 233280) * 0.4,
+    }));
+  }, [current]);
 
   useEffect(() => {
     for (const ach of pendingAchievements) {
@@ -78,7 +78,7 @@ export default function AchievementToast() {
   }, []);
 
   return (
-    <Box position="fixed" bottom={6} right={6} zIndex={9000}>
+    <Box position="fixed" bottom={6} right={6} zIndex={9000} role="status" aria-live="polite" aria-atomic="true">
       <AnimatePresence>
         {current && (
           <motion.div
@@ -90,6 +90,7 @@ export default function AchievementToast() {
             data-testid="achievement-toast"
           >
             {/* Confetti burst */}
+            <Box aria-hidden="true">
             {confettiEmojis.map((c) => (
               <motion.div
                 key={c.id}
@@ -107,6 +108,7 @@ export default function AchievementToast() {
                 {c.emoji}
               </motion.div>
             ))}
+            </Box>
 
             <Flex
               {...retroCardProps}

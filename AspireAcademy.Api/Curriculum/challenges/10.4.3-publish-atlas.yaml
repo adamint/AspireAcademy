@@ -1,10 +1,29 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
+  api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\nbuilder.AddViteApp(\"frontend\", \"../atlas-web\")\n    .WithReference(api);\n\n// TODO: Add a custom pipeline step that runs after\
+  \ \"publish\"\n// and writes a deployment-notes.txt file to the output directory\n\nbuilder.Build().Run();"
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
+  api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\nbuilder.AddViteApp(\"frontend\", \"../atlas-web\")\n    .WithReference(api);\n\nbuilder.Eventing.Subscribe<BeforeStartEvent>((evt, ct)\
+  \ =>\n{\n    if (evt.Model.ExecutionContext.IsPublishMode)\n    {\n        var pipeline = evt.Services.GetRequiredService<IDistributedApplicationPipeline>();\n        pipeline.AddStep(new PipelineStep\n\
+  \        {\n            Name = \"deployment-notes\",\n            Description = \"Generate deployment notes\",\n            Action = async ctx =>\n            {\n                var outputPath = ctx.PipelineContext.OutputPath;\n\
+  \                await File.WriteAllTextAsync(\n                    Path.Combine(outputPath, \"deployment-notes.txt\"),\n                    $\"Deployed {ctx.PipelineContext.Model.Resources.Count} resources\"\
+  );\n                ctx.PipelineContext.Summary.Add(\"Notes\", \"deployment-notes.txt\");\n            },\n            DependsOnSteps = { \"publish\" }\n        });\n    }\n    return Task.CompletedTask;\n\
+  });\n\nbuilder.Build().Run();"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must check IsPublishMode
+  value: IsPublishMode
+- type: code-contains
+  description: Must add a PipelineStep
+  value: PipelineStep
+- type: code-contains
+  description: Must set DependsOnSteps
+  value: DependsOnSteps
+- type: code-contains
+  description: Must subscribe to BeforeStartEvent
+  value: BeforeStartEvent
 hints:
-  - "Start by reading the instructions carefully"
+- Subscribe to BeforeStartEvent and check IsPublishMode
+- Get IDistributedApplicationPipeline from evt.Services
+- Create a PipelineStep with a Name, Action, and DependsOnSteps
+- Use DependsOnSteps = { "publish" } to run after the publish step
 requiredPackages: []

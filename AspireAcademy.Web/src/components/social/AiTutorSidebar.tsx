@@ -171,7 +171,7 @@ export default function AiTutorSidebar() {
             </Drawer.Header>
 
             {/* Messages */}
-            <Drawer.Body p={4} display="flex" flexDirection="column" gap={3} overflowY="auto">
+            <Drawer.Body p={4} display="flex" flexDirection="column" gap={3} overflowY="auto" aria-live="polite" aria-relevant="additions">
               {messages.length === 0 && (
                 <Text textAlign="center" color="dark.muted" mt={8} fontSize="sm">
                   Ask me anything about Aspire! I&apos;m here to help you learn.

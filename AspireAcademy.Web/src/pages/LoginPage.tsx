@@ -3,6 +3,7 @@ import { Box, Flex, Text, Input, Button, Spinner } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useGamificationStore } from '../store/gamificationStore';
+import { extractErrorMessage } from '../utils/errorHandler';
 import api from '../services/apiClient';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import type { AuthResponse } from '../types';
@@ -38,12 +39,7 @@ export default function LoginPage() {
       navigate('/dashboard');
     } catch (err: unknown) {
       console.error('[LoginPage] Login failed:', err);
-      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
-      const msg =
-        axiosErr?.response?.data?.error ??
-        axiosErr?.response?.data?.message ??
-        'Login failed. Please check your credentials.';
-      setError(msg);
+      setError(extractErrorMessage(err, 'Login failed. Please check your credentials.'));
     } finally {
       setLoading(false);
     }
@@ -84,6 +80,8 @@ export default function LoginPage() {
         {/* Error message */}
         {error && (
           <Box
+            id="login-error"
+            role="alert"
             bg="rgba(209, 52, 56, 0.15)"
             border="2px solid"
             borderColor="game.error"
@@ -112,7 +110,7 @@ export default function LoginPage() {
                 placeholder="hero@aspire.dev"
                 autoComplete="username"
                 required
-                aria-required="true"
+                aria-describedby={error ? 'login-error' : undefined}
                 size="md"
                 bg="dark.surface"
                 borderColor="game.pixelBorder"
@@ -135,7 +133,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 autoComplete="current-password"
                 required
-                aria-required="true"
+                aria-describedby={error ? 'login-error' : undefined}
                 size="md"
                 bg="dark.surface"
                 borderColor="game.pixelBorder"
@@ -161,8 +159,8 @@ export default function LoginPage() {
               size="md"
               w="100%"
               mt="2"
-              title="Login to your account"
-              aria-label="Login to your account"
+              title="Log in to your account"
+              aria-label="Log in to your account"
             >
               {loading ? <Spinner size="sm" /> : 'Log In'}
             </Button>

@@ -39,6 +39,7 @@ export default function OutputPanel({
             _selected={{ color: '#50fa7b', borderColor: '#50fa7b' }}
             fontSize="xs"
             fontWeight="bold"
+            aria-label="Show output"
           >
             Output
           </Tabs.Trigger>
@@ -48,6 +49,7 @@ export default function OutputPanel({
             _selected={{ color: '#ff5555', borderColor: '#ff5555' }}
             fontSize="xs"
             fontWeight="bold"
+            aria-label="Show errors"
           >
             Errors{hasErrors ? ' ⚠' : ''}
           </Tabs.Trigger>

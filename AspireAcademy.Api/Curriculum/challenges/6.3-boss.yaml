@@ -1,10 +1,52 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// Instrument the Atlas API with complete observability:
+
+  // 1. ServiceDefaults
+
+  // 2. Custom health checks for ML service and Worker
+
+  // 3. Custom ActivitySource with spans for search and recommend
+
+  // 4. Custom metrics: search count, recommendation count, latency histogram
+
+  // 5. Structured logging with query context
+
+
+  var builder = WebApplication.CreateBuilder(args);
+
+  // TODO: Your observability code here
+
+  var app = builder.Build();
+
+  app.Run();'
+solutionCode: "var builder = WebApplication.CreateBuilder(args);\n\nbuilder.AddServiceDefaults();\nbuilder.Services.AddHealthChecks()\n    .AddUrlGroup(new Uri(\"http://ml/health\"), \"ml-service\")\n \
+  \   .AddUrlGroup(new Uri(\"http://worker/health\"), \"worker\");\n\nvar app = builder.Build();\napp.MapDefaultEndpoints();\n\nvar source = new ActivitySource(\"Atlas.Api\");\nvar meter = app.Services.GetRequiredService<IMeterFactory>().Create(\"\
+  Atlas.Api\");\nvar searchCount = meter.CreateCounter<long>(\"atlas.search.count\");\nvar recoCount = meter.CreateCounter<long>(\"atlas.recommendations.count\");\nvar latency = meter.CreateHistogram<double>(\"\
+  atlas.search.latency_ms\");\n\napp.MapGet(\"/search\", async (string query, ILogger<Program> logger) =>\n{\n    using var activity = source.StartActivity(\"Search\");\n    activity?.SetTag(\"search.query\"\
+  , query);\n    searchCount.Add(1, new KeyValuePair<string, object?>(\"endpoint\", \"search\"));\n    var sw = Stopwatch.StartNew();\n    logger.LogInformation(\"Search requested for {Query}\", query);\n\
+  \    // ...search logic...\n    latency.Record(sw.ElapsedMilliseconds);\n    return Results.Ok();\n});\n\napp.Run();"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must use AddServiceDefaults
+  value: AddServiceDefaults
+- type: code-contains
+  description: Must add multiple health checks
+  value: AddHealthChecks
+- type: code-contains
+  description: Must create ActivitySource
+  value: ActivitySource
+- type: code-contains
+  description: Must create histogram for latency
+  value: CreateHistogram
+- type: code-contains
+  description: Must create counter
+  value: CreateCounter
+- type: code-contains
+  description: Must use structured logging
+  value: LogInformation
 hints:
-  - "Start by reading the instructions carefully"
+- Start with AddServiceDefaults() and MapDefaultEndpoints()
+- Add health checks for each external service the API calls
+- ActivitySource + StartActivity creates spans visible in the Dashboard traces view
+- CreateHistogram records distributions (like latency percentiles)
+- Use ILogger with message templates for structured logging
 requiredPackages: []

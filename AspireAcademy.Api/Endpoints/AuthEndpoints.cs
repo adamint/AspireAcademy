@@ -126,7 +126,7 @@ public static partial class AuthEndpoints
         var input = request.UsernameOrEmail.ToLowerInvariant();
 
         var user = await db.Users.FirstOrDefaultAsync(u =>
-            u.Username.ToLower() == input || u.Email.ToLower() == input);
+            (u.Username.ToLower() == input || u.Email.ToLower() == input) && !u.IsDeleted);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
@@ -226,7 +226,7 @@ public static partial class AuthEndpoints
     internal static string GenerateJwtToken(User user, IConfiguration config)
     {
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(config["Jwt:Key"] ?? "dev-secret-key-change-in-production-min-32-chars!!"));
+            Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
 
         Claim[] claims =
         [
@@ -251,7 +251,7 @@ public static partial class AuthEndpoints
             return null;
         }
 
-        var key = Encoding.UTF8.GetBytes(config["Jwt:Key"] ?? "dev-secret-key-change-in-production-min-32-chars!!");
+        var key = Encoding.UTF8.GetBytes(config["Jwt:Key"]!);
         var handler = new JwtSecurityTokenHandler();
 
         try

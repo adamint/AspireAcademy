@@ -91,9 +91,13 @@ export default function DailyRewardPopup() {
           maxW="380px"
           w="90%"
           textAlign="center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="daily-reward-title"
+          onKeyDown={(e) => { if (e.key === 'Escape') setVisible(false); }}
         >
-          <Text fontSize="40px" mb={3}>🎁</Text>
-          <Text {...pixelFontProps} fontSize="md" color="dark.text" mb={2}>
+          <Text fontSize="40px" mb={3} aria-hidden="true">🎁</Text>
+          <Text id="daily-reward-title" {...pixelFontProps} fontSize="md" color="dark.text" mb={2}>
             Daily Reward!
           </Text>
           <Text fontSize="sm" color="dark.muted" mb={4}>
@@ -101,7 +105,7 @@ export default function DailyRewardPopup() {
           </Text>
 
           {/* Streak fires */}
-          <Flex justify="center" mb={3}>
+          <Flex justify="center" mb={3} aria-hidden="true">
             {Array.from({ length: streakFires }, (_, i) => (
               <Text key={i} fontSize="xl" mx="1px">🔥</Text>
             ))}

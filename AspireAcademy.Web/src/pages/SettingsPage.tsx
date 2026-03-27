@@ -8,6 +8,7 @@ import { FiDownload, FiTrash2, FiLock, FiCheck } from 'react-icons/fi';
 import api from '../services/apiClient';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore, type EditorFontSize } from '../store/settingsStore';
+import { extractErrorMessage } from '../utils/errorHandler';
 import { useColorMode } from '../hooks/useColorMode';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 
@@ -108,8 +109,7 @@ export default function SettingsPage() {
       setTimeout(() => setChangePasswordOpen(false), 1500);
     },
     onError: (err) => {
-      const axiosErr = err as { response?: { data?: { error?: string } } };
-      setPasswordError(axiosErr?.response?.data?.error ?? 'Failed to change password.');
+      setPasswordError(extractErrorMessage(err, 'Failed to change password.'));
       setPasswordSuccess(false);
     },
   });
@@ -140,8 +140,7 @@ export default function SettingsPage() {
       logout();
     },
     onError: (err) => {
-      const axiosErr = err as { response?: { data?: { error?: string } } };
-      setDeleteError(axiosErr?.response?.data?.error ?? 'Failed to delete account.');
+      setDeleteError(extractErrorMessage(err, 'Failed to delete account.'));
     },
   });
 
@@ -166,20 +165,20 @@ export default function SettingsPage() {
 
   // Reset dialog state when closed
   useEffect(() => {
-    if (!changePasswordOpen) {
+    return () => {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       setPasswordError(null);
       setPasswordSuccess(false);
-    }
+    };
   }, [changePasswordOpen]);
 
   useEffect(() => {
-    if (!deleteOpen) {
+    return () => {
       setDeleteConfirmation('');
       setDeleteError(null);
-    }
+    };
   }, [deleteOpen]);
 
   return (

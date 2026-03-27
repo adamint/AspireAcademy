@@ -1,0 +1,664 @@
+[
+  {
+    "id": "ecommerce",
+    "title": "🛒 E-Commerce Platform",
+    "description": "A full-featured e-commerce system with separate microservices for catalog, orders, and cart management. Uses message-driven architecture with RabbitMQ for order event processing and Redis for high-speed cart and session caching.",
+    "services": [
+      {
+        "id": "web",
+        "name": "Web\nFrontend",
+        "type": "frontend",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "gateway",
+        "name": "API\nGateway",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "catalog",
+        "name": "Catalog\nService",
+        "type": "api",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "orders",
+        "name": "Order\nService",
+        "type": "api",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "cart",
+        "name": "Cart\nService",
+        "type": "api",
+        "row": 1,
+        "col": 3
+      },
+      {
+        "id": "productsdb",
+        "name": "Products\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 0
+      },
+      {
+        "id": "ordersdb",
+        "name": "Orders\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 2
+      },
+      {
+        "id": "redis",
+        "name": "Redis",
+        "type": "cache",
+        "row": 2,
+        "col": 3
+      },
+      {
+        "id": "rabbitmq",
+        "name": "RabbitMQ",
+        "type": "messaging",
+        "row": 1,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "web",
+        "to": "gateway",
+        "label": "HTTP"
+      },
+      {
+        "from": "catalog",
+        "to": "productsdb",
+        "label": "queries"
+      },
+      {
+        "from": "orders",
+        "to": "ordersdb",
+        "label": "queries"
+      },
+      {
+        "from": "cart",
+        "to": "redis",
+        "label": "cache"
+      },
+      {
+        "from": "catalog",
+        "to": "rabbitmq",
+        "label": "events"
+      },
+      {
+        "from": "orders",
+        "to": "rabbitmq",
+        "label": "events"
+      },
+      {
+        "from": "gateway",
+        "to": "catalog",
+        "label": "WithReference"
+      },
+      {
+        "from": "gateway",
+        "to": "orders",
+        "label": "WithReference"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Databases\nvar productsDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"productsdb\");\nvar ordersDb = builder.AddPostgres(\"pg-orders\")\n    .AddDatabase(\"ordersdb\");\n\n// Caching & Messaging\nvar redis = builder.AddRedis(\"redis\");\nvar rabbitmq = builder.AddRabbitMQ(\"rabbitmq\");\n\n// Services\nvar catalogService = builder.AddProject<Projects.CatalogService>(\"catalog\")\n    .WithReference(productsDb)\n    .WithReference(rabbitmq);\n\nvar orderService = builder.AddProject<Projects.OrderService>(\"orders\")\n    .WithReference(ordersDb)\n    .WithReference(rabbitmq);\n\nvar cartService = builder.AddProject<Projects.CartService>(\"cart\")\n    .WithReference(redis);\n\n// API Gateway\nvar gateway = builder.AddProject<Projects.ApiGateway>(\"gateway\")\n    .WithReference(catalogService)\n    .WithReference(orderService)\n    .WithReference(cartService);\n\n// Frontend\nbuilder.AddNpmApp(\"webfrontend\", \"../Web\")\n    .WithReference(gateway)\n    .WithHttpEndpoint(env: \"PORT\");\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Multiple Databases",
+      "RabbitMQ",
+      "Service Discovery",
+      "Redis Caching",
+      "Message-Driven Architecture"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 5: Integration Mastery"
+  },
+  {
+    "id": "saas",
+    "title": "🏢 SaaS Multi-Tenant App",
+    "description": "A multi-tenant SaaS platform with isolated tenant databases, centralized authentication, file storage with Azure Blob, and background job processing. Demonstrates secret management with Aspire Parameters.",
+    "services": [
+      {
+        "id": "admin",
+        "name": "Admin\nPortal",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "auth",
+        "name": "Auth\nService",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "tenantapi",
+        "name": "Tenant\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "worker",
+        "name": "Background\nWorker",
+        "type": "worker",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "tenantdb",
+        "name": "Tenant\nDB",
+        "type": "database",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "redis",
+        "name": "Redis",
+        "type": "cache",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "blob",
+        "name": "Azure\nBlob",
+        "type": "container",
+        "row": 1,
+        "col": 3
+      }
+    ],
+    "connections": [
+      {
+        "from": "admin",
+        "to": "auth",
+        "label": "auth"
+      },
+      {
+        "from": "auth",
+        "to": "tenantapi",
+        "label": "JWT"
+      },
+      {
+        "from": "tenantapi",
+        "to": "tenantdb",
+        "label": "queries"
+      },
+      {
+        "from": "tenantapi",
+        "to": "redis",
+        "label": "cache"
+      },
+      {
+        "from": "tenantapi",
+        "to": "blob",
+        "label": "files"
+      },
+      {
+        "from": "worker",
+        "to": "tenantdb",
+        "label": "jobs"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Secrets via Parameters\nvar dbPassword = builder.AddParameter(\"db-password\", secret: true);\nvar jwtSecret = builder.AddParameter(\"jwt-secret\", secret: true);\n\n// Infrastructure\nvar tenantDb = builder.AddPostgres(\"pg\", password: dbPassword)\n    .AddDatabase(\"tenantdb\");\nvar redis = builder.AddRedis(\"redis\");\nvar blobStorage = builder.AddAzureStorage(\"storage\")\n    .AddBlobs(\"blobs\");\n\n// Auth Service\nvar authService = builder.AddProject<Projects.AuthService>(\"auth\")\n    .WithReference(tenantDb)\n    .WithEnvironment(\"JWT_SECRET\", jwtSecret);\n\n// Tenant API\nvar tenantApi = builder.AddProject<Projects.TenantApi>(\"tenant-api\")\n    .WithReference(tenantDb)\n    .WithReference(redis)\n    .WithReference(blobStorage)\n    .WithReference(authService);\n\n// Background Worker\nbuilder.AddProject<Projects.BackgroundWorker>(\"worker\")\n    .WithReference(tenantDb)\n    .WithReference(redis);\n\n// Admin Portal\nbuilder.AddProject<Projects.AdminPortal>(\"admin\")\n    .WithReference(authService)\n    .WithReference(tenantApi);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Parameters & Secrets",
+      "Azure Blob Storage",
+      "Health Checks",
+      "Connection Strings",
+      "Background Workers"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 3: Resource Wiring"
+  },
+  {
+    "id": "realtime",
+    "title": "📊 Real-Time Dashboard",
+    "description": "A real-time analytics dashboard ingesting high-velocity event streams via Kafka. Features a Node.js React frontend connected through WebSockets, with PostgreSQL for durable metrics storage and Redis pub/sub for live updates.",
+    "services": [
+      {
+        "id": "dashboard",
+        "name": "React\nDashboard",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "wsgateway",
+        "name": "WebSocket\nGateway",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "analytics",
+        "name": "Analytics\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "ingestion",
+        "name": "Data\nIngestion",
+        "type": "worker",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "kafka",
+        "name": "Kafka",
+        "type": "messaging",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nPub/Sub",
+        "type": "cache",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "metricsdb",
+        "name": "Metrics\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "dashboard",
+        "to": "wsgateway",
+        "label": "WS"
+      },
+      {
+        "from": "wsgateway",
+        "to": "analytics",
+        "label": "WithReference"
+      },
+      {
+        "from": "ingestion",
+        "to": "kafka",
+        "label": "produce"
+      },
+      {
+        "from": "kafka",
+        "to": "analytics",
+        "label": "consume"
+      },
+      {
+        "from": "analytics",
+        "to": "redis",
+        "label": "pub/sub"
+      },
+      {
+        "from": "analytics",
+        "to": "metricsdb",
+        "label": "queries"
+      },
+      {
+        "from": "wsgateway",
+        "to": "redis",
+        "label": "subscribe"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Infrastructure\nvar metricsDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"metricsdb\");\nvar redis = builder.AddRedis(\"redis\");\nvar kafka = builder.AddKafka(\"kafka\");\n\n// Data Ingestion (produces events)\nvar ingestion = builder.AddProject<Projects.DataIngestion>(\"ingestion\")\n    .WithReference(kafka);\n\n// Analytics API (consumes + queries)\nvar analyticsApi = builder.AddProject<Projects.AnalyticsApi>(\"analytics\")\n    .WithReference(kafka)\n    .WithReference(metricsDb)\n    .WithReference(redis);\n\n// WebSocket Gateway\nvar wsGateway = builder.AddProject<Projects.WsGateway>(\"ws-gateway\")\n    .WithReference(analyticsApi)\n    .WithReference(redis);\n\n// React Dashboard (Node.js frontend)\nbuilder.AddNpmApp(\"dashboard\", \"../dashboard-app\")\n    .WithReference(wsGateway)\n    .WithHttpEndpoint(env: \"PORT\");\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Kafka Integration",
+      "Real-Time Processing",
+      "Polyglot (Node.js)",
+      "WebSockets",
+      "Redis Pub/Sub"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 6: Advanced Patterns"
+  },
+  {
+    "id": "mlpipeline",
+    "title": "🤖 ML Pipeline",
+    "description": "An end-to-end machine learning pipeline with a Python training worker, .NET inference API, and model registry. Uses Redis as a job queue and PostgreSQL for experiment metadata. Demonstrates Aspire's polyglot support with AddPythonApp.",
+    "services": [
+      {
+        "id": "apiservice",
+        "name": "API\nService",
+        "type": "api",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "inference",
+        "name": "Inference\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "registry",
+        "name": "Model\nRegistry",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "trainer",
+        "name": "Training\nWorker",
+        "type": "worker",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nJob Queue",
+        "type": "cache",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "metadb",
+        "name": "Metadata\nDB",
+        "type": "database",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "modelstore",
+        "name": "Model\nStorage",
+        "type": "container",
+        "row": 2,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "apiservice",
+        "to": "inference",
+        "label": "predict"
+      },
+      {
+        "from": "apiservice",
+        "to": "redis",
+        "label": "enqueue"
+      },
+      {
+        "from": "trainer",
+        "to": "redis",
+        "label": "dequeue"
+      },
+      {
+        "from": "trainer",
+        "to": "metadb",
+        "label": "metadata"
+      },
+      {
+        "from": "trainer",
+        "to": "modelstore",
+        "label": "save model"
+      },
+      {
+        "from": "inference",
+        "to": "registry",
+        "label": "load model"
+      },
+      {
+        "from": "registry",
+        "to": "modelstore",
+        "label": "artifacts"
+      },
+      {
+        "from": "registry",
+        "to": "metadb",
+        "label": "queries"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Infrastructure\nvar metadataDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"metadatadb\");\nvar redis = builder.AddRedis(\"redis\");\n\n// Model Storage (MinIO-compatible)\nvar modelStorage = builder.AddContainer(\"model-storage\", \"minio/minio\")\n    .WithHttpEndpoint(port: 9000, targetPort: 9000)\n    .WithEnvironment(\"MINIO_ROOT_USER\", \"minioadmin\")\n    .WithEnvironment(\"MINIO_ROOT_PASSWORD\", \"minioadmin\")\n    .WithArgs(\"server\", \"/data\");\n\n// Python Training Worker\nvar trainer = builder.AddPythonApp(\"trainer\", \"../ml-trainer\", \"train.py\")\n    .WithReference(redis)\n    .WithReference(metadataDb)\n    .WithReference(modelStorage);\n\n// Model Registry\nvar registry = builder.AddProject<Projects.ModelRegistry>(\"registry\")\n    .WithReference(metadataDb)\n    .WithReference(modelStorage);\n\n// Inference API\nvar inference = builder.AddProject<Projects.InferenceApi>(\"inference\")\n    .WithReference(registry);\n\n// API Service\nbuilder.AddProject<Projects.ApiService>(\"api\")\n    .WithReference(inference)\n    .WithReference(redis);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "AddPythonApp",
+      "Polyglot Architecture",
+      "Container Resources",
+      "Custom Containers",
+      "Job Queues"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 4: Beyond .NET"
+  },
+  {
+    "id": "blog",
+    "title": "📝 Microservices Blog Platform",
+    "description": "A microservices blog with dedicated services for posts, users, and comments. Uses PostgreSQL for structured data, MongoDB for flexible comment storage, and an API gateway to unify access. Demonstrates the WaitFor pattern for startup ordering.",
+    "services": [
+      {
+        "id": "ssrfrontend",
+        "name": "SSR\nFrontend",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "gateway",
+        "name": "API\nGateway",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "postsapi",
+        "name": "Posts\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "usersapi",
+        "name": "Users\nAPI",
+        "type": "api",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "commentsapi",
+        "name": "Comments\nAPI",
+        "type": "api",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "postsdb",
+        "name": "Posts\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 0
+      },
+      {
+        "id": "usersdb",
+        "name": "Users\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 1
+      },
+      {
+        "id": "commentsdb",
+        "name": "MongoDB",
+        "type": "database",
+        "row": 2,
+        "col": 2
+      },
+      {
+        "id": "redis",
+        "name": "Redis",
+        "type": "cache",
+        "row": 1,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "ssrfrontend",
+        "to": "gateway",
+        "label": "HTTP"
+      },
+      {
+        "from": "gateway",
+        "to": "postsapi",
+        "label": "WithReference"
+      },
+      {
+        "from": "postsapi",
+        "to": "commentsapi",
+        "label": "WithReference"
+      },
+      {
+        "from": "usersapi",
+        "to": "usersdb",
+        "label": "queries"
+      },
+      {
+        "from": "postsapi",
+        "to": "postsdb",
+        "label": "queries"
+      },
+      {
+        "from": "commentsapi",
+        "to": "commentsdb",
+        "label": "queries"
+      },
+      {
+        "from": "gateway",
+        "to": "redis",
+        "label": "cache"
+      },
+      {
+        "from": "usersapi",
+        "to": "redis",
+        "label": "sessions"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Databases\nvar postsDb = builder.AddPostgres(\"pg-posts\")\n    .AddDatabase(\"postsdb\");\nvar usersDb = builder.AddPostgres(\"pg-users\")\n    .AddDatabase(\"usersdb\");\nvar commentsDb = builder.AddMongoDB(\"mongodb\")\n    .AddDatabase(\"commentsdb\");\n\n// Cache\nvar redis = builder.AddRedis(\"redis\");\n\n// Microservices with WaitFor ordering\nvar usersApi = builder.AddProject<Projects.UsersApi>(\"users-api\")\n    .WithReference(usersDb)\n    .WithReference(redis)\n    .WaitFor(usersDb);\n\nvar commentsApi = builder.AddProject<Projects.CommentsApi>(\"comments-api\")\n    .WithReference(commentsDb)\n    .WaitFor(commentsDb);\n\nvar postsApi = builder.AddProject<Projects.PostsApi>(\"posts-api\")\n    .WithReference(postsDb)\n    .WithReference(commentsApi)\n    .WaitFor(postsDb);\n\n// API Gateway\nvar gateway = builder.AddProject<Projects.ApiGateway>(\"gateway\")\n    .WithReference(postsApi)\n    .WithReference(usersApi)\n    .WithReference(commentsApi)\n    .WithReference(redis)\n    .WaitFor(postsApi)\n    .WaitFor(usersApi);\n\n// SSR Frontend\nbuilder.AddProject<Projects.WebFrontend>(\"frontend\")\n    .WithReference(gateway)\n    .WaitFor(gateway);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Multiple DB Types",
+      "MongoDB",
+      "Gateway Pattern",
+      "WaitFor Ordering",
+      "Service Discovery"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 5: Integration Mastery"
+  },
+  {
+    "id": "iot",
+    "title": "🌡️ IoT Data Platform",
+    "description": "A high-throughput IoT platform processing device telemetry via Kafka event streams. Features a custom device gateway container, real-time alert processing, and Redis-backed latest-readings cache for instant dashboard queries.",
+    "services": [
+      {
+        "id": "dashboard",
+        "name": "IoT\nDashboard",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "alertsvc",
+        "name": "Alert\nService",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "devicegw",
+        "name": "Device\nGateway",
+        "type": "container",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "processor",
+        "name": "Telemetry\nProcessor",
+        "type": "worker",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "kafka",
+        "name": "Kafka",
+        "type": "messaging",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "devicedb",
+        "name": "Device\nRegistry",
+        "type": "database",
+        "row": 2,
+        "col": 0
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nCache",
+        "type": "cache",
+        "row": 2,
+        "col": 1
+      },
+      {
+        "id": "tsdb",
+        "name": "TimeSeries\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 2
+      }
+    ],
+    "connections": [
+      {
+        "from": "devicegw",
+        "to": "kafka",
+        "label": "telemetry"
+      },
+      {
+        "from": "kafka",
+        "to": "processor",
+        "label": "consume"
+      },
+      {
+        "from": "processor",
+        "to": "redis",
+        "label": "latest"
+      },
+      {
+        "from": "processor",
+        "to": "tsdb",
+        "label": "store"
+      },
+      {
+        "from": "processor",
+        "to": "alertsvc",
+        "label": "alerts"
+      },
+      {
+        "from": "dashboard",
+        "to": "redis",
+        "label": "reads"
+      },
+      {
+        "from": "dashboard",
+        "to": "devicedb",
+        "label": "registry"
+      },
+      {
+        "from": "devicegw",
+        "to": "devicedb",
+        "label": "auth"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Infrastructure\nvar deviceDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"deviceregistry\");\nvar tsDb = builder.AddPostgres(\"pg-timeseries\")\n    .AddDatabase(\"telemetrydb\");\nvar redis = builder.AddRedis(\"redis\");\nvar kafka = builder.AddKafka(\"kafka\");\n\n// Custom Device Gateway Container\nvar deviceGateway = builder.AddContainer(\"device-gateway\", \"myregistry/device-gw\")\n    .WithHttpEndpoint(port: 8443, targetPort: 8443, name: \"mqtt\")\n    .WithReference(kafka)\n    .WithReference(deviceDb);\n\n// Telemetry Processor\nvar processor = builder.AddProject<Projects.TelemetryProcessor>(\"processor\")\n    .WithReference(kafka)\n    .WithReference(redis)\n    .WithReference(tsDb)\n    .WaitFor(kafka);\n\n// Alert Service\nvar alertService = builder.AddProject<Projects.AlertService>(\"alerts\")\n    .WithReference(tsDb)\n    .WithReference(redis);\n\n// IoT Dashboard\nbuilder.AddProject<Projects.IotDashboard>(\"dashboard\")\n    .WithReference(redis)\n    .WithReference(deviceDb)\n    .WithReference(alertService)\n    .WaitFor(processor);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Custom Containers",
+      "Event Streaming",
+      "High Throughput",
+      "Kafka",
+      "WaitFor Ordering"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 6: Advanced Patterns"
+  }
+]

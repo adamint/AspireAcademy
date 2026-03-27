@@ -1,10 +1,53 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
+
+
+  // Build Atlas with:
+
+  // 1. PostgreSQL "pg" with persistent lifetime and data volume "pg-data" + database "atlas-db"
+
+  // 2. Redis "cache" with persistent lifetime and data volume "redis-data"
+
+  // 3. RabbitMQ "messaging" with management plugin
+
+  // 4. Meilisearch "search" (custom integration - use AddContainer as fallback)
+
+  // 5. API referencing all four + WaitFor
+
+  // 6. Frontend referencing API + WaitFor
+
+
+  builder.Build().Run();'
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\")\n    .WithLifetime(ContainerLifetime.Persistent)\n    .WithDataVolume(\"pg-data\")\n\
+  \    .AddDatabase(\"atlas-db\");\n\nvar redis = builder.AddRedis(\"cache\")\n    .WithLifetime(ContainerLifetime.Persistent)\n    .WithDataVolume(\"redis-data\");\n\nvar rabbitmq = builder.AddRabbitMQ(\"\
+  messaging\")\n    .WithManagementPlugin();\n\nvar search = builder.AddContainer(\"search\", \"getmeili/meilisearch\", \"v1.7\")\n    .WithHttpEndpoint(port: 7700, targetPort: 7700);\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
+  api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq)\n    .WithReference(search)\n    .WaitFor(postgres)\n    .WaitFor(redis)\n    .WaitFor(rabbitmq);\n\nbuilder.AddViteApp(\"\
+  frontend\", \"../atlas-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\nbuilder.Build().Run();"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must use WithDataVolume
+  value: WithDataVolume
+- type: code-contains
+  description: Must use WithLifetime for persistence
+  value: WithLifetime
+- type: code-contains
+  description: Must add RabbitMQ with management
+  value: WithManagementPlugin
+- type: code-contains
+  description: Must add Meilisearch container
+  value: getmeili/meilisearch
+- type: code-contains
+  description: Must wire API to all resources
+  value: WithReference
+- type: code-contains
+  description: Must use WaitFor
+  value: WaitFor
 hints:
-  - "Start by reading the instructions carefully"
-requiredPackages: []
+- Use .WithDataVolume("pg-data") on PostgreSQL for persistent data
+- Use .WithManagementPlugin() on RabbitMQ for the management UI
+- Meilisearch can be added with AddContainer since there is no official hosting integration
+- The API should WithReference and WaitFor all infrastructure resources
+requiredPackages:
+- Aspire.Hosting.PostgreSQL
+- Aspire.Hosting.Redis
+- Aspire.Hosting.RabbitMQ
+- Aspire.Hosting.NodeJs

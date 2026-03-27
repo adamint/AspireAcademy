@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Box, Flex, Text, Skeleton } from '@chakra-ui/react';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import api from '../services/apiClient';
+import { formatDateLabel } from '../utils/formatters';
 
 interface ActivityDay {
   date: string;
@@ -69,9 +70,6 @@ function computeStreak(days: DayCell[]): number {
 function getMonthPositions(days: DayCell[], weekCount: number): { label: string; col: number }[] {
   const positions: { label: string; col: number }[] = [];
   let lastMonth = -1;
-  // Offset for day labels column
-  const startIndex = days.findIndex((d) => d.dayOfWeek === 0);
-  const offset = startIndex === -1 ? 0 : startIndex;
 
   for (let i = 0; i < days.length; i++) {
     const d = new Date(days[i].date);
@@ -87,11 +85,6 @@ function getMonthPositions(days: DayCell[], weekCount: number): { label: string;
   return positions;
 }
 
-function formatDateLabel(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-}
-
 interface ActivityHeatmapProps {
   userId?: string;
   compact?: boolean;
@@ -105,7 +98,7 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
     queryFn: () => api.get('/profile/activity-heatmap').then((r) => r.data),
   });
 
-  const { days, totalCount, streak, monthPositions, weekCount } = useMemo(() => {
+  const { days, totalCount, streak, monthPositions } = useMemo(() => {
     const activityMap = new Map<string, number>();
     if (data?.days) {
       for (const d of data.days) {

@@ -1,6 +1,5 @@
 import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { pixelFontProps } from '../../theme/aspireTheme';
-import type { World } from '../../types/curriculum';
 
 interface WorldCompletionBadgesProps {
   worlds: { id: string; name: string; icon: string; completionPercentage: number }[];

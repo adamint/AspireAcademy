@@ -37,6 +37,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.Property(u => u.AvatarSeed).HasMaxLength(50);
             e.Property(u => u.Bio).HasMaxLength(200);
             e.Property(u => u.GitHubUsername).HasMaxLength(39);
+            e.Property(u => u.Persona).HasMaxLength(20);
             e.Property(u => u.CreatedAt).HasDefaultValueSql("now()").IsRequired();
             e.Property(u => u.LoginStreakDays).HasDefaultValue(0).IsRequired();
 
@@ -122,6 +123,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.Property(l => l.EstimatedMinutes).IsRequired();
             e.Property(l => l.UnlockAfterLessonId).HasMaxLength(50);
             e.Property(l => l.IsBoss).HasDefaultValue(false).IsRequired();
+            e.Ignore(l => l.PersonaRelevance);
 
             e.HasOne(l => l.Module)
                 .WithMany(m => m.Lessons)

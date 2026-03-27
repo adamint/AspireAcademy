@@ -1,10 +1,43 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// Write a hosting integration for Meilisearch (search engine)
+
+  // 1. Define MeilisearchResource inheriting ContainerResource + IResourceWithConnectionString
+
+  // 2. Write AddMeilisearch extension method
+
+  // 3. Configure image "getmeili/meilisearch", tag "v1.7", port 7700
+
+  // 4. Add health check
+
+
+  // Your code here:'
+solutionCode: "public class MeilisearchResource(string name) :\n    ContainerResource(name), IResourceWithConnectionString\n{\n    internal const string PrimaryEndpointName = \"http\";\n    private EndpointReference?\
+  \ _endpoint;\n    public EndpointReference PrimaryEndpoint =>\n        _endpoint ??= new(this, PrimaryEndpointName);\n\n    public ReferenceExpression ConnectionStringExpression =>\n        ReferenceExpression.Create(\n\
+  \            $\"http://{PrimaryEndpoint.Property(EndpointProperty.Host)}:{PrimaryEndpoint.Property(EndpointProperty.Port)}\");\n}\n\npublic static class MeilisearchExtensions\n{\n    public static IResourceBuilder<MeilisearchResource>\
+  \ AddMeilisearch(\n        this IDistributedApplicationBuilder builder, string name)\n    {\n        return builder.AddResource(new MeilisearchResource(name))\n            .WithImage(\"getmeili/meilisearch\"\
+  )\n            .WithImageTag(\"v1.7\")\n            .WithHttpEndpoint(targetPort: 7700, name: MeilisearchResource.PrimaryEndpointName)\n            .WithHealthCheck(MeilisearchResource.PrimaryEndpointName);\n\
+  \    }\n}"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must define MeilisearchResource
+  value: MeilisearchResource
+- type: code-contains
+  description: Must inherit ContainerResource
+  value: ContainerResource
+- type: code-contains
+  description: Must implement IResourceWithConnectionString
+  value: IResourceWithConnectionString
+- type: code-contains
+  description: Must use WithImage for meilisearch
+  value: getmeili/meilisearch
+- type: code-contains
+  description: Must set port 7700
+  value: '7700'
+- type: code-contains
+  description: Must add health check
+  value: WithHealthCheck
 hints:
-  - "Start by reading the instructions carefully"
+- MeilisearchResource should inherit from ContainerResource and implement IResourceWithConnectionString
+- IResourceWithConnectionString requires a ConnectionStringExpression property returning ReferenceExpression
+- Use builder.AddResource(new MeilisearchResource(name)) then chain .WithImage().WithImageTag().WithHttpEndpoint()
+- WithHealthCheck(endpointName) adds an HTTP health check on that endpoint
 requiredPackages: []

@@ -21,9 +21,8 @@ namespace AspireAcademy.Api.Tests;
 
 public class AcademyApiFactory : WebApplicationFactory<Program>
 {
-    // Must match the fallback key in Program.cs because JWT bearer options are configured
-    // before WebApplicationFactory's ConfigureAppConfiguration runs.
-    public const string JwtKey = "dev-secret-key-change-in-production-min-32-chars!!";
+    // Injected via ConfigureAppConfiguration — no hardcoded fallback in Program.cs
+    public const string JwtKey = "test-jwt-signing-key-at-least-32-characters-long!!";
     public const string JwtIssuer = "AspireAcademy";
     public const string AdminInternalSecret = "test-admin-secret-for-integration-tests";
 

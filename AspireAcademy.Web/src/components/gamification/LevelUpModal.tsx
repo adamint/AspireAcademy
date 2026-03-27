@@ -1,39 +1,26 @@
 import { Box, Text, Button, VStack } from '@chakra-ui/react';
 import { FiStar } from 'react-icons/fi';
 import Confetti from 'react-confetti';
-import { useEffect, useState } from 'react';
 import { useGamificationStore } from '../../store/gamificationStore';
 import { retroCardProps, pixelFontProps } from '../../theme/aspireTheme';
-
-interface UnlockedItem {
-  name: string;
-  type: string;
-}
 
 export default function LevelUpModal() {
   const pendingLevelUp = useGamificationStore((s) => s.pendingLevelUp);
   const setPendingLevelUp = useGamificationStore((s) => s.setPendingLevelUp);
-  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
-
-  useEffect(() => {
-    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   if (!pendingLevelUp) return null;
 
-  const unlockedItems = (pendingLevelUp as Record<string, unknown>).unlockedItems as UnlockedItem[] | undefined;
+  const unlockedItems = pendingLevelUp.unlockedItems;
   const rankEmoji = pendingLevelUp.previousRank !== pendingLevelUp.newRank ? '🎖️' : '⭐';
 
   return (
-    <Box position="fixed" inset={0} zIndex={9999} display="flex" alignItems="center" justifyContent="center">
+    <Box position="fixed" inset={0} zIndex={9999} display="flex" alignItems="center" justifyContent="center" role="dialog" aria-modal="true" aria-labelledby="levelup-title" onKeyDown={(e) => { if (e.key === 'Escape') setPendingLevelUp(null); }}>
       {/* Dark backdrop */}
       <Box position="absolute" inset={0} bg="blackAlpha.700" />
 
       <Confetti
-        width={windowSize.width}
-        height={windowSize.height}
+        width={window.innerWidth}
+        height={window.innerHeight}
         numberOfPieces={300}
         recycle={false}
         colors={['#FFD700', '#6B4FBB', '#107C10', '#FF6B35', '#2196F3']}
@@ -51,11 +38,11 @@ export default function LevelUpModal() {
         gap={4}
         position="relative"
       >
-        <Box fontSize="64px" color="game.xpGold">
+        <Box fontSize="64px" color="game.xpGold" aria-hidden="true">
           <FiStar />
         </Box>
 
-        <Text {...pixelFontProps} fontSize="2xl" color="game.xpGold">
+        <Text id="levelup-title" {...pixelFontProps} fontSize="2xl" color="game.xpGold">
           LEVEL UP!
         </Text>
 

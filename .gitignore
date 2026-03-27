@@ -28,6 +28,9 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Aspire publish/deploy output
+aspire-output/
+
 # Test results
 TestResults/
 coverage/

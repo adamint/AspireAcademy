@@ -1,10 +1,66 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
+
+
+  // Configure all Atlas resources with correct endpoints, environment variables, and parameters
+
+  // 1. PostgreSQL "pg" with database "atlas-db" and persistent lifetime
+
+  // 2. Redis "cache" with persistent lifetime
+
+  // 3. RabbitMQ "messaging"
+
+  // 4. API key parameter "api-key" (secret)
+
+  // 5. C# API "api" referencing pg, redis, rabbitmq, with the API key as env var
+
+  // 6. Python ML "ml" at "../atlas-ml" with HTTP endpoint on 8000 referencing rabbitmq
+
+  // 7. Go worker "worker" as executable referencing rabbitmq
+
+  // 8. Vite frontend "frontend" at "../atlas-web" referencing api
+
+
+  builder.Build().Run();'
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\")\n    .WithLifetime(ContainerLifetime.Persistent)\n    .AddDatabase(\"atlas-db\");\n\
+  var redis = builder.AddRedis(\"cache\")\n    .WithLifetime(ContainerLifetime.Persistent);\nvar rabbitmq = builder.AddRabbitMQ(\"messaging\");\nvar apiKey = builder.AddParameter(\"api-key\", secret: true);\n\
+  \nvar api = builder.AddProject<Projects.AtlasApi>(\"api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq)\n    .WithEnvironment(\"API_KEY\", apiKey)\n    .WaitFor(postgres)\n\
+  \    .WaitFor(redis);\n\nbuilder.AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\")\n    .WithHttpEndpoint(port: 8000, env: \"PORT\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nbuilder.AddExecutable(\"\
+  worker\", \"go\", \"../atlas-worker\", \"run\", \".\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nbuilder.AddViteApp(\"frontend\", \"../atlas-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\
+  \nbuilder.Build().Run();"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must use AddPostgres
+  value: AddPostgres
+- type: code-contains
+  description: Must use AddRedis
+  value: AddRedis
+- type: code-contains
+  description: Must use AddRabbitMQ
+  value: AddRabbitMQ
+- type: code-contains
+  description: Must use AddParameter with secret
+  value: 'secret: true'
+- type: code-contains
+  description: Must use WithLifetime for persistence
+  value: WithLifetime
+- type: code-contains
+  description: Must use WaitFor
+  value: WaitFor
+- type: code-contains
+  description: Must add Python ML service
+  value: AddPythonApp
+- type: code-contains
+  description: Must add Vite frontend
+  value: AddViteApp
 hints:
-  - "Start by reading the instructions carefully"
-requiredPackages: []
+- 'Start with infrastructure: AddPostgres, AddRedis, AddRabbitMQ'
+- Use .WithLifetime(ContainerLifetime.Persistent) on databases/caches
+- 'AddParameter("api-key", secret: true) creates a secret parameter'
+- Use .WithEnvironment("API_KEY", apiKey) to inject the parameter
+- Chain WaitFor on services that depend on infrastructure
+requiredPackages:
+- Aspire.Hosting.PostgreSQL
+- Aspire.Hosting.Redis
+- Aspire.Hosting.RabbitMQ
+- Aspire.Hosting.Python
+- Aspire.Hosting.NodeJs

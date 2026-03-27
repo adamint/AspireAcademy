@@ -14,51 +14,16 @@ import {
 } from '@chakra-ui/react';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import { useAuthStore } from '../store/authStore';
-import { Rank, LessonType } from '../constants';
+import { LessonType } from '../constants';
 import api from '../services/apiClient';
+import { formatRank, formatTimeAgo } from '../utils/formatters';
+import { rankEmojis, xpEventIcons } from '../utils/constants';
 import WorldCard from '../components/curriculum/WorldCard';
 import AspireQuickStartCard from '../components/gamification/AspireQuickStartCard';
 import WorldCompletionBadges from '../components/gamification/WorldCompletionBadges';
 import ProgressMilestonePopup from '../components/gamification/ProgressMilestonePopup';
 import ActivityHeatmap from '../components/ActivityHeatmap';
-import type { World, XpResponse, XpEvent } from '../types/curriculum';
-
-const rankEmojis: Record<string, string> = {
-  [Rank.AspireIntern]: '🌱',
-  'junior-dev': '💚',
-  'mid-dev': '💙',
-  'senior-dev': '💜',
-  'tech-lead': '⭐',
-  'architect': '🏗️',
-  'fellow': '👑',
-};
-
-const xpEventIcons: Record<XpEvent['type'], string> = {
-  lesson: '✅',
-  quiz: '📝',
-  challenge: '💻',
-  achievement: '🏆',
-  streak: '🔥',
-  bonus: '🎁',
-};
-
-function formatRank(rank: string): string {
-  return rank
-    .split(/[-_]/)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
-}
-
-function formatTimeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
-}
+import type { World, XpResponse } from '../types/curriculum';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -97,7 +62,7 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <Box maxW="1100px" mx="auto" p="6" display="flex" flexDirection="column" gap="6">
+      <Box maxW="1100px" mx="auto" p="6" display="flex" flexDirection="column" gap="6" aria-busy="true" role="status" aria-label="Loading dashboard">
         <Skeleton height="32px" width="300px" borderRadius="sm" />
         <SimpleGrid columns={{ base: 1, md: 3 }} gap="4">
           {[1, 2, 3].map((i) => (

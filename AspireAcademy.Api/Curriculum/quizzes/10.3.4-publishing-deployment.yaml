@@ -14,7 +14,53 @@ questions:
   - id: d
     text: A CI/CD pipeline stage
     isCorrect: false
-  explanation: PipelineStep is the building block of Aspire's publishing pipeline.
-    Each step has a Name, an async Action, and dependency edges (DependsOn/RequiredBy)
-    that form a directed acyclic graph. Steps with satisfied dependencies execute
-    concurrently.
+  explanation: PipelineStep is the building block of Aspire's publishing pipeline. Each step has a Name, an async Action, and dependency edges (DependsOn/RequiredBy) forming a DAG. Steps with satisfied
+    dependencies execute concurrently.
+- text: What does aspire publish --target kubernetes generate?
+  type: multiple-choice
+  options:
+  - id: a
+    text: A set of kubectl commands
+    isCorrect: false
+  - id: b
+    text: A Helm chart with YAML templates and values.yaml
+    isCorrect: true
+  - id: c
+    text: A Kubernetes operator
+    isCorrect: false
+  - id: d
+    text: A Docker Compose file with K8s annotations
+    isCorrect: false
+  explanation: 'The Kubernetes publisher generates a complete Helm chart: Chart.yaml, values.yaml, and templates/ with Deployment, Service, and ConfigMap YAML for each resource.'
+- text: How does Aspire translate AddPostgres to Azure infrastructure?
+  type: multiple-choice
+  options:
+  - id: a
+    text: It uploads a Docker image to Azure
+    isCorrect: false
+  - id: b
+    text: It generates Bicep for Azure Database for PostgreSQL Flexible Server
+    isCorrect: true
+  - id: c
+    text: It creates an Azure VM running PostgreSQL
+    isCorrect: false
+  - id: d
+    text: It uses Azure Container Instances
+    isCorrect: false
+  explanation: AzurePublishingContext maps AddPostgres to an Azure Database for PostgreSQL Flexible Server definition in main.bicep, with managed identity and role assignments.
+- text: What is the difference between aspire publish and aspire deploy?
+  type: multiple-choice
+  options:
+  - id: a
+    text: They are the same command
+    isCorrect: false
+  - id: b
+    text: publish generates artifacts; deploy generates artifacts AND provisions infrastructure
+    isCorrect: true
+  - id: c
+    text: publish is for Docker; deploy is for Kubernetes
+    isCorrect: false
+  - id: d
+    text: publish is deprecated in favor of deploy
+    isCorrect: false
+  explanation: 'aspire publish generates deployment artifacts (Compose, K8s YAML, Bicep) without deploying. aspire deploy runs the full pipeline: build, push, publish, then deploy to the target environment.'

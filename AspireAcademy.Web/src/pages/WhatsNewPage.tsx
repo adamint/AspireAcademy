@@ -3,6 +3,7 @@ import { Box, Flex, Text, VStack } from '@chakra-ui/react';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import { changelog } from '../data/changelog';
 import type { ChangelogEntry } from '../data/changelog';
+import { formatDateShort } from '../utils/formatters';
 
 const typeConfig: Record<string, { icon: string; color: string; label: string }> = {
   feature: { icon: '🆕', color: '#107C10', label: 'Feature' },
@@ -106,7 +107,7 @@ function VersionCard({
           )}
 
           <Text fontSize="xs" color="dark.muted">
-            {formatDate(entry.date)}
+            {formatDateShort(entry.date)}
           </Text>
 
           <Text ml="auto" fontSize="sm" color="dark.muted">
@@ -178,15 +179,6 @@ function VersionCard({
       </Box>
     </Flex>
   );
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso + 'T00:00:00');
-  return d.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 export default function WhatsNewPage() {

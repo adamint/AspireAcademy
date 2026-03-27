@@ -30,13 +30,15 @@ export default function QuestionFeedback({
           ? '4px 4px 0 #107C10'
           : '4px 4px 0 #D13438'
       }
+      role="status"
+      aria-live="polite"
     >
       <Flex justify="space-between" align="center" mb={2}>
         <Flex align="center" gap={2}>
           {isCorrect ? (
-            <Box as={FiCheck} color="green.300" boxSize={5} />
+            <Box as={FiCheck} color="green.300" boxSize={5} aria-hidden="true" />
           ) : (
-            <Box as={FiX} color="red.300" boxSize={5} />
+            <Box as={FiX} color="red.300" boxSize={5} aria-hidden="true" />
           )}
           <Text
             fontWeight="bold"

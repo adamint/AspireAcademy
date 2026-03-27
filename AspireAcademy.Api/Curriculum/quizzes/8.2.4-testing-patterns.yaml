@@ -3,7 +3,7 @@ questions:
   type: multiple-choice
   options:
   - id: a
-    text: A mock Dashboard for visual testing
+    text: A mock Dashboard
     isCorrect: false
   - id: b
     text: An in-memory AppHost with HttpClient access to resources
@@ -14,6 +14,52 @@ questions:
   - id: d
     text: A Docker Compose test runner
     isCorrect: false
-  explanation: DistributedApplicationTestingBuilder creates an in-memory version of
-    your AppHost that you can use in xUnit/NUnit/MSTest tests. It provides methods
-    to get typed HttpClients for any resource.
+  explanation: DistributedApplicationTestingBuilder creates an in-memory version of your AppHost and provides CreateHttpClient(resourceName) to make requests to running resources.
+- text: When using DistributedApplicationTestingBuilder, what actually runs the containers?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Nothing — containers are mocked
+    isCorrect: false
+  - id: b
+    text: Docker via DCP — real containers are started
+    isCorrect: true
+  - id: c
+    text: A built-in container simulator
+    isCorrect: false
+  - id: d
+    text: Kubernetes pods
+    isCorrect: false
+  explanation: Integration tests with DistributedApplicationTestingBuilder start real Docker containers via DCP. PostgreSQL, Redis, and RabbitMQ run as actual containers for high-fidelity tests.
+- text: What is the purpose of resource substitution in tests?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Replacing real infrastructure with test doubles for speed or isolation
+    isCorrect: true
+  - id: b
+    text: Changing resource names for test clarity
+    isCorrect: false
+  - id: c
+    text: Switching from Docker to Podman
+    isCorrect: false
+  - id: d
+    text: Running tests in Kubernetes instead of locally
+    isCorrect: false
+  explanation: Resource substitution replaces production resources (like PostgreSQL) with lighter alternatives (like in-memory databases) for faster, more deterministic tests.
+- text: How do you wait for a resource to be ready before running assertions?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Thread.Sleep(5000)
+    isCorrect: false
+  - id: b
+    text: Use WaitForResourceAsync on ResourceNotificationService
+    isCorrect: true
+  - id: c
+    text: Poll the health endpoint in a loop
+    isCorrect: false
+  - id: d
+    text: Resources are always ready immediately
+    isCorrect: false
+  explanation: WaitForResourceAsync subscribes to ResourceNotificationService and returns when the specified resource reaches the target state (e.g., Running). This is more reliable than polling or sleeping.

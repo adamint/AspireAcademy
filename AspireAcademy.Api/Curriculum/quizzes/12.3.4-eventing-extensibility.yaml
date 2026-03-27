@@ -14,5 +14,70 @@ questions:
   - id: d
     text: BeforeResourceStartedEvent
     isCorrect: false
-  explanation: ResourceReadyEvent fires the first time a resource transitions to a
-    healthy running state. This is the event that WaitFor listens for internally.
+  explanation: ResourceReadyEvent fires the first time a resource transitions to a healthy running state. This is the event WaitFor listens for internally.
+- text: What dispatch behavior does PublishAsync use by default?
+  type: multiple-choice
+  options:
+  - id: a
+    text: NonBlockingConcurrent
+    isCorrect: false
+  - id: b
+    text: BlockingSequential
+    isCorrect: true
+  - id: c
+    text: BlockingConcurrent
+    isCorrect: false
+  - id: d
+    text: NonBlockingSequential
+    isCorrect: false
+  explanation: The default is BlockingSequential — PublishAsync waits for all handlers to complete in order before returning. This ensures handlers can safely modify state before the next lifecycle phase.
+- text: How does DistributedApplicationEventing store subscriptions internally?
+  type: multiple-choice
+  options:
+  - id: a
+    text: In a database
+    isCorrect: false
+  - id: b
+    text: In a ConcurrentDictionary mapping event Type to List of subscriptions
+    isCorrect: true
+  - id: c
+    text: In a message queue
+    isCorrect: false
+  - id: d
+    text: In a configuration file
+    isCorrect: false
+  explanation: DistributedApplicationEventing uses ConcurrentDictionary<Type, List<DistributedApplicationEventSubscription>> to map event types to their subscriber lists, plus a reverse lookup for unsubscribe.
+- text: What makes InitializeResourceEvent unique among resource events?
+  type: multiple-choice
+  options:
+  - id: a
+    text: It only fires once per AppHost lifetime
+    isCorrect: false
+  - id: b
+    text: It provides direct access to Eventing, Logger, and Notifications without DI resolution
+    isCorrect: true
+  - id: c
+    text: It cannot be subscribed to
+    isCorrect: false
+  - id: d
+    text: It fires before the app model is built
+    isCorrect: false
+  explanation: InitializeResourceEvent is the richest event — its constructor receives IDistributedApplicationEventing, ResourceLoggerService, and ResourceNotificationService directly, so handlers can subscribe
+    to further events, log to the resource stream, and publish state updates without resolving from DI.
+- text: When writing a custom hosting integration, what must the resource class implement for WithReference to work?
+  type: multiple-choice
+  options:
+  - id: a
+    text: IDisposable
+    isCorrect: false
+  - id: b
+    text: IResourceWithConnectionString
+    isCorrect: true
+  - id: c
+    text: IHealthCheck
+    isCorrect: false
+  - id: d
+    text: IHostedService
+    isCorrect: false
+  explanation: IResourceWithConnectionString requires a ConnectionStringExpression property (ReferenceExpression). When another resource calls WithReference, this expression is resolved and injected as
+    a ConnectionStrings__ environment variable.

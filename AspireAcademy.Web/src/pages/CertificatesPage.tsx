@@ -8,11 +8,13 @@ import api from '../services/apiClient';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import {
   Certificate,
+  type CertificateData,
+} from '../components/Certificate';
+import {
   downloadCertificateSVG,
   copyCertificateSummary,
   generateCertificateId,
-  type CertificateData,
-} from '../components/Certificate';
+} from '../components/certificateUtils';
 
 interface CertificateApiItem {
   worldId: string;

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import { FiShare2 } from 'react-icons/fi';
+import { formatRank } from '../../utils/formatters';
 
 interface ShareProgressProps {
-  displayName: string;
+  displayName?: string;
   level: number;
   rank: string;
   completedLessons: number;
@@ -12,15 +13,7 @@ interface ShareProgressProps {
   streakDays: number;
 }
 
-function formatRank(rank: string): string {
-  return rank
-    .split(/[-_]/)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
-}
-
 export default function ShareProgressButton({
-  displayName,
   level,
   rank,
   completedLessons,

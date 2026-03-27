@@ -5,6 +5,7 @@ interface LevelUp {
   newRank: string;
   previousLevel: number;
   previousRank: string;
+  unlockedItems?: { name: string; type: string }[];
 }
 
 interface Achievement {

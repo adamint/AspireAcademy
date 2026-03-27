@@ -14,9 +14,8 @@ questions:
   - id: d
     text: Requests, responses, and errors
     isCorrect: false
-  explanation: The three pillars of observability in OpenTelemetry are traces (distributed
-    request tracking), metrics (numerical measurements), and logs (structured event
-    records). All three flow via OTLP to the Aspire Dashboard.
+  explanation: The three pillars of observability in OpenTelemetry are traces (distributed request tracking), metrics (numerical measurements), and logs (structured event records). All three flow via OTLP
+    to the Aspire Dashboard.
 - text: How does a trace span propagate from a C# API to a Python ML service via HTTP?
   type: multiple-choice
   options:
@@ -32,6 +31,37 @@ questions:
   - id: d
     text: Via the Aspire Dashboard
     isCorrect: false
-  explanation: W3C TraceContext propagation uses the traceparent HTTP header to pass
-    the trace ID and span ID between services. Both the C# HttpClient and Python requests
-    library (with OpenTelemetry instrumentation) handle this automatically.
+  explanation: W3C TraceContext propagation uses the traceparent HTTP header to pass the trace ID and span ID. Both C# HttpClient and Python requests (with OpenTelemetry instrumentation) handle this automatically.
+- text: What is the difference between a Counter and a Histogram?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Counters are for errors, Histograms are for successes
+    isCorrect: false
+  - id: b
+    text: Counters count occurrences; Histograms record value distributions (like latency percentiles)
+    isCorrect: true
+  - id: c
+    text: Counters are integers, Histograms are strings
+    isCorrect: false
+  - id: d
+    text: There is no difference
+    isCorrect: false
+  explanation: A Counter monotonically increases (request count, error count). A Histogram records a distribution of values (response latency) and computes percentiles (p50, p95, p99). Both are visible
+    in the Dashboard Metrics view.
+- text: What protocol does the Dashboard use to receive traces, metrics, and logs?
+  type: multiple-choice
+  options:
+  - id: a
+    text: HTTP REST API
+    isCorrect: false
+  - id: b
+    text: OTLP (OpenTelemetry Protocol)
+    isCorrect: true
+  - id: c
+    text: Prometheus scraping
+    isCorrect: false
+  - id: d
+    text: StatsD UDP
+    isCorrect: false
+  explanation: The Dashboard runs an OTLP receiver. Services export via OTEL_EXPORTER_OTLP_ENDPOINT, which DCP injects automatically. OTLP is the standard wire protocol for all three signal types.

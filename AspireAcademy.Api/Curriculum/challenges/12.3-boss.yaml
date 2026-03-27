@@ -1,10 +1,50 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// Build a complete hosting integration for a hypothetical "MetricsDB" service:
+
+  // 1. MetricsDbResource inheriting ContainerResource + IResourceWithConnectionString
+
+  // 2. AddMetricsDb extension method (image: metricsdb/server, port: 9090)
+
+  // 3. Health check annotation
+
+  // 4. Subscribe to ResourceReadyEvent to log when MetricsDB is ready
+
+  // 5. Register it in an AppHost with another service referencing it
+
+
+  // Your code here:'
+solutionCode: "public class MetricsDbResource(string name) :\n    ContainerResource(name), IResourceWithConnectionString\n{\n    internal const string EndpointName = \"http\";\n    private EndpointReference?\
+  \ _endpoint;\n    public EndpointReference Endpoint => _endpoint ??= new(this, EndpointName);\n\n    public ReferenceExpression ConnectionStringExpression =>\n        ReferenceExpression.Create(\n   \
+  \         $\"http://{Endpoint.Property(EndpointProperty.Host)}:{Endpoint.Property(EndpointProperty.Port)}\");\n}\n\npublic static class MetricsDbExtensions\n{\n    public static IResourceBuilder<MetricsDbResource>\
+  \ AddMetricsDb(\n        this IDistributedApplicationBuilder builder, string name)\n    {\n        return builder.AddResource(new MetricsDbResource(name))\n            .WithImage(\"metricsdb/server\"\
+  )\n            .WithImageTag(\"latest\")\n            .WithHttpEndpoint(targetPort: 9090, name: MetricsDbResource.EndpointName)\n            .WithHealthCheck(MetricsDbResource.EndpointName);\n    }\n\
+  }\n\n// Usage:\nvar builder = DistributedApplication.CreateBuilder(args);\n\nvar metrics = builder.AddMetricsDb(\"metrics\");\n\nbuilder.Eventing.Subscribe<ResourceReadyEvent>(\n    metrics.Resource,\n\
+  \    async (evt, ct) => Console.WriteLine(\"MetricsDB ready!\"));\n\nbuilder.AddProject<Projects.Api>(\"api\")\n    .WithReference(metrics)\n    .WaitFor(metrics);\n\nbuilder.Build().Run();"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must define MetricsDbResource
+  value: MetricsDbResource
+- type: code-contains
+  description: Must inherit ContainerResource
+  value: ContainerResource
+- type: code-contains
+  description: Must implement IResourceWithConnectionString
+  value: IResourceWithConnectionString
+- type: code-contains
+  description: Must use ConnectionStringExpression
+  value: ConnectionStringExpression
+- type: code-contains
+  description: Must add health check
+  value: WithHealthCheck
+- type: code-contains
+  description: Must subscribe to ResourceReadyEvent
+  value: ResourceReadyEvent
+- type: code-contains
+  description: Must use WithReference
+  value: WithReference
 hints:
-  - "Start by reading the instructions carefully"
+- 'Follow the same pattern as MeilisearchResource: inherit ContainerResource, implement IResourceWithConnectionString'
+- ConnectionStringExpression uses ReferenceExpression.Create with endpoint properties
+- The extension method should call AddResource, WithImage, WithHttpEndpoint, WithHealthCheck
+- Subscribe to ResourceReadyEvent with the resource as filter
+- Wire it to a project with WithReference and WaitFor
 requiredPackages: []

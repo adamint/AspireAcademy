@@ -9,8 +9,6 @@ namespace AspireAcademy.Api.Endpoints;
 public static class CurriculumEndpoints
 {
     private const int PassingScorePercent = 70;
-    private static readonly string[] CompletedStatuses = [ProgressStatuses.Completed, ProgressStatuses.Perfect];
-    private static readonly string[] DoneStatuses = [ProgressStatuses.Completed, ProgressStatuses.Perfect, ProgressStatuses.Skipped];
     private static ILogger s_logger = null!;
 
     public static WebApplication MapCurriculumEndpoints(this WebApplication app)
@@ -19,10 +17,12 @@ public static class CurriculumEndpoints
 
         var group = app.MapGroup("/api").WithTags("Curriculum");
 
-        group.MapGet("/worlds", GetWorlds);
-        group.MapGet("/worlds/{worldId}/modules", GetWorldModules);
-        group.MapGet("/modules/{moduleId}/lessons", GetModuleLessons);
-        group.MapGet("/lessons/{lessonId}", GetLessonDetail);
+        group.MapGet("/worlds", GetWorlds).AllowAnonymous();
+        group.MapGet("/worlds/{worldId}/modules", GetWorldModules).AllowAnonymous();
+        group.MapGet("/modules/{moduleId}/lessons", GetModuleLessons).AllowAnonymous();
+        group.MapGet("/lessons/{lessonId}", GetLessonDetail).AllowAnonymous();
+        group.MapGet("/gallery", GetGallery).AllowAnonymous();
+        group.MapGet("/concepts", GetConcepts).AllowAnonymous();
 
         return app;
     }
@@ -46,12 +46,12 @@ public static class CurriculumEndpoints
             : [];
 
         var completedLessonIds = userProgress
-            .Where(p => CompletedStatuses.Contains(p.Status))
+            .Where(p => EndpointHelpers.CompletedStatuses.Contains(p.Status))
             .Select(p => p.LessonId)
             .ToHashSet();
 
         var doneLessonIds = userProgress
-            .Where(p => DoneStatuses.Contains(p.Status))
+            .Where(p => EndpointHelpers.DoneStatuses.Contains(p.Status))
             .Select(p => p.LessonId)
             .ToHashSet();
 
@@ -148,12 +148,12 @@ public static class CurriculumEndpoints
             : [];
 
         var completedLessonIds = userProgress
-            .Where(p => CompletedStatuses.Contains(p.Status))
+            .Where(p => EndpointHelpers.CompletedStatuses.Contains(p.Status))
             .Select(p => p.LessonId)
             .ToHashSet();
 
         var doneLessonIds = userProgress
-            .Where(p => DoneStatuses.Contains(p.Status))
+            .Where(p => EndpointHelpers.DoneStatuses.Contains(p.Status))
             .Select(p => p.LessonId)
             .ToHashSet();
 
@@ -223,12 +223,12 @@ public static class CurriculumEndpoints
             : new Dictionary<string, UserProgress>();
 
         var completedLessonIds = userProgress.Values
-            .Where(p => CompletedStatuses.Contains(p.Status))
+            .Where(p => EndpointHelpers.CompletedStatuses.Contains(p.Status))
             .Select(p => p.LessonId)
             .ToHashSet();
 
         var doneLessonIds = userProgress.Values
-            .Where(p => DoneStatuses.Contains(p.Status))
+            .Where(p => EndpointHelpers.DoneStatuses.Contains(p.Status))
             .Select(p => p.LessonId)
             .ToHashSet();
 

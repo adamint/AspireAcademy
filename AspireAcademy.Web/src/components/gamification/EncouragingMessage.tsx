@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { pixelFontProps } from '../../theme/aspireTheme';
@@ -21,9 +21,8 @@ interface EncouragingMessageProps {
 }
 
 export default function EncouragingMessage({ xpEarned }: EncouragingMessageProps) {
-  const message = useMemo(
-    () => messages[Math.floor(Math.random() * messages.length)],
-    []
+  const [message] = useState(
+    () => messages[Math.floor(Math.random() * messages.length)]
   );
 
   return (

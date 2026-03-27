@@ -1,10 +1,57 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// In your Atlas API Program.cs, add:
+
+  // 1. ServiceDefaults with AddServiceDefaults()
+
+  // 2. A custom health check for the ML service
+
+  // 3. A custom ActivitySource and a span for search requests
+
+  // 4. A custom Counter metric for search requests
+
+
+  var builder = WebApplication.CreateBuilder(args);
+
+
+  // TODO: Add service defaults
+
+  // TODO: Add custom health check
+
+  // TODO: Create metrics
+
+
+  var app = builder.Build();
+
+
+  // TODO: Map health endpoints
+
+  // TODO: Add search endpoint with custom tracing and metrics
+
+
+  app.Run();'
+solutionCode: "var builder = WebApplication.CreateBuilder(args);\n\nbuilder.AddServiceDefaults();\n\nbuilder.Services.AddHealthChecks()\n    .AddUrlGroup(new Uri(\"http://ml/health\"), \"ml-service\");\n\
+  \nvar app = builder.Build();\n\napp.MapDefaultEndpoints();\n\nvar searchSource = new ActivitySource(\"Atlas.Api.Search\");\nvar searchCounter = app.Services.GetRequiredService<IMeterFactory>()\n    .Create(\"\
+  Atlas.Api\").CreateCounter<long>(\"atlas.search.requests\");\n\napp.MapGet(\"/search\", async (string query) =>\n{\n    using var activity = searchSource.StartActivity(\"SearchArticles\");\n    activity?.SetTag(\"\
+  search.query\", query);\n    searchCounter.Add(1);\n    // ... perform search\n    return Results.Ok(new { query, results = Array.Empty<string>() });\n});\n\napp.Run();"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must call AddServiceDefaults
+  value: AddServiceDefaults
+- type: code-contains
+  description: Must add health checks
+  value: AddHealthChecks
+- type: code-contains
+  description: Must map default endpoints
+  value: MapDefaultEndpoints
+- type: code-contains
+  description: Must create ActivitySource
+  value: ActivitySource
+- type: code-contains
+  description: Must create a counter metric
+  value: CreateCounter
 hints:
-  - "Start by reading the instructions carefully"
+- AddServiceDefaults() registers OpenTelemetry, health checks, service discovery, and resilience
+- Use .AddUrlGroup() to add an HTTP health check for an external service
+- MapDefaultEndpoints() maps /health and /alive endpoints
+- Create an ActivitySource and use StartActivity to create spans
+- Use IMeterFactory to create meters and counters
 requiredPackages: []

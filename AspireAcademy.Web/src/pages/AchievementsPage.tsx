@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import api from '../services/apiClient';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
+import { rarityColors } from '../utils/constants';
 
 interface AchievementItem {
   id: string;
@@ -24,14 +25,6 @@ interface AchievementItem {
 type Category = 'All' | 'Milestone' | 'Mastery' | 'Streak' | 'Speed' | 'Perfection' | 'Completion';
 
 const categories: Category[] = ['All', 'Milestone', 'Mastery', 'Streak', 'Speed', 'Perfection', 'Completion'];
-
-const rarityBorderColors: Record<string, string> = {
-  common: '#8A8886',
-  uncommon: '#107C10',
-  rare: '#2196F3',
-  epic: '#6B4FBB',
-  legendary: '#FFD700',
-};
 
 export default function AchievementsPage() {
   const [category, setCategory] = useState<string>('All');
@@ -128,7 +121,7 @@ export default function AchievementsPage() {
                   transition="transform 0.15s ease"
                   _hover={ach.isUnlocked ? { transform: 'translateY(-2px)' } : undefined}
                   position="relative"
-                  borderColor={rarityBorderColors[ach.rarity]}
+                  borderColor={rarityColors[ach.rarity]}
                   filter={ach.isUnlocked ? undefined : 'grayscale(100%)'}
                   opacity={ach.isUnlocked ? 1 : 0.6}
                   onClick={() => ach.isUnlocked && setSelected(ach)}
@@ -140,7 +133,7 @@ export default function AchievementsPage() {
                     </Box>
                   )}
 
-                  <Text fontSize="40px" lineHeight="1">{ach.icon}</Text>
+                  <Text fontSize="40px" lineHeight="1" aria-hidden="true">{ach.icon}</Text>
                   <Text {...pixelFontProps} fontSize="8px" fontWeight="bold">
                     {ach.isUnlocked ? ach.name : '???'}
                   </Text>
@@ -179,7 +172,7 @@ export default function AchievementsPage() {
                 <Flex gap={4} mt={2}>
                   <Text fontSize="sm" color="dark.muted">
                     Rarity:{' '}
-                    <Text as="span" fontWeight="bold" color={rarityBorderColors[selected?.rarity ?? 'common']}>
+                    <Text as="span" fontWeight="bold" color={rarityColors[selected?.rarity ?? 'common']}>
                       {selected?.rarity}
                     </Text>
                   </Text>

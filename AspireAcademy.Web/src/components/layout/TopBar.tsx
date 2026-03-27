@@ -33,6 +33,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
 
   return (
     <Flex
+      as="header"
       align="center"
       h="56px"
       px="4"
@@ -43,6 +44,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
       position="sticky"
       top="0"
       zIndex={100}
+      role="banner"
     >
       {/* Mobile hamburger */}
       <IconButton
@@ -84,7 +86,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
 
             {loginStreakDays > 0 && (
               <Text {...pixelFontProps} fontSize="10px" color="game.streak" whiteSpace="nowrap">
-                🔥 {loginStreakDays}
+                <Text as="span" aria-hidden="true">🔥</Text> {loginStreakDays}
               </Text>
             )}
 

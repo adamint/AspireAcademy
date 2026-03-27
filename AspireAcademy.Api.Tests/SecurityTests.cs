@@ -233,13 +233,14 @@ public class SecurityTests : TestFixture
     }
 
     [Fact]
-    public async Task Achievements_RequiresAuth()
+    public async Task Achievements_IsPublic()
     {
+        // Achievements catalog is intentionally public (shows all achievements, locked status for anon users)
         using var client = Factory.CreateClient();
         client.DefaultRequestHeaders.Add("X-Test-Client", "true");
 
         var response = await client.GetAsync("/api/achievements");
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

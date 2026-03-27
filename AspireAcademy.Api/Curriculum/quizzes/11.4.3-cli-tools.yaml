@@ -14,6 +14,52 @@ questions:
   - id: d
     text: Via gRPC
     isCorrect: false
-  explanation: The CLI uses a JSON-RPC backchannel over Unix sockets to communicate
-    with the AppHost process. This is how aspire ps, aspire logs, and other commands
-    query the running application.
+  explanation: The CLI uses a JSON-RPC backchannel over Unix sockets (~/.aspire/cli/backchannels/) to communicate with running AppHosts. Commands like ps, logs, and exec query through this channel.
+- text: What does the VS Code extension's code lens feature do?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Highlights syntax errors in AppHost files
+    isCorrect: false
+  - id: b
+    text: Shows Run/Debug buttons above AppHost entry points in all supported languages
+    isCorrect: true
+  - id: c
+    text: Auto-formats YAML configuration
+    isCorrect: false
+  - id: d
+    text: Generates documentation from code comments
+    isCorrect: false
+  explanation: The extension detects AppHost entry points (CreateBuilder in C#, createBuilder in TypeScript, create_builder in Python, etc.) and places clickable Run/Debug code lenses above them.
+- text: What transport does the Aspire MCP server use?
+  type: multiple-choice
+  options:
+  - id: a
+    text: HTTP/2
+    isCorrect: false
+  - id: b
+    text: WebSocket
+    isCorrect: false
+  - id: c
+    text: Standard I/O (stdin/stdout)
+    isCorrect: true
+  - id: d
+    text: Named pipes only
+    isCorrect: false
+  explanation: The MCP server uses StdioMcpTransportFactory — it reads JSON from stdin and writes to stdout. AI agents spawn the aspire agent mcp process and communicate via stdio.
+- text: Which MCP tool would an AI agent use to find the cause of a failing service?
+  type: multiple-choice
+  options:
+  - id: a
+    text: list_integrations
+    isCorrect: false
+  - id: b
+    text: list_console_logs and list_traces
+    isCorrect: true
+  - id: c
+    text: refresh_tools
+    isCorrect: false
+  - id: d
+    text: select_apphost
+    isCorrect: false
+  explanation: list_console_logs shows error output from the failing service. list_traces shows distributed traces that may reveal where the failure occurs in the request chain.

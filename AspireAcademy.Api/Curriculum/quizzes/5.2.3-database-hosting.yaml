@@ -14,11 +14,8 @@ questions:
   - id: d
     text: builder.AddPostgres("mydb")
     isCorrect: false
-  explanation: AddPostgres creates the server. AddDatabase (chained from the server)
-    creates a logical database within it. The database resource is what you pass to
-    WithReference.
-- text: What happens if you add WithLifetime(ContainerLifetime.Persistent) to a PostgreSQL
-    resource?
+  explanation: AddPostgres creates the server. AddDatabase (chained from the server) creates a logical database. The database resource is what you pass to WithReference.
+- text: What happens if you add WithLifetime(ContainerLifetime.Persistent) to a PostgreSQL resource?
   type: multiple-choice
   options:
   - id: a
@@ -33,6 +30,36 @@ questions:
   - id: d
     text: The container cannot be stopped
     isCorrect: false
-  explanation: Persistent lifetime keeps the container alive across AppHost restarts.
-    Combined with a data volume, your database retains its data between development
-    sessions.
+  explanation: Persistent lifetime keeps the container alive across AppHost restarts. Combined with a data volume, your database retains its data between development sessions.
+- text: How does a Python application connect to a PostgreSQL database managed by Aspire?
+  type: multiple-choice
+  options:
+  - id: a
+    text: It uses the Aspire Python SDK's built-in PostgreSQL client
+    isCorrect: false
+  - id: b
+    text: It reads the connection string from os.environ["ConnectionStrings__atlas-db"] and passes it to psycopg2 or asyncpg
+    isCorrect: true
+  - id: c
+    text: It connects via a Unix socket provided by DCP
+    isCorrect: false
+  - id: d
+    text: Python cannot connect to Aspire-managed databases
+    isCorrect: false
+  explanation: Aspire injects the connection string as an environment variable. Python services read it with os.environ and use standard PostgreSQL drivers (psycopg2, asyncpg, SQLAlchemy).
+- text: What does .WithPgAdmin() add to a PostgreSQL resource?
+  type: multiple-choice
+  options:
+  - id: a
+    text: A command-line administration tool inside the container
+    isCorrect: false
+  - id: b
+    text: A separate pgAdmin container for visual database management
+    isCorrect: true
+  - id: c
+    text: SQL syntax highlighting in the Dashboard
+    isCorrect: false
+  - id: d
+    text: Automatic database backups
+    isCorrect: false
+  explanation: WithPgAdmin() adds a pgAdmin container that connects to the PostgreSQL server. It appears as a separate resource in the Dashboard with its own web UI endpoint.

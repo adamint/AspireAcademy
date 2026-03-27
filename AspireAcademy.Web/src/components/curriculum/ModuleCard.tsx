@@ -40,6 +40,7 @@ export default function ModuleCard({ module }: ModuleCardProps) {
           onClick={toggle}
           title={module.isLocked ? `${module.name} - Locked` : `Toggle ${module.name} module`}
           aria-label={module.isLocked ? `${module.name} module - Locked` : `Toggle ${module.name} module`}
+          aria-expanded={module.isLocked ? undefined : expanded}
           role="button"
           tabIndex={module.isLocked ? -1 : 0}
           onKeyDown={(e) => {

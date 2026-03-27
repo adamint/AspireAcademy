@@ -1,10 +1,75 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// Given this scenario: Atlas search requests are taking 3 seconds.
+
+  // The Dashboard shows the following trace waterfall:
+
+  //
+
+  // Frontend  [========================================] 3000ms
+
+  //   API     [====================================]     2950ms
+
+  //     DB    [==]                                        50ms
+
+  //     ML    [================================]          2800ms
+
+  //       DB  [============================]              2700ms
+
+  //
+
+  // Questions:
+
+  // 1. Which service is the bottleneck?
+
+  // 2. What specific operation within that service is slow?
+
+  // 3. What would you change to fix it?
+
+
+  // Answer as code comments:
+
+  // Bottleneck: TODO
+
+  // Slow operation: TODO
+
+  // Fix: TODO'
+solutionCode: '// Answer:
+
+  // Bottleneck: The ML (Python recommendation) service
+
+  // Slow operation: The ML service''s database query taking 2700ms
+
+  // Fix: Add an index to the ML service''s database query, or add caching
+
+  //      with Redis to cache recommendation results. In the AppHost:
+
+  //
+
+  // builder.AddPythonApp("ml", "../atlas-ml", "app:app")
+
+  //     .WithReference(redis)
+
+  //     .WithReference(postgres);
+
+  //
+
+  // The ML service should check Redis cache before querying PostgreSQL.
+
+  // Also consider adding .WithReplicas(2) to the ML service if the
+
+  // query optimization is not sufficient.'
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must identify ML as bottleneck
+  value: ML
+- type: code-contains
+  description: Must identify database query as slow
+  value: database
+- type: code-contains
+  description: Must suggest caching or indexing as fix
+  value: cache
 hints:
-  - "Start by reading the instructions carefully"
+- 'Look at the trace waterfall: which span takes the most time?'
+- The ML service span is 2800ms, and within it, the DB query is 2700ms
+- Consider caching frequently accessed data with Redis
+- Adding a database index could speed up the slow query
 requiredPackages: []

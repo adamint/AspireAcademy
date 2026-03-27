@@ -34,3 +34,21 @@ public static class Ranks
     public const string AspireMaster = "aspire-master";
     public const string AspireArchitect = "aspire-architect";
 }
+
+public static class PersonaTypes
+{
+    public const string DevOps = "devops";
+    public const string CSharp = "csharp";
+    public const string JavaScript = "javascript";
+    public const string Polyglot = "polyglot";
+
+    public static readonly string[] All = [DevOps, CSharp, JavaScript, Polyglot];
+}
+
+public static class PersonaRelevance
+{
+    public const string High = "high";
+    public const string Medium = "medium";
+    public const string Low = "low";
+    public const string Skip = "skip";
+}

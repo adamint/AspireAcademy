@@ -1,10 +1,30 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
+  api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\n// TODO: Add a Python ML service at \"../atlas-ml\" with entry point \"app:app\"\n//       It should have an HTTP endpoint on port 8000\
+  \ and reference the API\n\n// TODO: Add a Vite frontend at \"../atlas-web\"\n//       It should reference the API and wait for the API to be ready\n\nbuilder.Build().Run();"
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
+  api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\nbuilder.AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\")\n    .WithHttpEndpoint(port: 8000, env: \"PORT\")\n    .WithReference(api);\n\
+  \nbuilder.AddViteApp(\"frontend\", \"../atlas-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\nbuilder.Build().Run();"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must add a Python app
+  value: AddPythonApp
+- type: code-contains
+  description: Python app entry point must be app:app
+  value: app:app
+- type: code-contains
+  description: Must add a Vite frontend
+  value: AddViteApp
+- type: code-contains
+  description: Frontend must reference the API
+  value: WithReference(api)
+- type: code-contains
+  description: Frontend must wait for API
+  value: WaitFor(api)
 hints:
-  - "Start by reading the instructions carefully"
-requiredPackages: []
+- Use builder.AddPythonApp("ml", "../atlas-ml", "app:app") for the ML service
+- 'Add .WithHttpEndpoint(port: 8000, env: "PORT") to the Python app'
+- Use builder.AddViteApp("frontend", "../atlas-web") for the frontend
+- Chain .WithReference(api).WaitFor(api) on the frontend
+requiredPackages:
+- Aspire.Hosting.Python
+- Aspire.Hosting.NodeJs

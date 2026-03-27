@@ -16,6 +16,7 @@ import {
 import { FiUsers, FiActivity, FiStar, FiZap, FiGlobe, FiLayers, FiBookOpen, FiTrash2, FiRefreshCw, FiDatabase } from 'react-icons/fi';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import api from '../services/apiClient';
+import { formatDate } from '../utils/formatters';
 
 interface AdminStats {
   totalUsers: number;
@@ -43,12 +44,6 @@ interface AdminUsersResponse {
   totalCount: number;
   page: number;
   pageSize: number;
-}
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return 'Never';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 export default function AdminPage() {
@@ -142,25 +137,27 @@ export default function AdminPage() {
       </Flex>
 
       {/* Action message toast */}
-      {actionMessage && (
-        <Card.Root
-          variant="outline"
-          {...retroCardProps}
-          borderColor={actionMessage.isError ? 'game.error' : 'game.success'}
-          bg={actionMessage.isError ? 'red.900' : 'green.900'}
-        >
-          <Card.Body p="3">
-            <Text fontSize="sm" color="white">
-              {actionMessage.isError ? '❌' : '✅'} {actionMessage.text}
-            </Text>
-          </Card.Body>
-        </Card.Root>
-      )}
+      <Box role="status" aria-live="polite" aria-atomic="true">
+        {actionMessage && (
+          <Card.Root
+            variant="outline"
+            {...retroCardProps}
+            borderColor={actionMessage.isError ? 'game.error' : 'game.success'}
+            bg={actionMessage.isError ? 'red.900' : 'green.900'}
+          >
+            <Card.Body p="3">
+              <Text fontSize="sm" color="white">
+                {actionMessage.isError ? '❌' : '✅'} {actionMessage.text}
+              </Text>
+            </Card.Body>
+          </Card.Root>
+        )}
+      </Box>
 
       {/* Stats Cards */}
       {statsLoading ? (
-        <Flex justify="center" p="8">
-          <Spinner size="lg" color="aspire.600" />
+        <Flex justify="center" p="8" role="status" aria-label="Loading statistics">
+          <Spinner size="lg" color="aspire.600" aria-hidden="true" />
         </Flex>
       ) : stats ? (
         <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="4">
@@ -239,6 +236,7 @@ export default function AdminPage() {
               color="dark.text"
               borderColor="dark.border"
               _placeholder={{ color: 'dark.muted' }}
+              aria-label="Search users by username, email, or display name"
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -248,8 +246,8 @@ export default function AdminPage() {
           </Flex>
 
           {usersLoading ? (
-            <Flex justify="center" p="6">
-              <Spinner size="md" color="aspire.500" />
+            <Flex justify="center" p="6" role="status" aria-label="Loading users">
+              <Spinner size="md" color="aspire.500" aria-hidden="true" />
             </Flex>
           ) : (
             <>
@@ -296,6 +294,7 @@ export default function AdminPage() {
                             size="xs"
                             colorPalette="red"
                             variant="ghost"
+                            aria-label={`Delete user ${user.username}`}
                             onClick={() => {
                               if (window.confirm(`Delete user "${user.username}"? This cannot be undone.`)) {
                                 deleteUser.mutate(user.id);

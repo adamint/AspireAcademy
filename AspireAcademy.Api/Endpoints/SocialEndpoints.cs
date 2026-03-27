@@ -381,14 +381,19 @@ public static class SocialEndpoints
 
             var skillNames = new Dictionary<string, string>
             {
-                ["world-1"] = "Fundamentals",
-                ["world-2"] = "Hosting",
-                ["world-3"] = "Networking",
-                ["world-4"] = "Integrations",
-                ["world-5"] = "Observability",
-                ["world-6"] = "Advanced",
-                ["world-7"] = "Deployment",
-                ["world-8"] = "Tooling",
+                ["world-1"] = "Distributed Problems",
+                ["world-2"] = "App Model",
+                ["world-3"] = "Resource Types",
+                ["world-4"] = "Wiring & Discovery",
+                ["world-5"] = "Integrations",
+                ["world-6"] = "Observability",
+                ["world-7"] = "Dashboard",
+                ["world-8"] = "Testing",
+                ["world-9"] = "Polyglot Internals",
+                ["world-10"] = "Deployment",
+                ["world-11"] = "CLI & Tools",
+                ["world-12"] = "Eventing & Lifecycle",
+                ["world-13"] = "Aspire Internals",
             };
 
             var skills = worlds.Select(world =>

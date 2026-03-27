@@ -113,10 +113,12 @@ export default function LessonPage() {
 
   // Reset mutation states when navigating to a different lesson
   useEffect(() => {
-    completeMutation.reset();
-    skipMutation.reset();
-    unskipMutation.reset();
-    setXpAnim(null);
+    return () => {
+      completeMutation.reset();
+      skipMutation.reset();
+      unskipMutation.reset();
+      setXpAnim(null);
+    };
   }, [lessonId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleComplete = useCallback(() => {

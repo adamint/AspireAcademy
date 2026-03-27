@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Box, Text, Button, Flex } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { pixelFontProps } from '../../theme/aspireTheme';
@@ -36,6 +36,11 @@ const realWorldCards: Record<string, string> = {
   'world-6': 'Cloud-native teams rely on Aspire\'s Azure integrations for managed databases, storage, and messaging.',
   'world-7': 'Advanced teams use Aspire custom resources to integrate proprietary services into their distributed architecture.',
   'world-8': 'Production-grade apps use Aspire\'s observability features for end-to-end distributed tracing across all services.',
+  'world-9': 'Polyglot teams use Aspire\'s RemoteHost bridge so Node.js, Python, and Go services participate in the same app model as .NET.',
+  'world-10': 'DevOps teams use Aspire\'s publish pipeline to generate Docker Compose, Kubernetes Helm charts, and Azure Bicep from one app model.',
+  'world-11': 'The Aspire CLI and VS Code extension give developers fast inner-loop iteration, while the MCP server enables AI-assisted workflows.',
+  'world-12': 'Teams extend Aspire with custom lifecycle events and resources — hooking into startup, health checks, and teardown.',
+  'world-13': 'Open-source contributors use knowledge of Aspire internals — DCP, the backchannel, and the Dashboard — to ship features upstream.',
 };
 
 interface ProgressMilestonePopupProps {
@@ -65,12 +70,8 @@ export default function ProgressMilestonePopup({ worlds }: ProgressMilestonePopu
   const [activeMilestone, setActiveMilestone] = useState<{
     world: World;
     milestone: number;
-  } | null>(null);
-  const checkedRef = useRef(false);
-
-  useEffect(() => {
-    if (checkedRef.current || !worlds.length) return;
-    checkedRef.current = true;
+  } | null>(() => {
+    if (!worlds.length) return null;
 
     const seen = getSeenMilestones();
     const milestones = [25, 50, 75, 100];
@@ -81,12 +82,12 @@ export default function ProgressMilestonePopup({ worlds }: ProgressMilestonePopu
 
       for (const m of milestones) {
         if (pct >= m && !worldSeen.includes(m)) {
-          setActiveMilestone({ world, milestone: m });
-          return;
+          return { world, milestone: m };
         }
       }
     }
-  }, [worlds]);
+    return null;
+  });
 
   const handleDismiss = () => {
     if (activeMilestone) {
@@ -130,9 +131,13 @@ export default function ProgressMilestonePopup({ worlds }: ProgressMilestonePopu
           maxW="400px"
           w="90%"
           textAlign="center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="milestone-title"
+          onKeyDown={(e) => { if (e.key === 'Escape') handleDismiss(); }}
         >
-          <Text fontSize="48px" mb={2}>{info.emoji}</Text>
-          <Text {...pixelFontProps} fontSize="sm" color="game.xpGold" mb={2}>
+          <Text fontSize="48px" mb={2} aria-hidden="true">{info.emoji}</Text>
+          <Text id="milestone-title" {...pixelFontProps} fontSize="sm" color="game.xpGold" mb={2}>
             {info.title}
           </Text>
           <Text fontSize="sm" color="dark.muted" mb={2}>

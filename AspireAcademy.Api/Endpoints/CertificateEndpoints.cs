@@ -55,10 +55,8 @@ public static class CertificateEndpoints
             .OrderBy(w => w.SortOrder)
             .ToListAsync();
 
-        var completedStatuses = new[] { ProgressStatuses.Completed, ProgressStatuses.Perfect };
-
         var userProgress = await db.UserProgress
-            .Where(p => p.UserId == userId && completedStatuses.Contains(p.Status))
+            .Where(p => p.UserId == userId && EndpointHelpers.CompletedStatuses.Contains(p.Status))
             .ToListAsync();
 
         var progressByLesson = userProgress.ToDictionary(p => p.LessonId);

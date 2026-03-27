@@ -29,9 +29,9 @@ const WhatsNewPage = lazy(() => import('./pages/WhatsNewPage'));
 
 function LazyFallback() {
   return (
-    <Flex align="center" justify="center" h="100%" p="12">
+    <Flex align="center" justify="center" h="100%" p="12" role="status" aria-label="Loading page">
       <Flex direction="column" align="center" gap="3">
-        <Spinner size="lg" color="aspire.600" borderWidth="3px" />
+        <Spinner size="lg" color="aspire.600" borderWidth="3px" aria-hidden="true" />
         <Text fontSize="sm" color="aspire.500" fontFamily="pixel">
           Loading...
         </Text>

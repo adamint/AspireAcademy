@@ -3,21 +3,9 @@ import { persist } from 'zustand/middleware';
 import { Rank } from '../constants';
 import { useGamificationStore } from './gamificationStore';
 import { useProgressStore } from './progressStore';
+import type { User } from '../types';
 
-export interface User {
-  id: string;
-  username: string;
-  displayName: string;
-  email: string;
-  avatarUrl: string;
-  bio: string | null;
-  currentLevel: number;
-  currentRank: string;
-  totalXp: number;
-  loginStreakDays: number;
-  createdAt: string;
-  gitHubUsername: string | null;
-}
+export type { User };
 
 interface AuthStore {
   token: string | null;

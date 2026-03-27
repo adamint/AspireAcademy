@@ -1,10 +1,86 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// Explain how one AppHost produces three deployment targets:
+
+  // 1. Docker Compose (docker-compose.yml)
+
+  // 2. Kubernetes Helm (Chart.yaml + templates/)
+
+  // 3. Azure Bicep (main.bicep)
+
+  //
+
+  // For each target, describe what the AppHost''s AddPostgres("pg") becomes.
+
+  // Write your answer as code comments.
+
+
+  // Docker Compose: TODO
+
+  // Kubernetes: TODO
+
+  // Azure Bicep: TODO'
+solutionCode: '// Docker Compose:
+
+  // AddPostgres("pg") becomes a service in docker-compose.yml:
+
+  //   services:
+
+  //     pg:
+
+  //       image: postgres:17
+
+  //       environment: POSTGRES_PASSWORD=${PG_PASSWORD}
+
+  //       volumes: [pg-data:/var/lib/postgresql/data]
+
+  //       healthcheck: { test: ["CMD", "pg_isready"] }
+
+  // Other services get: ConnectionStrings__atlas-db=Host=pg;Port=5432;...
+
+
+  // Kubernetes:
+
+  // AddPostgres("pg") becomes a StatefulSet + Service + PersistentVolumeClaim:
+
+  //   - StatefulSet runs the postgres:17 container with resource limits
+
+  //   - Service exposes port 5432 for internal cluster access
+
+  //   - PVC provides persistent storage
+
+  //   - Connection string is injected via ConfigMap or Secret
+
+  //   - values.yaml contains the password as a Helm value
+
+
+  // Azure Bicep:
+
+  // AddPostgres("pg") becomes Microsoft.DBforPostgreSQL/flexibleServers:
+
+  //   - Azure Database for PostgreSQL Flexible Server (managed service)
+
+  //   - No container — Azure manages the infrastructure
+
+  //   - Managed identity for authentication (no password in code)
+
+  //   - Connection string includes Azure-specific DNS name
+
+  //   - Role assignments grant the API''s managed identity access'
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must describe Docker Compose mapping
+  value: docker-compose
+- type: code-contains
+  description: Must describe Kubernetes mapping
+  value: StatefulSet
+- type: code-contains
+  description: Must describe Azure mapping
+  value: flexibleServers
+- type: code-contains
+  description: Must mention connection string handling
+  value: ConnectionString
 hints:
-  - "Start by reading the instructions carefully"
+- 'Docker Compose: PostgreSQL becomes a service with image, env, volumes, healthcheck'
+- 'Kubernetes: PostgreSQL becomes a StatefulSet + Service + PVC in Helm templates'
+- 'Azure: PostgreSQL becomes a managed Azure Database for PostgreSQL (no container)'
+- 'Each target handles connection strings differently: env vars, ConfigMaps, managed identity'
 requiredPackages: []

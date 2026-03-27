@@ -16,6 +16,7 @@ public class User
     public DateOnly? LastStreakDate { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAt { get; set; }
+    public string? Persona { get; set; }
 
     // Navigation properties
     public UserXp? Xp { get; set; }

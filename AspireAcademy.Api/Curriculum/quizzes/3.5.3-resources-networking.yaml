@@ -1,6 +1,5 @@
 questions:
-- text: 'In WithHttpEndpoint(port: 8080, targetPort: 80), what is the difference between
-    port and targetPort?'
+- text: 'In WithHttpEndpoint(port: 8080, targetPort: 80), what is the difference between port and targetPort?'
   type: multiple-choice
   options:
   - id: a
@@ -15,8 +14,7 @@ questions:
   - id: d
     text: targetPort is for HTTPS only
     isCorrect: false
-  explanation: port is the host port (what you connect to from outside). targetPort
-    is the container port (what the process inside listens on).
+  explanation: port is the host port (what you connect to from outside). targetPort is the container port (what the process inside listens on).
 - text: How does a Python service read a connection string injected by WithReference?
   type: multiple-choice
   options:
@@ -32,5 +30,36 @@ questions:
   - id: d
     text: Connection strings only work with .NET services
     isCorrect: false
-  explanation: Connection strings are injected as environment variables. Every language
-    reads them the same way — from the environment. The format is ConnectionStrings__<resource-name>.
+  explanation: Connection strings are injected as environment variables. Every language reads them the same way. The format is ConnectionStrings__<resource-name>.
+- text: 'What does AddParameter("key", secret: true) do differently from a non-secret parameter?'
+  type: multiple-choice
+  options:
+  - id: a
+    text: Secret parameters are encrypted at rest
+    isCorrect: false
+  - id: b
+    text: Secret parameters are never logged, never shown in the Dashboard, and stored securely in deployment manifests
+    isCorrect: true
+  - id: c
+    text: Secret parameters can only be used by the AppHost
+    isCorrect: false
+  - id: d
+    text: There is no difference
+    isCorrect: false
+  explanation: Secret parameters are masked in the Dashboard, not logged, prompted interactively (not stored in config files), and marked as @secure() in Bicep deployment templates.
+- text: What happens if you omit the port parameter in WithHttpEndpoint?
+  type: multiple-choice
+  options:
+  - id: a
+    text: The endpoint is disabled
+    isCorrect: false
+  - id: b
+    text: DCP allocates a random available port automatically
+    isCorrect: true
+  - id: c
+    text: Port 80 is used by default
+    isCorrect: false
+  - id: d
+    text: The build fails with an error
+    isCorrect: false
+  explanation: If you omit port, DCP allocates a random available port. This prevents conflicts when running multiple Aspire apps simultaneously.

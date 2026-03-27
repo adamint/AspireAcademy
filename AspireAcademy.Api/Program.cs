@@ -21,18 +21,11 @@ builder.Services.AddScoped<CurriculumLoader>();
 builder.Services.AddSingleton<AiTutorService>();
 builder.Services.AddSingleton<CodeCheckerService>();
 
-// JWT authentication
-var jwtSecret = builder.Configuration["Jwt:Key"] ?? "dev-secret-key-change-in-production-min-32-chars!!";
+// JWT authentication — key is always injected by the AppHost (or test harness)
+var jwtSecret = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException(
+        "Missing 'Jwt:Key' configuration. The AppHost must inject this value.");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "AspireAcademy";
-
-// Fail fast if the default dev key is used in production
-if (!builder.Environment.IsDevelopment() && builder.Environment.EnvironmentName != "Testing" &&
-    jwtSecret == "dev-secret-key-change-in-production-min-32-chars!!")
-{
-    throw new InvalidOperationException(
-        "SECURITY: The default development JWT signing key must not be used in production. " +
-        "Set the 'Jwt:Key' configuration value to a unique, random string of at least 32 characters.");
-}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -112,8 +105,9 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
-// Auto-migrate and load curriculum in Development
-if (app.Environment.IsDevelopment())
+// Initialize database schema and load curriculum on startup (all environments).
+// In dev: uses EnsureCreated (drop/recreate on schema mismatch).
+// In production: applies EF Core migrations, then loads curriculum if empty.
 {
     try
     {
@@ -121,57 +115,62 @@ if (app.Environment.IsDevelopment())
         await using var scope = app.Services.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<AcademyDbContext>();
 
-        app.Logger.LogInformation("Database connection string: {ConnStr}",
-            db.Database.GetConnectionString()?[..Math.Min(80, db.Database.GetConnectionString()?.Length ?? 0)] + "...");
-
-        // EnsureCreated works for new DBs; for existing ones with missing tables,
-        // drop and recreate (dev only — production would use migrations)
-        app.Logger.LogInformation("Calling EnsureCreatedAsync...");
-        var created = await db.Database.EnsureCreatedAsync();
-        app.Logger.LogInformation("EnsureCreatedAsync returned created={Created}", created);
-
-        if (!created)
+        if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testing")
         {
-            // DB exists but might be missing tables — check by trying a simple query
-            try
+            app.Logger.LogInformation("Dev/Testing mode — using EnsureCreated");
+            var created = await db.Database.EnsureCreatedAsync();
+            if (!created)
             {
-                await db.Worlds.AnyAsync();
-                app.Logger.LogInformation("Worlds table exists, schema is intact");
-            }
-            catch (Exception schemaEx)
-            {
-                app.Logger.LogWarning(schemaEx, "Worlds table query failed — recreating schema");
-                // Tables don't exist — recreate schema
-                await db.Database.EnsureDeletedAsync();
-                await db.Database.EnsureCreatedAsync();
-                app.Logger.LogInformation("Schema recreated successfully");
+                try
+                {
+                    await db.Worlds.AnyAsync();
+                    app.Logger.LogInformation("Worlds table exists, schema is intact");
+                }
+                catch
+                {
+                    app.Logger.LogWarning("Schema mismatch — recreating (dev only)");
+                    await db.Database.EnsureDeletedAsync();
+                    await db.Database.EnsureCreatedAsync();
+                }
             }
         }
-
-        app.Logger.LogInformation("Running CurriculumLoader...");
-        var loader = scope.ServiceProvider.GetRequiredService<CurriculumLoader>();
-        await loader.LoadAsync();
-
-        // Verify what was loaded
-        var worldCount = await db.Worlds.CountAsync();
-        var moduleCount = await db.Modules.CountAsync();
-        var lessonCount = await db.Lessons.CountAsync();
-        app.Logger.LogInformation("Curriculum load complete: {WorldCount} worlds, {ModuleCount} modules, {LessonCount} lessons",
-            worldCount, moduleCount, lessonCount);
-
-        if (worldCount == 0)
+        else
         {
-            app.Logger.LogWarning(
-                "WARNING: 0 worlds loaded! Check that worlds.yaml exists at {Path} and contains valid YAML with a 'worlds:' root key",
-                Path.Combine(app.Environment.ContentRootPath, "Curriculum", "worlds.yaml"));
+            app.Logger.LogInformation("Production mode — applying EF Core migrations");
+            await db.Database.MigrateAsync();
+        }
+
+        // Load curriculum if the database is empty (first deploy or after flush).
+        // Skip in Testing — tests seed their own data.
+        if (app.Environment.EnvironmentName != "Testing")
+        {
+            var worldCount = await db.Worlds.CountAsync();
+            if (worldCount == 0)
+            {
+                app.Logger.LogInformation("No curriculum data found — running CurriculumLoader...");
+                var loader = scope.ServiceProvider.GetRequiredService<CurriculumLoader>();
+                await loader.LoadAsync();
+
+                worldCount = await db.Worlds.CountAsync();
+                var moduleCount = await db.Modules.CountAsync();
+                var lessonCount = await db.Lessons.CountAsync();
+                app.Logger.LogInformation("Curriculum loaded: {WorldCount} worlds, {ModuleCount} modules, {LessonCount} lessons",
+                    worldCount, moduleCount, lessonCount);
+            }
+            else
+            {
+                app.Logger.LogInformation("Curriculum already loaded ({WorldCount} worlds)", worldCount);
+            }
         }
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "Failed to initialize database or load curriculum. The app will start but data may be missing. Exception: {Message}\n{StackTrace}",
-            ex.Message, ex.StackTrace);
+        app.Logger.LogError(ex, "Failed to initialize database or load curriculum. The app will start but data may be missing.");
     }
+}
 
+if (app.Environment.IsDevelopment())
+{
     app.MapOpenApi();
 }
 
@@ -212,6 +211,13 @@ app.UseAuthorization();
 
 app.MapDefaultEndpoints();
 
+// Serve React SPA static files in production (bundled via PublishWithContainerFiles)
+if (!app.Environment.IsDevelopment())
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
+
 // Wire all API endpoint groups
 app.MapAuthEndpoints();
 app.MapCurriculumEndpoints();
@@ -224,6 +230,12 @@ app.MapAdminEndpoints();
 app.MapCertificateEndpoints();
 app.MapSettingsEndpoints();
 app.MapWeeklyChallengeEndpoints();
+
+// SPA fallback: serve index.html for non-API, non-file routes (React Router)
+if (!app.Environment.IsDevelopment())
+{
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();
 

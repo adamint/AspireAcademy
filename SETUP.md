@@ -28,16 +28,11 @@ The AI tutor uses `gpt-4o` by default. The connection string format is `Key=...`
 
 **Without this:** The app starts but AI Tutor (chat, hints, code review) won't work. All other features are unaffected.
 
-### 2. JWT Secret Key (Optional — has dev default)
+### 2. JWT Secret Key (Auto-configured)
 
-A secret key for signing JWT authentication tokens. Has a built-in dev fallback, but should be set in production:
+The AppHost generates a random JWT signing key each dev session automatically. No manual configuration needed.
 
-```bash
-# Set via environment variable or appsettings
-export Jwt__Key="your-secret-key-at-least-32-characters-long"
-```
-
-**Without this:** Uses the hardcoded dev key `"dev-secret-key-change-in-production-min-32-chars!!"`. Fine for local dev, **must change for production**.
+For deployment, `aspire deploy` prompts for a persistent key that gets stored as an ACA secret.
 
 ### 3. PostgreSQL & Redis (Auto-configured)
 

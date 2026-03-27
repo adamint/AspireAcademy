@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ChakraProvider } from '@chakra-ui/react'
 import { system } from '../../../theme/aspireTheme'
 import QuestionCard from '../QuestionCard'
-import type { QuizQuestion, QuizOption } from '../../../pages/QuizPage'
+import type { QuizQuestion } from '../../../pages/QuizPage'
 
 function renderCard(
   question: QuizQuestion,

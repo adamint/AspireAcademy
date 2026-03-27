@@ -1,10 +1,35 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\nvar rabbitmq =\
+  \ builder.AddRabbitMQ(\"messaging\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq);\n    // TODO:\
+  \ API should wait for postgres, redis, and rabbitmq\n\nvar ml = builder.AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\")\n    .WithReference(rabbitmq);\n    // TODO: ML should wait for rabbitmq\n\n\
+  var worker = builder.AddExecutable(\"worker\", \"go\", \"../atlas-worker\", \"run\", \".\")\n    .WithReference(rabbitmq);\n    // TODO: Worker should wait for rabbitmq\n\nvar frontend = builder.AddViteApp(\"\
+  frontend\", \"../atlas-web\")\n    .WithReference(api);\n    // TODO: Frontend should wait for api\n\nbuilder.Build().Run();"
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\nvar rabbitmq\
+  \ = builder.AddRabbitMQ(\"messaging\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq)\n    .WaitFor(postgres)\n\
+  \    .WaitFor(redis)\n    .WaitFor(rabbitmq);\n\nvar ml = builder.AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nvar worker = builder.AddExecutable(\"\
+  worker\", \"go\", \"../atlas-worker\", \"run\", \".\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nvar frontend = builder.AddViteApp(\"frontend\", \"../atlas-web\")\n    .WithReference(api)\n\
+  \    .WaitFor(api);\n\nbuilder.Build().Run();"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: API must wait for postgres
+  value: WaitFor(postgres)
+- type: code-contains
+  description: API must wait for redis
+  value: WaitFor(redis)
+- type: code-contains
+  description: API must wait for rabbitmq
+  value: WaitFor(rabbitmq)
+- type: code-contains
+  description: ML must wait for rabbitmq
+  value: .WaitFor(rabbitmq)
+- type: code-contains
+  description: Frontend must wait for api
+  value: WaitFor(api)
 hints:
-  - "Start by reading the instructions carefully"
-requiredPackages: []
+- WaitFor holds a service in Waiting state until its dependency is healthy
+- Chain .WaitFor(resource) after .WithReference(resource)
+- The API depends on three infrastructure resources
+- The frontend only depends on the API — not directly on databases
+requiredPackages:
+- Aspire.Hosting.PostgreSQL
+- Aspire.Hosting.Redis
+- Aspire.Hosting.RabbitMQ

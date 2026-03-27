@@ -52,11 +52,12 @@ public class GamificationEndpointsTests : TestFixture
     }
 
     [Fact]
-    public async Task GetAchievements_Unauthenticated_Returns401()
+    public async Task GetAchievements_Unauthenticated_ReturnsOk()
     {
+        // Achievements endpoint is intentionally public (shows catalog)
         var response = await Client.GetAsync("/api/achievements");
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     // ── Complete Lesson ──

@@ -1,10 +1,66 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// Trace what happens when a TypeScript AppHost calls:
+
+  //   const redis = await builder.addRedis("cache");
+
+  //
+
+  // Describe each step in the pipeline from TypeScript to DCP.
+
+  // Write your answer as numbered code comments.
+
+
+  // Step 1: TypeScript calls addRedis("cache") on the builder handle
+
+  // Step 2: TODO
+
+  // Step 3: TODO
+
+  // Step 4: TODO
+
+  // Step 5: TODO
+
+  // Step 6: TODO'
+solutionCode: '// Step 1: TypeScript calls addRedis("cache") on the builder proxy object in .modules/aspire.js
+
+  // Step 2: The proxy sends a JSON-RPC message over the Unix socket:
+
+  //         { "method": "invokeCapability", "params": { "capabilityId": "addRedis", "args": { "builderHandle": "handle-1", "name": "cache" } } }
+
+  // Step 3: RemoteHostServer receives the message. JsonRpcServer routes it to CapabilityDispatcher.
+
+  // Step 4: CapabilityDispatcher looks up "addRedis" in its capability table (built from [AspireExport] attributes).
+
+  //         It resolves the builder handle from HandleRegistry, getting the actual IDistributedApplicationBuilder.
+
+  // Step 5: AtsMarshaller converts JSON args to .NET types. CapabilityDispatcher calls RedisBuilderExtensions.AddRedis(builder, "cache").
+
+  //         This creates a RedisResource, adds annotations (EndpointAnnotation, HealthCheckAnnotation), and returns IResourceBuilder<RedisResource>.
+
+  // Step 6: HandleRegistry registers the returned IResourceBuilder with a new handle ID (e.g., "handle-3").
+
+  //         The handle is returned as JSON: { "result": { "$handle": "handle-3" } }.
+
+  //         TypeScript wraps it in a RedisResourceBuilderHandle class with typed methods (withLifetime, etc.).'
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must mention JSON-RPC
+  value: JSON-RPC
+- type: code-contains
+  description: Must mention CapabilityDispatcher
+  value: CapabilityDispatcher
+- type: code-contains
+  description: Must mention HandleRegistry
+  value: HandleRegistry
+- type: code-contains
+  description: Must mention Unix socket
+  value: socket
+- type: code-contains
+  description: Must mention RedisResource or AddRedis
+  value: Redis
 hints:
-  - "Start by reading the instructions carefully"
+- The TypeScript proxy in .modules/aspire.js sends JSON-RPC messages
+- The RemoteHostServer receives messages on a Unix domain socket
+- CapabilityDispatcher maps capability IDs to .NET methods via [AspireExport]
+- HandleRegistry manages opaque handle IDs for .NET objects
+- AtsMarshaller converts between JSON and .NET types
 requiredPackages: []

@@ -14,6 +14,52 @@ questions:
   - id: d
     text: Vue.js, WebSockets, and Elasticsearch
     isCorrect: false
-  explanation: The Dashboard uses Blazor Server for the UI, a gRPC service for receiving
-    resource state from the AppHost, and an OTLP receiver for ingesting traces, metrics,
-    and logs.
+  explanation: The Dashboard uses Blazor Server for the UI, a gRPC service for receiving resource state from the AppHost, and an OTLP receiver for ingesting traces, metrics, and logs.
+- text: Why does the Dashboard use Blazor Server instead of a SPA framework like React?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Blazor is faster than React
+    isCorrect: false
+  - id: b
+    text: Real-time SignalR push updates, server-side data access without CORS, and small client footprint
+    isCorrect: true
+  - id: c
+    text: The team does not know JavaScript
+    isCorrect: false
+  - id: d
+    text: Blazor has better SEO support
+    isCorrect: false
+  explanation: Blazor Server renders on the server and pushes diffs via SignalR. This enables real-time updates without polling, direct server-side data access, and a minimal JS client.
+- text: How does the Dashboard receive resource state changes from the AppHost?
+  type: multiple-choice
+  options:
+  - id: a
+    text: HTTP polling every 5 seconds
+    isCorrect: false
+  - id: b
+    text: Reading a shared database
+    isCorrect: false
+  - id: c
+    text: gRPC streaming subscription to ResourceNotificationService
+    isCorrect: true
+  - id: d
+    text: WebSocket connection to DCP
+    isCorrect: false
+  explanation: The Dashboard subscribes to the AppHost via a gRPC streaming RPC. The AppHost pushes updates whenever ResourceNotificationService.PublishUpdateAsync is called.
+- text: Where does the Dashboard store traces, metrics, and logs?
+  type: multiple-choice
+  options:
+  - id: a
+    text: In a SQLite database on disk
+    isCorrect: false
+  - id: b
+    text: In memory — data is lost when the AppHost stops
+    isCorrect: true
+  - id: c
+    text: In Azure Application Insights
+    isCorrect: false
+  - id: d
+    text: In the Docker container filesystem
+    isCorrect: false
+  explanation: The Dashboard stores all telemetry in memory. When the AppHost stops, all traces, metrics, and logs are lost. This is by design — the Dashboard is for development, not production.

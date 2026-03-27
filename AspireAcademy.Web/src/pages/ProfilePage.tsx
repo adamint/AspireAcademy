@@ -7,7 +7,6 @@ import {
 import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX, FiGithub, FiAward } from 'react-icons/fi';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery as useWorldsQuery } from '@tanstack/react-query';
 import api from '../services/apiClient';
 import { useAuthStore, type User } from '../store/authStore';
 import AvatarDisplay from '../components/gamification/AvatarDisplay';
@@ -17,6 +16,8 @@ import ActivityHeatmap from '../components/ActivityHeatmap';
 import SkillRadar from '../components/SkillRadar';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import type { World } from '../types/curriculum';
+import { rarityColors } from '../utils/constants';
+import { extractErrorMessage } from '../utils/errorHandler';
 
 interface UserProfile extends User {
   completedLessons: number;
@@ -34,14 +35,6 @@ interface SkillData {
   lessonsCompleted: number;
   totalLessons: number;
 }
-
-const rarityColors: Record<string, string> = {
-  common: '#8A8886',
-  uncommon: '#107C10',
-  rare: '#2196F3',
-  epic: '#6B4FBB',
-  legendary: '#FFD700',
-};
 
 export default function ProfilePage() {
   const { userId } = useParams<{ userId: string }>();
@@ -96,12 +89,7 @@ export default function ProfilePage() {
     },
     onError: (err) => {
       console.error('[ProfilePage] Friend action failed:', err);
-      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
-      setMutationError(
-        axiosErr?.response?.data?.error ??
-        axiosErr?.response?.data?.message ??
-        'Action failed. Please try again.'
-      );
+      setMutationError(extractErrorMessage(err, 'Action failed. Please try again.'));
     },
   });
 
@@ -118,12 +106,7 @@ export default function ProfilePage() {
     },
     onError: (err) => {
       console.error('[ProfilePage] Edit profile failed:', err);
-      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
-      setMutationError(
-        axiosErr?.response?.data?.error ??
-        axiosErr?.response?.data?.message ??
-        'Failed to save profile. Please try again.'
-      );
+      setMutationError(extractErrorMessage(err, 'Failed to save profile. Please try again.'));
     },
   });
 

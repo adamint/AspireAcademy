@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Box, Text, VStack, Input, RadioGroup, Checkbox } from '@chakra-ui/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import type { QuizQuestion, QuizOption } from '../../pages/QuizPage';
+import type { QuizQuestion } from '../../pages/QuizPage';
 import { retroCardProps } from '../../theme/aspireTheme';
 import MarkdownContent from '../common/MarkdownContent';
 
@@ -37,6 +37,7 @@ export default function QuestionCard({
             value={(selectedAnswer as string) ?? ''}
             onValueChange={(e) => onAnswerChange(e.value)}
             disabled={disabled}
+            aria-label={question.text}
           >
             <VStack align="stretch" gap={2}>
               {question.options?.map((opt) => (
@@ -105,6 +106,7 @@ export default function QuestionCard({
             value={(selectedAnswer as string) ?? ''}
             onValueChange={(e) => onAnswerChange(e.value)}
             disabled={disabled}
+            aria-label="Select the predicted output"
           >
             <VStack align="stretch" gap={2}>
               {question.options?.map((opt) => (
@@ -153,6 +155,7 @@ export default function QuestionCard({
               onChange={(e) => onAnswerChange(e.target.value)}
               disabled={disabled}
               placeholder="Your answer..."
+              aria-label="Type your answer"
               bg="dark.surface"
               border="2px solid"
               borderColor="game.pixelBorder"

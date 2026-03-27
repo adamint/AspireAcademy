@@ -1,10 +1,79 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: '// Describe the sequence of CLI commands to:
+
+  // 1. Create a new Aspire project
+
+  // 2. Add a Redis integration
+
+  // 3. Run the app
+
+  // 4. Check resource status
+
+  // 5. View API logs
+
+  // 6. Publish to Docker Compose
+
+  // Write each command and explain what it does.
+
+
+  // Command 1: TODO
+
+  // Command 2: TODO
+
+  // Command 3: TODO
+
+  // Command 4: TODO
+
+  // Command 5: TODO
+
+  // Command 6: TODO'
+solutionCode: '// Command 1: aspire new aspire-starter --name Atlas
+
+  // Creates a new Aspire project from the starter template with AppHost + ServiceDefaults + API
+
+
+  // Command 2: aspire add Atlas.AppHost --package Aspire.Hosting.Redis
+
+  // Adds the Redis hosting integration NuGet package to the AppHost project
+
+
+  // Command 3: aspire run
+
+  // Builds the AppHost, starts DCP, launches all resources, opens the Dashboard
+
+
+  // Command 4: aspire ps
+
+  // Lists all running resources with status (Running/Starting/Exited), type, and endpoints
+
+
+  // Command 5: aspire logs api
+
+  // Streams console logs from the "api" resource in real time
+
+
+  // Command 6: aspire publish --target docker-compose --output-path ./deploy
+
+  // Generates docker-compose.yml + .env files in ./deploy/ without starting anything'
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must use aspire new
+  value: aspire new
+- type: code-contains
+  description: Must use aspire run
+  value: aspire run
+- type: code-contains
+  description: Must use aspire ps
+  value: aspire ps
+- type: code-contains
+  description: Must use aspire logs
+  value: aspire logs
+- type: code-contains
+  description: Must use aspire publish
+  value: aspire publish
 hints:
-  - "Start by reading the instructions carefully"
+- aspire new creates projects, aspire add adds integrations
+- aspire run starts the AppHost with DCP and Dashboard
+- aspire ps shows running resource status like docker ps
+- aspire logs <resource> streams console output
+- aspire publish --target docker-compose generates Compose files
 requiredPackages: []

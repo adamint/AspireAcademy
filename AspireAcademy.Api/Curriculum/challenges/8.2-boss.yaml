@@ -1,10 +1,36 @@
-starterCode: |
-  // TODO: Implement the challenge
-solutionCode: |
-  // Solution code
+starterCode: "// Write a complete test suite for Atlas:\n// 1. Shared fixture that starts Atlas once for all tests\n// 2. Health endpoint test (GET /health -> 200)\n// 3. Search endpoint test (GET /api/search?q=hello\
+  \ -> 200 with results)\n// 4. WaitForResourceAsync to ensure resources are ready\n\n[CollectionDefinition(\"Atlas\")]\npublic class AtlasCollection : ICollectionFixture<AtlasFixture> { }\n\npublic class\
+  \ AtlasFixture : IAsyncLifetime\n{\n    public DistributedApplication App { get; private set; } = null!;\n\n    // TODO: Initialize and dispose\n}\n\n[Collection(\"Atlas\")]\npublic class AtlasSearchTests\n\
+  {\n    // TODO: Test search functionality\n}"
+solutionCode: "[CollectionDefinition(\"Atlas\")]\npublic class AtlasCollection : ICollectionFixture<AtlasFixture> { }\n\npublic class AtlasFixture : IAsyncLifetime\n{\n    public DistributedApplication\
+  \ App { get; private set; } = null!;\n\n    public async Task InitializeAsync()\n    {\n        var builder = await DistributedApplicationTestingBuilder\n            .CreateAsync<Projects.AtlasAppHost>();\n\
+  \        App = await builder.BuildAsync();\n        await App.StartAsync();\n\n        var rns = App.Services.GetRequiredService<ResourceNotificationService>();\n        await rns.WaitForResourceAsync(\"\
+  api\", KnownResourceStates.Running);\n    }\n\n    public async Task DisposeAsync() => await App.DisposeAsync();\n}\n\n[Collection(\"Atlas\")]\npublic class AtlasSearchTests(AtlasFixture fixture)\n{\n\
+  \    [Fact]\n    public async Task HealthCheck()\n    {\n        var client = fixture.App.CreateHttpClient(\"api\");\n        var response = await client.GetAsync(\"/health\");\n        response.StatusCode.Should().Be(HttpStatusCode.OK);\n\
+  \    }\n\n    [Fact]\n    public async Task SearchReturnsResults()\n    {\n        var client = fixture.App.CreateHttpClient(\"api\");\n        var response = await client.GetAsync(\"/api/search?q=hello\"\
+  );\n        response.StatusCode.Should().Be(HttpStatusCode.OK);\n    }\n}"
 testCases:
-  - type: compiles
-    description: "Code should compile"
+- type: code-contains
+  description: Must define fixture
+  value: AtlasFixture
+- type: code-contains
+  description: Must use ICollectionFixture
+  value: ICollectionFixture
+- type: code-contains
+  description: Must use DistributedApplicationTestingBuilder
+  value: DistributedApplicationTestingBuilder
+- type: code-contains
+  description: Must wait for resource readiness
+  value: WaitForResourceAsync
+- type: code-contains
+  description: Must test health endpoint
+  value: /health
+- type: code-contains
+  description: Must dispose properly
+  value: DisposeAsync
 hints:
-  - "Start by reading the instructions carefully"
+- ICollectionFixture<T> shares one fixture across all test classes in the collection
+- Primary constructor parameter (AtlasFixture fixture) injects the shared fixture
+- WaitForResourceAsync ensures the API is ready before tests run
+- Use fixture.App.CreateHttpClient("api") in each test method
 requiredPackages: []
