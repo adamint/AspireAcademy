@@ -136,7 +136,6 @@ public class ScenarioTests : TestFixture
         await UnlockChallengeLesson();
 
         using var authClient = CreateAuthenticatedClient(TestUserId);
-        Factory.FakeRedis.Reset();
 
         var request = new ChallengeRunRequest("Console.WriteLine(\"Hello\");");
 

@@ -14,7 +14,7 @@ using Npgsql;
 namespace AspireAcademy.Api.Tests;
 
 /// <summary>
-/// Shared test fixture that spins up the full Aspire AppHost (Postgres, Redis, API)
+/// Shared test fixture that spins up the full Aspire AppHost (Postgres, API)
 /// using DistributedApplicationTestingBuilder. Requires Docker to be running.
 /// </summary>
 public sealed class AspireIntegrationFixture : IAsyncLifetime
@@ -23,7 +23,6 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
 
     public HttpClient ApiClient { get; private set; } = null!;
     public string PostgresConnectionString { get; private set; } = null!;
-    public string RedisConnectionString { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {
@@ -34,7 +33,7 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
 
         _aspireApp = await builder.BuildAsync();
 
-        // Start all resources (Postgres container, Redis container, API project)
+        // Start all resources (Postgres container, API project)
         // CI runners may need extra time to pull container images
         using var startCts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
         await _aspireApp.StartAsync(startCts.Token);
@@ -42,7 +41,6 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
         // Wait for infrastructure containers to be healthy
         var rns = _aspireApp.Services.GetRequiredService<ResourceNotificationService>();
         await rns.WaitForResourceHealthyAsync("postgres", startCts.Token);
-        await rns.WaitForResourceHealthyAsync("cache", startCts.Token);
 
         // Wait for the API project to be running
         await rns.WaitForResourceAsync("api", KnownResourceStates.Running, startCts.Token);
@@ -50,8 +48,6 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
         // Get real connection strings from running containers
         PostgresConnectionString = await _aspireApp.GetConnectionStringAsync("academydb")
             ?? throw new InvalidOperationException("Failed to get Postgres connection string");
-        RedisConnectionString = await _aspireApp.GetConnectionStringAsync("cache")
-            ?? throw new InvalidOperationException("Failed to get Redis connection string");
 
         // Create an HTTP client that talks to the real API resource
         ApiClient = _aspireApp.CreateHttpClient("api");
@@ -97,7 +93,7 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
 }
 
 /// <summary>
-/// Integration tests that spin up the full Aspire infrastructure (Postgres, Redis)
+/// Integration tests that spin up the full Aspire infrastructure (Postgres)
 /// and test the API end-to-end against real services. These catch DB schema issues,
 /// connection string problems, service discovery failures, and startup crashes.
 /// </summary>
@@ -144,13 +140,6 @@ public class AppHostIntegrationTests : IClassFixture<AspireIntegrationFixture>
         cmd.CommandText = "SELECT 1";
         var result = await cmd.ExecuteScalarAsync();
         Assert.Equal(1, result);
-    }
-
-    [Fact]
-    public async Task Redis_ConnectionStringIsValid()
-    {
-        Assert.NotNull(_fixture.RedisConnectionString);
-        Assert.NotEmpty(_fixture.RedisConnectionString);
     }
 
     // ================================================================

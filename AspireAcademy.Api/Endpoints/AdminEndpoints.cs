@@ -3,7 +3,6 @@ using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
 using AspireAcademy.Api.Services;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 
 namespace AspireAcademy.Api.Endpoints;
 
@@ -18,7 +17,6 @@ public static class AdminEndpoints
         group.MapGet("/stats", GetStats);
         group.MapPost("/reload-curriculum", ReloadCurriculum);
         group.MapPost("/flush-db", FlushDatabase);
-        group.MapPost("/flush-redis", FlushRedis);
         group.MapGet("/users", GetUsers);
         group.MapDelete("/users/{userId:guid}", DeleteUser);
         group.MapPost("/seed-test-data", SeedTestData);
@@ -168,30 +166,6 @@ public static class AdminEndpoints
 
         logger.LogWarning("Admin action: Database flushed and curriculum reloaded");
         return Results.Ok(new AdminActionResponse("Database flushed and curriculum reloaded."));
-    }
-
-    private static async Task<IResult> FlushRedis(
-        ClaimsPrincipal principal,
-        HttpRequest request,
-        IConnectionMultiplexer redis,
-        ILogger<AcademyDbContext> logger)
-    {
-        if (!IsAdmin(principal, request))
-        {
-            return Forbidden();
-        }
-
-        logger.LogWarning("Admin action: FlushRedis requested by {User}", principal.FindFirstValue(ClaimTypes.Name));
-
-        var server = redis.GetServers().FirstOrDefault();
-        if (server is null)
-        {
-            return Results.Json(new ErrorResponse("No Redis servers available."), statusCode: 503);
-        }
-        await server.FlushAllDatabasesAsync();
-
-        logger.LogWarning("Admin action: Redis flushed");
-        return Results.Ok(new AdminActionResponse("Redis cache flushed."));
     }
 
     private static async Task<IResult> GetUsers(

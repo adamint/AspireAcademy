@@ -8,8 +8,7 @@ This project uses **Aspire's built-in publish/deploy pipeline** to deploy to Azu
 |----------|--------------|-------|
 | API + React SPA | **Azure Container Apps** | React build is bundled into the API container as static files |
 | PostgreSQL | **Azure Database for PostgreSQL Flexible Server** | Burstable B1ms, 32 GB, Entra ID auth (no passwords) |
-| Redis | **Azure Cache for Redis** | Managed Redis, Entra ID auth via managed identity |
-| Identity | **User-Assigned Managed Identity** | RBAC roles for PostgreSQL + Redis |
+| Identity | **User-Assigned Managed Identity** | RBAC roles for PostgreSQL |
 | Container Registry | **Azure Container Registry** | Auto-created for container images |
 | Networking | **Container Apps Environment** | Shared environment with Log Analytics |
 
@@ -79,7 +78,7 @@ You'll need two values for the first deploy:
 | Secret | Description |
 |--------|-------------|
 | **JWT signing key** | A random string, at least 32 characters. Used to sign auth tokens. |
-| **OpenAI connection string** | `Key=sk-your-key` (OpenAI) or `Endpoint=https://your-resource.openai.azure.com;Key=your-key` (Azure OpenAI) |
+| **AI connection string** | `Endpoint=https://your-resource.services.ai.azure.com/;Key=your-key` (Azure AI Foundry) or `Key=sk-your-key` (OpenAI) |
 
 Generate a JWT key:
 
@@ -115,7 +114,7 @@ The Aspire CLI will interactively prompt you for:
 3. **Resource group** — Enter the name from Step 1
 4. **Location** — Azure region
 5. **jwt-key** — Paste your JWT signing key
-6. **openai connection string** — Paste your OpenAI/Azure OpenAI connection string
+6. **openai connection string** — Paste your AI connection string (Azure AI Foundry endpoint or OpenAI API key)
 
 After this first deploy, all subsequent deploys (automated or manual) reuse these stored secrets.
 
@@ -196,11 +195,9 @@ aspire-output/
 ├── aca-env/aca-env.bicep         # Container Apps Environment + Log Analytics
 ├── aca-env-acr/aca-env-acr.bicep # Azure Container Registry
 ├── postgres/postgres.bicep       # PostgreSQL Flexible Server
-├── cache/cache.bicep             # Azure Cache for Redis
 ├── api/api.bicep                 # API Container App
 ├── api-identity/                 # Managed Identity
-├── api-roles-postgres/           # PostgreSQL RBAC
-└── api-roles-cache/              # Redis RBAC
+└── api-roles-postgres/           # PostgreSQL RBAC
 ```
 
 You can inspect, customize, or deploy these manually with `az deployment sub create`.
@@ -214,8 +211,7 @@ These are injected by Aspire into the container at deploy time:
 | Variable | Source |
 |----------|--------|
 | `ConnectionStrings__academydb` | Azure PostgreSQL connection string (with Entra ID auth) |
-| `ConnectionStrings__cache` | Azure Redis connection string (with Entra ID auth) |
-| `ConnectionStrings__openai` | From your input (stored as ACA secret) |
+| `ConnectionStrings__openai` | AI connection string — Azure AI Foundry endpoint or OpenAI key (stored as ACA secret) |
 | `Jwt__Key` | From your input (stored as ACA secret) |
 | `AZURE_CLIENT_ID` | Managed identity client ID |
 | `HTTP_PORTS` | Container port (auto-assigned) |
@@ -223,8 +219,7 @@ These are injected by Aspire into the container at deploy time:
 ### Authentication
 
 - **PostgreSQL**: Entra ID authentication via managed identity (no password)
-- **Redis**: Entra ID authentication via managed identity (no password)
-- **OpenAI**: API key from connection string (stored as ACA secret)
+- **AI (Azure AI Foundry / OpenAI)**: Connection string with endpoint+key or API key (stored as ACA secret)
 - **JWT**: Symmetric key (stored as ACA secret)
 
 ### Scaling
@@ -244,16 +239,15 @@ For a minimal deployment (Burstable tier, single replica):
 |----------|--------------|
 | Container Apps (1 replica, 0.5 vCPU / 1 GB) | ~$15 |
 | PostgreSQL Flexible Server (B1ms) | ~$13 |
-| Azure Cache for Redis (Basic C0) | ~$16 |
 | Container Registry (Basic) | ~$5 |
 | Log Analytics | ~$2-5 |
-| **Total** | **~$50-55/month** |
+| **Total** | **~$35-40/month** |
 
 ## Troubleshooting
 
 ### Deploy fails at "process-parameters"
 
-You need to provide values for `jwt-key` and `openai` connection string. Run `aspire deploy` (not `--non-interactive`) to get the interactive prompts. This happens on first deploy before secrets are stored.
+You need to provide values for `jwt-key` and `openai` connection string (which accepts Azure AI Foundry or OpenAI). Run `aspire deploy` (not `--non-interactive`) to get the interactive prompts. This happens on first deploy before secrets are stored.
 
 ### Container starts but health check fails
 
@@ -265,7 +259,7 @@ az containerapp logs show --name api --resource-group <your-rg> --type console
 
 Common causes:
 - Database migration failed (check PostgreSQL firewall rules)
-- Missing or invalid OpenAI connection string
+- Missing or invalid AI connection string (check `ConnectionStrings__openai`)
 - JWT key too short (must be at least 32 characters)
 
 ### "MigrateAsync" fails on first deploy

@@ -12,7 +12,6 @@ public class GamificationServiceTests : IDisposable
 {
     private readonly AcademyDbContext _db;
     private readonly GamificationService _service;
-    private readonly FakeRedis _fakeRedis;
     private readonly SqliteConnection _connection;
 
     private static readonly Guid UserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
@@ -28,8 +27,7 @@ public class GamificationServiceTests : IDisposable
 
         _db = new TestAcademyDbContext(options);
         _db.Database.EnsureCreated();
-        _fakeRedis = new FakeRedis();
-        _service = new GamificationService(_db, _fakeRedis.Multiplexer, NullLogger<GamificationService>.Instance);
+        _service = new GamificationService(_db, NullLogger<GamificationService>.Instance);
 
         SeedUser();
     }

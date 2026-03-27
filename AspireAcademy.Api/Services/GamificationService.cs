@@ -76,7 +76,9 @@ public class GamificationService(AcademyDbContext db, ILogger<GamificationServic
             CreatedAt = DateTime.UtcNow
         });
 
-        await db.SaveChangesAsync();\n\n        LevelUpInfo? levelUp = null;
+        await db.SaveChangesAsync();
+
+        LevelUpInfo? levelUp = null;
         if (newLevel > previousLevel)
         {
             levelUp = new LevelUpInfo(previousLevel, previousRank, newLevel, newRank);

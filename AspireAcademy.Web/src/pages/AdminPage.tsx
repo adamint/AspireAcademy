@@ -96,12 +96,6 @@ export default function AdminPage() {
     onError: (err) => { console.error('[AdminPage] Failed to flush database:', err); showMessage('Failed to flush database.', true); },
   });
 
-  const flushRedis = useMutation({
-    mutationFn: () => api.post('/admin/flush-redis'),
-    onSuccess: () => showMessage('Redis cache flushed!'),
-    onError: (err) => { console.error('[AdminPage] Failed to flush Redis:', err); showMessage('Failed to flush Redis.', true); },
-  });
-
   const deleteUser = useMutation({
     mutationFn: (userId: string) => api.delete(`/admin/users/${userId}`),
     onSuccess: () => {
@@ -199,15 +193,6 @@ export default function AdminPage() {
             >
               <FiDatabase />
               {flushDb.isPending ? 'Flushing…' : 'Flush Database'}
-            </Button>
-            <Button
-              colorPalette="orange"
-              size="sm"
-              onClick={() => flushRedis.mutate()}
-              disabled={flushRedis.isPending}
-            >
-              <FiZap />
-              {flushRedis.isPending ? 'Flushing…' : 'Flush Redis'}
             </Button>
             <Button
               colorPalette="green"

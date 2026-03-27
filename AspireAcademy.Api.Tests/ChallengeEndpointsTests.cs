@@ -99,8 +99,6 @@ public class ChallengeEndpointsTests : TestFixture
     [Fact]
     public async Task RunCode_RateLimiting_Returns429AfterExceedingLimit()
     {
-        Factory.FakeRedis.Reset();
-
         using var authClient = CreateAuthenticatedClient(TestUserId);
         var request = new ChallengeRunRequest("Console.WriteLine(\"hi\");", 0);
 

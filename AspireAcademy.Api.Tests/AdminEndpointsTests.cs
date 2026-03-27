@@ -142,20 +142,7 @@ public class AdminEndpointsTests : TestFixture
         body.GetProperty("message").GetString().Should().Contain("reloaded");
     }
 
-    // ── Flush Redis ──
-
-    [Fact]
-    public async Task FlushRedis_AsAdmin_ReturnsExpectedResponse()
-    {
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
-
-        var response = await client.PostAsync("/api/admin/flush-redis", null);
-
-        // FakeRedis returns empty servers, so the API returns 503
-        response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
-    }
-
-    // ── Admin via X-Aspire-Admin header ──
+    // \u2500\u2500 Admin via X-Aspire-Admin header \u2500\u2500
 
     [Fact]
     public async Task AdminEndpoint_ViaAspireHeader_Succeeds()

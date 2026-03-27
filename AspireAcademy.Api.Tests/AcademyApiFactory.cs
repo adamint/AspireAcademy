@@ -15,7 +15,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
 
 namespace AspireAcademy.Api.Tests;
 
@@ -27,8 +26,6 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
     public const string AdminInternalSecret = "test-admin-secret-for-integration-tests";
 
     private readonly SqliteConnection _sqliteConnection;
-
-    public FakeRedis FakeRedis { get; } = new();
 
     public AcademyApiFactory()
     {
@@ -49,9 +46,7 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
         builder.UseSetting("Jwt:Audience", JwtIssuer);
         builder.UseSetting("Admin:InternalSecret", AdminInternalSecret);
         builder.UseSetting("ConnectionStrings:academydb", "Host=localhost;Database=fake");
-        builder.UseSetting("ConnectionStrings:cache", "localhost:6379");
 
-        var fakeRedis = FakeRedis;
         var connection = _sqliteConnection;
 
         builder.ConfigureServices(services =>
@@ -83,17 +78,13 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
                 optionsBuilder.UseSqlite(connection);
                 return optionsBuilder.Options;
             });
-
-            // Replace Redis with fake
-            services.RemoveAll<IConnectionMultiplexer>();
-            services.AddSingleton(fakeRedis.Multiplexer);
         });
     }
 }
 
 /// <summary>
 /// Base class for integration tests. Provides a WebApplicationFactory with
-/// InMemory DB, fake Redis, fake CodeRunner, and seeded test data.
+/// InMemory DB and seeded test data.
 /// </summary>
 public abstract class TestFixture : IAsyncLifetime, IDisposable
 {

@@ -3,7 +3,6 @@ using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 
 namespace AspireAcademy.Api.Endpoints;
 
@@ -342,7 +341,7 @@ public static class SocialEndpoints
 
         // Public leaderboard endpoint - no auth required for general leaderboard
         var publicGroup = app.MapGroup("/api");
-        publicGroup.MapGet("/leaderboard", async (string? scope, int? limit, AcademyDbContext db, IConnectionMultiplexer redis, ClaimsPrincipal user) =>
+        publicGroup.MapGet("/leaderboard", async (string? scope, int? limit, AcademyDbContext db, ClaimsPrincipal user) =>
         {
             // Make user optional for anonymous access
             var userId = user.Identity?.IsAuthenticated == true ? EndpointHelpers.GetUserId(user) : (Guid?)null;
@@ -359,7 +358,7 @@ public static class SocialEndpoints
                 return await GetFriendsLeaderboard(userId.Value, maxLimit, db);
             }
 
-            return await GetRedisLeaderboard(userId, scope, maxLimit, db, redis);
+            return await GetDbLeaderboard(userId, scope, maxLimit, db);
         });
 
         group.MapGet("/profile/skills", async (AcademyDbContext db, ClaimsPrincipal user) =>
@@ -446,80 +445,71 @@ public static class SocialEndpoints
         return Results.Ok(new LeaderboardResponse(entries, userEntry?.Rank ?? 0, userEntry, "friends", entries.Count));
     }
 
-    private static async Task<IResult> GetRedisLeaderboard(Guid? userId, string scope, int maxLimit, AcademyDbContext db, IConnectionMultiplexer redis)
+    private static async Task<IResult> GetDbLeaderboard(Guid? userId, string scope, int maxLimit, AcademyDbContext db)
     {
-        var redisDb = redis.GetDatabase();
-        var key = scope == "weekly" ? "leaderboard:weekly" : "leaderboard:alltime";
+        // Use the appropriate XP column based on scope
+        var isWeekly = scope == "weekly";
 
-        var sortedEntries = await redisDb.SortedSetRangeByRankWithScoresAsync(key, 0, maxLimit - 1, Order.Descending);
+        var query = db.UserXp
+            .Join(db.Users, x => x.UserId, u => u.Id, (x, u) => new { u, x });
 
-        if (sortedEntries is null || sortedEntries.Length == 0)
-        {
-            return Results.Ok(new LeaderboardResponse([], 0, null, scope, 0));
-        }
+        var orderedQuery = isWeekly
+            ? query.OrderByDescending(ux => ux.x.WeeklyXp)
+            : query.OrderByDescending(ux => ux.x.TotalXp);
 
-        var userIds = sortedEntries
-            .Select(e => Guid.TryParse(e.Element.ToString(), out var id) ? id : (Guid?)null)
-            .Where(id => id.HasValue)
-            .Select(id => id!.Value)
-            .ToList();
-
-        var users = await db.Users
-            .Where(u => userIds.Contains(u.Id))
-            .ToDictionaryAsync(u => u.Id);
-
-        var xpByUser = await db.UserXp
-            .Where(x => userIds.Contains(x.UserId))
-            .ToDictionaryAsync(x => x.UserId);
-
-        var entries = sortedEntries.Select((e, i) =>
-        {
-            if (!Guid.TryParse(e.Element.ToString(), out var uid))
+        var topEntries = await orderedQuery
+            .Take(maxLimit)
+            .Select(ux => new
             {
-                return null;
-            }
-            var u = users.GetValueOrDefault(uid);
-            var xp = xpByUser.GetValueOrDefault(uid);
-            var avatarUrl = AvatarHelper.GetAvatarUrl(u?.AvatarSeed, u?.Email ?? "", u?.GitHubUsername);
-            return new LeaderboardEntry(
-                i + 1, uid,
-                u?.Username ?? "", u?.DisplayName ?? "", avatarUrl,
-                (int)e.Score, xp?.CurrentLevel ?? 1, xp?.CurrentRank ?? Ranks.AspireIntern, u?.GitHubUsername);
-        }).Where(e => e is not null).Cast<LeaderboardEntry>().ToList();
+                ux.u.Id, ux.u.Username, ux.u.DisplayName, ux.u.AvatarSeed, ux.u.Email, ux.u.GitHubUsername,
+                Xp = isWeekly ? ux.x.WeeklyXp : ux.x.TotalXp,
+                ux.x.CurrentLevel, ux.x.CurrentRank
+            })
+            .ToListAsync();
 
-        // Only get user rank if authenticated
-        long? userRank = null;
+        var entries = topEntries.Select((r, i) => new LeaderboardEntry(
+            i + 1, r.Id, r.Username, r.DisplayName,
+            AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email, r.GitHubUsername),
+            r.Xp, r.CurrentLevel, r.CurrentRank, r.GitHubUsername)).ToList();
+
         LeaderboardEntry? currentUserEntry = null;
+        var userRank = 0;
 
         if (userId.HasValue)
         {
-            userRank = await redisDb.SortedSetRankAsync(key, userId.Value.ToString(), Order.Descending);
+            currentUserEntry = entries.FirstOrDefault(e => e.UserId == userId.Value);
 
-            if (userRank.HasValue)
+            if (currentUserEntry is not null)
             {
-                var userScore = await redisDb.SortedSetScoreAsync(key, userId.Value.ToString());
-                var currentUser = await db.Users.FindAsync(userId.Value);
-                var currentUserXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId.Value);
-
-                if (currentUser is not null)
+                userRank = currentUserEntry.Rank;
+            }
+            else
+            {
+                // User is not in top N — compute their rank
+                var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId.Value);
+                if (userXp is not null)
                 {
-                    var currentUserAvatarUrl = AvatarHelper.GetAvatarUrl(currentUser.AvatarSeed, currentUser.Email, currentUser.GitHubUsername);
-                    currentUserEntry = new LeaderboardEntry(
-                        (int)userRank.Value + 1, userId.Value,
-                        currentUser.Username, currentUser.DisplayName, currentUserAvatarUrl,
-                        (int)(userScore ?? 0), currentUserXp?.CurrentLevel ?? 1, currentUserXp?.CurrentRank ?? Ranks.AspireIntern, currentUser.GitHubUsername);
+                    var userXpValue = isWeekly ? userXp.WeeklyXp : userXp.TotalXp;
+                    var rank = isWeekly
+                        ? await db.UserXp.CountAsync(x => x.WeeklyXp > userXpValue) + 1
+                        : await db.UserXp.CountAsync(x => x.TotalXp > userXpValue) + 1;
+
+                    var currentUser = await db.Users.FindAsync(userId.Value);
+                    if (currentUser is not null)
+                    {
+                        var avatarUrl = AvatarHelper.GetAvatarUrl(currentUser.AvatarSeed, currentUser.Email, currentUser.GitHubUsername);
+                        currentUserEntry = new LeaderboardEntry(
+                            rank, userId.Value, currentUser.Username, currentUser.DisplayName, avatarUrl,
+                            userXpValue, userXp.CurrentLevel, userXp.CurrentRank, currentUser.GitHubUsername);
+                        userRank = rank;
+                    }
                 }
             }
         }
 
-        var totalEntries = await redisDb.SortedSetLengthAsync(key);
+        var totalEntries = await db.UserXp.CountAsync();
 
-        return Results.Ok(new LeaderboardResponse(
-            entries,
-            currentUserEntry?.Rank ?? 0,
-            currentUserEntry,
-            scope,
-            (int)totalEntries));
+        return Results.Ok(new LeaderboardResponse(entries, userRank, currentUserEntry, scope, totalEntries));
     }
 
 }

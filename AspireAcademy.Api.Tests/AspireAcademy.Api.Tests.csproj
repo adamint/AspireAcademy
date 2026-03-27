@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.2.0" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="13.2.0" />
     <PackageReference Include="Aspire.Hosting.Testing" Version="13.2.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="FluentAssertions" Version="8.9.0" />

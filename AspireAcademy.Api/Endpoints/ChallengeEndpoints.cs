@@ -5,7 +5,6 @@ using AspireAcademy.Api.Models;
 using AspireAcademy.Api.Services;
 using AspireAcademy.Api.Telemetry;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 
 namespace AspireAcademy.Api.Endpoints;
 
@@ -61,14 +60,14 @@ public static class ChallengeEndpoints
         ChallengeRunRequest request,
         AcademyDbContext db,
         CodeCheckerService codeChecker,
-        IConnectionMultiplexer redis,
+        InMemoryRateLimiter rateLimiter,
         ClaimsPrincipal user)
     {
         var userId = EndpointHelpers.GetUserId(user);
         s_logger.LogInformation("Code run for LessonId={LessonId}, UserId={UserId}", lessonId, userId);
 
         // Rate limiting
-        if (!await CheckRateLimitAsync(redis, userId))
+        if (!rateLimiter.IsAllowed($"coderun:{userId}", MaxRunsPerMinute, TimeSpan.FromSeconds(60)))
         {
             return Results.StatusCode(429);
         }
@@ -111,7 +110,6 @@ public static class ChallengeEndpoints
         ChallengeRunRequest request,
         AcademyDbContext db,
         CodeCheckerService codeChecker,
-        IConnectionMultiplexer redis,
         GamificationService gamification,
         ClaimsPrincipal user)
     {
@@ -265,21 +263,6 @@ public static class ChallengeEndpoints
             CurrentLevel: currentLevel,
             CurrentRank: currentRank,
             WeeklyXp: weeklyXp));
-    }
-
-    private static async Task<bool> CheckRateLimitAsync(IConnectionMultiplexer redis, Guid userId)
-    {
-        var redisDb = redis.GetDatabase();
-        var key = $"ratelimit:coderun:{userId}";
-
-        var count = await redisDb.StringIncrementAsync(key);
-
-        if (count == 1)
-        {
-            await redisDb.KeyExpireAsync(key, TimeSpan.FromSeconds(60));
-        }
-
-        return count <= MaxRunsPerMinute;
     }
 
 }
