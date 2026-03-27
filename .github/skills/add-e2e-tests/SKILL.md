@@ -59,3 +59,20 @@ If a test fails, fix the APPLICATION CODE. Never weaken assertions to make tests
 - ❌ Checking only that "element is visible" without verifying content
 - ❌ Skipping tests because prerequisites are locked (seed progress first)
 - ❌ Deleting the database volume on restart
+
+## Iterating on failing tests
+
+When fixing failing E2E tests, **NEVER run the full suite** on each iteration. Run only the specific failing test:
+
+```bash
+# WRONG — runs all 187 tests, takes 25 minutes
+dotnet test --filter "Category=E2E"
+
+# RIGHT — runs one test class, takes 30 seconds  
+dotnet test --filter "FullyQualifiedName~ProfileTests"
+
+# RIGHT — runs one specific test method
+dotnet test --filter "FullyQualifiedName~ProfileTests.EditDisplayName"
+```
+
+Only run the full suite AFTER all individual fixes are confirmed passing.
