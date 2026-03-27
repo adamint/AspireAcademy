@@ -22,11 +22,16 @@ import QuizResults from '../components/curriculum/QuizResults';
 
 // ── Types ────────────────────────────────────────────
 
+export interface QuizOption {
+  id: string;
+  text: string;
+}
+
 export interface QuizQuestion {
   id: string;
   text: string;
   questionType: 'multiple-choice' | 'multi-select' | 'code-prediction' | 'fill-in-blank';
-  options?: string[];
+  options?: QuizOption[];
   codeSnippet?: string;
   points: number;
 }
@@ -44,7 +49,7 @@ interface QuizData {
 interface AnswerResponse {
   correct: boolean;
   explanation: string;
-  correctAnswer?: string;
+  correctOptionIds?: string[];
   pointsAwarded: number;
 }
 
@@ -85,6 +90,7 @@ export default function QuizPage() {
   const [questionResults, setQuestionResults] = useState<QuestionResult[]>([]);
   const [quizResult, setQuizResult] = useState<QuizSubmitResponse | null>(null);
   const [finalizingQuiz, setFinalizingQuiz] = useState(false);
+  const [submittedAnswers, setSubmittedAnswers] = useState<{ questionId: string; selectedOptionIds?: string[]; freeTextAnswer?: string }[]>([]);
 
   // Fetch quiz data on mount
   const fetched = useState(false);
@@ -103,11 +109,14 @@ export default function QuizPage() {
           text: (q.questionText ?? q.text) as string,
           questionType: ((q.questionType as string) ?? '').replace(/_/g, '-') as QuizQuestion['questionType'],
           options: Array.isArray(q.options)
-            ? q.options.map((o: unknown) =>
-                typeof o === 'object' && o !== null && 'text' in o
-                  ? (o as Record<string, string>).text
-                  : String(o),
-              )
+            ? q.options.map((o: unknown) => {
+                if (typeof o === 'object' && o !== null && 'id' in o && 'text' in o) {
+                  const obj = o as Record<string, string>;
+                  return { id: obj.id, text: obj.text } as QuizOption;
+                }
+                const str = String(o);
+                return { id: str, text: str } as QuizOption;
+              })
             : undefined,
           codeSnippet: q.codeSnippet as string | undefined,
           points: (q.points ?? 0) as number,
@@ -159,6 +168,14 @@ export default function QuizPage() {
           pointsAwarded: fb.pointsAwarded,
         },
       ]);
+      // Track the actual answer for final submission
+      const answerEntry: { questionId: string; selectedOptionIds?: string[]; freeTextAnswer?: string } = { questionId: currentQuestion.id };
+      if (currentQuestion.questionType === 'fill-in-blank') {
+        answerEntry.freeTextAnswer = typeof selectedAnswer === 'string' ? selectedAnswer : undefined;
+      } else {
+        answerEntry.selectedOptionIds = Array.isArray(selectedAnswer) ? selectedAnswer : selectedAnswer ? [selectedAnswer] : undefined;
+      }
+      setSubmittedAnswers((prev) => [...prev, answerEntry]);
     } catch {
       console.error('[QuizPage] Failed to submit answer for question:', currentQuestion.id);
       setFeedback({
@@ -179,7 +196,7 @@ export default function QuizPage() {
       try {
         const res = await api.post<QuizSubmitResponse>(
           `/quizzes/${lessonId}/submit`,
-          { results: [...questionResults] }
+          { answers: [...submittedAnswers] }
         );
         setQuizResult(res.data);
         if (res.data.xpEarned > 0) {
@@ -194,10 +211,11 @@ export default function QuizPage() {
         }
       } catch {
         console.error('[QuizPage] Failed to submit quiz for lesson:', lessonId);
+        const fallbackPercentage = maxScore > 0 ? Math.round((runningScore / maxScore) * 100) : 0;
         setQuizResult({
           score: runningScore,
           maxScore,
-          passed: runningScore >= (quiz.passingScore ?? 0),
+          passed: fallbackPercentage >= (quiz.passingScore ?? 70),
           xpEarned: 0,
           results: questionResults,
         });
@@ -207,7 +225,7 @@ export default function QuizPage() {
       setSelectedAnswer(null);
       setFeedback(null);
     }
-  }, [quiz, lessonId, isLastQuestion, questionResults, runningScore, maxScore, syncFromServer, finalizingQuiz]);
+  }, [quiz, lessonId, isLastQuestion, questionResults, submittedAnswers, runningScore, maxScore, syncFromServer, finalizingQuiz]);
 
   // ── Loading ──────────────────────────────────────
 
@@ -344,7 +362,14 @@ export default function QuizPage() {
           <QuestionFeedback
             isCorrect={feedback.correct}
             explanation={feedback.explanation}
-            correctAnswer={feedback.correctAnswer}
+            correctAnswer={
+              !feedback.correct && feedback.correctOptionIds && currentQuestion?.options
+                ? feedback.correctOptionIds
+                    .map((id) => currentQuestion.options?.find((o) => o.id === id)?.text)
+                    .filter(Boolean)
+                    .join(', ')
+                : undefined
+            }
             pointsAwarded={feedback.pointsAwarded}
           />
         </Flex>

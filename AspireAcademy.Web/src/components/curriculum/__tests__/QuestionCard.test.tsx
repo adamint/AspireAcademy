@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ChakraProvider } from '@chakra-ui/react'
 import { system } from '../../../theme/aspireTheme'
 import QuestionCard from '../QuestionCard'
-import type { QuizQuestion } from '../../../pages/QuizPage'
+import type { QuizQuestion, QuizOption } from '../../../pages/QuizPage'
 
 function renderCard(
   question: QuizQuestion,
@@ -30,7 +30,11 @@ const mcQuestion: QuizQuestion = {
   id: 'q1',
   text: 'What is 2 + 2?',
   questionType: 'multiple-choice',
-  options: ['3', '4', '5'],
+  options: [
+    { id: 'a', text: '3' },
+    { id: 'b', text: '4' },
+    { id: 'c', text: '5' },
+  ],
   points: 10,
 }
 
@@ -38,7 +42,12 @@ const msQuestion: QuizQuestion = {
   id: 'q2',
   text: 'Select all prime numbers',
   questionType: 'multi-select',
-  options: ['2', '4', '5', '9'],
+  options: [
+    { id: 'a', text: '2' },
+    { id: 'b', text: '4' },
+    { id: 'c', text: '5' },
+    { id: 'd', text: '9' },
+  ],
   points: 10,
 }
 
@@ -77,13 +86,13 @@ describe('QuestionCard', () => {
     expect(screen.getByPlaceholderText('Your answer...')).toBeInTheDocument()
   })
 
-  it('calls onChange when a multiple-choice option is selected', async () => {
+  it('calls onChange with option id when a multiple-choice option is selected', async () => {
     const onChange = vi.fn()
     renderCard(mcQuestion, null, onChange)
 
     const user = userEvent.setup()
     await user.click(screen.getByText('4'))
-    expect(onChange).toHaveBeenCalled()
+    expect(onChange).toHaveBeenCalledWith('b')
   })
 
   it('calls onChange when fill-in-blank input changes', () => {

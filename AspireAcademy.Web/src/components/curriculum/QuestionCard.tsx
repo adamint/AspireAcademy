@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Box, Text, VStack, Input, RadioGroup, Checkbox } from '@chakra-ui/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import type { QuizQuestion } from '../../pages/QuizPage';
+import type { QuizQuestion, QuizOption } from '../../pages/QuizPage';
 import { retroCardProps } from '../../theme/aspireTheme';
 import MarkdownContent from '../common/MarkdownContent';
 
@@ -41,8 +41,8 @@ export default function QuestionCard({
             <VStack align="stretch" gap={2}>
               {question.options?.map((opt) => (
                 <RadioGroup.Item
-                  key={opt}
-                  value={opt}
+                  key={opt.id}
+                  value={opt.id}
                   cursor="pointer"
                   p={3}
                   borderRadius="sm"
@@ -54,7 +54,7 @@ export default function QuestionCard({
                 >
                   <RadioGroup.ItemHiddenInput />
                   <RadioGroup.ItemIndicator />
-                  <RadioGroup.ItemText>{opt}</RadioGroup.ItemText>
+                  <RadioGroup.ItemText>{opt.text}</RadioGroup.ItemText>
                 </RadioGroup.Item>
               ))}
             </VStack>
@@ -109,8 +109,8 @@ export default function QuestionCard({
             <VStack align="stretch" gap={2}>
               {question.options?.map((opt) => (
                 <RadioGroup.Item
-                  key={opt}
-                  value={opt}
+                  key={opt.id}
+                  value={opt.id}
                   cursor="pointer"
                   p={3}
                   borderRadius="sm"
@@ -123,7 +123,7 @@ export default function QuestionCard({
                 >
                   <RadioGroup.ItemHiddenInput />
                   <RadioGroup.ItemIndicator />
-                  <RadioGroup.ItemText>{opt}</RadioGroup.ItemText>
+                  <RadioGroup.ItemText>{opt.text}</RadioGroup.ItemText>
                 </RadioGroup.Item>
               ))}
             </VStack>
@@ -179,10 +179,10 @@ function MultiSelectCard({
     Array.isArray(selectedAnswer) ? selectedAnswer : []
   );
 
-  const handleToggle = (option: string, checked: boolean) => {
+  const handleToggle = (optionId: string, checked: boolean) => {
     const next = checked
-      ? [...selected, option]
-      : selected.filter((s) => s !== option);
+      ? [...selected, optionId]
+      : selected.filter((s) => s !== optionId);
     setSelected(next);
     onAnswerChange(next);
   };
@@ -205,9 +205,9 @@ function MultiSelectCard({
       <VStack align="stretch" gap={2}>
         {question.options?.map((opt) => (
           <Checkbox.Root
-            key={opt}
-            checked={selected.includes(opt)}
-            onCheckedChange={(e) => handleToggle(opt, !!e.checked)}
+            key={opt.id}
+            checked={selected.includes(opt.id)}
+            onCheckedChange={(e) => handleToggle(opt.id, !!e.checked)}
             disabled={disabled}
             cursor="pointer"
           >
@@ -218,15 +218,15 @@ function MultiSelectCard({
               p={3}
               borderRadius="sm"
               border="2px solid"
-              borderColor={selected.includes(opt) ? 'aspire.500' : 'game.pixelBorder'}
-              bg={selected.includes(opt) ? 'aspire.800' : 'content.subtle'}
+              borderColor={selected.includes(opt.id) ? 'aspire.500' : 'game.pixelBorder'}
+              bg={selected.includes(opt.id) ? 'aspire.800' : 'content.subtle'}
               _hover={{ bg: 'content.hover' }}
             >
               <Checkbox.HiddenInput />
               <Checkbox.Control>
                 <Checkbox.Indicator />
               </Checkbox.Control>
-              <Checkbox.Label>{opt}</Checkbox.Label>
+              <Checkbox.Label>{opt.text}</Checkbox.Label>
             </Box>
           </Checkbox.Root>
         ))}

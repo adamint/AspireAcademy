@@ -30,8 +30,6 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
     /// </summary>
     private static async Task<string[]> GetCorrectOptionIdsForCurrentQuestion(IPage page, string token, string lessonId, string questionId)
     {
-        // Use the single-answer endpoint to probe each option
-        // But more reliably, we try each option and check the response
         var resp = await page.APIRequest.PostAsync(ApiBaseUrl + $"/api/quizzes/{lessonId}/answer", new()
         {
             Headers = new Dictionary<string, string> { ["Authorization"] = $"Bearer {token}" },
@@ -53,6 +51,26 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
         }
 
         return [];
+    }
+
+    /// <summary>
+    /// Selects a radio button by its value attribute (option ID).
+    /// Returns true if a matching radio was found and clicked.
+    /// </summary>
+    private static async Task<bool> SelectRadioByOptionId(IPage page, string optionId)
+    {
+        var radios = page.Locator("input[type='radio']");
+        var radioCount = await radios.CountAsync();
+        for (var i = 0; i < radioCount; i++)
+        {
+            var value = await radios.Nth(i).GetAttributeAsync("value");
+            if (value == optionId)
+            {
+                await radios.Nth(i).ClickAsync(new() { Force = true });
+                return true;
+            }
+        }
+        return false;
     }
 
     [Fact]
@@ -84,34 +102,16 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
             // Probe the API for the correct answer
             var correctIds = await GetCorrectOptionIdsForCurrentQuestion(page, token, "1.1.3", questionId);
 
-            // Now select the correct radio in the UI
+            // Now select the correct radio in the UI by option ID
             if (correctIds.Length > 0)
             {
-                var correctRadio = page.Locator($"input[type='radio'][value='{correctIds[0]}']");
-                if (await correctRadio.IsVisibleAsync())
-                {
-                    await correctRadio.ClickAsync(new() { Force = true });
-                }
-                else
-                {
-                    // Fall back: click each radio until we get the right one
-                    var radios = page.Locator("input[type='radio']");
-                    var radioCount = await radios.CountAsync();
-                    for (var i = 0; i < radioCount; i++)
-                    {
-                        var value = await radios.Nth(i).GetAttributeAsync("value");
-                        if (correctIds.Contains(value))
-                        {
-                            await radios.Nth(i).ClickAsync(new() { Force = true });
-                            break;
-                        }
-                    }
-                }
+                var found = await SelectRadioByOptionId(page, correctIds[0]);
+                Assert.True(found, $"Could not find radio with value='{correctIds[0]}' — " +
+                    "radio values may not match option IDs (text vs ID mismatch).");
             }
             else
             {
-                // Best effort: click first radio
-                await page.Locator("input[type='radio']").First.ClickAsync(new() { Force = true });
+                Assert.Fail("No correct option IDs returned from the API — cannot test correct answer grading.");
             }
 
             var submitBtn = page.GetByTestId("quiz-submit");
@@ -162,7 +162,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
             // Probe for correct answer so we can select the WRONG one
             var correctIds = await GetCorrectOptionIdsForCurrentQuestion(page, token, "1.1.3", questionId);
 
-            // Select a wrong radio (one that is NOT in correctIds)
+            // Select a wrong radio (one that is NOT in correctIds) — match by option ID value
             var radios = page.Locator("input[type='radio']");
             var radioCount = await radios.CountAsync();
             var selectedWrong = false;
@@ -177,11 +177,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
                 }
             }
 
-            if (!selectedWrong)
-            {
-                // All options are correct — unlikely, but just select first
-                await radios.First.ClickAsync(new() { Force = true });
-            }
+            Assert.True(selectedWrong, "Could not find a wrong option — all radio values matched correct IDs.");
 
             var submitBtn = page.GetByTestId("quiz-submit");
             await Assertions.Expect(submitBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
@@ -285,10 +281,8 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
                     }
                 }
 
-                if (!clickedCorrect && radioCount > 0)
-                {
-                    await radios.First.ClickAsync(new() { Force = true });
-                }
+                Assert.True(clickedCorrect || radioCount == 0,
+                    "Could not find radio matching any correct option ID — radio values may not match option IDs.");
 
                 await Assertions.Expect(submitBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
                 await submitBtn.ClickAsync();
