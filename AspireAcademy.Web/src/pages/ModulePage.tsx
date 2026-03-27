@@ -1,10 +1,11 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   Box,
   Flex,
   Text,
   Badge,
+  Button,
   Heading,
   Skeleton,
   Progress,
@@ -12,6 +13,7 @@ import {
 import { FiArrowLeft } from 'react-icons/fi';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import { ProgressStatus } from '../constants';
+import { useAuthStore } from '../store/authStore';
 import ModuleCard from '../components/curriculum/ModuleCard';
 import api from '../services/apiClient';
 import type { World } from '../types/curriculum';
@@ -19,6 +21,9 @@ import type { World } from '../types/curriculum';
 export default function ModulePage() {
   const { worldId } = useParams<{ worldId: string }>();
   const navigate = useNavigate();
+  const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
+  const isAuthenticated = !!token && !!user;
 
   const { data: world, isLoading } = useQuery<World>({
     queryKey: ['world', worldId],
@@ -137,32 +142,48 @@ export default function ModulePage() {
           </Box>
         </Flex>
 
-        <Flex align="center" gap="3" mt="4">
-          <Box flex="1">
-            <Progress.Root
-              value={progress}
-              colorPalette="purple"
-              size="md"
-            >
-              <Progress.Track>
-                <Progress.Range />
-              </Progress.Track>
-            </Progress.Root>
-          </Box>
-          <Badge
-            {...pixelFontProps}
-            fontSize="2xs"
-            colorPalette="purple"
-            variant="solid"
-          >
-            {progress}%
-          </Badge>
-        </Flex>
+        {isAuthenticated ? (
+          <>
+            <Flex align="center" gap="3" mt="4">
+              <Box flex="1">
+                <Progress.Root
+                  value={progress}
+                  colorPalette="purple"
+                  size="md"
+                >
+                  <Progress.Track>
+                    <Progress.Range />
+                  </Progress.Track>
+                </Progress.Root>
+              </Box>
+              <Badge
+                {...pixelFontProps}
+                fontSize="2xs"
+                colorPalette="purple"
+                variant="solid"
+              >
+                {progress}%
+              </Badge>
+            </Flex>
 
-        <Text fontSize="xs" color="aspire.400" mt="2">
-          {world.completedLessons} / {world.totalLessons} lessons complete
-          {world.skippedLessons > 0 && `, ${world.skippedLessons} skipped`}
-        </Text>
+            <Text fontSize="xs" color="aspire.400" mt="2">
+              {world.completedLessons} / {world.totalLessons} lessons complete
+              {world.skippedLessons > 0 && `, ${world.skippedLessons} skipped`}
+            </Text>
+          </>
+        ) : (
+          <Box mt="4">
+            <Button
+              as={RouterLink}
+              to="/register"
+              size="sm"
+              variant="outline"
+              colorPalette="purple"
+            >
+              🔐 Sign up to track progress
+            </Button>
+          </Box>
+        )}
       </Box>
 
       {/* Modules */}

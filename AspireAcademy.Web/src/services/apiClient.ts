@@ -23,7 +23,10 @@ api.interceptors.response.use(
     console.error(`[API Error] ${method} ${url} → ${status}`, body);
 
     if (error.response?.status === 401) {
-      useAuthStore.getState().logout();
+      // Only logout if the user was actually authenticated (has a token)
+      if (useAuthStore.getState().token) {
+        useAuthStore.getState().logout();
+      }
     }
     // Also logout if /me returns 404 (user deleted from DB but JWT still valid)
     if (error.response?.status === 404 && url?.includes('/auth/me')) {
