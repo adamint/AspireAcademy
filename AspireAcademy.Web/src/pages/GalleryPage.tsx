@@ -18,7 +18,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import api from '../services/apiClient';
 import ArchitectureDiagram from '../components/common/ArchitectureDiagram';
 import { serviceTypeColors } from '../components/common/architectureDiagramTypes';
-import type { ServiceNode, DiagramConnection } from '../components/common/ArchitectureDiagram';
+import type { ServiceNode, DiagramConnection } from '../components/common/architectureDiagramTypes';
 
 // ─── Gallery Types ─────────────────────────────────────────────────────────────
 

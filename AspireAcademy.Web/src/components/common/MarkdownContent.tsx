@@ -6,7 +6,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import type { Components } from 'react-markdown';
 import ArchitectureDiagram from './ArchitectureDiagram';
-import type { ServiceNode, DiagramConnection } from './ArchitectureDiagram';
+import type { ServiceNode, DiagramConnection } from './architectureDiagramTypes';
 
 function extractText(node: React.ReactNode): string {
   if (typeof node === 'string') return node;
