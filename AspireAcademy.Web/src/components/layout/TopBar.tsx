@@ -1,11 +1,10 @@
 import { Flex, Box, Text, IconButton, Button } from '@chakra-ui/react';
-import { FiMenu, FiLogOut, FiUser, FiSun, FiMoon, FiSettings, FiSearch } from 'react-icons/fi';
+import { FiMenu, FiLogOut, FiUser, FiSun, FiMoon, FiSettings } from 'react-icons/fi';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { useGamificationStore } from '../../store/gamificationStore';
 import { useEffectsStore } from '../../store/effectsStore';
-import { useSearchStore } from '../../store/searchStore';
 import { useColorMode } from '../../hooks/useColorMode';
 import { XPProgressBar } from '../gamification/XPProgressBar';
 import { pixelFontProps } from '../../theme/aspireTheme';
@@ -23,7 +22,6 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
   const { colorMode, toggleColorMode } = useColorMode();
   const soundEnabled = useEffectsStore((s) => s.soundEnabled);
   const toggleSound = useEffectsStore((s) => s.toggleSound);
-  const openSearch = useSearchStore((s) => s.setOpen);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const isAuthenticated = !!token && !!user;
@@ -77,48 +75,6 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
       </Text>
 
       <Box flexGrow={1} />
-
-      {/* Search trigger */}
-      <Flex
-        as="button"
-        align="center"
-        gap="2"
-        px="3"
-        py="1.5"
-        borderRadius="md"
-        bg="whiteAlpha.100"
-        border="1px solid"
-        borderColor="whiteAlpha.200"
-        cursor="pointer"
-        _hover={{ bg: 'whiteAlpha.200', borderColor: 'aspire.600' }}
-        transition="all 0.15s"
-        onClick={() => openSearch(true)}
-        display={{ base: 'none', md: 'flex' }}
-        title="Open search palette"
-        aria-label="Open search palette"
-      >
-        <FiSearch size={14} color="#9185D1" />
-        <Text fontSize="xs" color="whiteAlpha.500" whiteSpace="nowrap">
-          Search...
-        </Text>
-        <Text fontSize="10px" color="whiteAlpha.400" ml="2" whiteSpace="nowrap">
-          ⌘K
-        </Text>
-      </Flex>
-
-      {/* Mobile search button */}
-      <IconButton
-        display={{ base: 'flex', md: 'none' }}
-        aria-label="Search"
-        title="Open search palette"
-        variant="ghost"
-        size="sm"
-        color="whiteAlpha.800"
-        _hover={{ bg: 'whiteAlpha.200' }}
-        onClick={() => openSearch(true)}
-      >
-        <FiSearch />
-      </IconButton>
 
       {/* Right section */}
       <Flex align="center" gap="3">

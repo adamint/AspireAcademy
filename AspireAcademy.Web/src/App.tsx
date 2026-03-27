@@ -60,6 +60,10 @@ export default function App() {
           <Route path="/concept-map" element={<ConceptMapPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/whats-new" element={<WhatsNewPage />} />
+          {/* Public leaderboard, achievements, and weekly challenge for discoverability */}
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/achievements" element={<AchievementsPage />} />
+          <Route path="/weekly-challenge" element={<WeeklyChallengePage />} />
         </Route>
         {/* Authenticated routes */}
         <Route element={<ProtectedRoute />}>
@@ -67,10 +71,7 @@ export default function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/users/:userId" element={<ProfilePage />} />
             <Route path="/friends" element={<FriendsPage />} />
-            <Route path="/leaderboard" element={<LeaderboardPage />} />
-            <Route path="/achievements" element={<AchievementsPage />} />
             <Route path="/certificates" element={<CertificatesPage />} />
-            <Route path="/weekly-challenge" element={<WeeklyChallengePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
           </Route>

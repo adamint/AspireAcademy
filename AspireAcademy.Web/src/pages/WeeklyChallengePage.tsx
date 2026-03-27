@@ -232,23 +232,37 @@ export default function WeeklyChallengePage() {
                 <>
                   <Text fontSize="lg">⏳</Text>
                   <Text {...pixelFontProps} fontSize="10px" color="#B8860B">
-                    Not yet attempted
+                    {currentUser ? 'Not yet attempted' : 'Sign up to track progress!'}
                   </Text>
                 </>
               )}
             </HStack>
 
-            <Button
-              size="sm"
-              bg={challenge.userCompleted ? 'aspire.600' : '#B8860B'}
-              color="white"
-              onClick={() => navigate(`/challenges/${challenge.lessonId}`)}
-              _hover={{ opacity: 0.9 }}
-            >
-              <Text {...pixelFontProps} fontSize="9px">
-                {challenge.userCompleted ? 'View Challenge' : '⚔️ Accept Challenge'}
-              </Text>
-            </Button>
+            {currentUser ? (
+              <Button
+                size="sm"
+                bg={challenge.userCompleted ? 'aspire.600' : '#B8860B'}
+                color="white"
+                onClick={() => navigate(`/challenges/${challenge.lessonId}`)}
+                _hover={{ opacity: 0.9 }}
+              >
+                <Text {...pixelFontProps} fontSize="9px">
+                  {challenge.userCompleted ? 'View Challenge' : '⚔️ Accept Challenge'}
+                </Text>
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                bg="aspire.600"
+                color="white"
+                onClick={() => navigate('/register')}
+                _hover={{ opacity: 0.9 }}
+              >
+                <Text {...pixelFontProps} fontSize="9px">
+                  🚀 Sign Up to Compete!
+                </Text>
+              </Button>
+            )}
           </Flex>
         </Box>
       ) : (

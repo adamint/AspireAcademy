@@ -12,6 +12,12 @@ import {
   FiChevronRight,
   FiLock,
   FiShield,
+  FiCpu,
+  FiBook,
+  FiMap,
+  FiImage,
+  FiTarget,
+  FiStar,
 } from 'react-icons/fi';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -242,6 +248,41 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 )}
             </Box>
           ))}
+        </Box>
+
+        {/* Explore */}
+        <Box px="2" mt="2">
+          <Text
+            fontSize="10px"
+            fontWeight="700"
+            color="whiteAlpha.700"
+            textTransform="uppercase"
+            letterSpacing="0.5px"
+            px="3"
+            pt="3"
+            pb="1"
+            fontFamily="pixel"
+          >
+            Explore
+          </Text>
+          <SideNavLink to="/playground" icon={<FiCpu size={16} />} onClose={onClose}>
+            Playground
+          </SideNavLink>
+          <SideNavLink to="/cheatsheet" icon={<FiBook size={16} />} onClose={onClose}>
+            Cheat Sheet
+          </SideNavLink>
+          <SideNavLink to="/concept-map" icon={<FiMap size={16} />} onClose={onClose}>
+            Concept Map
+          </SideNavLink>
+          <SideNavLink to="/gallery" icon={<FiImage size={16} />} onClose={onClose}>
+            Gallery
+          </SideNavLink>
+          <SideNavLink to="/weekly-challenge" icon={<FiTarget size={16} />} onClose={onClose}>
+            Weekly Challenge
+          </SideNavLink>
+          <SideNavLink to="/whats-new" icon={<FiStar size={16} />} onClose={onClose}>
+            What's New
+          </SideNavLink>
         </Box>
 
         {/* Social */}

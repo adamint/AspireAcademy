@@ -42,11 +42,11 @@ public static class WeeklyChallengeEndpoints
 {
     public static WebApplication MapWeeklyChallengeEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/api/weekly-challenge").RequireAuthorization();
-
-        group.MapGet("/", GetCurrentWeeklyChallenge);
-        group.MapGet("/leaderboard", GetWeeklyLeaderboard);
-        group.MapGet("/previous", GetPreviousWeeklyChallenges);
+        // Public weekly challenge endpoints - no auth required for read-only access
+        var publicGroup = app.MapGroup("/api/weekly-challenge");
+        publicGroup.MapGet("/", GetCurrentWeeklyChallenge);
+        publicGroup.MapGet("/leaderboard", GetWeeklyLeaderboard);
+        publicGroup.MapGet("/previous", GetPreviousWeeklyChallenges);
 
         return app;
     }
@@ -58,7 +58,8 @@ public static class WeeklyChallengeEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = EndpointHelpers.GetUserId(user);
+        // Make user optional for anonymous access
+        var userId = user.Identity?.IsAuthenticated == true ? EndpointHelpers.GetUserId(user) : (Guid?)null;
         var (weekNumber, weekStart, weekEnd) = GetCurrentWeekInfo();
 
         var challengeLessons = await db.Lessons
@@ -74,13 +75,17 @@ public static class WeeklyChallengeEndpoints
         var selectedIndex = weekNumber % challengeLessons.Count;
         var lesson = challengeLessons[selectedIndex];
 
-        // Check if user completed it this week
-        var userCompletion = await db.UserProgress
-            .Where(p => p.UserId == userId
-                && p.LessonId == lesson.Id
-                && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect)
-                && p.CompletedAt >= weekStart && p.CompletedAt < weekEnd)
-            .FirstOrDefaultAsync();
+        // Check if user completed it this week (only if authenticated)
+        UserProgress? userCompletion = null;
+        if (userId.HasValue)
+        {
+            userCompletion = await db.UserProgress
+                .Where(p => p.UserId == userId.Value
+                    && p.LessonId == lesson.Id
+                    && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect)
+                    && p.CompletedAt >= weekStart && p.CompletedAt < weekEnd)
+                .FirstOrDefaultAsync();
+        }
 
         return Results.Ok(new WeeklyChallengeResponse(
             lesson.Id,
@@ -100,7 +105,7 @@ public static class WeeklyChallengeEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        EndpointHelpers.GetUserId(user); // Ensure authenticated
+        // No auth required for leaderboard viewing
         var (weekNumber, weekStart, weekEnd) = GetCurrentWeekInfo();
 
         var challengeLessons = await db.Lessons
@@ -150,7 +155,8 @@ public static class WeeklyChallengeEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = EndpointHelpers.GetUserId(user);
+        // Make user optional for anonymous access
+        var userId = user.Identity?.IsAuthenticated == true ? EndpointHelpers.GetUserId(user) : (Guid?)null;
 
         var challengeLessons = await db.Lessons
             .Where(l => l.Type == LessonTypes.Challenge || l.Type == LessonTypes.BossBattle)
@@ -177,11 +183,15 @@ public static class WeeklyChallengeEndpoints
             var selectedIndex = pastWeek % challengeLessons.Count;
             var lesson = challengeLessons[selectedIndex];
 
-            var completed = await db.UserProgress
-                .AnyAsync(p => p.UserId == userId
-                    && p.LessonId == lesson.Id
-                    && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect)
-                    && p.CompletedAt >= pastStart && p.CompletedAt < pastEnd);
+            var completed = false;
+            if (userId.HasValue)
+            {
+                completed = await db.UserProgress
+                    .AnyAsync(p => p.UserId == userId.Value
+                        && p.LessonId == lesson.Id
+                        && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect)
+                        && p.CompletedAt >= pastStart && p.CompletedAt < pastEnd);
+            }
 
             previous.Add(new PreviousWeeklyChallenge(
                 lesson.Id,

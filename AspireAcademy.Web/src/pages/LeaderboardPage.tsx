@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Flex, Text, Badge, Skeleton, VStack, Tabs } from '@chakra-ui/react';
 import { FiGithub } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
 import api from '../services/apiClient';
 import { useAuthStore } from '../store/authStore';
 import AvatarDisplay from '../components/gamification/AvatarDisplay';
@@ -41,6 +43,8 @@ function formatRank(rank: string): string {
 export default function LeaderboardPage() {
   const [tab, setTab] = useState<LeaderboardTab>('weekly');
   const currentUser = useAuthStore((s) => s.user);
+  const { token } = useAuthStore();
+  const navigate = useNavigate();
 
   const { data, isLoading } = useQuery<LeaderboardData>({
     queryKey: ['leaderboard', tab],
@@ -93,7 +97,25 @@ export default function LeaderboardPage() {
             {tab === 'friends' ? 'No friends yet' : 'No data available'}
           </Text>
           {tab === 'friends' && (
-            <Text fontSize="sm" color="dark.muted" mt={2}>Add friends to see their rankings!</Text>
+            <>
+              <Text fontSize="sm" color="dark.muted" mt={2}>
+                {token ? 'Add friends to see their rankings!' : 'Sign up to compete with friends!'}
+              </Text>
+              {!token && (
+                <Button
+                  size="sm"
+                  bg="aspire.600"
+                  color="white"
+                  onClick={() => navigate('/register')}
+                  _hover={{ opacity: 0.9 }}
+                  mt={3}
+                >
+                  <Text {...pixelFontProps} fontSize="9px">
+                    🚀 Join the Competition!
+                  </Text>
+                </Button>
+              )}
+            </>
           )}
         </Box>
       )}

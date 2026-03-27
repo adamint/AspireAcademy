@@ -67,10 +67,13 @@ public static class GamificationEndpoints
         group.MapPost("/progress/complete", CompleteLessonAsync);
         group.MapPost("/progress/skip", SkipLessonAsync);
         group.MapPost("/progress/unskip", UnskipLessonAsync);
-        group.MapGet("/achievements", GetAchievementsAsync);
         group.MapPost("/avatar/randomize", RandomizeAvatarAsync);
         group.MapDelete("/avatar", ClearAvatarAsync);
         group.MapPost("/daily-reward", ClaimDailyRewardAsync);
+
+        // Public achievements endpoint - no auth required
+        var publicGroup = app.MapGroup("/api");
+        publicGroup.MapGet("/achievements", GetAchievementsAsync);
 
         return app;
     }
@@ -366,19 +369,25 @@ public static class GamificationEndpoints
         AcademyDbContext db,
         ClaimsPrincipal user)
     {
-        var userId = EndpointHelpers.GetUserId(user);
+        // Make user optional for anonymous access
+        var userId = user.Identity?.IsAuthenticated == true ? EndpointHelpers.GetUserId(user) : (Guid?)null;
 
         var allAchievements = await db.Achievements
             .OrderBy(a => a.SortOrder)
             .ToListAsync();
 
-        var userAchievements = await db.UserAchievements
-            .Where(ua => ua.UserId == userId)
-            .ToDictionaryAsync(ua => ua.AchievementId, ua => ua.UnlockedAt);
+        Dictionary<string, DateTime>? userAchievements = null;
+        if (userId.HasValue)
+        {
+            userAchievements = await db.UserAchievements
+                .Where(ua => ua.UserId == userId.Value)
+                .ToDictionaryAsync(ua => ua.AchievementId, ua => ua.UnlockedAt);
+        }
 
         var result = allAchievements.Select(a =>
         {
-            var isUnlocked = userAchievements.TryGetValue(a.Id, out var unlockedAt);
+            var unlockedAt = DateTime.MinValue;
+            var isUnlocked = userId.HasValue && userAchievements?.TryGetValue(a.Id, out unlockedAt) == true;
 
             return new AchievementDto(
                 Id: a.Id,

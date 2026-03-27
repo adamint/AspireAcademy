@@ -4,6 +4,8 @@ import {
   Box, Flex, Text, Button, Skeleton, SimpleGrid, VStack, Tabs, Tooltip, Dialog,
 } from '@chakra-ui/react';
 import { FiLock } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 import api from '../services/apiClient';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 
@@ -34,6 +36,8 @@ const rarityBorderColors: Record<string, string> = {
 export default function AchievementsPage() {
   const [category, setCategory] = useState<string>('All');
   const [selected, setSelected] = useState<AchievementItem | null>(null);
+  const navigate = useNavigate();
+  const { token } = useAuthStore();
 
   const { data: achievements, isLoading } = useQuery<AchievementItem[]>({
     queryKey: ['achievements'],
@@ -65,6 +69,20 @@ export default function AchievementsPage() {
         <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
           {unlockedCount} of {totalCount} unlocked
         </Text>
+        {!token && (
+          <Button
+            size="sm"
+            bg="aspire.600"
+            color="white"
+            onClick={() => navigate('/register')}
+            _hover={{ opacity: 0.9 }}
+            ml="auto"
+          >
+            <Text {...pixelFontProps} fontSize="9px">
+              🚀 Sign Up to Unlock!
+            </Text>
+          </Button>
+        )}
       </Flex>
 
       {/* Category Tabs */}

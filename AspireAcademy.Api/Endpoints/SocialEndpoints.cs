@@ -340,15 +340,23 @@ public static class SocialEndpoints
             return Results.Ok(new ActivityHeatmapResponse(merged));
         });
 
-        group.MapGet("/leaderboard", async (string? scope, int? limit, AcademyDbContext db, IConnectionMultiplexer redis, ClaimsPrincipal user) =>
+        // Public leaderboard endpoint - no auth required for general leaderboard
+        var publicGroup = app.MapGroup("/api");
+        publicGroup.MapGet("/leaderboard", async (string? scope, int? limit, AcademyDbContext db, IConnectionMultiplexer redis, ClaimsPrincipal user) =>
         {
-            var userId = EndpointHelpers.GetUserId(user);
+            // Make user optional for anonymous access
+            var userId = user.Identity?.IsAuthenticated == true ? EndpointHelpers.GetUserId(user) : (Guid?)null;
             scope ??= "weekly";
             var maxLimit = Math.Clamp(limit ?? 50, 1, 50);
 
             if (scope == "friends")
             {
-                return await GetFriendsLeaderboard(userId, maxLimit, db);
+                // Friends scope requires authentication
+                if (!userId.HasValue)
+                {
+                    return Results.Unauthorized();
+                }
+                return await GetFriendsLeaderboard(userId.Value, maxLimit, db);
             }
 
             return await GetRedisLeaderboard(userId, scope, maxLimit, db, redis);
@@ -433,7 +441,7 @@ public static class SocialEndpoints
         return Results.Ok(new LeaderboardResponse(entries, userEntry?.Rank ?? 0, userEntry, "friends", entries.Count));
     }
 
-    private static async Task<IResult> GetRedisLeaderboard(Guid userId, string scope, int maxLimit, AcademyDbContext db, IConnectionMultiplexer redis)
+    private static async Task<IResult> GetRedisLeaderboard(Guid? userId, string scope, int maxLimit, AcademyDbContext db, IConnectionMultiplexer redis)
     {
         var redisDb = redis.GetDatabase();
         var key = scope == "weekly" ? "leaderboard:weekly" : "leaderboard:alltime";
@@ -474,22 +482,28 @@ public static class SocialEndpoints
                 (int)e.Score, xp?.CurrentLevel ?? 1, xp?.CurrentRank ?? Ranks.AspireIntern, u?.GitHubUsername);
         }).Where(e => e is not null).Cast<LeaderboardEntry>().ToList();
 
-        var userRank = await redisDb.SortedSetRankAsync(key, userId.ToString(), Order.Descending);
+        // Only get user rank if authenticated
+        long? userRank = null;
         LeaderboardEntry? currentUserEntry = null;
 
-        if (userRank.HasValue)
+        if (userId.HasValue)
         {
-            var userScore = await redisDb.SortedSetScoreAsync(key, userId.ToString());
-            var currentUser = await db.Users.FindAsync(userId);
-            var currentUserXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
+            userRank = await redisDb.SortedSetRankAsync(key, userId.Value.ToString(), Order.Descending);
 
-            if (currentUser is not null)
+            if (userRank.HasValue)
             {
-                var currentUserAvatarUrl = AvatarHelper.GetAvatarUrl(currentUser.AvatarSeed, currentUser.Email, currentUser.GitHubUsername);
-                currentUserEntry = new LeaderboardEntry(
-                    (int)userRank.Value + 1, userId,
-                    currentUser.Username, currentUser.DisplayName, currentUserAvatarUrl,
-                    (int)(userScore ?? 0), currentUserXp?.CurrentLevel ?? 1, currentUserXp?.CurrentRank ?? Ranks.AspireIntern, currentUser.GitHubUsername);
+                var userScore = await redisDb.SortedSetScoreAsync(key, userId.Value.ToString());
+                var currentUser = await db.Users.FindAsync(userId.Value);
+                var currentUserXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId.Value);
+
+                if (currentUser is not null)
+                {
+                    var currentUserAvatarUrl = AvatarHelper.GetAvatarUrl(currentUser.AvatarSeed, currentUser.Email, currentUser.GitHubUsername);
+                    currentUserEntry = new LeaderboardEntry(
+                        (int)userRank.Value + 1, userId.Value,
+                        currentUser.Username, currentUser.DisplayName, currentUserAvatarUrl,
+                        (int)(userScore ?? 0), currentUserXp?.CurrentLevel ?? 1, currentUserXp?.CurrentRank ?? Ranks.AspireIntern, currentUser.GitHubUsername);
+                }
             }
         }
 
