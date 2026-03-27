@@ -110,7 +110,7 @@ public class SecurityTests : TestFixture
         client.DefaultRequestHeaders.Add("X-Test-Client", "true");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenStr);
 
-        var response = await client.GetAsync("/api/worlds");
+        var response = await client.GetAsync("/api/xp");
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

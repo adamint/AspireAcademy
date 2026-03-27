@@ -35,7 +35,8 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
         _aspireApp = await builder.BuildAsync();
 
         // Start all resources (Postgres container, Redis container, API project)
-        using var startCts = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+        // CI runners may need extra time to pull container images
+        using var startCts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
         await _aspireApp.StartAsync(startCts.Token);
 
         // Wait for infrastructure containers to be healthy
@@ -54,7 +55,7 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
 
         // Create an HTTP client that talks to the real API resource
         ApiClient = _aspireApp.CreateHttpClient("api");
-        ApiClient.Timeout = TimeSpan.FromSeconds(60);
+        ApiClient.Timeout = TimeSpan.FromSeconds(120);
         ApiClient.DefaultRequestHeaders.Add("X-Test-Client", "true");
 
         // Give the API time to initialize DB and load curriculum on first request
@@ -63,7 +64,7 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
 
     private async Task WaitForApiHealthy(CancellationToken ct)
     {
-        for (var i = 0; i < 60; i++)
+        for (var i = 0; i < 120; i++)
         {
             try
             {
@@ -81,7 +82,7 @@ public sealed class AspireIntegrationFixture : IAsyncLifetime
             await Task.Delay(1000, ct);
         }
 
-        throw new TimeoutException("API /health did not respond within 60 seconds");
+        throw new TimeoutException("API /health did not respond within 120 seconds");
     }
 
     public async Task DisposeAsync()

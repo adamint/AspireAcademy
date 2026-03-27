@@ -17,23 +17,23 @@ As a DevOps engineer, you're the person who keeps distributed systems running in
 ## Your Priority Worlds
 
 ### 🔥 Must-Do (High Relevance)
-- **World 1: The Distributed Problem** — Understand what Aspire replaces in your workflow
-- **World 3: Resource Types** — Containers, volumes, persistent lifetimes, parameters
-- **World 5: Integration Ecosystem** — Database hosting, cache, messaging, Azure provisioning
-- **World 6: Clients & Observability** — OpenTelemetry, health checks, metrics — your bread and butter
-- **World 7: The Dashboard** — Real-time resource monitoring and diagnostics
-- **World 10: Publishing & Deployment** — Docker Compose, Kubernetes, Azure Bicep publishing
-- **World 11: CLI & Dev Tools** — CLI commands, MCP server, automation
+- **[World 1: The Distributed Problem](/worlds/world-1)** — Understand what Aspire replaces in your workflow
+- **[World 3: Resource Types](/worlds/world-3)** — Containers, volumes, persistent lifetimes, parameters
+- **[World 5: Integration Ecosystem](/worlds/world-5)** — Database hosting, cache, messaging, Azure provisioning
+- **[World 6: Clients & Observability](/worlds/world-6)** — OpenTelemetry, health checks, metrics — your bread and butter
+- **[World 7: The Dashboard](/worlds/world-7)** — Real-time resource monitoring and diagnostics
+- **[World 10: Publishing & Deployment](/worlds/world-10)** — Docker Compose, Kubernetes, Azure Bicep publishing
+- **[World 11: CLI & Dev Tools](/worlds/world-11)** — CLI commands, MCP server, automation
 
 ### 📘 Good to Know (Medium Relevance)
-- **World 2: The App Model** — Understand how developers define resources
-- **World 4: Wiring It Together** — Service discovery and dependency ordering
-- **World 8: Testing** — Integration testing patterns for CI/CD pipelines
-- **World 12: Eventing & Lifecycle** — Custom events and lifecycle hooks
+- **[World 2: The App Model](/worlds/world-2)** — Understand how developers define resources
+- **[World 4: Wiring It Together](/worlds/world-4)** — Service discovery and dependency ordering
+- **[World 8: Testing](/worlds/world-8)** — Integration testing patterns for CI/CD pipelines
+- **[World 12: Eventing & Lifecycle](/worlds/world-12)** — Custom events and lifecycle hooks
 
 ### 📋 Optional (Low Relevance)
-- **World 9: Polyglot Internals** — RemoteHost and ATS are developer concerns
-- **World 13: Internals & Contributing** — Unless you want to contribute to Aspire itself
+- **[World 9: Polyglot Internals](/worlds/world-9)** — RemoteHost and ATS are developer concerns
+- **[World 13: Internals & Contributing](/worlds/world-13)** — Unless you want to contribute to Aspire itself
 
 ## Key Concepts for DevOps
 
@@ -45,4 +45,4 @@ As a DevOps engineer, you're the person who keeps distributed systems running in
 
 ## Start Here
 
-Begin with **World 1** to understand the problem space, then jump to **World 10** (Publishing & Deployment) once you've completed the foundations. That's where Aspire's value is most tangible for your role.
+Begin with **[World 1](/worlds/world-1)** to understand the problem space, then jump to **[World 10](/worlds/world-10)** (Publishing & Deployment) once you've completed the foundations. That's where Aspire's value is most tangible for your role.

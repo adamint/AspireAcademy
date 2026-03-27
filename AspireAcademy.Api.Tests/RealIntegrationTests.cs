@@ -698,7 +698,7 @@ public class EdgeCaseTests : TestFixture
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", expiredToken);
 
-        var response = await client.GetAsync("/api/worlds");
+        var response = await client.GetAsync("/api/xp");
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 

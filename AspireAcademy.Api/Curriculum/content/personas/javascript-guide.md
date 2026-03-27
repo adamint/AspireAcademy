@@ -17,23 +17,23 @@ As a JS/TS developer, you can use Aspire to orchestrate your Node.js APIs, Vite 
 ## Your Priority Worlds
 
 ### 🔥 Must-Do (High Relevance)
-- **World 1: The Distributed Problem** — Why Aspire exists and how to get started
-- **World 3, Module 3.3: JavaScript & Node Resources** — `AddNpmApp`, `AddViteApp`, package manager detection
-- **World 4, Module 4.1: WithReference & Service Discovery** — How your frontend discovers backend URLs
-- **World 9: Polyglot Internals** — RemoteHost, TypeScript AppHosts, JSON-RPC, code generation
-- **World 11: CLI & Dev Tools** — CLI, VS Code extension, MCP server, TypeScript AppHost parsing
+- **[World 1: The Distributed Problem](/worlds/world-1)** — Why Aspire exists and how to get started
+- **[World 3, Module 3.3: JavaScript & Node Resources](/worlds/world-3)** — `AddNpmApp`, `AddViteApp`, package manager detection
+- **[World 4, Module 4.1: WithReference & Service Discovery](/worlds/world-4)** — How your frontend discovers backend URLs
+- **[World 9: Polyglot Internals](/worlds/world-9)** — RemoteHost, TypeScript AppHosts, JSON-RPC, code generation
+- **[World 11: CLI & Dev Tools](/worlds/world-11)** — CLI, VS Code extension, MCP server, TypeScript AppHost parsing
 
 ### 📘 Good to Know (Medium Relevance)
-- **World 2: The App Model** — Understanding resources and the builder pattern
-- **World 3: Other Resources** — Containers, parameters, endpoints (you'll use these)
-- **World 5: Integration Ecosystem** — Databases and caches your apps connect to
-- **World 6: Observability** — OpenTelemetry works with Node.js too
-- **World 10: Publishing** — How your Vite app gets deployed alongside everything else
+- **[World 2: The App Model](/worlds/world-2)** — Understanding resources and the builder pattern
+- **[World 3: Other Resources](/worlds/world-3)** — Containers, parameters, endpoints (you'll use these)
+- **[World 5: Integration Ecosystem](/worlds/world-5)** — Databases and caches your apps connect to
+- **[World 6: Observability](/worlds/world-6)** — OpenTelemetry works with Node.js too
+- **[World 10: Publishing](/worlds/world-10)** — How your Vite app gets deployed alongside everything else
 
 ### 📋 Optional (Low Relevance)
-- **World 8: Testing** — .NET-specific integration testing patterns
-- **World 12: Eventing & Lifecycle** — C# extensibility internals
-- **World 13: Internals & Contributing** — .NET source code deep dive
+- **[World 8: Testing](/worlds/world-8)** — .NET-specific integration testing patterns
+- **[World 12: Eventing & Lifecycle](/worlds/world-12)** — C# extensibility internals
+- **[World 13: Internals & Contributing](/worlds/world-13)** — .NET source code deep dive
 
 ## Key Concepts for JS/TS Developers
 
@@ -45,4 +45,4 @@ As a JS/TS developer, you can use Aspire to orchestrate your Node.js APIs, Vite 
 
 ## Start Here
 
-Start with **World 1** for the big picture. Then prioritize **World 3, Module 3.3** (JavaScript resources) to learn how your services fit in. After that, **World 9** (Polyglot Internals) is where you'll learn to write AppHosts in TypeScript — a game changer for JS-first teams.
+Start with **[World 1](/worlds/world-1)** for the big picture. Then prioritize **[World 3, Module 3.3](/worlds/world-3)** (JavaScript resources) to learn how your services fit in. After that, **[World 9](/worlds/world-9)** (Polyglot Internals) is where you'll learn to write AppHosts in TypeScript — a game changer for JS-first teams.

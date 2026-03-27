@@ -18,21 +18,21 @@ Your team uses multiple languages — C# APIs alongside TypeScript frontends, Py
 ## Your Priority Worlds
 
 ### 🔥 Must-Do (High Relevance)
-- **World 1: The Distributed Problem** — The polyglot pain points Aspire solves
-- **World 2: The App Model** — Resources and the builder pattern (consistent across languages)
-- **World 3: Resource Types** — .NET projects, containers, JS/Python/Go/Java resources
-- **World 4: Wiring It Together** — Cross-service references, discovery, and communication
-- **World 5: Integration Ecosystem** — Shared infrastructure (DB, cache, messaging)
-- **World 6: Observability** — Cross-language tracing and health checks
-- **World 8: Testing** — Integration testing polyglot distributed apps
-- **World 9: Polyglot Internals** — RemoteHost, ATS, code generation — how it all connects
-- **World 10: Publishing & Deployment** — Deploying the full polyglot stack
-- **World 11: CLI & Dev Tools** — CLI, VS Code extension for multi-language AppHosts
-- **World 12: Eventing & Lifecycle** — Custom resources for your team's unique needs
+- **[World 1: The Distributed Problem](/worlds/world-1)** — The polyglot pain points Aspire solves
+- **[World 2: The App Model](/worlds/world-2)** — Resources and the builder pattern (consistent across languages)
+- **[World 3: Resource Types](/worlds/world-3)** — .NET projects, containers, JS/Python/Go/Java resources
+- **[World 4: Wiring It Together](/worlds/world-4)** — Cross-service references, discovery, and communication
+- **[World 5: Integration Ecosystem](/worlds/world-5)** — Shared infrastructure (DB, cache, messaging)
+- **[World 6: Observability](/worlds/world-6)** — Cross-language tracing and health checks
+- **[World 8: Testing](/worlds/world-8)** — Integration testing polyglot distributed apps
+- **[World 9: Polyglot Internals](/worlds/world-9)** — RemoteHost, ATS, code generation — how it all connects
+- **[World 10: Publishing & Deployment](/worlds/world-10)** — Deploying the full polyglot stack
+- **[World 11: CLI & Dev Tools](/worlds/world-11)** — CLI, VS Code extension for multi-language AppHosts
+- **[World 12: Eventing & Lifecycle](/worlds/world-12)** — Custom resources for your team's unique needs
 
 ### 📘 Good to Know (Medium Relevance)
-- **World 7: The Dashboard** — Useful for monitoring but not polyglot-specific
-- **World 13: Internals & Contributing** — Deep dive if your team wants to extend Aspire
+- **[World 7: The Dashboard](/worlds/world-7)** — Useful for monitoring but not polyglot-specific
+- **[World 13: Internals & Contributing](/worlds/world-13)** — Deep dive if your team wants to extend Aspire
 
 ## Key Concepts for Polyglot Teams
 
@@ -45,4 +45,4 @@ Your team uses multiple languages — C# APIs alongside TypeScript frontends, Py
 
 ## Start Here
 
-Start with **World 1** (everyone needs foundations), then go through **World 3** paying special attention to Module 3.3 (polyglot resources). **World 9** is your team's most important world — it explains how non-.NET AppHosts communicate with Aspire infrastructure. After that, follow the linear path through Worlds 4-6 for cross-service wiring and observability.
+Start with **[World 1](/worlds/world-1)** (everyone needs foundations), then go through **[World 3](/worlds/world-3)** paying special attention to Module 3.3 (polyglot resources). **[World 9](/worlds/world-9)** is your team's most important world — it explains how non-.NET AppHosts communicate with Aspire infrastructure. After that, follow the linear path through Worlds 4-6 for cross-service wiring and observability.
