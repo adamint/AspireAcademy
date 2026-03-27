@@ -70,4 +70,27 @@ public class ConceptMapTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
         }
         finally { await fixture.ClosePageAsync(page); }
     }
+
+    [Fact]
+    public async Task ConceptMap_LoadsFromApi()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            var apiCalled = false;
+            await page.RouteAsync("**/api/concepts", async route =>
+            {
+                apiCalled = true;
+                await route.ContinueAsync();
+            });
+
+            var username = UniqueUser("apicheck");
+            await RegisterUser(page, username);
+            await page.GotoAsync(fixture.WebBaseUrl + "/concept-map");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
+
+            Assert.True(apiCalled, "ConceptMapPage should fetch data from /api/concepts");
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
 }

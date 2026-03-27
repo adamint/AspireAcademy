@@ -1,3 +1,8 @@
+---
+name: add-e2e-tests
+description: "Adds E2E tests using C# Playwright against the real running app. USE FOR: adding end-to-end tests, verifying test coverage, writing browser-based integration tests, E2E test failures. DO NOT USE FOR: unit tests or API-only tests (use add-feature skill)."
+---
+
 # Skill: Add E2E Tests
 
 ## When to use
@@ -7,6 +12,8 @@ When adding, fixing, or verifying test coverage for any part of the application.
 
 ### 1. Start the real app
 The app MUST be running via `aspire run` with real Postgres, Redis, and CodeRunner. NEVER test against mocks or in-memory databases.
+
+**NEVER mock API responses** (e.g. `playwright-cli route` with `--body`). If the API isn't running, restart it with `aspire start`. All tests must hit the real backend.
 
 **NEVER delete the postgres data volume** (`aspire-learn-pgdata`) — it contains user data. Only delete if schema changed and migrations fail.
 

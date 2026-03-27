@@ -26,6 +26,8 @@ const ConceptMapPage = lazy(() => import('./pages/ConceptMapPage'));
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const WeeklyChallengePage = lazy(() => import('./pages/WeeklyChallengePage'));
 const WhatsNewPage = lazy(() => import('./pages/WhatsNewPage'));
+const PersonaHubPage = lazy(() => import('./pages/PersonaHubPage'));
+const PersonaDetailPage = lazy(() => import('./pages/PersonaDetailPage'));
 
 function LazyFallback() {
   return (
@@ -58,6 +60,8 @@ export default function App() {
           <Route path="/concept-map" element={<ConceptMapPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/whats-new" element={<WhatsNewPage />} />
+          <Route path="/personas" element={<PersonaHubPage />} />
+          <Route path="/personas/:personaId" element={<PersonaDetailPage />} />
           {/* Public leaderboard, achievements, and weekly challenge for discoverability */}
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/achievements" element={<AchievementsPage />} />

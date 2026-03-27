@@ -578,14 +578,13 @@ export default function ChallengePage() {
               </Button>
             ) : (
               <Button
-                as={RouterLink}
-                to="/register"
+                asChild
                 size="sm"
                 bg="aspire.600"
                 color="white"
                 _hover={{ bg: 'aspire.500' }}
               >
-                🔐 Sign up to submit your code
+                <RouterLink to="/register">🔐 Sign up to submit your code</RouterLink>
               </Button>
             )}
           </HStack>

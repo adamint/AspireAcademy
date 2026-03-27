@@ -114,4 +114,68 @@ public class HomePageTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
         }
         finally { await fixture.ClosePageAsync(page); }
     }
+
+    [Fact]
+    public async Task HomePage_Achievements_LoadFromApi()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            // Intercept the achievements API call to verify it is made
+            var apiCalled = false;
+            await page.RouteAsync("**/api/achievements", async route =>
+            {
+                apiCalled = true;
+                await route.ContinueAsync();
+            });
+
+            await page.GotoAsync(fixture.WebBaseUrl + "/");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
+
+            Assert.True(apiCalled, "HomePage should fetch achievements from /api/achievements");
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
+
+    [Fact]
+    public async Task HomePage_Leaderboard_LoadsFromApi()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            var apiCalled = false;
+            await page.RouteAsync("**/api/leaderboard**", async route =>
+            {
+                apiCalled = true;
+                await route.ContinueAsync();
+            });
+
+            await page.GotoAsync(fixture.WebBaseUrl + "/");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
+
+            Assert.True(apiCalled, "HomePage should fetch leaderboard from /api/leaderboard");
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
+
+    [Fact]
+    public async Task HomePage_Worlds_LoadFromApi()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            var apiCalled = false;
+            await page.RouteAsync("**/api/worlds", async route =>
+            {
+                apiCalled = true;
+                await route.ContinueAsync();
+            });
+
+            await page.GotoAsync(fixture.WebBaseUrl + "/");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
+
+            Assert.True(apiCalled, "HomePage should fetch worlds from /api/worlds");
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
 }

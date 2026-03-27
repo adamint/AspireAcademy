@@ -137,7 +137,7 @@
       "label": "Parameter",
       "layer": "resource",
       "description": "Define configurable values with AddParameter() for secrets and settings.",
-      "lessonId": "2.7.1",
+      "lessonId": "3.4.1",
       "emoji": "🔑"
     },
     {
@@ -145,7 +145,7 @@
       "label": "ConnectionString",
       "layer": "resource",
       "description": "Reference external resources with AddConnectionString() for pre-existing services.",
-      "lessonId": "2.7.3",
+      "lessonId": "3.4.2",
       "emoji": "🔗"
     },
     {
@@ -273,7 +273,7 @@
       "label": "Node.js",
       "layer": "polyglot",
       "description": "Run Node.js scripts as resources with AddNodeApp().",
-      "lessonId": "2.4.1",
+      "lessonId": "3.3.1",
       "emoji": "🟢"
     },
     {
@@ -281,7 +281,7 @@
       "label": "Python",
       "layer": "polyglot",
       "description": "Run Python scripts and ASGI apps with AddPythonApp() and AddUvicornApp().",
-      "lessonId": "2.5.1",
+      "lessonId": "3.3.2",
       "emoji": "🐍"
     },
     {
@@ -289,7 +289,7 @@
       "label": "Vite",
       "layer": "polyglot",
       "description": "Vite-based frontends with AddViteApp() and dev server integration.",
-      "lessonId": "2.4.3",
+      "lessonId": "3.3.1",
       "emoji": "⚡"
     }
   ]

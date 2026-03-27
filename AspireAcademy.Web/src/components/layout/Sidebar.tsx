@@ -19,6 +19,7 @@ import {
   FiStar,
   FiExternalLink,
   FiGithub,
+  FiCompass,
 } from 'react-icons/fi';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -288,6 +289,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </SideNavLink>
           <SideNavLink to="/whats-new" icon={<FiStar size={16} />} onClose={onClose}>
             What's New
+          </SideNavLink>
+          <SideNavLink to="/personas" icon={<FiCompass size={16} />} onClose={onClose}>
+            Learning Tracks
           </SideNavLink>
         </Box>
 

@@ -97,12 +97,11 @@ export default function DashboardPage() {
                 </Text>
               </Box>
               <Button
-                as={RouterLink}
-                to="/register"
+                asChild
                 colorPalette="purple"
                 size="lg"
               >
-                Sign Up Free
+                <RouterLink to="/register">Sign Up Free</RouterLink>
               </Button>
             </Flex>
           </Card.Body>
@@ -160,6 +159,36 @@ export default function DashboardPage() {
             </Card.Body>
           </Card.Root>
         </SimpleGrid>
+      )}
+
+      {/* Persona Track */}
+      {isAuthenticated && user?.persona && (
+        <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg">
+          <Card.Body p="4">
+            <Flex align="center" gap="3">
+              <Text fontSize="lg">🎯</Text>
+              <Box flex="1">
+                <Text fontSize="xs" color="aspire.300" mb="0.5">Your Learning Track</Text>
+                <Text fontSize="sm" color="dark.text" fontWeight="semibold" textTransform="capitalize">
+                  {user.persona === 'devops' ? '🔧 DevOps Engineer'
+                    : user.persona === 'csharp' ? '💜 C# Developer'
+                    : user.persona === 'javascript' ? '💛 JS/TS Developer'
+                    : user.persona === 'polyglot' ? '🌐 Polyglot Team'
+                    : user.persona}
+                </Text>
+              </Box>
+              <Button
+                asChild
+                variant="outline"
+                size="xs"
+                borderColor="aspire.600"
+                color="aspire.600"
+              >
+                <RouterLink to={`/personas/${user.persona}`}>View Guide</RouterLink>
+              </Button>
+            </Flex>
+          </Card.Body>
+        </Card.Root>
       )}
 
       {/* Activity Heatmap (compact) */}

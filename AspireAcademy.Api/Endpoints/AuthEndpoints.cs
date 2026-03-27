@@ -106,7 +106,7 @@ public static partial class AuthEndpoints
             token,
             new AuthUserDto(
                 user.Id, user.Username, user.DisplayName, user.Email,
-                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp, user.GitHubUsername)));
+                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp, user.GitHubUsername, user.Persona)));
     }
 
     private static async Task<IResult> Login(
@@ -167,7 +167,7 @@ public static partial class AuthEndpoints
             token,
             new AuthUserDto(
                 user.Id, user.Username, user.DisplayName, user.Email,
-                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp, user.GitHubUsername)));
+                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp, user.GitHubUsername, user.Persona)));
     }
 
     private static async Task<IResult> GetMe(
@@ -191,7 +191,7 @@ public static partial class AuthEndpoints
         return Results.Ok(new MeResponse(
             user.Id, user.Username, user.DisplayName, user.Email,
             avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp,
-            user.Bio, user.LoginStreakDays, user.CreatedAt, user.GitHubUsername));
+            user.Bio, user.LoginStreakDays, user.CreatedAt, user.GitHubUsername, user.Persona));
     }
 
     private static async Task<IResult> RefreshToken(
@@ -314,7 +314,8 @@ public record AuthUserDto(
     int CurrentLevel,
     string CurrentRank,
     int TotalXp,
-    string? GitHubUsername = null);
+    string? GitHubUsername = null,
+    string? Persona = null);
 
 public record MeResponse(
     Guid Id,
@@ -328,6 +329,7 @@ public record MeResponse(
     string? Bio,
     int LoginStreakDays,
     DateTime CreatedAt,
-    string? GitHubUsername = null);
+    string? GitHubUsername = null,
+    string? Persona = null);
 
 public record ErrorResponse(string Error, string? Details = null);

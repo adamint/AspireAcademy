@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Flex, Text, Heading, Button, SimpleGrid, Card } from '@chakra-ui/react';
+import { Box, Flex, Text, Heading, Button, SimpleGrid, Card, Badge } from '@chakra-ui/react';
 import { useAuthStore } from '../store/authStore';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import api from '../services/apiClient';
 import type { World } from '../types/curriculum';
+import type { PersonaSummary } from '../types';
 
 /* ───────────────────────────── constants ───────────────────────────── */
 
@@ -36,10 +37,6 @@ const KEYFRAMES = `
   50%      { text-shadow: 0 0 20px rgba(107,79,187,0.9), 0 0 60px rgba(107,79,187,0.5), 0 0 80px rgba(107,79,187,0.2); }
 }
 @keyframes typewriter-cursor { 0%,100%{opacity:1} 50%{opacity:0} }
-@keyframes fade-in-up {
-  from { opacity:0; transform:translateY(24px); }
-  to   { opacity:1; transform:translateY(0); }
-}
 @keyframes float-node {
   0%,100% { transform:translateY(0); }
   50%     { transform:translateY(-8px); }
@@ -189,86 +186,19 @@ function useTypewriter(text: string, speed = 60) {
   return { displayed, done };
 }
 
-/* ─────────────────── Count-up on scroll ──────────────────── */
+/* ─────────────────── Count-up (immediate) ──────────────────── */
 
 function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [value, setValue] = useState(0);
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started) setStarted(true);
-      },
-      { threshold: 0.3 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (!started || target < 0) return;
-    const duration = 1500;
-    const steps = 40;
-    const increment = target / steps;
-    let current = 0;
-    const id = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        setValue(target);
-        clearInterval(id);
-      } else {
-        setValue(Math.floor(current));
-      }
-    }, duration / steps);
-    return () => clearInterval(id);
-  }, [started, target]);
-
   return (
     <Text
       as="span"
-      ref={ref as React.Ref<HTMLParagraphElement>}
       {...pixelFontProps}
       fontSize={{ base: '24px', md: '36px' }}
       color="game.xpGold"
     >
-      {target < 0 ? '∞' : value}
+      {target < 0 ? '∞' : target}
       {suffix}
     </Text>
-  );
-}
-
-/* ─────────────────── Scroll-triggered fade-in ──────────────────── */
-
-function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <Box
-      ref={ref}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(24px)',
-        transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
-      }}
-    >
-      {children}
-    </Box>
   );
 }
 
@@ -295,6 +225,12 @@ export default function HomePage() {
   const { data: leaderboardData } = useQuery<{ entries: { rank: number; username: string; xp: number }[] }>({
     queryKey: ['leaderboard-preview'],
     queryFn: () => api.get('/leaderboard?scope=all-time&limit=3').then((r) => r.data),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: personas } = useQuery<PersonaSummary[]>({
+    queryKey: ['personas'],
+    queryFn: () => api.get('/personas').then((r) => r.data),
     staleTime: 5 * 60_000,
   });
 
@@ -565,7 +501,6 @@ export default function HomePage() {
 
         {/* ═══════════════════ STATS ═══════════════════ */}
         <Box id="stats" py={{ base: '16', md: '20' }} px="4" bg="#151224">
-          <FadeInSection>
             <SimpleGrid
               data-testid="stats-section"
               columns={{ base: 2, md: 4 }}
@@ -595,12 +530,93 @@ export default function HomePage() {
                 </Flex>
               ))}
             </SimpleGrid>
-          </FadeInSection>
         </Box>
+
+        {/* ═══════════════════ LEARNING TRACKS ═══════════════════ */}
+        {(personas ?? []).length > 0 && (
+          <Box py={{ base: '16', md: '20' }} px="4">
+              <Heading
+                as="h2"
+                {...pixelFontProps}
+                fontSize={{ base: '16px', md: '22px' }}
+                textAlign="center"
+                color="aspire.400"
+                mb="3"
+              >
+                🎯 Built for Your Role
+              </Heading>
+              <Text textAlign="center" color="whiteAlpha.600" mb="10" maxW="600px" mx="auto">
+                Whether you're a DevOps engineer, a C# developer, a JS/TS developer, or leading a polyglot team —
+                we've got a personalized path for you
+              </Text>
+
+            <SimpleGrid
+              columns={{ base: 1, sm: 2, md: 4 }}
+              gap="5"
+              maxW="1000px"
+              mx="auto"
+            >
+              {(personas ?? []).map(p => (
+                  <Card.Root
+                    {...retroCardProps}
+                    bg="rgba(26,11,46,0.7)"
+                    p="5"
+                    textAlign="center"
+                    cursor="pointer"
+                    transition="all 0.25s"
+                    _hover={{
+                      transform: 'scale(1.05) translateY(-4px)',
+                      borderColor: p.color,
+                    }}
+                    onClick={() => navigate(`/personas/${p.id}`)}
+                  >
+                    <Text fontSize="36px" mb="2">{p.icon}</Text>
+                    <Text
+                      {...pixelFontProps}
+                      fontSize={{ base: '9px', md: '10px' }}
+                      color="aspire.300"
+                      mb="2"
+                    >
+                      {p.name}
+                    </Text>
+                    <Text fontSize="xs" color="whiteAlpha.600" lineHeight="1.5" mb="3">
+                      {p.description.length > 80 ? p.description.slice(0, 80) + '…' : p.description}
+                    </Text>
+                    <Flex wrap="wrap" justify="center" gap="1">
+                      {p.focusAreas.slice(0, 2).map((area) => (
+                        <Badge
+                          key={area}
+                          fontSize="2xs"
+                          colorPalette="purple"
+                          variant="subtle"
+                        >
+                          {area}
+                        </Badge>
+                      ))}
+                    </Flex>
+                  </Card.Root>
+              ))}
+            </SimpleGrid>
+
+              <Flex justify="center" mt="8">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  borderColor="aspire.600"
+                  color="aspire.400"
+                  {...pixelFontProps}
+                  fontSize="10px"
+                  _hover={{ bg: 'rgba(107,79,187,0.15)' }}
+                  onClick={() => navigate('/personas')}
+                >
+                  Explore All Tracks →
+                </Button>
+              </Flex>
+          </Box>
+        )}
 
         {/* ═══════════════════ WORLDS ═══════════════════ */}
         <Box id="worlds" py={{ base: '16', md: '20' }} px="4">
-          <FadeInSection>
             <Heading
               data-testid="worlds-heading"
               as="h2"
@@ -615,7 +631,6 @@ export default function HomePage() {
             <Text textAlign="center" color="whiteAlpha.600" mb="10" maxW="600px" mx="auto">
               {worlds ? `${worlds.length} themed worlds` : 'Themed worlds'} take you from cloud fundamentals to production-ready distributed apps
             </Text>
-          </FadeInSection>
 
           <SimpleGrid
             data-testid="worlds-grid"
@@ -624,8 +639,7 @@ export default function HomePage() {
             maxW="1000px"
             mx="auto"
           >
-            {(worlds ?? []).map((w, i) => (
-              <FadeInSection key={w.id} delay={i * 0.08}>
+            {(worlds ?? []).map(w => (
                 <Card.Root
                   {...retroCardProps}
                   bg="rgba(26,11,46,0.7)"
@@ -653,14 +667,12 @@ export default function HomePage() {
                     {w.description}
                   </Text>
                 </Card.Root>
-              </FadeInSection>
             ))}
           </SimpleGrid>
         </Box>
 
         {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
         <Box id="how-it-works" py={{ base: '16', md: '20' }} px="4" bg="#151224">
-          <FadeInSection>
             <Heading
               data-testid="how-it-works-heading"
               as="h2"
@@ -672,11 +684,9 @@ export default function HomePage() {
             >
               ⚔️ How It Works
             </Heading>
-          </FadeInSection>
 
           <SimpleGrid columns={{ base: 1, md: 3 }} gap="8" maxW="900px" mx="auto">
             {HOW_IT_WORKS.map((item, i) => (
-              <FadeInSection key={item.title} delay={i * 0.15}>
                 <Flex direction="column" align="center" textAlign="center" gap="3">
                   <Flex
                     align="center"
@@ -708,7 +718,6 @@ export default function HomePage() {
                     </Text>
                   )}
                 </Flex>
-              </FadeInSection>
             ))}
           </SimpleGrid>
 
@@ -728,7 +737,6 @@ export default function HomePage() {
 
         {/* ═══════════════════ SOCIAL PROOF / GAMIFICATION ═══════════════════ */}
         <Box py={{ base: '16', md: '20' }} px="4">
-          <FadeInSection>
             <Heading
               data-testid="gamification-heading"
               as="h2"
@@ -740,11 +748,9 @@ export default function HomePage() {
             >
               🏆 Level Up Your Skills
             </Heading>
-          </FadeInSection>
 
           <SimpleGrid columns={{ base: 1, md: 2 }} gap="8" maxW="900px" mx="auto">
             {/* Achievements preview */}
-            <FadeInSection delay={0.1}>
               <Box {...retroCardProps} bg="rgba(26,11,46,0.7)" p="5">
                 <Text {...pixelFontProps} fontSize="12px" color="game.xpGold" mb="4">
                   🎖️ Achievements
@@ -774,10 +780,8 @@ export default function HomePage() {
                   ))}
                 </Flex>
               </Box>
-            </FadeInSection>
 
             {/* Leaderboard preview + XP bar */}
-            <FadeInSection delay={0.2}>
               <Flex direction="column" gap="5">
                 <Box {...retroCardProps} bg="rgba(26,11,46,0.7)" p="5">
                   <Text {...pixelFontProps} fontSize="12px" color="game.xpGold" mb="4">
@@ -848,7 +852,6 @@ export default function HomePage() {
                   </Box>
                 </Box>
               </Flex>
-            </FadeInSection>
           </SimpleGrid>
         </Box>
 
@@ -860,7 +863,6 @@ export default function HomePage() {
           bg="#151224"
           textAlign="center"
         >
-          <FadeInSection>
             <Text {...pixelFontProps} fontSize={{ base: '14px', md: '20px' }} color="aspire.400" mb="4">
               Ready to build distributed apps?
             </Text>
@@ -889,7 +891,6 @@ export default function HomePage() {
             >
               🎮 {isLoggedIn ? 'Continue Journey' : 'Start Your Journey'}
             </Button>
-          </FadeInSection>
         </Box>
 
         {/* ─── Footer ─── */}

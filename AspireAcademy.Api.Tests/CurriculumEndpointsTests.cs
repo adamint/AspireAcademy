@@ -149,4 +149,131 @@ public class CurriculumEndpointsTests : TestFixture
         worlds!.Should().AllSatisfy(w => w.IsUnlocked.Should().BeTrue(),
             "anonymous users should see all worlds as unlocked");
     }
+
+    // ── Gallery endpoint ──
+
+    [Fact]
+    public async Task GetGallery_ReturnsGalleryEntries()
+    {
+        var response = await Client.GetAsync("/api/gallery");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var rawJson = await response.Content.ReadAsStringAsync();
+        var doc = JsonDocument.Parse(rawJson);
+        doc.RootElement.ValueKind.Should().Be(JsonValueKind.Array);
+        doc.RootElement.GetArrayLength().Should().BeGreaterThan(0);
+
+        var first = doc.RootElement[0];
+        first.TryGetProperty("id", out _).Should().BeTrue("each entry must have an id");
+        first.TryGetProperty("title", out _).Should().BeTrue("each entry must have a title");
+        first.TryGetProperty("services", out _).Should().BeTrue("each entry must have services");
+        first.TryGetProperty("connections", out _).Should().BeTrue("each entry must have connections");
+        first.TryGetProperty("code", out _).Should().BeTrue("each entry must have code");
+        first.TryGetProperty("concepts", out _).Should().BeTrue("each entry must have concepts");
+    }
+
+    [Fact]
+    public async Task GetGallery_DoesNotRequireAuth()
+    {
+        // Use unauthenticated client
+        var response = await Client.GetAsync("/api/gallery");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task GetGallery_EntriesHaveValidStructure()
+    {
+        var response = await Client.GetAsync("/api/gallery");
+        var rawJson = await response.Content.ReadAsStringAsync();
+        var doc = JsonDocument.Parse(rawJson);
+
+        foreach (var entry in doc.RootElement.EnumerateArray())
+        {
+            var id = entry.GetProperty("id").GetString();
+            id.Should().NotBeNullOrEmpty();
+
+            var services = entry.GetProperty("services");
+            services.GetArrayLength().Should().BeGreaterThan(0, $"gallery entry '{id}' must have services");
+
+            foreach (var svc in services.EnumerateArray())
+            {
+                svc.TryGetProperty("id", out _).Should().BeTrue($"service in '{id}' must have an id");
+                svc.TryGetProperty("name", out _).Should().BeTrue($"service in '{id}' must have a name");
+                svc.TryGetProperty("type", out _).Should().BeTrue($"service in '{id}' must have a type");
+            }
+
+            var code = entry.GetProperty("code").GetString();
+            code.Should().NotBeNullOrEmpty($"gallery entry '{id}' must have code");
+            code.Should().Contain("DistributedApplication", $"gallery entry '{id}' code should be Aspire AppHost code");
+        }
+    }
+
+    // ── Concepts endpoint ──
+
+    [Fact]
+    public async Task GetConcepts_ReturnsConceptsData()
+    {
+        var response = await Client.GetAsync("/api/concepts");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var rawJson = await response.Content.ReadAsStringAsync();
+        var doc = JsonDocument.Parse(rawJson);
+        doc.RootElement.ValueKind.Should().Be(JsonValueKind.Object);
+
+        doc.RootElement.TryGetProperty("layerOrder", out var layerOrder).Should().BeTrue();
+        layerOrder.GetArrayLength().Should().BeGreaterThan(0);
+
+        doc.RootElement.TryGetProperty("layers", out var layers).Should().BeTrue();
+        layers.ValueKind.Should().Be(JsonValueKind.Object);
+
+        doc.RootElement.TryGetProperty("concepts", out var concepts).Should().BeTrue();
+        concepts.GetArrayLength().Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public async Task GetConcepts_DoesNotRequireAuth()
+    {
+        var response = await Client.GetAsync("/api/concepts");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task GetConcepts_ConceptsHaveValidStructure()
+    {
+        var response = await Client.GetAsync("/api/concepts");
+        var rawJson = await response.Content.ReadAsStringAsync();
+        var doc = JsonDocument.Parse(rawJson);
+
+        var layerOrder = doc.RootElement.GetProperty("layerOrder");
+        var layers = doc.RootElement.GetProperty("layers");
+        var concepts = doc.RootElement.GetProperty("concepts");
+
+        // Every layer in layerOrder should exist in layers object
+        foreach (var layer in layerOrder.EnumerateArray())
+        {
+            var key = layer.GetString()!;
+            layers.TryGetProperty(key, out var layerDef).Should().BeTrue($"layer '{key}' from layerOrder must exist in layers");
+            layerDef.TryGetProperty("name", out _).Should().BeTrue($"layer '{key}' must have a name");
+            layerDef.TryGetProperty("color", out _).Should().BeTrue($"layer '{key}' must have a color");
+            layerDef.TryGetProperty("emoji", out _).Should().BeTrue($"layer '{key}' must have an emoji");
+        }
+
+        // Every concept should reference a valid layer
+        var validLayers = new HashSet<string>();
+        foreach (var layer in layerOrder.EnumerateArray())
+            validLayers.Add(layer.GetString()!);
+
+        foreach (var concept in concepts.EnumerateArray())
+        {
+            var id = concept.GetProperty("id").GetString();
+            id.Should().NotBeNullOrEmpty();
+
+            concept.TryGetProperty("label", out _).Should().BeTrue($"concept '{id}' must have a label");
+            concept.TryGetProperty("description", out _).Should().BeTrue($"concept '{id}' must have a description");
+            concept.TryGetProperty("lessonId", out _).Should().BeTrue($"concept '{id}' must have a lessonId");
+
+            var layer = concept.GetProperty("layer").GetString();
+            validLayers.Should().Contain(layer, $"concept '{id}' references unknown layer '{layer}'");
+        }
+    }
 }

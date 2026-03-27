@@ -19,9 +19,9 @@ export default function AchievementToast() {
   const [current, setCurrent] = useState<QueuedAchievement | null>(null);
   const queueRef = useRef<QueuedAchievement[]>([]);
   const shownRef = useRef<Set<string>>(new Set());
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const showNextRef = useRef<() => void>();
+  const showNextRef = useRef<(() => void) | undefined>(undefined);
 
   const showNext = useCallback(() => {
     if (queueRef.current.length > 0) {

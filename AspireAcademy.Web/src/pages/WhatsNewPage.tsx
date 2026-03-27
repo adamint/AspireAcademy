@@ -13,10 +13,6 @@ const typeConfig: Record<string, { icon: string; color: string; label: string }>
 };
 
 const fadeInKeyframes = `
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 @keyframes pulseNew {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.5; }
@@ -25,7 +21,6 @@ const fadeInKeyframes = `
 
 function VersionCard({
   entry,
-  index,
   isLatest,
 }: {
   entry: ChangelogEntry;
@@ -38,7 +33,6 @@ function VersionCard({
     <Flex
       gap={0}
       align="stretch"
-      style={{ animation: `fadeSlideIn 0.4s ease ${index * 0.12}s both` }}
     >
       {/* Timeline rail */}
       <Flex direction="column" align="center" minW="48px" position="relative">

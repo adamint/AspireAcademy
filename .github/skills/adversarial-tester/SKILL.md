@@ -1,3 +1,8 @@
+---
+name: adversarial-tester
+description: "Runs adversarial testing against the live app to find bugs and broken flows. USE FOR: breaking things deliberately, stress testing UI flows, finding edge cases, testing error handling, verifying XSS/injection protection, double-click prevention, refresh resilience. DO NOT USE FOR: writing new features (use add-feature skill), structured E2E test suites (use add-e2e-tests skill)."
+---
+
 # Skill: Adversarial Tester
 
 ## When to use
@@ -7,6 +12,8 @@ After any feature is added or bug is fixed, run this adversarial testing process
 
 ### 1. Start the app
 Ensure `aspire run` is running with all resources healthy. **Do NOT delete the postgres data volume.**
+
+**NEVER mock API responses** (e.g. `playwright-cli route` with `--body`). If the API isn't running, restart it with `aspire start`. All testing must hit the real backend.
 
 ### 2. Register a fresh user via Playwright
 ```csharp

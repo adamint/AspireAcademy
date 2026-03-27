@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from 'react';
-import { Box, Flex, Text, Input, Button, Spinner } from '@chakra-ui/react';
+import { Box, Flex, Text, Input, Button, Spinner, Card } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
 import { useGamificationStore } from '../store/gamificationStore';
 import api from '../services/apiClient';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
-import type { AuthResponse } from '../types';
+import type { AuthResponse, PersonaSummary } from '../types';
 import { extractErrorMessage } from '../utils/errorHandler';
 
 interface FormErrors {
@@ -27,6 +28,7 @@ function FieldError({ message }: { message?: string }) {
 export default function RegisterPage() {
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
+  const updateUser = useAuthStore((s) => s.updateUser);
   const syncFromServer = useGamificationStore((s) => s.syncFromServer);
 
   const [username, setUsername] = useState('');
@@ -37,6 +39,7 @@ export default function RegisterPage() {
   const [serverError, setServerError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
+  const [showPersonaStep, setShowPersonaStep] = useState(false);
 
   const clearFieldError = (field: keyof FormErrors) => {
     if (fieldErrors[field]) {
@@ -96,7 +99,7 @@ export default function RegisterPage() {
         weeklyXp: 0,
         loginStreakDays: data.user.loginStreakDays,
       });
-      navigate('/dashboard');
+      setShowPersonaStep(true);
     } catch (err: unknown) {
       console.error('[RegisterPage] Registration failed:', err);
       setServerError(extractErrorMessage(err, 'Registration failed. Please try again.'));
@@ -104,6 +107,95 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  const { data: personas } = useQuery<PersonaSummary[]>({
+    queryKey: ['personas'],
+    queryFn: () => api.get('/personas').then((r) => r.data),
+    enabled: showPersonaStep,
+  });
+
+  const selectPersonaMutation = useMutation({
+    mutationFn: (personaId: string | null) =>
+      api.put('/personas/select', { personaId }),
+    onSuccess: (_, personaId) => {
+      updateUser({ persona: personaId });
+      navigate('/dashboard');
+    },
+  });
+
+  if (showPersonaStep) {
+    return (
+      <Flex
+        minH="100vh"
+        align="center"
+        justify="center"
+        bgGradient="linear-gradient(135deg, var(--chakra-colors-aspire-900) 0%, var(--chakra-colors-aspire-600) 100%)"
+        p="4"
+      >
+        <Box
+          w="100%"
+          maxW="560px"
+          bg="dark.card"
+          px="8"
+          py="9"
+          {...retroCardProps}
+          boxShadow="6px 6px 0 #2B1260"
+          borderColor="aspire.600"
+        >
+          <Text
+            {...pixelFontProps}
+            fontSize="16px"
+            color="aspire.600"
+            textAlign="center"
+            mb="1"
+          >
+            What describes you best?
+          </Text>
+          <Text textAlign="center" color="dark.muted" mb="5" fontSize="sm">
+            This personalizes your learning path. You can change this anytime.
+          </Text>
+
+          <Flex direction="column" gap="3">
+            {personas?.map((p) => (
+              <Card.Root
+                key={p.id}
+                {...retroCardProps}
+                cursor="pointer"
+                onClick={() => selectPersonaMutation.mutate(p.id)}
+                _hover={{ borderColor: p.color, bg: 'rgba(107,79,187,0.06)' }}
+                transition="all 0.15s"
+              >
+                <Card.Body p="3.5">
+                  <Flex align="center" gap="3">
+                    <Text fontSize="xl">{p.icon}</Text>
+                    <Box flex="1">
+                      <Text fontWeight="bold" color="dark.text" fontSize="sm">
+                        {p.name}
+                      </Text>
+                      <Text color="dark.muted" fontSize="xs">
+                        {p.description}
+                      </Text>
+                    </Box>
+                  </Flex>
+                </Card.Body>
+              </Card.Root>
+            ))}
+          </Flex>
+
+          <Button
+            variant="ghost"
+            color="dark.muted"
+            size="sm"
+            w="100%"
+            mt="4"
+            onClick={() => navigate('/dashboard')}
+          >
+            Skip — show me everything
+          </Button>
+        </Box>
+      </Flex>
+    );
+  }
 
   const inputStyles = {
     bg: 'dark.surface',
@@ -168,9 +260,9 @@ export default function RegisterPage() {
           <Flex direction="column" gap="3.5">
             {/* Username */}
             <Box>
-              <Text as="label" htmlFor="reg-user" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
+              <label htmlFor="reg-user" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
                 Username <Text as="span" color="game.error">*</Text>
-              </Text>
+              </label>
               <Input
                 id="reg-user"
                 value={username}
@@ -187,9 +279,9 @@ export default function RegisterPage() {
 
             {/* Email */}
             <Box>
-              <Text as="label" htmlFor="reg-email" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
+              <label htmlFor="reg-email" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
                 Email <Text as="span" color="game.error">*</Text>
-              </Text>
+              </label>
               <Input
                 id="reg-email"
                 type="email"
@@ -207,9 +299,9 @@ export default function RegisterPage() {
 
             {/* Display Name */}
             <Box>
-              <Text as="label" htmlFor="reg-display" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
+              <label htmlFor="reg-display" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
                 Display Name
-              </Text>
+              </label>
               <Input
                 id="reg-display"
                 value={displayName}
@@ -222,9 +314,9 @@ export default function RegisterPage() {
 
             {/* Password */}
             <Box>
-              <Text as="label" htmlFor="reg-pass" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
+              <label htmlFor="reg-pass" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
                 Password <Text as="span" color="game.error">*</Text>
-              </Text>
+              </label>
               <Input
                 id="reg-pass"
                 type="password"
@@ -242,9 +334,9 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <Box>
-              <Text as="label" htmlFor="reg-confirm" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
+              <label htmlFor="reg-confirm" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
                 Confirm Password <Text as="span" color="game.error">*</Text>
-              </Text>
+              </label>
               <Input
                 id="reg-confirm"
                 type="password"

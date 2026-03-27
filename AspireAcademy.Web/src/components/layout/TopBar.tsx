@@ -258,26 +258,24 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
             </IconButton>
 
             <Button
-              as={RouterLink}
-              to="/login"
+              asChild
               variant="ghost"
               size="sm"
               color="whiteAlpha.800"
               _hover={{ bg: 'whiteAlpha.200' }}
               title="Go to login page"
             >
-              Log In
+              <RouterLink to="/login">Log In</RouterLink>
             </Button>
             <Button
-              as={RouterLink}
-              to="/register"
+              asChild
               size="sm"
               bg="aspire.600"
               color="white"
               _hover={{ bg: 'aspire.500' }}
               title="Go to registration page"
             >
-              Sign Up
+              <RouterLink to="/register">Sign Up</RouterLink>
             </Button>
           </>
         )}

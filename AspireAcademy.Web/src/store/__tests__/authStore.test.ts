@@ -14,6 +14,8 @@ const testUser: User = {
   totalXp: 1200,
   loginStreakDays: 5,
   createdAt: '2025-01-01T00:00:00Z',
+  gitHubUsername: null,
+  persona: null,
 }
 
 describe('authStore', () => {

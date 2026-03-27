@@ -380,13 +380,12 @@ export default function QuizPage() {
         <Flex mt={5} w="100%" maxW="720px" justify="flex-end">
           {!isAuthenticated ? (
             <Button
-              as={RouterLink}
-              to="/register"
+              asChild
               bg="aspire.600"
               color="white"
               _hover={{ bg: 'aspire.500' }}
             >
-              🔐 Sign up to take this quiz
+              <RouterLink to="/register">🔐 Sign up to take this quiz</RouterLink>
             </Button>
           ) : !feedback ? (
             <Button

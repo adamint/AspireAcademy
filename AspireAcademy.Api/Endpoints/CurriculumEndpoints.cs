@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
+using AspireAcademy.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspireAcademy.Api.Endpoints;
@@ -197,7 +198,8 @@ public static class CurriculumEndpoints
     private static async Task<IResult> GetModuleLessons(
         string moduleId,
         ClaimsPrincipal principal,
-        AcademyDbContext db)
+        AcademyDbContext db,
+        PersonaService personaService)
     {
         var module = await db.Modules.FindAsync(moduleId);
         if (module is null)
@@ -252,7 +254,8 @@ public static class CurriculumEndpoints
                 lesson.IsBoss,
                 Status: progress?.Status ?? ProgressStatuses.NotStarted,
                 Score: progress?.Score,
-                IsUnlocked: isUnlocked);
+                IsUnlocked: isUnlocked,
+                PersonaRelevance: personaService.GetAllRelevance(lesson.Id, lesson.ModuleId));
         }).ToList();
 
         return Results.Ok(result);
@@ -261,7 +264,8 @@ public static class CurriculumEndpoints
     private static async Task<IResult> GetLessonDetail(
         string lessonId,
         ClaimsPrincipal principal,
-        AcademyDbContext db)
+        AcademyDbContext db,
+        PersonaService personaService)
     {
         var lesson = await db.Lessons.FirstOrDefaultAsync(l => l.Id == lessonId);
         if (lesson is null)
@@ -399,7 +403,8 @@ public static class CurriculumEndpoints
             PreviousLessonType: previousLesson?.Type,
             NextLessonType: nextLesson?.Type,
             Quiz: quizDto,
-            ChallengeSteps: challengeSteps));
+            ChallengeSteps: challengeSteps,
+            PersonaRelevance: personaService.GetAllRelevance(lesson.Id, lesson.ModuleId)));
     }
 
     // --- Unlock Logic ---
@@ -453,6 +458,36 @@ public static class CurriculumEndpoints
                completedLessonIds.Contains(lesson.UnlockAfterLessonId);
     }
 
+    private static readonly JsonSerializerOptions s_jsonOptions = new(JsonSerializerDefaults.Web);
+    private static JsonElement? s_galleryCache;
+    private static JsonElement? s_conceptsCache;
+
+    private static IResult GetGallery(IWebHostEnvironment env)
+    {
+        if (s_galleryCache is null)
+        {
+            var path = Path.Combine(env.ContentRootPath, "Curriculum", "gallery.json");
+            if (!File.Exists(path))
+                return Results.Ok(Array.Empty<object>());
+            var json = File.ReadAllText(path);
+            s_galleryCache = JsonSerializer.Deserialize<JsonElement>(json);
+        }
+        return Results.Ok(s_galleryCache);
+    }
+
+    private static IResult GetConcepts(IWebHostEnvironment env)
+    {
+        if (s_conceptsCache is null)
+        {
+            var path = Path.Combine(env.ContentRootPath, "Curriculum", "concepts.json");
+            if (!File.Exists(path))
+                return Results.Ok(new { layerOrder = Array.Empty<string>(), layers = new { }, concepts = Array.Empty<object>() });
+            var json = File.ReadAllText(path);
+            s_conceptsCache = JsonSerializer.Deserialize<JsonElement>(json);
+        }
+        return Results.Ok(s_conceptsCache);
+    }
+
 }
 
 // --- DTOs ---
@@ -498,7 +533,8 @@ public record LessonListDto(
     bool IsBoss,
     string Status,
     int? Score,
-    bool IsUnlocked);
+    bool IsUnlocked,
+    Dictionary<string, string>? PersonaRelevance = null);
 
 public record LessonDetailDto(
     string Id,
@@ -526,7 +562,8 @@ public record LessonDetailDto(
     string? PreviousLessonType,
     string? NextLessonType,
     QuizDto? Quiz,
-    List<ChallengeDto>? ChallengeSteps);
+    List<ChallengeDto>? ChallengeSteps,
+    Dictionary<string, string>? PersonaRelevance = null);
 
 public record QuizDto(
     List<QuizQuestionDto> Questions,

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Flex, Text, Badge } from '@chakra-ui/react';
 import { pixelFontProps } from '../../theme/aspireTheme';
 import { LessonType, ProgressStatus } from '../../constants';
+import { useAuthStore } from '../../store/authStore';
 import type { Lesson, LessonStatus } from '../../types/curriculum';
 
 interface LessonListItemProps {
@@ -29,6 +30,7 @@ const typeIcons: Record<string, string> = {
 
 export default function LessonListItem({ lesson }: LessonListItemProps) {
   const navigate = useNavigate();
+  const persona = useAuthStore((s) => s.user?.persona);
 
   const handleClick = () => {
     switch (lesson.type) {
@@ -67,6 +69,9 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
   const isLocked = lesson.status === ProgressStatus.Locked;
   const isSkipped = lesson.status === ProgressStatus.Skipped;
 
+  const relevance = persona && lesson.personaRelevance?.[persona];
+  const isLowRelevance = relevance === 'low' || relevance === 'skip';
+
   return (
     <Flex
       data-testid={`lesson-${lesson.id}`}
@@ -76,7 +81,7 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       py="2"
       borderRadius="sm"
       cursor="pointer"
-      opacity={isLocked ? 0.7 : isSkipped ? 0.75 : 1}
+      opacity={isLocked ? 0.7 : isSkipped ? 0.75 : isLowRelevance ? 0.6 : 1}
       _hover={{ bg: 'content.hover' }}
       onClick={handleClick}
       role="button"
@@ -96,6 +101,16 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       <Text fontSize="sm" flex="1" minW="0" truncate color={statusColor()}>
         {lesson.title}
       </Text>
+      {relevance === 'high' && (
+        <Badge fontSize="2xs" colorPalette="green" variant="subtle">
+          ⭐ For you
+        </Badge>
+      )}
+      {isLowRelevance && (
+        <Badge fontSize="2xs" colorPalette="gray" variant="subtle">
+          Optional
+        </Badge>
+      )}
       {isLocked && (
         <Badge fontSize="2xs" colorPalette="gray" variant="subtle">
           👁️ preview

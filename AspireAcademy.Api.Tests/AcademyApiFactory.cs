@@ -41,20 +41,15 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
     {
         builder.UseEnvironment("Testing");
 
-        builder.ConfigureAppConfiguration((_, config) =>
-        {
-            config.AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Jwt:Key"] = JwtKey,
-                ["Jwt:Secret"] = JwtKey,
-                ["Jwt:Issuer"] = JwtIssuer,
-                ["Jwt:Audience"] = JwtIssuer,
-                ["Admin:InternalSecret"] = AdminInternalSecret,
-                // Dummy connection string to satisfy Aspire validation (won't be used)
-                ["ConnectionStrings:academydb"] = "Host=localhost;Database=fake",
-                ["ConnectionStrings:cache"] = "localhost:6379",
-            });
-        });
+        // UseSetting applies values BEFORE Program.cs runs (unlike ConfigureAppConfiguration
+        // which fires after the host builder is constructed).
+        builder.UseSetting("Jwt:Key", JwtKey);
+        builder.UseSetting("Jwt:Secret", JwtKey);
+        builder.UseSetting("Jwt:Issuer", JwtIssuer);
+        builder.UseSetting("Jwt:Audience", JwtIssuer);
+        builder.UseSetting("Admin:InternalSecret", AdminInternalSecret);
+        builder.UseSetting("ConnectionStrings:academydb", "Host=localhost;Database=fake");
+        builder.UseSetting("ConnectionStrings:cache", "localhost:6379");
 
         var fakeRedis = FakeRedis;
         var connection = _sqliteConnection;

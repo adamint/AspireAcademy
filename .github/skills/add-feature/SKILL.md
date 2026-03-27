@@ -1,3 +1,8 @@
+---
+name: add-feature
+description: "Adds new features to the application including API endpoints, React pages, components, and curriculum content. USE FOR: implementing new features, adding API endpoints, creating React components, adding curriculum content, writing unit/API tests. DO NOT USE FOR: E2E browser tests (use add-e2e-tests skill), adversarial/break testing (use adversarial-tester skill)."
+---
+
 # Skill: Add Feature
 
 ## When to use
@@ -69,7 +74,9 @@ ALL tests must pass before the feature is considered done.
 
 ## Restarting the app
 
-Use `aspire stop` then `aspire run` — NOT `kill` or `kill -9`.
+Use `aspire start` NOT `kill` or `kill -9`.
+
+**NEVER mock API responses** (e.g. `playwright-cli route` with `--body`) when testing UI. If the API isn't running, restart it with `aspire start`. All visual checks and tests must hit the real backend.
 
 ```bash
 # Stop gracefully (preserves data)

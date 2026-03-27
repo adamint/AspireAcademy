@@ -47,6 +47,8 @@ describe('ProtectedRoute', () => {
         totalXp: 0,
         loginStreakDays: 0,
         createdAt: '2025-01-01T00:00:00Z',
+        gitHubUsername: null,
+        persona: null,
       },
     })
 

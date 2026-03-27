@@ -35,7 +35,7 @@ export default function QuestionCard({
           </Box>
           <RadioGroup.Root
             value={(selectedAnswer as string) ?? ''}
-            onValueChange={(e) => onAnswerChange(e.value)}
+            onValueChange={(e) => { if (e.value != null) onAnswerChange(e.value); }}
             disabled={disabled}
             aria-label={question.text}
           >
@@ -104,7 +104,7 @@ export default function QuestionCard({
           </Text>
           <RadioGroup.Root
             value={(selectedAnswer as string) ?? ''}
-            onValueChange={(e) => onAnswerChange(e.value)}
+            onValueChange={(e) => { if (e.value != null) onAnswerChange(e.value); }}
             disabled={disabled}
             aria-label="Select the predicted output"
           >

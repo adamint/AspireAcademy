@@ -12,6 +12,7 @@ export interface Lesson {
   contentMarkdown?: string;
   score?: number;
   maxScore?: number;
+  personaRelevance?: Record<string, string>;
 }
 
 export interface Module {

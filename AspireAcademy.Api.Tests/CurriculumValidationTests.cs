@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FluentAssertions;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -465,6 +466,118 @@ public class CurriculumValidationTests
             $"all referenced challenge files should exist. Missing: {string.Join("; ", missing)}");
     }
 
+    // ── gallery.json validation ──
+
+    [Fact]
+    public void GalleryJson_FileExists()
+    {
+        var path = Path.Combine(CurriculumPath, "gallery.json");
+        File.Exists(path).Should().BeTrue($"gallery.json should exist at {path}");
+    }
+
+    [Fact]
+    public void GalleryJson_DeserializesWithoutErrors()
+    {
+        var gallery = LoadGalleryJson();
+        gallery.ValueKind.Should().Be(JsonValueKind.Array);
+    }
+
+    [Fact]
+    public void GalleryJson_HasAtLeast1Entry()
+    {
+        var gallery = LoadGalleryJson();
+        gallery.GetArrayLength().Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public void GalleryJson_EachEntryHasRequiredFields()
+    {
+        var gallery = LoadGalleryJson();
+
+        foreach (var entry in gallery.EnumerateArray())
+        {
+            var id = entry.GetProperty("id").GetString();
+            id.Should().NotBeNullOrEmpty();
+
+            entry.TryGetProperty("title", out _).Should().BeTrue($"gallery entry '{id}' must have a title");
+            entry.TryGetProperty("description", out _).Should().BeTrue($"gallery entry '{id}' must have a description");
+            entry.TryGetProperty("services", out var services).Should().BeTrue($"gallery entry '{id}' must have services");
+            services.GetArrayLength().Should().BeGreaterThan(0, $"gallery entry '{id}' must have at least one service");
+            entry.TryGetProperty("connections", out _).Should().BeTrue($"gallery entry '{id}' must have connections");
+            entry.TryGetProperty("code", out _).Should().BeTrue($"gallery entry '{id}' must have code");
+            entry.TryGetProperty("concepts", out _).Should().BeTrue($"gallery entry '{id}' must have concepts");
+        }
+    }
+
+    // ── concepts.json validation ──
+
+    [Fact]
+    public void ConceptsJson_FileExists()
+    {
+        var path = Path.Combine(CurriculumPath, "concepts.json");
+        File.Exists(path).Should().BeTrue($"concepts.json should exist at {path}");
+    }
+
+    [Fact]
+    public void ConceptsJson_DeserializesWithoutErrors()
+    {
+        var concepts = LoadConceptsJson();
+        concepts.ValueKind.Should().Be(JsonValueKind.Object);
+    }
+
+    [Fact]
+    public void ConceptsJson_HasLayerOrderAndLayers()
+    {
+        var concepts = LoadConceptsJson();
+
+        concepts.TryGetProperty("layerOrder", out var layerOrder).Should().BeTrue();
+        layerOrder.GetArrayLength().Should().BeGreaterThan(0);
+
+        concepts.TryGetProperty("layers", out var layers).Should().BeTrue();
+        layers.ValueKind.Should().Be(JsonValueKind.Object);
+
+        // Every layer referenced in layerOrder must exist in layers
+        foreach (var layer in layerOrder.EnumerateArray())
+        {
+            var key = layer.GetString()!;
+            layers.TryGetProperty(key, out _).Should().BeTrue($"layer '{key}' from layerOrder must exist in layers");
+        }
+    }
+
+    [Fact]
+    public void ConceptsJson_HasConcepts()
+    {
+        var concepts = LoadConceptsJson();
+        concepts.TryGetProperty("concepts", out var conceptsArr).Should().BeTrue();
+        conceptsArr.GetArrayLength().Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public void ConceptsJson_AllLessonIdsExistInCurriculum()
+    {
+        var worldsRoot = LoadWorldsRoot();
+        var allLessonIds = new HashSet<string>();
+        foreach (var world in worldsRoot.Worlds)
+            foreach (var module in world.Modules)
+                foreach (var lesson in module.Lessons)
+                    allLessonIds.Add(lesson.Id);
+
+        var concepts = LoadConceptsJson();
+        var missing = new List<string>();
+
+        foreach (var concept in concepts.GetProperty("concepts").EnumerateArray())
+        {
+            var lessonId = concept.GetProperty("lessonId").GetString()!;
+            var conceptId = concept.GetProperty("id").GetString()!;
+
+            if (!allLessonIds.Contains(lessonId))
+                missing.Add($"concept '{conceptId}' references lesson '{lessonId}'");
+        }
+
+        missing.Should().BeEmpty(
+            $"all concept lessonIds should reference existing lessons. Missing: {string.Join("; ", missing)}");
+    }
+
     // ── Helpers ──
 
     private static WorldsYamlRoot LoadWorldsRoot()
@@ -472,6 +585,20 @@ public class CurriculumValidationTests
         var path = Path.Combine(CurriculumPath, "worlds.yaml");
         var yaml = File.ReadAllText(path);
         return YamlDeserializer.Deserialize<WorldsYamlRoot>(yaml)!;
+    }
+
+    private static JsonElement LoadGalleryJson()
+    {
+        var path = Path.Combine(CurriculumPath, "gallery.json");
+        var json = File.ReadAllText(path);
+        return JsonDocument.Parse(json).RootElement;
+    }
+
+    private static JsonElement LoadConceptsJson()
+    {
+        var path = Path.Combine(CurriculumPath, "concepts.json");
+        var json = File.ReadAllText(path);
+        return JsonDocument.Parse(json).RootElement;
     }
 }
 

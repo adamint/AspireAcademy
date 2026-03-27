@@ -18,6 +18,7 @@ builder.Services.AddOpenApi();
 // Services
 builder.Services.AddScoped<GamificationService>();
 builder.Services.AddScoped<CurriculumLoader>();
+builder.Services.AddSingleton<PersonaService>();
 builder.Services.AddSingleton<AiTutorService>();
 builder.Services.AddSingleton<CodeCheckerService>();
 
@@ -123,8 +124,11 @@ var app = builder.Build();
             {
                 try
                 {
+                    // Probe both Worlds and Users (including newer columns) to
+                    // detect schema drift that would cause runtime errors.
                     await db.Worlds.AnyAsync();
-                    app.Logger.LogInformation("Worlds table exists, schema is intact");
+                    await db.Users.Select(u => new { u.Persona, u.IsDeleted }).FirstOrDefaultAsync();
+                    app.Logger.LogInformation("Schema check passed — tables are intact");
                 }
                 catch
                 {
@@ -162,6 +166,10 @@ var app = builder.Build();
                 app.Logger.LogInformation("Curriculum already loaded ({WorldCount} worlds)", worldCount);
             }
         }
+
+        // Load persona definitions (not DB-persisted) — runs in all environments
+        var personaService = scope.ServiceProvider.GetRequiredService<PersonaService>();
+        await personaService.LoadAsync();
     }
     catch (Exception ex)
     {
@@ -230,6 +238,7 @@ app.MapAdminEndpoints();
 app.MapCertificateEndpoints();
 app.MapSettingsEndpoints();
 app.MapWeeklyChallengeEndpoints();
+app.MapPersonaEndpoints();
 
 // SPA fallback: serve index.html for non-API, non-file routes (React Router)
 if (!app.Environment.IsDevelopment())

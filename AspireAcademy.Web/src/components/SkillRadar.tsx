@@ -139,7 +139,7 @@ export default function SkillRadar({ skills, size = 300 }: SkillRadarProps) {
               const labelPoint = getPoint(center, center, labelRadius, angle);
 
               const normalizedAngle = ((angle - Math.PI / 2) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-              let textAnchor: string = 'middle';
+              let textAnchor: 'start' | 'middle' | 'end' = 'middle';
               if (normalizedAngle > Math.PI * 0.1 && normalizedAngle < Math.PI * 0.9) {
                 textAnchor = 'start';
               } else if (normalizedAngle > Math.PI * 1.1 && normalizedAngle < Math.PI * 1.9) {

@@ -164,18 +164,15 @@ export default function LeaderboardPage() {
                         <Text fontSize="xs" color="aspire.600">(you)</Text>
                       )}
                       {entry.gitHubUsername && (
-                        <Text
-                          as="a"
+                        <a
                           href={`https://github.com/${entry.gitHubUsername}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          color="dark.muted"
-                          _hover={{ color: 'aspire.400' }}
-                          display="inline-flex"
+                          style={{ color: 'var(--chakra-colors-dark-muted)', display: 'inline-flex' }}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <FiGithub size={14} />
-                        </Text>
+                        </a>
                       )}
                     </Flex>
                     <Flex gap={2} align="center" mt={0.5}>

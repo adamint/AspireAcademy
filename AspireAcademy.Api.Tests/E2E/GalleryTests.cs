@@ -105,4 +105,25 @@ public class GalleryTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
         }
         finally { await fixture.ClosePageAsync(page); }
     }
+
+    [Fact]
+    public async Task Gallery_LoadsFromApi()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            var apiCalled = false;
+            await page.RouteAsync("**/api/gallery", async route =>
+            {
+                apiCalled = true;
+                await route.ContinueAsync();
+            });
+
+            await page.GotoAsync(fixture.WebBaseUrl + "/gallery");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
+
+            Assert.True(apiCalled, "GalleryPage should fetch data from /api/gallery");
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
 }

@@ -120,7 +120,6 @@ export default function AiTutorSidebar() {
           right="24px"
           w="56px"
           h="56px"
-          borderRadius="full"
           display="flex"
           alignItems="center"
           justifyContent="center"
@@ -130,6 +129,7 @@ export default function AiTutorSidebar() {
           bg="game.xpGold"
           color="game.retroBg"
           {...retroCardProps}
+          borderRadius="full"
           borderColor="game.pixelBorder"
           _hover={{ transform: 'scale(1.1)' }}
           transition="transform 0.15s ease"

@@ -11,6 +11,20 @@ export interface User {
   loginStreakDays: number;
   createdAt: string;
   gitHubUsername: string | null;
+  persona: string | null;
+}
+
+export interface PersonaSummary {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  description: string;
+  focusAreas: string[];
+}
+
+export interface PersonaDetail extends PersonaSummary {
+  guideContent: string | null;
 }
 
 export interface World {

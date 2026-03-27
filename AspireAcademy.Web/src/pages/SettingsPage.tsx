@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Box, Flex, Text, VStack, Button, Input, Switch, Dialog,
-  SegmentGroup, Spinner, Field,
+  SegmentGroup, Spinner, Field, Card, Badge,
 } from '@chakra-ui/react';
 import { FiDownload, FiTrash2, FiLock, FiCheck } from 'react-icons/fi';
 import api from '../services/apiClient';
@@ -11,6 +11,7 @@ import { useSettingsStore, type EditorFontSize } from '../store/settingsStore';
 import { extractErrorMessage } from '../utils/errorHandler';
 import { useColorMode } from '../hooks/useColorMode';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
+import type { PersonaSummary } from '../types';
 
 function SettingSwitch({ label, checked, onChange }: {
   label: string;
@@ -46,6 +47,8 @@ function SavedIndicator({ visible }: { visible: boolean }) {
 export default function SettingsPage() {
   const { colorMode, setColorMode } = useColorMode();
   const logout = useAuthStore((s) => s.logout);
+  const user = useAuthStore((s) => s.user);
+  const updateUser = useAuthStore((s) => s.updateUser);
 
   const settings = useSettingsStore();
 
@@ -76,8 +79,8 @@ export default function SettingsPage() {
   );
 
   const handleFontSize = useCallback(
-    (details: { value: string }) => {
-      settings.setEditorFontSize(details.value as EditorFontSize);
+    (details: { value: string | null }) => {
+      if (details.value) settings.setEditorFontSize(details.value as EditorFontSize);
       flashSaved();
     },
     [settings, flashSaved],
@@ -85,8 +88,8 @@ export default function SettingsPage() {
 
   // Keep color mode toggle synced through the existing hook
   const handleThemeChange = useCallback(
-    (details: { value: string }) => {
-      setColorMode(details.value as 'dark' | 'light');
+    (details: { value: string | null }) => {
+      if (details.value) setColorMode(details.value as 'dark' | 'light');
       flashSaved();
     },
     [setColorMode, flashSaved],
@@ -289,6 +292,9 @@ export default function SettingsPage() {
           />
         </VStack>
       </Box>
+
+      {/* ─── Learning Track ─── */}
+      <PersonaSettings user={user} updateUser={updateUser} flashSaved={flashSaved} />
 
       {/* ─── Account ─── */}
       <Box {...retroCardProps} bg="dark.card" p={5}>
@@ -499,5 +505,88 @@ export default function SettingsPage() {
         </Dialog.Positioner>
       </Dialog.Root>
     </VStack>
+  );
+}
+
+function PersonaSettings({ user, updateUser, flashSaved }: {
+  user: ReturnType<typeof useAuthStore.getState>['user'];
+  updateUser: (updates: Partial<{ persona: string | null }>) => void;
+  flashSaved: () => void;
+}) {
+  const { data: personas } = useQuery<PersonaSummary[]>({
+    queryKey: ['personas'],
+    queryFn: () => api.get('/personas').then((r) => r.data),
+  });
+
+  const selectMutation = useMutation({
+    mutationFn: (personaId: string | null) =>
+      api.put('/personas/select', { personaId }),
+    onSuccess: (_, personaId) => {
+      updateUser({ persona: personaId });
+      flashSaved();
+    },
+  });
+
+  return (
+    <Box {...retroCardProps} bg="dark.card" p={5}>
+      <Text {...pixelFontProps} fontSize="xs" color="dark.text" mb={2}>
+        🎯 Learning Track
+      </Text>
+      <Text color="dark.muted" fontSize="xs" mb={4}>
+        Highlights the most relevant lessons for your role. Doesn't hide any content.
+      </Text>
+      <Flex direction="column" gap="2.5">
+        {personas?.map((p) => {
+          const isSelected = user?.persona === p.id;
+          return (
+            <Card.Root
+              key={p.id}
+              {...retroCardProps}
+              cursor="pointer"
+              onClick={() =>
+                selectMutation.mutate(isSelected ? null : p.id)
+              }
+              borderColor={isSelected ? p.color : 'game.pixelBorder'}
+              borderWidth={isSelected ? '3px' : '2px'}
+              bg={isSelected ? 'rgba(107,79,187,0.06)' : 'dark.surface'}
+              _hover={{ borderColor: p.color }}
+              transition="all 0.15s"
+            >
+              <Card.Body p="3">
+                <Flex align="center" gap="2.5">
+                  <Text fontSize="lg">{p.icon}</Text>
+                  <Box flex="1">
+                    <Flex align="center" gap="2">
+                      <Text fontWeight="bold" color="dark.text" fontSize="sm">
+                        {p.name}
+                      </Text>
+                      {isSelected && (
+                        <Badge colorPalette="purple" fontSize="2xs" variant="solid">
+                          Active
+                        </Badge>
+                      )}
+                    </Flex>
+                    <Text color="dark.muted" fontSize="xs">
+                      {p.description}
+                    </Text>
+                  </Box>
+                </Flex>
+              </Card.Body>
+            </Card.Root>
+          );
+        })}
+        {user?.persona && (
+          <Button
+            variant="ghost"
+            color="dark.muted"
+            size="xs"
+            onClick={() => selectMutation.mutate(null)}
+            disabled={selectMutation.isPending}
+          >
+            Clear track — show everything equally
+          </Button>
+        )}
+      </Flex>
+    </Box>
   );
 }

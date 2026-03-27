@@ -174,13 +174,12 @@ export default function ModulePage() {
         ) : (
           <Box mt="4">
             <Button
-              as={RouterLink}
-              to="/register"
+              asChild
               size="sm"
               variant="outline"
               colorPalette="purple"
             >
-              🔐 Sign up to track progress
+              <RouterLink to="/register">🔐 Sign up to track progress</RouterLink>
             </Button>
           </Box>
         )}

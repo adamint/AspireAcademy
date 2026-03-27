@@ -49,7 +49,7 @@ export default function ProfilePage() {
   const isOwnProfile = !userId || userId === currentUser?.id;
   const profileId = isOwnProfile ? currentUser?.id : userId;
 
-  const { data: worlds } = useWorldsQuery<World[]>({
+  const { data: worlds } = useQuery<World[]>({
     queryKey: ['worlds'],
     queryFn: () => api.get('/worlds').then((r) => r.data),
     enabled: !!profileId,
@@ -219,17 +219,14 @@ export default function ProfilePage() {
           {profile.gitHubUsername && (
             <Flex align="center" gap={1} mt={1}>
               <FiGithub size={14} color="#8B949E" />
-              <Text
-                as="a"
+              <a
                 href={`https://github.com/${profile.gitHubUsername}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                fontSize="sm"
-                color="aspire.400"
-                _hover={{ color: 'aspire.300', textDecoration: 'underline' }}
+                style={{ fontSize: 'var(--chakra-fontSizes-sm)', color: 'var(--chakra-colors-aspire-400)' }}
               >
                 {profile.gitHubUsername}
-              </Text>
+              </a>
             </Flex>
           )}
           <Text fontSize="xs" color="dark.muted" mt={1}>
@@ -371,7 +368,7 @@ export default function ProfilePage() {
       {worlds && worlds.length > 0 && (
         <Box {...retroCardProps} p={4} bg="dark.card">
           <WorldCompletionBadges
-            worlds={worlds.map((w) => ({
+            worlds={worlds.map((w: World) => ({
               id: w.id,
               name: w.name,
               icon: w.icon,

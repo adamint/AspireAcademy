@@ -100,9 +100,9 @@ export default function LoginPage() {
           <Flex direction="column" gap="4">
             {/* Username / Email */}
             <Box>
-              <Text as="label" htmlFor="login-user" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
+              <label htmlFor="login-user" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
                 Username or Email <Text as="span" color="game.error">*</Text>
-              </Text>
+              </label>
               <Input
                 id="login-user"
                 value={usernameOrEmail}
@@ -122,9 +122,9 @@ export default function LoginPage() {
 
             {/* Password */}
             <Box>
-              <Text as="label" htmlFor="login-pass" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
+              <label htmlFor="login-pass" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
                 Password <Text as="span" color="game.error">*</Text>
-              </Text>
+              </label>
               <Input
                 id="login-pass"
                 type="password"

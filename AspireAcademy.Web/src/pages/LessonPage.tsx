@@ -347,12 +347,11 @@ export default function LessonPage() {
             </>
           ) : (
             <Button
-              as={RouterLink}
-              to="/register"
+              asChild
               colorPalette="purple"
               size="lg"
             >
-              🔐 Sign up to track your progress
+              <RouterLink to="/register">🔐 Sign up to track your progress</RouterLink>
             </Button>
           )}
         </Flex>
