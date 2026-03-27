@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Check changelog entry exists
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if ! grep -q "version: '$VERSION'" AspireAcademy.Web/src/data/changelog.ts; then
+            echo "::error::No changelog entry for version $VERSION in AspireAcademy.Web/src/data/changelog.ts"
+            exit 1
+          fi
+          echo "✓ Changelog entry found for v$VERSION"
+
+  backend:
+    name: Backend Tests
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj
+
+      - name: Build
+        run: dotnet build AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj --no-restore
+
+      - name: Test
+        run: dotnet test AspireAcademy.Api.Tests/ --no-build --filter 'FullyQualifiedName!~E2E' --verbosity normal
+
+  frontend:
+    name: Frontend Checks
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: AspireAcademy.Web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: AspireAcademy.Web
+        run: npm ci
+
+      - name: Type check
+        working-directory: AspireAcademy.Web
+        run: npm run type-check
+
+      - name: Lint
+        working-directory: AspireAcademy.Web
+        run: npm run lint
+
+      - name: Build
+        working-directory: AspireAcademy.Web
+        run: npm run build
+
+  release:
+    name: Create GitHub Release
+    needs: [validate, backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract release notes from changelog
+        id: notes
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          # Extract the entries for this version from changelog.ts
+          python3 - <<'PYTHON'
+          import re, sys, json
+
+          version = "$VERSION"
+          with open("AspireAcademy.Web/src/data/changelog.ts") as f:
+              content = f.read()
+
+          # Find the block for this version
+          pattern = rf"\{{\s*version:\s*'{re.escape(version)}'.*?\}}\s*\]"
+          match = re.search(pattern, content, re.DOTALL)
+          if not match:
+              print(f"Could not parse changelog for {version}", file=sys.stderr)
+              sys.exit(1)
+
+          block = match.group(0)
+
+          # Extract title
+          title_match = re.search(r"title:\s*'([^']*)'", block)
+          title = title_match.group(1) if title_match else f"v{version}"
+
+          # Extract entries
+          entries = re.findall(r"\{\s*type:\s*'(\w+)',\s*text:\s*'([^']*)'\s*\}", block)
+
+          lines = [f"# {title}\n"]
+          type_labels = {"feature": "Features", "improvement": "Improvements", "fix": "Fixes", "content": "Content"}
+          for t in ["feature", "improvement", "fix", "content"]:
+              items = [text for typ, text in entries if typ == t]
+              if items:
+                  lines.append(f"\n## {type_labels[t]}\n")
+                  for item in items:
+                      lines.append(f"- {item}")
+
+          notes = "\n".join(lines)
+          # Write to file for the next step
+          with open("release_notes.md", "w") as f:
+              f.write(notes)
+          PYTHON
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "Release ${{ github.ref_name }}" \
+            --notes-file release_notes.md
