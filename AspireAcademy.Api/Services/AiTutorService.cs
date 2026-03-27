@@ -1,5 +1,7 @@
+using System.ClientModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Azure.AI.OpenAI;
 using OpenAI;
 using OpenAI.Chat;
 
@@ -7,7 +9,7 @@ namespace AspireAcademy.Api.Services;
 
 /// <summary>
 /// Wrapper service for Azure AI Foundry / OpenAI chat completions used by the AI tutor endpoints.
-/// Uses the Aspire Azure.AI.OpenAI client integration which auto-detects Azure vs plain OpenAI.
+/// Gracefully degrades when no AI connection string is configured.
 /// </summary>
 public sealed class AiTutorService
 {
@@ -21,20 +23,44 @@ public sealed class AiTutorService
     private readonly string? _configError;
     private readonly ILogger<AiTutorService> _logger;
 
-    public AiTutorService(IConfiguration configuration, ILogger<AiTutorService> logger, OpenAIClient? openAIClient = null)
+    public AiTutorService(IConfiguration configuration, ILogger<AiTutorService> logger)
     {
         _logger = logger;
-        _openAIClient = openAIClient;
         _modelDeployment = configuration["AI:ModelDeployment"] ?? "gpt-4o";
 
-        if (_openAIClient is null)
+        var connectionString = configuration.GetConnectionString("openai");
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
-            _configError = "OpenAI client not configured. Set ConnectionStrings:openai to \"Endpoint=https://your-resource.services.ai.azure.com/;Key=your-key\" or \"Key=sk-...\"";
-            _logger.LogWarning("AI not configured: {Reason}", _configError);
+            _configError = "AI not configured. Set ConnectionStrings:openai to \"Endpoint=https://your-resource.services.ai.azure.com/;Key=your-key\"";
+            _logger.LogWarning("AI not configured — AI tutor features disabled");
+            return;
         }
-        else
+
+        try
         {
-            _logger.LogInformation("AI tutor initialized with model deployment={Model}", _modelDeployment);
+            var (endpoint, apiKey) = ParseConnectionString(connectionString);
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                _configError = "AI connection string missing Key parameter";
+                _logger.LogWarning("AI not configured: {Reason}", _configError);
+                return;
+            }
+
+            if (endpoint is not null)
+            {
+                _openAIClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey));
+                _logger.LogInformation("Azure AI Foundry client initialized: endpoint={Endpoint}, model={Model}", endpoint, _modelDeployment);
+            }
+            else
+            {
+                _openAIClient = new OpenAIClient(apiKey);
+                _logger.LogInformation("OpenAI client initialized, model={Model}", _modelDeployment);
+            }
+        }
+        catch (Exception ex)
+        {
+            _configError = $"Failed to initialize AI client: {ex.Message}";
+            _logger.LogError(ex, "AI client initialization failed");
         }
     }
 
@@ -167,6 +193,37 @@ public sealed class AiTutorService
         {
             return new CodeReview(responseText, [], "good");
         }
+    }
+
+    private static (string? Endpoint, string ApiKey) ParseConnectionString(string connectionString)
+    {
+        if (!connectionString.Contains('='))
+        {
+            return (null, connectionString);
+        }
+
+        string? endpoint = null;
+        var apiKey = string.Empty;
+
+        foreach (var part in connectionString.Split(';', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var kvp = part.Split('=', 2);
+            if (kvp.Length is not 2)
+            {
+                continue;
+            }
+
+            if (kvp[0].Equals("Endpoint", StringComparison.OrdinalIgnoreCase))
+            {
+                endpoint = kvp[1];
+            }
+            else if (kvp[0].Equals("Key", StringComparison.OrdinalIgnoreCase))
+            {
+                apiKey = kvp[1];
+            }
+        }
+
+        return (endpoint, apiKey);
     }
 }
 
