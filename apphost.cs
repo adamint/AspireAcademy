@@ -100,6 +100,11 @@ var web = builder.AddViteApp("web", "./AspireAcademy.Web")
     .WithReference(api)
     .WaitFor(api);
 
+if (builder.ExecutionContext.IsRunMode)
+{
+    web.WithEndpoint("http", e => e.Port = 5173);
+}
+
 // In publish mode, bundle the React build into the API container's wwwroot folder
 api.PublishWithContainerFiles(web, "./wwwroot");
 
