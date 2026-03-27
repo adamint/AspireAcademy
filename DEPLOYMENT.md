@@ -102,6 +102,20 @@ This is automatic. No manual database setup is needed.
 
 ## Updating / Redeploying
 
+### Automated (Recommended)
+
+Push a version tag to trigger the full release & deploy pipeline:
+
+```bash
+./scripts/release.sh 1.5.0
+```
+
+This validates changelog → runs tests → creates a GitHub Release → deploys to Azure. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full release process.
+
+You can also trigger a deploy-only run from GitHub Actions → **Release & Deploy** → **Run workflow**.
+
+### Manual
+
 ```bash
 aspire deploy
 ```
@@ -177,6 +191,62 @@ For a minimal deployment (Burstable tier, single replica):
 | **Total** | **~$50-55/month** |
 
 ## Troubleshooting
+
+### CI/CD Deploy: Setting Up Azure OIDC
+
+The GitHub Actions deploy job uses OpenID Connect (OIDC) federated credentials — no stored Azure passwords.
+
+#### 1. Create an Entra ID App Registration
+
+```bash
+az ad app create --display-name "AspireAcademy-Deploy"
+APP_ID=$(az ad app list --display-name "AspireAcademy-Deploy" --query "[0].appId" -o tsv)
+
+# Create a service principal
+az ad sp create --id "$APP_ID"
+```
+
+#### 2. Add Federated Credential for GitHub Actions
+
+```bash
+az ad app federated-credential create --id "$APP_ID" --parameters '{
+  "name": "github-production",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "repo:adamint/AspireAcademy:environment:production",
+  "audiences": ["api://AzureADTokenExchange"]
+}'
+```
+
+#### 3. Grant Permissions
+
+```bash
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+SP_ID=$(az ad sp list --filter "appId eq '$APP_ID'" --query "[0].id" -o tsv)
+
+# Contributor on the resource group (creates/updates resources)
+az role assignment create --assignee "$SP_ID" \
+  --role Contributor \
+  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/<your-rg>"
+
+# User Access Administrator (for managed identity role assignments)
+az role assignment create --assignee "$SP_ID" \
+  --role "User Access Administrator" \
+  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/<your-rg>"
+```
+
+#### 4. Configure GitHub
+
+In your repo's **Settings → Environments**, create `production`.
+
+In **Settings → Secrets and variables → Actions**:
+
+| Type | Name | Value |
+|------|------|-------|
+| Secret | `AZURE_CLIENT_ID` | The app registration's Application (client) ID |
+| Secret | `AZURE_TENANT_ID` | Your Entra ID tenant ID |
+| Secret | `AZURE_SUBSCRIPTION_ID` | Target Azure subscription ID |
+| Variable | `AZURE_RESOURCE_GROUP` | Resource group name |
+| Variable | `AZURE_LOCATION` | Azure region (e.g., `eastus`) |
 
 ### Deploy fails at "process-parameters"
 

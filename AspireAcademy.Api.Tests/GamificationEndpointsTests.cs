@@ -113,6 +113,8 @@ public class GamificationEndpointsTests : TestFixture
         var body = await ReadJsonAsync<ProgressCompleteResponse>(response);
         body!.XpEarned.Should().Be(50);
         body.TotalXp.Should().BeGreaterThanOrEqualTo(50);
+        body.CurrentRank.Should().NotBeNullOrEmpty();
+        body.WeeklyXp.Should().BeGreaterThanOrEqualTo(50);
     }
 
     // ── Avatar ──

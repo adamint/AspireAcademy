@@ -53,6 +53,10 @@ public class QuizEndpointsTests : TestFixture
         body.BonusXpEarned.Should().Be(25); // lesson BonusXp for perfect
         body.Results.Should().HaveCount(2);
         body.Results.Should().AllSatisfy(r => r.Correct.Should().BeTrue());
+        body.TotalXp.Should().BeGreaterThan(0);
+        body.CurrentLevel.Should().BeGreaterThanOrEqualTo(1);
+        body.CurrentRank.Should().NotBeNullOrEmpty();
+        body.WeeklyXp.Should().BeGreaterThan(0);
     }
 
     [Fact]

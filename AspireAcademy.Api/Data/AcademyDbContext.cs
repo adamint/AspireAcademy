@@ -44,6 +44,8 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
 
             e.HasIndex(u => u.Username).IsUnique().HasDatabaseName("ix_users_username");
             e.HasIndex(u => u.Email).IsUnique().HasDatabaseName("ix_users_email");
+
+            e.HasQueryFilter(u => !u.IsDeleted);
         });
 
         // ── UserXp ──
@@ -55,7 +57,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.Property(x => x.CurrentLevel).HasDefaultValue(1).IsRequired();
             e.Property(x => x.CurrentRank).HasMaxLength(30).HasDefaultValue(Ranks.AspireIntern).IsRequired();
             e.Property(x => x.WeeklyXp).HasDefaultValue(0).IsRequired();
-            e.Property(x => x.WeekStart).IsRequired();
+            e.Property(x => x.WeekStart).HasDefaultValueSql("CURRENT_DATE").IsRequired();
 
             e.HasOne(x => x.User)
                 .WithOne(u => u.Xp)

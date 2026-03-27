@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Box, Flex, Text } from '@chakra-ui/react';
@@ -242,7 +243,7 @@ export default function MarkdownContent({ children }: MarkdownContentProps) {
         },
       }}
     >
-      <ReactMarkdown components={markdownComponents}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
         {children}
       </ReactMarkdown>
     </Box>

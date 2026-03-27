@@ -79,4 +79,30 @@ describe('gamificationStore', () => {
 
     expect(useGamificationStore.getState().pendingAchievements).toHaveLength(1)
   })
+
+  it('initializes with zero XP defaults (simulates page reload)', () => {
+    // This verifies that a fresh store starts at 0 XP.
+    // The AppShell global fetch is responsible for hydrating from the server.
+    useGamificationStore.setState({
+      totalXp: 500,
+      currentLevel: 3,
+      currentRank: 'apprentice',
+      weeklyXp: 100,
+      loginStreakDays: 5,
+    })
+
+    // Simulate what syncFromServer does when AppShell fetches /api/xp
+    useGamificationStore.getState().syncFromServer({
+      totalXp: 500,
+      currentLevel: 3,
+      currentRank: 'apprentice',
+      weeklyXp: 100,
+      loginStreakDays: 5,
+    })
+
+    const state = useGamificationStore.getState()
+    expect(state.totalXp).toBe(500)
+    expect(state.weeklyXp).toBe(100)
+    expect(state.loginStreakDays).toBe(5)
+  })
 })

@@ -1,16 +1,35 @@
-name: Release
+name: Release & Deploy
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      deploy_only:
+        description: 'Skip tests and deploy the current main branch'
+        type: boolean
+        default: false
+      environment:
+        description: 'Target environment'
+        type: choice
+        options:
+          - production
+        default: production
 
 permissions:
   contents: write
+  id-token: write  # Required for OIDC federated credentials with Azure
+
+env:
+  AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'eastus' }}
 
 jobs:
+  # ─── Stage 1: Validate ────────────────────────────────────────────
   validate:
     name: Validate Release
+    if: ${{ !inputs.deploy_only }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -30,9 +49,11 @@ jobs:
           fi
           echo "✓ Changelog entry found for v$VERSION"
 
-  backend:
-    name: Backend Tests
+  # ─── Stage 2: Test (parallel) ─────────────────────────────────────
+  backend-unit:
+    name: Backend Unit Tests
     needs: validate
+    if: ${{ !inputs.deploy_only }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,18 +64,37 @@ jobs:
           dotnet-version: '11.0.x'
           dotnet-quality: 'preview'
 
-      - name: Restore
-        run: dotnet restore AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj
-
-      - name: Build
-        run: dotnet build AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj --no-restore
+      - name: Restore & Build
+        run: dotnet build AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj
 
       - name: Test
-        run: dotnet test AspireAcademy.Api.Tests/ --no-build --filter 'FullyQualifiedName!~E2E' --verbosity normal
+        run: dotnet test AspireAcademy.Api.Tests/ --no-build --filter 'FullyQualifiedName!~E2E&Category!=Integration' --verbosity normal
+
+  backend-integration:
+    name: Backend Integration Tests
+    needs: validate
+    if: ${{ !inputs.deploy_only }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '11.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Restore & Build
+        run: dotnet build AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj
+
+      - name: Test
+        run: dotnet test AspireAcademy.Api.Tests/ --no-build --filter 'Category=Integration&FullyQualifiedName!~E2E' --verbosity normal
+        timeout-minutes: 10
 
   frontend:
     name: Frontend Checks
     needs: validate
+    if: ${{ !inputs.deploy_only }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -82,9 +122,11 @@ jobs:
         working-directory: AspireAcademy.Web
         run: npm run build
 
+  # ─── Stage 3: Create GitHub Release ───────────────────────────────
   release:
     name: Create GitHub Release
-    needs: [validate, backend, frontend]
+    needs: [validate, backend-unit, backend-integration, frontend]
+    if: ${{ !inputs.deploy_only && startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -93,9 +135,8 @@ jobs:
         id: notes
         run: |
           VERSION="${{ needs.validate.outputs.version }}"
-          # Extract the entries for this version from changelog.ts
           python3 - <<'PYTHON'
-          import re, sys, json
+          import re, sys
 
           version = "$VERSION"
           with open("AspireAcademy.Web/src/data/changelog.ts") as f:
@@ -110,11 +151,9 @@ jobs:
 
           block = match.group(0)
 
-          # Extract title
           title_match = re.search(r"title:\s*'([^']*)'", block)
           title = title_match.group(1) if title_match else f"v{version}"
 
-          # Extract entries
           entries = re.findall(r"\{\s*type:\s*'(\w+)',\s*text:\s*'([^']*)'\s*\}", block)
 
           lines = [f"# {title}\n"]
@@ -127,7 +166,6 @@ jobs:
                       lines.append(f"- {item}")
 
           notes = "\n".join(lines)
-          # Write to file for the next step
           with open("release_notes.md", "w") as f:
               f.write(notes)
           PYTHON
@@ -139,3 +177,94 @@ jobs:
           gh release create "${{ github.ref_name }}" \
             --title "Release ${{ github.ref_name }}" \
             --notes-file release_notes.md
+
+  # ─── Stage 4: Deploy to Azure ─────────────────────────────────────
+  deploy:
+    name: Deploy to Azure
+    needs: [release]
+    if: |
+      always() &&
+      (needs.release.result == 'success' || inputs.deploy_only) &&
+      (startsWith(github.ref, 'refs/tags/v') || inputs.deploy_only)
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '11.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Install Aspire CLI
+        run: dotnet tool install -g aspire
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: AspireAcademy.Web/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: AspireAcademy.Web
+        run: npm ci
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy with Aspire
+        run: |
+          aspire deploy \
+            --non-interactive \
+            --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            --resource-group "${{ env.AZURE_RESOURCE_GROUP }}" \
+            --location "${{ env.AZURE_LOCATION }}"
+        timeout-minutes: 20
+
+      - name: Get app URL
+        id: url
+        run: |
+          APP_URL=$(az containerapp show \
+            --name api \
+            --resource-group "${{ env.AZURE_RESOURCE_GROUP }}" \
+            --query "properties.configuration.ingress.fqdn" -o tsv 2>/dev/null || echo "")
+          if [[ -n "$APP_URL" ]]; then
+            echo "url=https://$APP_URL" >> "$GITHUB_OUTPUT"
+            echo "### Deployed to https://$APP_URL" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Smoke test
+        if: steps.url.outputs.url != ''
+        run: |
+          echo "Running smoke test against ${{ steps.url.outputs.url }}..."
+          for i in {1..5}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ steps.url.outputs.url }}/health" --max-time 15 || echo "000")
+            if [[ "$STATUS" == "200" ]]; then
+              echo "✓ Health check passed (attempt $i)"
+              exit 0
+            fi
+            echo "  Attempt $i: got $STATUS, retrying in 15s..."
+            sleep 15
+          done
+          echo "::warning::Smoke test did not get 200 from /health after 5 attempts"
+
+      - name: Update GitHub Release with deploy info
+        if: startsWith(github.ref, 'refs/tags/v') && steps.url.outputs.url != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CURRENT_BODY=$(gh release view "${{ github.ref_name }}" --json body -q .body)
+          gh release edit "${{ github.ref_name }}" \
+            --notes "${CURRENT_BODY}
+
+---
+**Deployed** to ${{ steps.url.outputs.url }} at $(date -u +%Y-%m-%dT%H:%M:%SZ)"

@@ -242,22 +242,41 @@ The script will:
 
 Pushing the tag triggers the **Release** GitHub Actions workflow, which runs full CI and creates a GitHub Release with auto-extracted release notes.
 
-### 3. Deploy to Azure
+### 3. Automated Deployment
 
-After the release workflow passes:
+When the release workflow passes all tests, it automatically deploys to Azure:
 
-```bash
-aspire deploy
-```
+1. Installs the Aspire CLI and logs in to Azure via OIDC
+2. Runs `aspire deploy` targeting the production resource group
+3. Runs a smoke test against `/health`
+4. Updates the GitHub Release with the deployed URL
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for full deployment details.
+You can also trigger a deploy-only run (skip tests) from the **Actions** tab → **Release & Deploy** → **Run workflow** → check "Skip tests".
+
+For manual deployments or first-time setup, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## CI/CD
 
 | Workflow | Trigger | What it does |
 |----------|---------|-------------|
-| **CI** (`.github/workflows/ci.yml`) | Push to `main`, PRs | Backend tests, frontend type-check, lint, build |
-| **Release** (`.github/workflows/release.yml`) | `v*` tags | Validates changelog, runs full CI, creates GitHub Release |
+| **CI** (`.github/workflows/ci.yml`) | Push to `main`, PRs | Unit tests, integration tests, frontend type-check/lint/build (3 parallel jobs) |
+| **Release & Deploy** (`.github/workflows/release.yml`) | `v*` tags or manual dispatch | Validates changelog → runs full CI → creates GitHub Release → deploys to Azure |
+
+### Azure Setup (one-time)
+
+The deploy job uses OIDC federated credentials (no stored passwords). You need to configure:
+
+1. **GitHub Environment**: Create a `production` environment in repo Settings → Environments
+2. **Azure App Registration**: Create an app with federated credential for `repo:adamint/AspireAcademy:environment:production`
+3. **Repository Secrets**:
+   - `AZURE_CLIENT_ID` — App registration client ID
+   - `AZURE_TENANT_ID` — Entra ID tenant ID
+   - `AZURE_SUBSCRIPTION_ID` — Target subscription
+4. **Repository Variables**:
+   - `AZURE_RESOURCE_GROUP` — Target resource group name
+   - `AZURE_LOCATION` — Azure region (default: `eastus`)
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed Azure setup.
 
 ## Useful Commands
 

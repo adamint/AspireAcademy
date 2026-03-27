@@ -99,9 +99,9 @@ public class SettingsEndpointsTests : TestFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // Verify soft-delete
-        await db.Entry(db.Users.Find(userId)!).ReloadAsync();
-        db.Users.Find(userId)!.IsDeleted.Should().BeTrue();
+        // Verify soft-delete — use IgnoreQueryFilters since the user is now filtered out
+        var deletedUser = await db.Users.IgnoreQueryFilters().FirstAsync(u => u.Id == userId);
+        deletedUser.IsDeleted.Should().BeTrue();
     }
 
     [Fact]
