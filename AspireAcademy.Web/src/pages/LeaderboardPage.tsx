@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Flex, Text, Badge, Skeleton, VStack, Tabs, Button } from '@chakra-ui/react';
+import { Box, Flex, Text, Badge, Skeleton, VStack, Tabs, Button, chakra } from '@chakra-ui/react';
 import { FiGithub } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/apiClient';
@@ -164,15 +164,18 @@ export default function LeaderboardPage() {
                         <Text fontSize="xs" color="aspire.600">(you)</Text>
                       )}
                       {entry.gitHubUsername && (
-                        <a
+                        <chakra.a
                           href={`https://github.com/${entry.gitHubUsername}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{ color: 'var(--chakra-colors-dark-muted)', display: 'inline-flex' }}
+                          color="dark.muted"
+                          _hover={{ color: 'aspire.400' }}
+                          display="inline-flex"
+                          aria-label={`${entry.gitHubUsername} on GitHub`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <FiGithub size={14} />
-                        </a>
+                        </chakra.a>
                       )}
                     </Flex>
                     <Flex gap={2} align="center" mt={0.5}>

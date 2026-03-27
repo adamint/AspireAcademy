@@ -72,10 +72,9 @@ export default function SkillRadar({ skills, size = 300 }: SkillRadarProps) {
       <Flex justify="center" mb={4}>
         <Box position="relative">
           <svg
-            width="100%"
-            height="100%"
+            width={size + padding * 2}
+            height={size + padding * 2}
             viewBox={`0 0 ${svgSize} ${svgSize}`}
-            style={{ maxWidth: size + padding * 2, maxHeight: size + padding * 2 }}
           >
             {/* Background grid polygons */}
             {Array.from({ length: GRID_LEVELS }, (_, level) => {
@@ -126,7 +125,7 @@ export default function SkillRadar({ skills, size = 300 }: SkillRadarProps) {
                 fill={DOT_COLOR}
                 stroke={DATA_STROKE}
                 strokeWidth={1.5}
-                style={{ cursor: 'pointer', transition: 'r 0.15s ease' }}
+                className="skill-radar-dot"
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
               />

@@ -20,7 +20,7 @@ builder.AddAzureContainerAppEnvironment("aca-env");
 var postgresServer = builder.AddAzurePostgresFlexibleServer("postgres")
     .RunAsContainer(c => c.WithDataVolume("aspire-learn-pgdata").WithPgAdmin());
 var postgres = postgresServer.AddDatabase("academydb");
-var redis = builder.AddAzureRedis("cache")
+var redis = builder.AddAzureManagedRedis("cache")
     .RunAsContainer(c => c.WithRedisCommander());
 var openai = builder.AddConnectionString("openai");
 

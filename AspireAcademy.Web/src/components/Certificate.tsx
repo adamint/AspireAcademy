@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Box } from '@chakra-ui/react';
 import { formatDateLong } from '../utils/formatters';
 import { generateCertificateId } from './certificateUtils';
 
@@ -38,7 +39,7 @@ function CertificateSVG({ data }: { data: CertificateData }) {
       viewBox={`0 0 ${CERT_WIDTH} ${CERT_HEIGHT}`}
       width="100%"
       height="100%"
-      style={{ fontFamily: '"Press Start 2P", monospace' }}
+      className="cert-svg"
       role="img"
       aria-label={`Certificate of completion for ${data.worldName} world, awarded to ${data.displayName}`}
     >
@@ -262,17 +263,17 @@ export function Certificate({ data, compact }: CertificateProps) {
 
   if (compact) {
     return (
-      <div style={{ width: '100%', aspectRatio: `${CERT_WIDTH}/${CERT_HEIGHT}` }}>
+      <Box w="100%" css={{ aspectRatio: `${CERT_WIDTH}/${CERT_HEIGHT}` }}>
         <CertificateSVG data={data} />
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div ref={containerRef} style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
-      <div style={{ aspectRatio: `${CERT_WIDTH}/${CERT_HEIGHT}` }}>
+    <Box ref={containerRef} w="100%" maxW="800px" mx="auto">
+      <Box css={{ aspectRatio: `${CERT_WIDTH}/${CERT_HEIGHT}` }}>
         <CertificateSVG data={data} />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

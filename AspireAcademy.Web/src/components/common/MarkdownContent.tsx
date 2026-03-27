@@ -34,13 +34,6 @@ const markdownComponents: Partial<Components> = {
     return (
       <code
         className={className}
-        style={{
-          background: 'var(--code-bg)',
-          color: 'var(--text-h)',
-          padding: '2px 6px',
-          borderRadius: 4,
-          fontSize: '0.9em',
-        }}
         {...props}
       >
         {children}

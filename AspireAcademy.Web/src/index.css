@@ -104,3 +104,14 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Certificate SVG font */
+.cert-svg {
+  font-family: "Press Start 2P", monospace;
+}
+
+/* Skill radar interactive dots */
+.skill-radar-dot {
+  cursor: pointer;
+  transition: r 0.15s ease;
+}

@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box, Flex, Text, Button, Badge, Skeleton, SimpleGrid, VStack,
-  Dialog, Input, Textarea, Tooltip, Field, Spinner,
+  Dialog, Input, Textarea, Tooltip, Field, Spinner, chakra,
 } from '@chakra-ui/react';
 import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX, FiGithub, FiAward } from 'react-icons/fi';
 import { useState } from 'react';
@@ -219,14 +219,16 @@ export default function ProfilePage() {
           {profile.gitHubUsername && (
             <Flex align="center" gap={1} mt={1}>
               <FiGithub size={14} color="#8B949E" />
-              <a
+              <chakra.a
                 href={`https://github.com/${profile.gitHubUsername}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ fontSize: 'var(--chakra-fontSizes-sm)', color: 'var(--chakra-colors-aspire-400)' }}
+                fontSize="sm"
+                color="aspire.400"
+                _hover={{ color: 'aspire.300', textDecoration: 'underline' }}
               >
                 {profile.gitHubUsername}
-              </a>
+              </chakra.a>
             </Flex>
           )}
           <Text fontSize="xs" color="dark.muted" mt={1}>

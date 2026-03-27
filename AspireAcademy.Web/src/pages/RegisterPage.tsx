@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Box, Flex, Text, Input, Button, Spinner, Card } from '@chakra-ui/react';
+import { Box, Flex, Text, Input, Button, Spinner, Card, chakra } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
@@ -260,9 +260,9 @@ export default function RegisterPage() {
           <Flex direction="column" gap="3.5">
             {/* Username */}
             <Box>
-              <label htmlFor="reg-user" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
+              <chakra.label htmlFor="reg-user" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Username <Text as="span" color="game.error">*</Text>
-              </label>
+              </chakra.label>
               <Input
                 id="reg-user"
                 value={username}
@@ -279,9 +279,9 @@ export default function RegisterPage() {
 
             {/* Email */}
             <Box>
-              <label htmlFor="reg-email" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
+              <chakra.label htmlFor="reg-email" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Email <Text as="span" color="game.error">*</Text>
-              </label>
+              </chakra.label>
               <Input
                 id="reg-email"
                 type="email"
@@ -299,9 +299,9 @@ export default function RegisterPage() {
 
             {/* Display Name */}
             <Box>
-              <label htmlFor="reg-display" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
+              <chakra.label htmlFor="reg-display" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Display Name
-              </label>
+              </chakra.label>
               <Input
                 id="reg-display"
                 value={displayName}
@@ -314,9 +314,9 @@ export default function RegisterPage() {
 
             {/* Password */}
             <Box>
-              <label htmlFor="reg-pass" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
+              <chakra.label htmlFor="reg-pass" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Password <Text as="span" color="game.error">*</Text>
-              </label>
+              </chakra.label>
               <Input
                 id="reg-pass"
                 type="password"
@@ -334,9 +334,9 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <Box>
-              <label htmlFor="reg-confirm" style={{ fontSize: 'var(--chakra-fontSizes-sm)', fontWeight: 600, marginBottom: '4px', display: 'block', color: 'var(--chakra-colors-dark-text)' }}>
+              <chakra.label htmlFor="reg-confirm" fontSize="sm" fontWeight="600" mb="1" display="block" color="dark.text">
                 Confirm Password <Text as="span" color="game.error">*</Text>
-              </label>
+              </chakra.label>
               <Input
                 id="reg-confirm"
                 type="password"
