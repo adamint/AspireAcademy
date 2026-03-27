@@ -1,6 +1,6 @@
 # Aspire Academy — Deployment Guide
 
-This project uses **.NET Aspire's built-in publish/deploy pipeline** to deploy to Azure. The `aspire deploy` command generates Azure Bicep templates, provisions infrastructure, builds container images, and deploys everything in one step.
+This project uses **Aspire's built-in publish/deploy pipeline** to deploy to Azure. Releases are automated via GitHub Actions: push a version tag and the workflow runs tests, creates a GitHub Release, and deploys to Azure Container Apps.
 
 ## What Gets Deployed
 
@@ -15,31 +15,66 @@ This project uses **.NET Aspire's built-in publish/deploy pipeline** to deploy t
 
 The React SPA is **not** deployed as a separate service. At publish time, Aspire runs `npm run build` and copies the output into the API container's `wwwroot/` folder. The API serves the SPA as static files in production.
 
-## Prerequisites
+## One-Time Setup
+
+Before the automated pipeline can deploy, you need to configure Azure OIDC credentials and GitHub secrets. This is a one-time setup.
+
+### Prerequisites
 
 1. **Azure CLI** — [Install](https://learn.microsoft.com/cli/azure/install-azure-cli)
-2. **Aspire CLI** — `dotnet tool install -g aspire` (or update: `dotnet tool update -g aspire`)
-3. **Docker Desktop** — Required for building container images
-4. **Azure subscription** with permissions to create resource groups and resources
-5. **Node.js 22+** — For building the React frontend
+2. **Azure subscription** with permissions to create resource groups and app registrations
+3. **GitHub repo admin access** — to configure environments and secrets
 
-## Step-by-Step Deployment
-
-### 1. Log in to Azure
+### Step 1: Create a Resource Group
 
 ```bash
 az login
+az group create --name aspire-academy --location eastus
 ```
 
-If you have multiple subscriptions, set the one you want:
+### Step 2: Create an Entra ID App Registration
 
 ```bash
-az account set --subscription "Your Subscription Name"
+az ad app create --display-name "AspireAcademy-Deploy"
+APP_ID=$(az ad app list --display-name "AspireAcademy-Deploy" --query "[0].appId" -o tsv)
+
+# Create a service principal
+az ad sp create --id "$APP_ID"
 ```
 
-### 2. Prepare Your Secrets
+### Step 3: Add OIDC Federated Credential
 
-You'll need two values ready:
+This lets GitHub Actions authenticate to Azure without stored passwords:
+
+```bash
+az ad app federated-credential create --id "$APP_ID" --parameters '{
+  "name": "github-production",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "repo:adamint/AspireAcademy:environment:production",
+  "audiences": ["api://AzureADTokenExchange"]
+}'
+```
+
+### Step 4: Grant Permissions
+
+```bash
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+SP_ID=$(az ad sp list --filter "appId eq '$APP_ID'" --query "[0].id" -o tsv)
+
+# Contributor on the resource group (creates/updates resources)
+az role assignment create --assignee "$SP_ID" \
+  --role Contributor \
+  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/aspire-academy"
+
+# User Access Administrator (for managed identity role assignments)
+az role assignment create --assignee "$SP_ID" \
+  --role "User Access Administrator" \
+  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/aspire-academy"
+```
+
+### Step 5: Prepare Secrets
+
+You'll need two values for the first deploy:
 
 | Secret | Description |
 |--------|-------------|
@@ -52,40 +87,86 @@ Generate a JWT key:
 openssl rand -base64 48
 ```
 
-### 3. Deploy
+### Step 6: Configure GitHub
 
-From the project root:
+1. Go to your repo's **Settings → Environments** and create an environment named `production`
+2. Go to **Settings → Secrets and variables → Actions** and add:
+
+| Type | Name | Value |
+|------|------|-------|
+| Secret | `AZURE_CLIENT_ID` | The app registration's Application (client) ID |
+| Secret | `AZURE_TENANT_ID` | Your Entra ID tenant ID |
+| Secret | `AZURE_SUBSCRIPTION_ID` | Target Azure subscription ID |
+| Variable | `AZURE_RESOURCE_GROUP` | Resource group name (e.g., `aspire-academy`) |
+| Variable | `AZURE_LOCATION` | Azure region (e.g., `eastus`) |
+
+### Step 7: First Deploy (Interactive)
+
+The first deploy must be run **manually** to provide the JWT key and OpenAI connection string (these get stored as ACA secrets and persist for future deploys):
 
 ```bash
 aspire deploy
 ```
 
-The CLI will interactively prompt you for:
+The Aspire CLI will interactively prompt you for:
 
 1. **Azure tenant** — Select your Entra ID tenant
 2. **Azure subscription** — Select the subscription to deploy to
-3. **Resource group** — Enter a name (created if it doesn't exist)
-4. **Location** — Azure region (e.g., `eastus`, `westus2`, `westeurope`)
+3. **Resource group** — Enter the name from Step 1
+4. **Location** — Azure region
 5. **jwt-key** — Paste your JWT signing key
 6. **openai connection string** — Paste your OpenAI/Azure OpenAI connection string
 
-Then it will:
-- Generate Bicep IaC templates
-- Provision Azure infrastructure (~3-5 minutes for first deploy)
-- Build the API container image (includes `npm run build` for the React SPA)
-- Push the image to Azure Container Registry
-- Deploy the container app
+After this first deploy, all subsequent deploys (automated or manual) reuse these stored secrets.
 
-### 4. Get Your App URL
+## Releasing & Deploying
+
+### Automated (Recommended)
+
+After the one-time setup, every release is a single command:
+
+```bash
+./scripts/release.sh 1.5.0
+```
+
+This script:
+1. Validates changelog entry exists in `AspireAcademy.Web/src/data/changelog.ts`
+2. Checks for uncommitted changes
+3. Runs backend tests and frontend checks locally
+4. Creates git tag `v1.5.0` and pushes it
+
+Pushing the tag triggers the **Release & Deploy** GitHub Actions workflow, which:
+1. **Validates** — confirms changelog entry
+2. **Tests** — runs unit tests, integration tests, and frontend checks in parallel
+3. **Creates GitHub Release** — with structured release notes parsed from changelog.ts
+4. **Deploys to Azure** — runs `aspire deploy --non-interactive`
+5. **Smoke tests** — verifies `/health` returns 200
+6. **Updates Release** — appends deployed URL to the GitHub Release
+
+### Manual Deploy-Only
+
+To redeploy without a new release (e.g., config change):
+
+- **From GitHub**: Actions → **Release & Deploy** → **Run workflow** → check "Skip tests"
+- **From CLI**: `aspire deploy`
+
+### Manual from CLI
+
+For local development or debugging deployments:
+
+```bash
+aspire deploy
+```
+
+Subsequent deploys are faster — only the container image is rebuilt and redeployed. Infrastructure changes are applied incrementally via Bicep.
+
+## Getting Your App URL
 
 After deployment completes, the CLI prints the Container App URL. You can also find it:
 
 ```bash
-# List your container apps
-az containerapp list --resource-group <your-rg> --output table
-
-# Get the URL directly
-az containerapp show --name api --resource-group <your-rg> --query "properties.configuration.ingress.fqdn" -o tsv
+az containerapp show --name api --resource-group <your-rg> \
+  --query "properties.configuration.ingress.fqdn" -o tsv
 ```
 
 Your app is live at `https://api.<environment-domain>.azurecontainerapps.io`.
@@ -99,28 +180,6 @@ When the API container starts in production for the first time:
 3. **Health check passes** — `/health` returns 200, Container Apps marks the app as healthy
 
 This is automatic. No manual database setup is needed.
-
-## Updating / Redeploying
-
-### Automated (Recommended)
-
-Push a version tag to trigger the full release & deploy pipeline:
-
-```bash
-./scripts/release.sh 1.5.0
-```
-
-This validates changelog → runs tests → creates a GitHub Release → deploys to Azure. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full release process.
-
-You can also trigger a deploy-only run from GitHub Actions → **Release & Deploy** → **Run workflow**.
-
-### Manual
-
-```bash
-aspire deploy
-```
-
-Subsequent deploys are faster — only the container image is rebuilt and redeployed. Infrastructure changes are applied incrementally via Bicep.
 
 ## Publish Only (No Deploy)
 
@@ -192,65 +251,9 @@ For a minimal deployment (Burstable tier, single replica):
 
 ## Troubleshooting
 
-### CI/CD Deploy: Setting Up Azure OIDC
-
-The GitHub Actions deploy job uses OpenID Connect (OIDC) federated credentials — no stored Azure passwords.
-
-#### 1. Create an Entra ID App Registration
-
-```bash
-az ad app create --display-name "AspireAcademy-Deploy"
-APP_ID=$(az ad app list --display-name "AspireAcademy-Deploy" --query "[0].appId" -o tsv)
-
-# Create a service principal
-az ad sp create --id "$APP_ID"
-```
-
-#### 2. Add Federated Credential for GitHub Actions
-
-```bash
-az ad app federated-credential create --id "$APP_ID" --parameters '{
-  "name": "github-production",
-  "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:adamint/AspireAcademy:environment:production",
-  "audiences": ["api://AzureADTokenExchange"]
-}'
-```
-
-#### 3. Grant Permissions
-
-```bash
-SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-SP_ID=$(az ad sp list --filter "appId eq '$APP_ID'" --query "[0].id" -o tsv)
-
-# Contributor on the resource group (creates/updates resources)
-az role assignment create --assignee "$SP_ID" \
-  --role Contributor \
-  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/<your-rg>"
-
-# User Access Administrator (for managed identity role assignments)
-az role assignment create --assignee "$SP_ID" \
-  --role "User Access Administrator" \
-  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/<your-rg>"
-```
-
-#### 4. Configure GitHub
-
-In your repo's **Settings → Environments**, create `production`.
-
-In **Settings → Secrets and variables → Actions**:
-
-| Type | Name | Value |
-|------|------|-------|
-| Secret | `AZURE_CLIENT_ID` | The app registration's Application (client) ID |
-| Secret | `AZURE_TENANT_ID` | Your Entra ID tenant ID |
-| Secret | `AZURE_SUBSCRIPTION_ID` | Target Azure subscription ID |
-| Variable | `AZURE_RESOURCE_GROUP` | Resource group name |
-| Variable | `AZURE_LOCATION` | Azure region (e.g., `eastus`) |
-
 ### Deploy fails at "process-parameters"
 
-You need to provide values for `jwt-key` and `openai` connection string. Run `aspire deploy` (not `--non-interactive`) to get the interactive prompts.
+You need to provide values for `jwt-key` and `openai` connection string. Run `aspire deploy` (not `--non-interactive`) to get the interactive prompts. This happens on first deploy before secrets are stored.
 
 ### Container starts but health check fails
 
@@ -269,20 +272,6 @@ Common causes:
 
 The EF Core migration history table and initial migration must exist. If deploying from scratch, the API uses `MigrateAsync()` which applies the migration in `Migrations/20260326042829_InitialCreate.cs`. Ensure that migration file is up to date with your model.
 
-### Need to reset the database
+### GitHub Actions deploy fails with "AADSTS70021"
 
-Connect to PostgreSQL via Azure Portal's query editor or `psql`, then restart the container app. On next startup, the API will detect an empty database and reload curriculum.
-
-### CORS errors
-
-In production, the React SPA is served from the same origin as the API (both from the container). CORS is not needed. If you see CORS errors, you might be hitting the production API from a local dev frontend — use `aspire run` for local development instead.
-
-## Tearing Down
-
-To remove all deployed resources:
-
-```bash
-az group delete --name <your-resource-group> --yes --no-wait
-```
-
-This deletes everything: Container App, PostgreSQL, Redis, Container Registry, managed identity, and Log Analytics workspace.
+The federated credential subject doesn't match. Verify the credential was created with `repo:adamint/AspireAcademy:environment:production` and that the deploy job has `environment: production` set.
