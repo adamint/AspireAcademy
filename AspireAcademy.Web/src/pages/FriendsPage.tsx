@@ -7,6 +7,7 @@ import { FiSearch, FiUserPlus, FiX, FiCheck } from 'react-icons/fi';
 import api from '../services/apiClient';
 import { useAuthStore } from '../store/authStore';
 import FriendCard, { type FriendCardUser } from '../components/social/FriendCard';
+import ChallengeButton from '../components/social/ChallengeButton';
 import { pixelFontProps } from '../theme/aspireTheme';
 
 interface FriendRequest {
@@ -206,14 +207,20 @@ export default function FriendsPage() {
                       key={friend.id}
                       user={friend}
                       actions={
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => friendActionMutation.mutate({ action: 'remove', userId: friend.id })}
-                          disabled={friendActionMutation.isPending}
-                        >
-                          {friendActionMutation.isPending ? <Spinner size="sm" /> : <><FiX /> Remove</>}
-                        </Button>
+                        <Flex gap={2}>
+                          <ChallengeButton
+                            friendId={friend.id}
+                            friendName={friend.displayName || friend.username}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => friendActionMutation.mutate({ action: 'remove', userId: friend.id })}
+                            disabled={friendActionMutation.isPending}
+                          >
+                            {friendActionMutation.isPending ? <Spinner size="sm" /> : <><FiX /> Remove</>}
+                          </Button>
+                        </Flex>
                       }
                     />
                   ))}

@@ -4,12 +4,16 @@ import {
   Box, Flex, Text, Button, Badge, Skeleton, SimpleGrid, VStack,
   Dialog, Input, Textarea, Tooltip, Field, Spinner,
 } from '@chakra-ui/react';
-import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX } from 'react-icons/fi';
+import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX, FiGithub } from 'react-icons/fi';
 import { useState } from 'react';
+import { useQuery as useWorldsQuery } from '@tanstack/react-query';
 import api from '../services/apiClient';
 import { useAuthStore, type User } from '../store/authStore';
 import AvatarDisplay from '../components/gamification/AvatarDisplay';
+import ShareProgressButton from '../components/social/ShareProgressButton';
+import WorldCompletionBadges from '../components/gamification/WorldCompletionBadges';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
+import type { World } from '../types/curriculum';
 
 interface UserProfile extends User {
   completedLessons: number;
@@ -18,6 +22,7 @@ interface UserProfile extends User {
   showcaseAchievements: { id: string; name: string; icon: string; rarity: string; unlockedAt: string }[];
   isFriend: boolean;
   friendshipId: string | null;
+  gitHubUsername: string | null;
 }
 
 const rarityColors: Record<string, string> = {
@@ -36,9 +41,16 @@ export default function ProfilePage() {
   const [editOpen, setEditOpen] = useState(false);
   const [editDisplayName, setEditDisplayName] = useState('');
   const [editBio, setEditBio] = useState('');
+  const [editGitHubUsername, setEditGitHubUsername] = useState('');
   const [mutationError, setMutationError] = useState<string | null>(null);
   const isOwnProfile = !userId || userId === currentUser?.id;
   const profileId = isOwnProfile ? currentUser?.id : userId;
+
+  const { data: worlds } = useWorldsQuery<World[]>({
+    queryKey: ['worlds'],
+    queryFn: () => api.get('/worlds').then((r) => r.data),
+    enabled: !!profileId,
+  });
 
   const { data: profile, isLoading, error: queryError } = useQuery<UserProfile>({    queryKey: ['profile', profileId],
     queryFn: async () => {
@@ -78,7 +90,7 @@ export default function ProfilePage() {
   });
 
   const editMutation = useMutation({
-    mutationFn: async (data: { displayName: string; bio: string }) => {
+    mutationFn: async (data: { displayName: string; bio: string; gitHubUsername: string }) => {
       const response = await api.put('/users/me', data);
       return response.data;
     },
@@ -134,6 +146,7 @@ export default function ProfilePage() {
   const openEditDialog = () => {
     setEditDisplayName(profile?.displayName ?? '');
     setEditBio(profile?.bio ?? '');
+    setEditGitHubUsername(profile?.gitHubUsername ?? '');
     setEditOpen(true);
   };
 
@@ -204,6 +217,22 @@ export default function ProfilePage() {
               &ldquo;{profile.bio}&rdquo;
             </Text>
           )}
+          {profile.gitHubUsername && (
+            <Flex align="center" gap={1} mt={1}>
+              <FiGithub size={14} color="#8B949E" />
+              <Text
+                as="a"
+                href={`https://github.com/${profile.gitHubUsername}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                fontSize="sm"
+                color="aspire.400"
+                _hover={{ color: 'aspire.300', textDecoration: 'underline' }}
+              >
+                {profile.gitHubUsername}
+              </Text>
+            </Flex>
+          )}
           <Text fontSize="xs" color="dark.muted" mt={1}>
             Member since {new Date(profile.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
           </Text>
@@ -236,6 +265,15 @@ export default function ProfilePage() {
                 >
                   {resetAvatarMutation.isPending ? <Spinner size="sm" /> : <><FiX /> Reset to Gravatar</>}
                 </Button>
+                <ShareProgressButton
+                  displayName={profile.displayName || profile.username}
+                  level={profile.currentLevel}
+                  rank={profile.currentRank}
+                  completedLessons={profile.completedLessons}
+                  totalLessons={profile.totalLessons}
+                  achievementCount={profile.achievementCount}
+                  streakDays={profile.loginStreakDays}
+                />
               </>
             ) : (
               <>
@@ -327,6 +365,20 @@ export default function ProfilePage() {
         </Box>
       )}
 
+      {/* World Completion Badges */}
+      {worlds && worlds.length > 0 && (
+        <Box {...retroCardProps} p={4} bg="dark.card">
+          <WorldCompletionBadges
+            worlds={worlds.map((w) => ({
+              id: w.id,
+              name: w.name,
+              icon: w.icon,
+              completionPercentage: w.completionPercentage,
+            }))}
+          />
+        </Box>
+      )}
+
       {/* Edit Profile Dialog */}
       <Dialog.Root open={editOpen} onOpenChange={(e) => setEditOpen(e.open)}>
         <Dialog.Backdrop />
@@ -360,13 +412,27 @@ export default function ProfilePage() {
                     color="dark.text"
                   />
                 </Field.Root>
+                <Field.Root>
+                  <Field.Label color="dark.text">
+                    <Flex align="center" gap={1}><FiGithub /> GitHub Username</Flex>
+                  </Field.Label>
+                  <Input
+                    value={editGitHubUsername}
+                    onChange={(e) => setEditGitHubUsername(e.target.value)}
+                    maxLength={39}
+                    placeholder="e.g. octocat"
+                    bg="dark.surface"
+                    borderColor="game.pixelBorder"
+                    color="dark.text"
+                  />
+                </Field.Root>
               </VStack>
             </Dialog.Body>
             <Dialog.Footer>
               <Button variant="outline" mr={3} onClick={() => setEditOpen(false)} borderColor="game.pixelBorder" color="dark.text">Cancel</Button>
               <Button
                 colorPalette="purple"
-                onClick={() => editMutation.mutate({ displayName: editDisplayName, bio: editBio })}
+                onClick={() => editMutation.mutate({ displayName: editDisplayName, bio: editBio, gitHubUsername: editGitHubUsername })}
                 disabled={editMutation.isPending}
               >
                 {editMutation.isPending ? <><Spinner size="sm" /> Saving…</> : 'Save'}

@@ -1,0 +1,102 @@
+import { useState } from 'react';
+import { Box, Flex, Text, Button, Badge } from '@chakra-ui/react';
+import { retroCardProps, pixelFontProps } from '../../theme/aspireTheme';
+
+export default function AspireQuickStartCard() {
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const handleCopy = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(label);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      // Clipboard API not available
+    }
+  };
+
+  return (
+    <Box
+      {...retroCardProps}
+      bg="game.retroBg"
+      p={4}
+      data-testid="aspire-quickstart-card"
+    >
+      <Flex align="center" gap={2} mb={3}>
+        <Text fontSize="lg">🚀</Text>
+        <Text {...pixelFontProps} fontSize="xs" color="dark.text">
+          Get Started with Aspire
+        </Text>
+      </Flex>
+
+      <Text fontSize="xs" color="dark.muted" mb={3}>
+        Ready to build your own distributed app? Start here:
+      </Text>
+
+      {/* Install command */}
+      <Box mb={2}>
+        <Text fontSize="2xs" color="aspire.400" mb={1}>Install the CLI:</Text>
+        <Flex
+          bg="dark.surface"
+          p={2}
+          borderRadius="sm"
+          border="1px solid"
+          borderColor="dark.border"
+          align="center"
+          justify="space-between"
+          gap={2}
+        >
+          <Text fontSize="xs" fontFamily="mono" color="game.xpGold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+            dotnet workload install aspire
+          </Text>
+          <Button
+            size="xs"
+            variant="ghost"
+            color="aspire.400"
+            onClick={() => handleCopy('dotnet workload install aspire', 'install')}
+            flexShrink={0}
+          >
+            {copied === 'install' ? '✓' : '📋'}
+          </Button>
+        </Flex>
+      </Box>
+
+      {/* New project command */}
+      <Box mb={3}>
+        <Text fontSize="2xs" color="aspire.400" mb={1}>Create a project:</Text>
+        <Flex
+          bg="dark.surface"
+          p={2}
+          borderRadius="sm"
+          border="1px solid"
+          borderColor="dark.border"
+          align="center"
+          justify="space-between"
+          gap={2}
+        >
+          <Text fontSize="xs" fontFamily="mono" color="game.xpGold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+            dotnet new aspire
+          </Text>
+          <Button
+            size="xs"
+            variant="ghost"
+            color="aspire.400"
+            onClick={() => handleCopy('dotnet new aspire', 'new')}
+            flexShrink={0}
+          >
+            {copied === 'new' ? '✓' : '📋'}
+          </Button>
+        </Flex>
+      </Box>
+
+      <Badge
+        {...pixelFontProps}
+        fontSize="2xs"
+        colorPalette="purple"
+        variant="outline"
+      >
+        Learn → Build → Ship 🚢
+      </Badge>
+    </Box>
+  );
+}

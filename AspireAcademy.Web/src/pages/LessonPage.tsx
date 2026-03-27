@@ -19,6 +19,7 @@ import api from '../services/apiClient';
 import { useGamificationStore } from '../store/gamificationStore';
 import type { LessonDetail, CompleteResponse } from '../types/curriculum';
 import MarkdownContent from '../components/common/MarkdownContent';
+import EncouragingMessage from '../components/gamification/EncouragingMessage';
 
 const lessonTypeLabel: Record<string, { emoji: string; label: string }> = {
   learn: { emoji: '📖', label: 'Learn' },
@@ -330,6 +331,11 @@ export default function LessonPage() {
         <Box bg="rgba(209, 52, 56, 0.15)" color="game.error" p="3" borderRadius="sm" textAlign="center">
           Failed to mark complete. Please try again.
         </Box>
+      )}
+
+      {/* Encouraging message after completion */}
+      {(lesson.isCompleted || completeMutation.isSuccess) && (
+        <EncouragingMessage xpEarned={xpAnim ?? lesson.xpReward} />
       )}
 
       {/* Previous / Next */}

@@ -28,6 +28,8 @@ import { useGamificationStore } from '../store/gamificationStore';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import CodeEditor from '../components/curriculum/CodeEditor';
 import MarkdownContent from '../components/common/MarkdownContent';
+import TryItPrompt from '../components/gamification/TryItPrompt';
+import EncouragingMessage from '../components/gamification/EncouragingMessage';
 
 // ── Types ────────────────────────────────────────────
 
@@ -370,6 +372,12 @@ export default function ChallengePage() {
                 +{xpEarned} XP
               </Text>
             )}
+            <Box mb={4}>
+              <EncouragingMessage xpEarned={xpEarned} />
+            </Box>
+            <Box mb={4}>
+              <TryItPrompt lessonTitle={challenge.title} />
+            </Box>
             <Button
               bg="aspire.600"
               color="white"

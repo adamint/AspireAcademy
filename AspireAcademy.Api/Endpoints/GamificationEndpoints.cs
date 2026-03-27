@@ -17,9 +17,12 @@ public record XpStatsResponse(
     int XpToNextLevel,
     int XpForCurrentLevel,
     int LoginStreakDays,
-    List<XpEventDto> RecentEvents);
+    List<XpEventDto> RecentEvents,
+    NextLessonDto? NextLesson);
 
-public record XpEventDto(Guid Id, int XpAmount, string SourceType, string? SourceId, DateTime CreatedAt);
+public record XpEventDto(Guid Id, string Type, string Description, int XpEarned, DateTime CreatedAt);
+
+public record NextLessonDto(string Id, string Title, string ModuleName, string WorldId, string Type);
 
 public record ProgressCompleteRequest(string LessonId);
 
@@ -48,6 +51,8 @@ public record AchievementDto(
 
 public record AvatarRandomizeResponse(string AvatarUrl);
 
+public record DailyRewardResponse(bool Awarded, int XpAwarded, int StreakDays, bool AlreadyClaimed);
+
 public static class GamificationEndpoints
 {
     private static ILogger s_logger = null!;
@@ -65,6 +70,7 @@ public static class GamificationEndpoints
         group.MapGet("/achievements", GetAchievementsAsync);
         group.MapPost("/avatar/randomize", RandomizeAvatarAsync);
         group.MapDelete("/avatar", ClearAvatarAsync);
+        group.MapPost("/daily-reward", ClaimDailyRewardAsync);
 
         return app;
     }
@@ -91,12 +97,88 @@ public static class GamificationEndpoints
         var xpToNextLevel = GamificationService.GetXpForNextLevel(totalXp);
         var xpForCurrentLevel = GamificationService.GetCumulativeXpForLevel(currentLevel + 1);
 
-        var recentEvents = await db.XpEvents
+        var rawEvents = await db.XpEvents
             .Where(e => e.UserId == userId)
             .OrderByDescending(e => e.CreatedAt)
             .Take(20)
-            .Select(e => new XpEventDto(e.Id, e.XpAmount, e.SourceType, e.SourceId, e.CreatedAt))
             .ToListAsync();
+
+        // Gather source IDs to look up lesson titles and achievement names
+        var lessonSourceTypes = new HashSet<string> { "lesson-complete", "challenge-first-try", "quiz-perfect" };
+        var lessonIds = rawEvents
+            .Where(e => lessonSourceTypes.Contains(e.SourceType) && e.SourceId is not null)
+            .Select(e => e.SourceId!)
+            .Distinct()
+            .ToList();
+
+        var achievementIds = rawEvents
+            .Where(e => e.SourceType == "achievement-bonus" && e.SourceId is not null)
+            .Select(e => e.SourceId!)
+            .Distinct()
+            .ToList();
+
+        var lessonLookup = lessonIds.Count > 0
+            ? await db.Lessons
+                .Where(l => lessonIds.Contains(l.Id))
+                .Select(l => new { l.Id, l.Title, l.Type })
+                .ToDictionaryAsync(l => l.Id)
+            : [];
+
+        var achievementLookup = achievementIds.Count > 0
+            ? await db.Achievements
+                .Where(a => achievementIds.Contains(a.Id))
+                .Select(a => new { a.Id, a.Name, a.Icon })
+                .ToDictionaryAsync(a => a.Id)
+            : [];
+
+        var recentEvents = rawEvents.Select(e =>
+        {
+            var (type, description) = e.SourceType switch
+            {
+                "lesson-complete" when e.SourceId is not null && lessonLookup.TryGetValue(e.SourceId, out var lesson) =>
+                    lesson.Type switch
+                    {
+                        LessonTypes.Quiz => ("quiz", $"Passed quiz: {lesson.Title}"),
+                        LessonTypes.Challenge or LessonTypes.BuildProject => ("challenge", $"Completed challenge: {lesson.Title}"),
+                        LessonTypes.BossBattle => ("challenge", $"Defeated boss: {lesson.Title}"),
+                        _ => ("lesson", $"Completed lesson: {lesson.Title}")
+                    },
+                "challenge-first-try" when e.SourceId is not null && lessonLookup.TryGetValue(e.SourceId, out var cl) =>
+                    ("challenge", $"First try bonus: {cl.Title}"),
+                "quiz-perfect" when e.SourceId is not null && lessonLookup.TryGetValue(e.SourceId, out var ql) =>
+                    ("quiz", $"Perfect score: {ql.Title}"),
+                "achievement-bonus" when e.SourceId is not null && achievementLookup.TryGetValue(e.SourceId, out var ach) =>
+                    ("achievement", $"Unlocked achievement: {ach.Name} {ach.Icon}"),
+                "streak-bonus" => ("streak", $"Streak bonus: {e.SourceId?.Replace("streak-", "")} days 🔥"),
+                _ => ("bonus", $"Earned bonus XP")
+            };
+
+            return new XpEventDto(e.Id, type, description, e.XpAmount, e.CreatedAt);
+        }).ToList();
+
+        // Find next lesson for "Continue Learning"
+        NextLessonDto? nextLesson = null;
+        var completedLessonIds = await db.UserProgress
+            .Where(p => p.UserId == userId && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect || p.Status == ProgressStatuses.Skipped))
+            .Select(p => p.LessonId)
+            .ToListAsync();
+
+        var nextLessonEntity = await db.Lessons
+            .Include(l => l.Module)
+            .Where(l => !completedLessonIds.Contains(l.Id))
+            .OrderBy(l => l.Module.SortOrder)
+            .ThenBy(l => l.SortOrder)
+            .FirstOrDefaultAsync();
+
+        if (nextLessonEntity is not null)
+        {
+            nextLesson = new NextLessonDto(
+                nextLessonEntity.Id,
+                nextLessonEntity.Title,
+                nextLessonEntity.Module.Name,
+                nextLessonEntity.Module.WorldId,
+                nextLessonEntity.Type);
+        }
 
         return Results.Ok(new XpStatsResponse(
             TotalXp: totalXp,
@@ -106,7 +188,8 @@ public static class GamificationEndpoints
             XpToNextLevel: xpToNextLevel,
             XpForCurrentLevel: xpForCurrentLevel,
             LoginStreakDays: dbUser.LoginStreakDays,
-            RecentEvents: recentEvents));
+            RecentEvents: recentEvents,
+            NextLesson: nextLesson));
     }
 
     private static async Task<IResult> CompleteLessonAsync(
@@ -327,7 +410,7 @@ public static class GamificationEndpoints
         dbUser.AvatarSeed = Guid.NewGuid().ToString("N");
         await db.SaveChangesAsync();
 
-        var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email);
+        var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email, dbUser.GitHubUsername);
         return Results.Ok(new AvatarRandomizeResponse(avatarUrl));
     }
 
@@ -346,8 +429,64 @@ public static class GamificationEndpoints
         dbUser.AvatarSeed = null;
         await db.SaveChangesAsync();
 
-        var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email);
+        var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email, dbUser.GitHubUsername);
         return Results.Ok(new AvatarRandomizeResponse(avatarUrl));
+    }
+
+    private static async Task<IResult> ClaimDailyRewardAsync(
+        AcademyDbContext db,
+        GamificationService gamification,
+        ClaimsPrincipal user)
+    {
+        var userId = EndpointHelpers.GetUserId(user);
+        var dbUser = await db.Users.FindAsync(userId);
+
+        if (dbUser is null)
+        {
+            return Results.NotFound(new ErrorResponse("User not found"));
+        }
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        // Check if already claimed today
+        if (dbUser.LastStreakDate == today)
+        {
+            return Results.Ok(new DailyRewardResponse(
+                Awarded: false,
+                XpAwarded: 0,
+                StreakDays: dbUser.LoginStreakDays,
+                AlreadyClaimed: true));
+        }
+
+        // Update streak
+        await gamification.UpdateStreakAsync(userId);
+
+        // Re-read user to get updated streak
+        await db.Entry(dbUser).ReloadAsync();
+
+        // Calculate daily XP bonus: 10 XP × streak day, capped at 100 XP
+        var streakDay = dbUser.LoginStreakDays;
+        var dailyXp = Math.Min(streakDay * 10, 100);
+
+        // Award the daily login XP
+        var alreadyAwarded = await db.XpEvents.AnyAsync(e =>
+            e.UserId == userId &&
+            e.SourceType == "daily-login" &&
+            e.CreatedAt >= DateTime.UtcNow.Date);
+
+        if (!alreadyAwarded && dailyXp > 0)
+        {
+            await gamification.AwardXpAsync(userId, dailyXp, "daily-login", $"day-{streakDay}");
+        }
+
+        s_logger.LogInformation("Daily reward claimed: +{Xp} XP for UserId={UserId}, streak={Streak}",
+            dailyXp, userId, streakDay);
+
+        return Results.Ok(new DailyRewardResponse(
+            Awarded: true,
+            XpAwarded: dailyXp,
+            StreakDays: streakDay,
+            AlreadyClaimed: false));
     }
 
 }

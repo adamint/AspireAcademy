@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { useGamificationStore } from '../../store/gamificationStore';
+import { useEffectsStore } from '../../store/effectsStore';
 import { useColorMode } from '../../hooks/useColorMode';
 import { XPProgressBar } from '../gamification/XPProgressBar';
 import { pixelFontProps } from '../../theme/aspireTheme';
@@ -18,6 +19,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
   const logout = useAuthStore((s) => s.logout);
   const loginStreakDays = useGamificationStore((s) => s.loginStreakDays);
   const { colorMode, toggleColorMode } = useColorMode();
+  const soundEnabled = useEffectsStore((s) => s.soundEnabled);
+  const toggleSound = useEffectsStore((s) => s.toggleSound);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -59,7 +62,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
         cursor="pointer"
         userSelect="none"
         whiteSpace="nowrap"
-        onClick={() => navigate('/dashboard')}
+        onClick={() => navigate('/')}
       >
         Aspire Academy
       </Text>
@@ -75,6 +78,19 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
             🔥 {loginStreakDays}
           </Text>
         )}
+
+        {/* Sound effects toggle */}
+        <IconButton
+          data-testid="sound-toggle"
+          aria-label="Toggle sound effects"
+          variant="ghost"
+          size="sm"
+          color="whiteAlpha.800"
+          _hover={{ bg: 'whiteAlpha.200' }}
+          onClick={toggleSound}
+        >
+          <Text fontSize="sm">{soundEnabled ? '🔊' : '🔇'}</Text>
+        </IconButton>
 
         {/* Theme toggle */}
         <IconButton

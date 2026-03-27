@@ -17,6 +17,9 @@ import { useAuthStore } from '../store/authStore';
 import { Rank, LessonType } from '../constants';
 import api from '../services/apiClient';
 import WorldCard from '../components/curriculum/WorldCard';
+import AspireQuickStartCard from '../components/gamification/AspireQuickStartCard';
+import WorldCompletionBadges from '../components/gamification/WorldCompletionBadges';
+import ProgressMilestonePopup from '../components/gamification/ProgressMilestonePopup';
 import type { World, XpResponse, XpEvent } from '../types/curriculum';
 
 const rankEmojis: Record<string, string> = {
@@ -162,22 +165,28 @@ export default function DashboardPage() {
         </SimpleGrid>
       )}
 
-      {/* Continue Learning */}
+      {/* Continue Learning — prominent hero section */}
       {xpData?.nextLesson && (
-        <Card.Root variant="outline" {...retroCardProps} borderColor="game.success">
-          <Card.Body p="5">
-            <Flex justify="space-between" align="center" flexWrap="wrap" gap="3">
-              <Box>
-                <Text fontWeight="semibold" fontSize="md" mb="1" color="dark.text">
-                  📚 Continue Learning
+        <Card.Root variant="outline" {...retroCardProps} borderColor="aspire.600" borderWidth="3px">
+          <Card.Body p="6">
+            <Flex justify="space-between" align="center" flexWrap="wrap" gap="4">
+              <Box flex={1}>
+                <Flex align="center" gap="2" mb="2">
+                  <Text fontSize="xl">📚</Text>
+                  <Text {...pixelFontProps} fontSize="sm" color="dark.text">
+                    Continue Learning
+                  </Text>
+                </Flex>
+                <Text fontSize="md" color="dark.text" fontWeight="semibold" mb="1">
+                  {xpData.nextLesson.title}
                 </Text>
-                <Text fontSize="sm" color="aspire.500">
-                  {xpData.nextLesson.moduleName} → {xpData.nextLesson.title}
+                <Text fontSize="sm" color="aspire.400">
+                  {xpData.nextLesson.moduleName}
                 </Text>
               </Box>
               <Button
                 colorPalette="purple"
-                size="sm"
+                size="lg"
                 onClick={() => {
                   const lesson = xpData.nextLesson!;
                   const path =
@@ -187,6 +196,14 @@ export default function DashboardPage() {
                         ? `/challenges/${lesson.id}`
                         : `/lessons/${lesson.id}`;
                   navigate(path);
+                }}
+                data-testid="continue-learning-btn"
+                css={{
+                  animation: 'glow 2s ease-in-out infinite alternate',
+                  '@keyframes glow': {
+                    '0%': { boxShadow: '0 0 5px rgba(107, 79, 187, 0.3)' },
+                    '100%': { boxShadow: '0 0 15px rgba(107, 79, 187, 0.6)' },
+                  },
                 }}
               >
                 Continue →
@@ -200,6 +217,19 @@ export default function DashboardPage() {
       <Heading as="h2" size="lg" color="dark.text">
         🌍 Your Worlds
       </Heading>
+
+      {/* World Completion Badges */}
+      {worlds && worlds.length > 0 && (
+        <WorldCompletionBadges
+          worlds={worlds.map((w) => ({
+            id: w.id,
+            name: w.name,
+            icon: w.icon,
+            completionPercentage: w.completionPercentage,
+          }))}
+        />
+      )}
+
       {(!worlds || worlds.length === 0) ? (
         <Box textAlign="center" py={12} {...retroCardProps}>
           <Text {...pixelFontProps} fontSize="sm">No worlds available yet</Text>
@@ -254,6 +284,12 @@ export default function DashboardPage() {
           </Card.Root>
         </>
       )}
+
+      {/* Aspire Quick Start Card */}
+      <AspireQuickStartCard />
+
+      {/* Progress Milestone Celebrations */}
+      {worlds && worlds.length > 0 && <ProgressMilestonePopup worlds={worlds} />}
     </Box>
   );
 }
