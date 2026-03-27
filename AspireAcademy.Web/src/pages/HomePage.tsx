@@ -607,7 +607,7 @@ export default function HomePage() {
                     borderColor: 'aspire.600',
                   }}
                   style={{ animation: 'card-glow 4s ease-in-out infinite' }}
-                  onClick={() => navigate(isLoggedIn ? `/worlds/${i + 1}` : '/register')}
+                  onClick={() => navigate(`/worlds/world-${i + 1}`)}
                 >
                   <Text fontSize="36px" mb="2">{w.icon}</Text>
                   <Text

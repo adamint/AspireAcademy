@@ -1317,200 +1317,101 @@ worlds:
             unlockAfterLesson: "5.5.1"
             challengeFile: 5.5.2-custom-health-check.yaml
 
-      - id: "5.6"
-        name: Dashboard Architecture
-        description: "The Aspire Dashboard internals — Blazor, gRPC, TelemetryRepository, and DashboardClient."
-        sortOrder: 6
-        unlockAfterModule: "5.5"
-        lessons:
-          - id: "5.6.1"
-            title: "Dashboard Architecture Overview"
-            description: "How the Dashboard is built with Blazor, receives telemetry via gRPC, and stores data in TelemetryRepository."
-            type: learn
-            sortOrder: 1
-            xpReward: 100
-            estimatedMinutes: 12
-            contentFile: world-5/5.6.1-dashboard-architecture.md
-          - id: "5.6.2"
-            title: "DashboardClient and Resource Monitoring"
-            description: "How DashboardClient connects to DCP and streams resource state updates to the UI."
-            type: learn
-            sortOrder: 2
-            xpReward: 100
-            estimatedMinutes: 10
-            unlockAfterLesson: "5.6.1"
-            contentFile: world-5/5.6.2-dashboard-client.md
-          - id: "5.6-boss"
-            title: "Boss: Debug a Distributed System"
-            description: "Use the Dashboard to diagnose a multi-service failure using traces, logs, and metrics."
-            type: boss-battle
-            sortOrder: 3
-            xpReward: 750
-            bonusXp: 375
-            estimatedMinutes: 30
-            isBoss: true
-            unlockAfterLesson: "5.6.2"
-            quizFile: 5.6-boss.yaml
-
   - id: world-6
-    name: Publishing & Deployment
-    description: "The pipeline system, manifest publishing, Docker Compose, and Kubernetes deployment."
-    icon: "🚀"
+    name: Testing with Aspire
+    description: "Integration testing with DistributedApplicationTestingBuilder, resource substitution, and test lifecycle management."
+    icon: "🧪"
     sortOrder: 6
     levelRangeStart: 37
     levelRangeEnd: 40
     unlockAfterWorld: world-5
     modules:
       - id: "6.1"
-        name: The Pipeline System
-        description: "PipelineStep, PipelineContext, WellKnownPipelineSteps — Aspire's build-publish-deploy pipeline."
+        name: "Integration Testing Basics"
+        description: "Use DistributedApplicationTestingBuilder to write integration tests against your Aspire app model."
         sortOrder: 1
         unlockAfterModule: null
         lessons:
           - id: "6.1.1"
-            title: "Pipeline Architecture"
-            description: "How PipelineStep, PipelineContext, and PipelineStepContext orchestrate the publish/deploy lifecycle."
+            title: "Introduction to Aspire Testing"
+            description: "Why integration testing matters for distributed apps and how Aspire's testing infrastructure helps."
             type: learn
             sortOrder: 1
-            xpReward: 120
-            estimatedMinutes: 15
-            contentFile: world-6/6.1.1-pipeline-architecture.md
+            xpReward: 100
+            estimatedMinutes: 10
+            contentFile: world-6/6.1.1-testing-introduction.md
           - id: "6.1.2"
-            title: "WellKnownPipelineSteps"
-            description: "The built-in pipeline steps: Publish, Deploy, Build, Push, ProcessParameters, and Diagnostics."
+            title: "DistributedApplicationTestingBuilder"
+            description: "Create a test AppHost with DistributedApplicationTestingBuilder.CreateAsync and configure resources for testing."
             type: learn
             sortOrder: 2
             xpReward: 120
             estimatedMinutes: 12
             unlockAfterLesson: "6.1.1"
-            contentFile: world-6/6.1.2-well-known-steps.md
+            contentFile: world-6/6.1.2-testing-builder.md
           - id: "6.1.3"
-            title: "PipelineStep Dependencies"
-            description: "Use DependsOn and RequiredBy to order pipeline steps with prerequisite relationships."
+            title: "Writing Your First Integration Test"
+            description: "Write a complete integration test that starts an AppHost, waits for resources, and makes HTTP requests."
             type: learn
             sortOrder: 3
-            xpReward: 100
-            estimatedMinutes: 10
+            xpReward: 120
+            estimatedMinutes: 15
             unlockAfterLesson: "6.1.2"
-            contentFile: world-6/6.1.3-step-dependencies.md
+            contentFile: world-6/6.1.3-first-integration-test.md
           - id: "6.1.4"
-            title: "Pipeline Quiz"
-            description: "Test your understanding of the pipeline architecture, steps, and dependencies."
-            type: quiz
+            title: "Integration Testing Challenge"
+            description: "Write an integration test for a two-service app with a database dependency."
+            type: challenge
             sortOrder: 4
-            xpReward: 150
-            estimatedMinutes: 8
+            xpReward: 200
+            bonusXp: 100
+            estimatedMinutes: 15
             unlockAfterLesson: "6.1.3"
-            quizFile: 6.1.4-pipeline-quiz.yaml
+            challengeFile: 6.1.4-integration-test-challenge.yaml
 
       - id: "6.2"
-        name: Manifest Publishing
-        description: "The aspire-manifest.json format and how expressions resolve during publishing."
+        name: "Test Configuration & Patterns"
+        description: "Resource substitution, environment overrides, and test lifecycle patterns."
         sortOrder: 2
         unlockAfterModule: "6.1"
         lessons:
           - id: "6.2.1"
-            title: "aspire-manifest.json"
-            description: "The manifest format — resource definitions, connection strings, bindings, and expression syntax."
+            title: "Resource Substitution in Tests"
+            description: "Replace production resources with test-specific alternatives using the testing builder."
             type: learn
             sortOrder: 1
             xpReward: 100
-            estimatedMinutes: 12
-            contentFile: world-6/6.2.1-manifest-format.md
+            estimatedMinutes: 10
+            contentFile: world-6/6.2.1-resource-substitution.md
           - id: "6.2.2"
-            title: "Manifest Expressions and Resolution"
-            description: "How {resource.connectionString} and {resource.bindings.http.url} expressions resolve at publish time."
+            title: "Test Lifecycle and Cleanup"
+            description: "Properly dispose test resources, handle async lifecycle, and avoid port conflicts."
             type: learn
             sortOrder: 2
             xpReward: 100
             estimatedMinutes: 10
             unlockAfterLesson: "6.2.1"
-            contentFile: world-6/6.2.2-manifest-expressions.md
-
-      - id: "6.3"
-        name: Docker Compose Publishing
-        description: "DockerComposeEnvironmentResource and compose file generation."
-        sortOrder: 3
-        unlockAfterModule: "6.2"
-        lessons:
-          - id: "6.3.1"
-            title: "AddDockerComposeEnvironment"
-            description: "Use AddDockerComposeEnvironment(name) to generate docker-compose.yaml from the Aspire app model."
-            type: learn
-            sortOrder: 1
-            xpReward: 120
-            estimatedMinutes: 12
-            contentFile: world-6/6.3.1-docker-compose-env.md
-          - id: "6.3.2"
-            title: "ConfigureComposeFile and PublishAsDockerComposeService"
-            description: "Customize compose output with ConfigureComposeFile and per-resource customization with PublishAsDockerComposeService."
-            type: learn
-            sortOrder: 2
-            xpReward: 120
-            estimatedMinutes: 12
-            unlockAfterLesson: "6.3.1"
-            contentFile: world-6/6.3.2-compose-customization.md
-          - id: "6.3.3"
-            title: "Docker Compose Challenge"
-            description: "Publish a multi-service Aspire app as a Docker Compose stack with custom service configuration."
-            type: challenge
+            contentFile: world-6/6.2.2-test-lifecycle.md
+          - id: "6.2.3"
+            title: "Testing Patterns Quiz"
+            description: "Test your knowledge of Aspire testing patterns, resource substitution, and lifecycle management."
+            type: quiz
             sortOrder: 3
-            xpReward: 250
-            bonusXp: 125
-            estimatedMinutes: 20
-            unlockAfterLesson: "6.3.2"
-            challengeFile: 6.3.3-compose-challenge.yaml
-
-      - id: "6.4"
-        name: Kubernetes Publishing
-        description: "KubernetesEnvironmentResource, Helm chart generation, and Kubernetes customization."
-        sortOrder: 4
-        unlockAfterModule: "6.3"
-        lessons:
-          - id: "6.4.1"
-            title: "AddKubernetesEnvironment"
-            description: "Use AddKubernetesEnvironment(name) to generate Kubernetes manifests from the Aspire app model."
-            type: learn
-            sortOrder: 1
-            xpReward: 120
-            estimatedMinutes: 12
-            contentFile: world-6/6.4.1-kubernetes-env.md
-          - id: "6.4.2"
-            title: "PublishAsKubernetesService and Customization"
-            description: "Customize Kubernetes output per-resource with PublishAsKubernetesService and KubernetesResource."
-            type: learn
-            sortOrder: 2
-            xpReward: 120
-            estimatedMinutes: 12
-            unlockAfterLesson: "6.4.1"
-            contentFile: world-6/6.4.2-k8s-customization.md
-
-      - id: "6.5"
-        name: Container Image Building
-        description: "Building and pushing container images as part of the publish pipeline."
-        sortOrder: 5
-        unlockAfterModule: "6.4"
-        lessons:
-          - id: "6.5.1"
-            title: "Container Image Building and Pushing"
-            description: "How the Build and Push pipeline steps create and distribute container images."
-            type: learn
-            sortOrder: 1
-            xpReward: 100
-            estimatedMinutes: 10
-            contentFile: world-6/6.5.1-image-building.md
-          - id: "6.5-boss"
-            title: "Boss: Publish to Docker Compose AND Kubernetes"
-            description: "Publish the same Aspire app to both Docker Compose and Kubernetes with custom configuration."
+            xpReward: 150
+            estimatedMinutes: 8
+            unlockAfterLesson: "6.2.2"
+            quizFile: 6.2.3-testing-patterns-quiz.yaml
+          - id: "6.2-boss"
+            title: "Boss: Full Integration Test Suite"
+            description: "Build a complete integration test suite for a multi-service app with database, cache, and API resources."
             type: boss-battle
-            sortOrder: 2
-            xpReward: 1000
-            bonusXp: 500
-            estimatedMinutes: 40
+            sortOrder: 4
+            xpReward: 750
+            bonusXp: 375
+            estimatedMinutes: 30
             isBoss: true
-            unlockAfterLesson: "6.5.1"
-            contentFile: world-6/6.5-boss.md
-            challengeFile: 6.5-boss.yaml
+            unlockAfterLesson: "6.2.3"
+            challengeFile: 6.2-boss.yaml
 
   - id: world-7
     name: Publishing & Deployment
@@ -1965,3 +1866,152 @@ worlds:
             isBoss: true
             unlockAfterLesson: "8.4.3"
             quizFile: 8.4-boss.yaml
+
+  - id: world-9
+    name: Aspire Internals
+    description: "Deep dive into how Aspire works under the hood — the orchestrator, DCP, resource lifecycle, eventing, and dashboard architecture."
+    icon: "🔬"
+    sortOrder: 9
+    levelRangeStart: 51
+    levelRangeEnd: 55
+    unlockAfterWorld: world-8
+    modules:
+      - id: "9.1"
+        name: "The Orchestrator & DCP"
+        description: "How the Developer Control Plane (DCP) manages resource lifecycle, networking, and process orchestration."
+        sortOrder: 1
+        unlockAfterModule: null
+        lessons:
+          - id: "9.1.1"
+            title: "What Is DCP?"
+            description: "The Developer Control Plane — Aspire's Kubernetes-inspired local orchestrator that manages containers, executables, and networking."
+            type: learn
+            sortOrder: 1
+            xpReward: 120
+            estimatedMinutes: 12
+            contentFile: world-9/9.1.1-what-is-dcp.md
+          - id: "9.1.2"
+            title: "How DCP Manages Resources"
+            description: "Resource creation, port allocation, container orchestration, and process management inside DCP."
+            type: learn
+            sortOrder: 2
+            xpReward: 120
+            estimatedMinutes: 15
+            unlockAfterLesson: "9.1.1"
+            contentFile: world-9/9.1.2-dcp-resource-management.md
+          - id: "9.1.3"
+            title: "Build-Time vs Run-Time Configuration"
+            description: "How the app model transforms from build-time definitions to run-time resource instances."
+            type: learn
+            sortOrder: 3
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "9.1.2"
+            contentFile: world-9/9.1.3-build-vs-runtime.md
+
+      - id: "9.2"
+        name: "Resource Lifecycle Internals"
+        description: "ResourceNotificationService, lifecycle hooks, the eventing system, and custom resource implementation."
+        sortOrder: 2
+        unlockAfterModule: "9.1"
+        lessons:
+          - id: "9.2.1"
+            title: "ResourceNotificationService"
+            description: "How resource state changes are published, subscribed to, and consumed by the Dashboard and orchestrator."
+            type: learn
+            sortOrder: 1
+            xpReward: 120
+            estimatedMinutes: 12
+            contentFile: world-9/9.2.1-resource-notification-service.md
+          - id: "9.2.2"
+            title: "IDistributedApplicationLifecycleHook"
+            description: "The three lifecycle callbacks — BeforeStartAsync, AfterEndpointsAllocatedAsync, AfterResourcesCreatedAsync."
+            type: learn
+            sortOrder: 2
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "9.2.1"
+            contentFile: world-9/9.2.2-lifecycle-hooks.md
+          - id: "9.2.3"
+            title: "The Eventing System"
+            description: "Subscribe to resource events with IDistributedApplicationEventing — BeforeResourceStartedEvent and custom events."
+            type: learn
+            sortOrder: 3
+            xpReward: 120
+            estimatedMinutes: 12
+            unlockAfterLesson: "9.2.2"
+            contentFile: world-9/9.2.3-eventing-system.md
+          - id: "9.2.4"
+            title: "Implementing Custom Resource Types"
+            description: "Build a custom resource from scratch — implement IResource, add annotations, create extension methods, and register with the builder."
+            type: learn
+            sortOrder: 4
+            xpReward: 150
+            estimatedMinutes: 15
+            unlockAfterLesson: "9.2.3"
+            contentFile: world-9/9.2.4-custom-resource-types.md
+
+      - id: "9.3"
+        name: "Dashboard Architecture"
+        description: "How the Aspire Dashboard is built with Blazor, gRPC, and OTLP — from telemetry ingestion to UI rendering."
+        sortOrder: 3
+        unlockAfterModule: "9.2"
+        lessons:
+          - id: "9.3.1"
+            title: "Dashboard Architecture Overview"
+            description: "How the Dashboard is built with Blazor, receives telemetry via gRPC, and stores data in TelemetryRepository."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 12
+            contentFile: world-5/5.6.1-dashboard-architecture.md
+          - id: "9.3.2"
+            title: "DashboardClient and Resource Monitoring"
+            description: "How DashboardClient connects to DCP and streams resource state updates to the UI."
+            type: learn
+            sortOrder: 2
+            xpReward: 100
+            estimatedMinutes: 10
+            unlockAfterLesson: "9.3.1"
+            contentFile: world-5/5.6.2-dashboard-client.md
+
+      - id: "9.4"
+        name: "Service Discovery Internals"
+        description: "How service discovery resolves endpoints at runtime — configuration providers, DNS, and endpoint selection."
+        sortOrder: 4
+        unlockAfterModule: "9.3"
+        lessons:
+          - id: "9.4.1"
+            title: "How Service Discovery Works Internally"
+            description: "The resolution pipeline — ConfigurationServiceEndpointProvider, DNS resolution, and endpoint selection strategies."
+            type: learn
+            sortOrder: 1
+            xpReward: 120
+            estimatedMinutes: 15
+            contentFile: world-9/9.4.1-service-discovery-internals.md
+
+      - id: "9.5"
+        name: "Health Check Evaluation"
+        description: "How the orchestrator evaluates health checks and translates them into resource states."
+        sortOrder: 5
+        unlockAfterModule: "9.4"
+        lessons:
+          - id: "9.5.1"
+            title: "How Health Checks Are Evaluated"
+            description: "The health check polling loop, resource state transitions, and how WaitFor consumes health status."
+            type: learn
+            sortOrder: 1
+            xpReward: 100
+            estimatedMinutes: 10
+            contentFile: world-9/9.5.1-health-check-evaluation.md
+          - id: "9.5-boss"
+            title: "Boss: Aspire Internals Mastery"
+            description: "Test your deep knowledge of DCP, lifecycle hooks, eventing, and the Dashboard architecture."
+            type: boss-battle
+            sortOrder: 2
+            xpReward: 1000
+            bonusXp: 500
+            estimatedMinutes: 30
+            isBoss: true
+            unlockAfterLesson: "9.5.1"
+            quizFile: 9.5-boss.yaml
