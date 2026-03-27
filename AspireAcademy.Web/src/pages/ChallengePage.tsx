@@ -582,19 +582,6 @@ export default function ChallengePage() {
             borderColor="game.pixelBorder"
           >
             <Button
-              data-testid="challenge-run"
-              variant="outline"
-              size="sm"
-              borderColor="#555"
-              color="#d4d4d4"
-              _hover={{ bg: 'whiteAlpha.100' }}
-              onClick={handleRun}
-              disabled={running || submitting || showSuccess || isLocked}
-            >
-              <FiPlay />
-              {running ? 'Running...' : 'Run'}
-            </Button>
-            <Button
               data-testid="challenge-submit"
               size="sm"
               bg="aspire.600"
@@ -604,7 +591,7 @@ export default function ChallengePage() {
               disabled={running || submitting || showSuccess || !code.trim() || isLocked}
             >
               <FiUpload />
-              {submitting ? 'Submitting...' : 'Submit'}
+              {submitting ? 'Checking...' : 'Check & Submit'}
             </Button>
           </HStack>
         </Flex>
