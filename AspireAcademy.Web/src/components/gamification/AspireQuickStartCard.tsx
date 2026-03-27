@@ -23,7 +23,6 @@ export default function AspireQuickStartCard() {
       data-testid="aspire-quickstart-card"
     >
       <Flex align="center" gap={2} mb={3}>
-        <Text fontSize="lg">🚀</Text>
         <Text {...pixelFontProps} fontSize="xs" color="dark.text">
           Get Started with Aspire
         </Text>

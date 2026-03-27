@@ -140,18 +140,17 @@ const RESOURCE_TEMPLATES: ResourceTemplate[] = [
   { type: 'parameter', label: 'Parameter', icon: TbVariable, color: '#E8912D', defaultName: 'my-param', supportsDatabases: false, category: 'config' },
 ];
 
-const CATEGORIES: { key: ResourceTemplate['category']; label: string; emoji: string }[] = [
-  { key: 'infrastructure', label: 'Infrastructure', emoji: '🗄️' },
-  { key: 'hosting', label: 'Hosting', emoji: '🚀' },
-  { key: 'azure', label: 'Azure', emoji: '☁️' },
-  { key: 'config', label: 'Config', emoji: '⚙️' },
+const CATEGORIES: { key: ResourceTemplate['category']; label: string }[] = [
+  { key: 'infrastructure', label: 'Infrastructure' },
+  { key: 'hosting', label: 'Hosting' },
+  { key: 'azure', label: 'Azure' },
+  { key: 'config', label: 'Config' },
 ];
 
 // ─── Pre-built examples ──────────────────────────────────────────────────────
 
 interface Example {
   name: string;
-  emoji: string;
   resources: PlaygroundResource[];
 }
 
@@ -183,7 +182,6 @@ function buildExamples(): Example[] {
   const ecomIds = { pg: makeId(), cache: makeId(), mq: makeId(), api: makeId(), web: makeId() };
   const ecommerce: Example = {
     name: 'E-Commerce',
-    emoji: '🛒',
     resources: [
       makeResource({ id: ecomIds.pg, type: 'postgres', name: 'postgres', databases: ['catalogdb'], hasDataVolume: true }),
       makeResource({ id: ecomIds.cache, type: 'redis', name: 'cache' }),
@@ -196,7 +194,6 @@ function buildExamples(): Example[] {
   const fsIds = { pg: makeId(), cache: makeId(), api: makeId(), frontend: makeId() };
   const fullstack: Example = {
     name: 'Full Stack',
-    emoji: '🏗️',
     resources: [
       makeResource({ id: fsIds.pg, type: 'postgres', name: 'postgres', databases: ['appdb'], hasDataVolume: true }),
       makeResource({ id: fsIds.cache, type: 'redis', name: 'cache' }),
@@ -208,7 +205,6 @@ function buildExamples(): Example[] {
   const mlIds = { redis: makeId(), pg: makeId(), trainer: makeId(), api: makeId(), minio: makeId() };
   const mlPipeline: Example = {
     name: 'ML Pipeline',
-    emoji: '🤖',
     resources: [
       makeResource({ id: mlIds.pg, type: 'postgres', name: 'metadata-db', databases: ['experiments'], hasDataVolume: true }),
       makeResource({ id: mlIds.redis, type: 'redis', name: 'job-queue' }),
@@ -221,7 +217,6 @@ function buildExamples(): Example[] {
   const saasIds = { pg: makeId(), redis: makeId(), blob: makeId(), kv: makeId(), dbPwd: makeId(), auth: makeId(), api: makeId() };
   const saas: Example = {
     name: 'SaaS App',
-    emoji: '🏢',
     resources: [
       makeResource({ id: saasIds.dbPwd, type: 'parameter', name: 'db-password', isSecret: true }),
       makeResource({ id: saasIds.pg, type: 'postgres', name: 'postgres', databases: ['tenantdb'], hasDataVolume: true }),
@@ -973,7 +968,7 @@ export default function PlaygroundPage() {
               onClick={() => loadExample(ex)}
               data-testid={`example-${ex.name.toLowerCase().replace(/\s+/g, '-')}`}
             >
-              {ex.emoji} {ex.name}
+              {ex.name}
             </Button>
           ))}
           <Button size="sm" variant="outline" colorPalette="red" onClick={reset} data-testid="reset-btn">
@@ -989,7 +984,7 @@ export default function PlaygroundPage() {
             {CATEGORIES.map((cat) => (
               <Box key={cat.key} minW="160px">
                 <Text {...pixelFontProps} fontSize="2xs" color="aspire.300" mb="3">
-                  {cat.emoji} {cat.label}
+                  {cat.label}
                 </Text>
                 <Flex direction="column" gap="2">
                   {RESOURCE_TEMPLATES.filter((t) => t.category === cat.key).map((tmpl) => (
@@ -1022,14 +1017,14 @@ export default function PlaygroundPage() {
             color="dark.muted" _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
             borderRadius="sm"
           >
-            🎮 Canvas ({resources.length})
+            Canvas ({resources.length})
           </Tabs.Trigger>
           <Tabs.Trigger value="code"
             fontSize="10px" px="5" py="2" {...pixelFontProps}
             color="dark.muted" _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
             borderRadius="sm"
           >
-            💻 Code
+            Code
           </Tabs.Trigger>
         </Tabs.List>
 
@@ -1037,7 +1032,7 @@ export default function PlaygroundPage() {
         <Tabs.Content value="canvas">
           {connectingFrom && (
             <Badge colorPalette="yellow" variant="solid" {...pixelFontProps} fontSize="2xs" mb="4" role="status" aria-live="polite">
-              🔗 Click another resource to connect
+              Click another resource to connect
             </Badge>
           )}
 
@@ -1045,7 +1040,7 @@ export default function PlaygroundPage() {
             <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg">
               <Card.Body p="5">
                 <Flex direction="column" align="center" justify="center" minH="300px" gap="4" data-testid="canvas-empty">
-                  <Text fontSize="4xl">🎯</Text>
+                  <Text fontSize="4xl">+</Text>
                   <Text {...pixelFontProps} fontSize="xs" color="dark.muted" textAlign="center">
                     Add resources from the palette above
                   </Text>

@@ -71,7 +71,7 @@ export default function ModuleCard({ module }: ModuleCardProps) {
             variant="subtle"
           >
             {module.completedLessons}/{module.totalLessons}
-            {skippedCount > 0 && ` (${skippedCount} ⏭️)`}
+            {skippedCount > 0 && ` (${skippedCount} skipped)`}
           </Badge>
         </Flex>
 

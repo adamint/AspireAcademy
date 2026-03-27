@@ -137,7 +137,7 @@ export default function AiTutorSidebar() {
           aria-label="Open AI Tutor"
           title="Open AI Tutor for help"
         >
-          🤖
+          AI
         </Box>
       )}
 
@@ -154,7 +154,7 @@ export default function AiTutorSidebar() {
             <Drawer.Header bg="dark.sidebar" py={3} px={4}>
               <Flex align="center" justify="space-between" w="100%">
                 <Text {...pixelFontProps} fontSize="10px" color="whiteAlpha.900">
-                  🤖 AI Tutor
+                  AI Tutor
                 </Text>
                 <IconButton
                   aria-label="Close"

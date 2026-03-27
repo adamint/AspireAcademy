@@ -72,7 +72,7 @@ export default function AchievementsPage() {
             ml="auto"
           >
             <Text {...pixelFontProps} fontSize="9px">
-              🚀 Sign Up to Unlock!
+              Sign Up to Unlock
             </Text>
           </Button>
         )}

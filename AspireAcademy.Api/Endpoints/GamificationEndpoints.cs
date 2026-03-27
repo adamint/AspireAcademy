@@ -280,6 +280,22 @@ public static class GamificationEndpoints
         // Check achievements (outside transaction — not critical path)
         var achievements = await gamification.CheckAchievementsAsync(userId);
 
+        // Re-read XP after achievement checks — achievements may have awarded bonus XP
+        if (achievements.Count > 0)
+        {
+            var freshXp = await db.UserXp.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+            if (freshXp is not null)
+            {
+                result = result with
+                {
+                    TotalXp = freshXp.TotalXp,
+                    CurrentLevel = freshXp.CurrentLevel,
+                    CurrentRank = freshXp.CurrentRank,
+                    WeeklyXp = freshXp.WeeklyXp
+                };
+            }
+        }
+
         AcademyMetrics.LessonsCompleted.Add(1);
         AcademyMetrics.XpAwarded.Add(xpEarned);
         if (achievements.Count > 0)

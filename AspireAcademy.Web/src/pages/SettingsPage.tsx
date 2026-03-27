@@ -187,14 +187,14 @@ export default function SettingsPage() {
   return (
     <VStack maxW="700px" mx="auto" p={6} gap={6} align="stretch">
       <Text {...pixelFontProps} fontSize="xl" color="dark.text">
-        ⚙️ Settings
+        Settings
       </Text>
 
       {/* ─── Appearance ─── */}
       <Box {...retroCardProps} bg="dark.card" p={5}>
         <Flex justify="space-between" align="center" mb={4}>
           <Text {...pixelFontProps} fontSize="xs" color="dark.text">
-            🎨 Appearance
+            Appearance
           </Text>
           <SavedIndicator visible={saved} />
         </Flex>
@@ -211,8 +211,8 @@ export default function SettingsPage() {
               <SegmentGroup.Indicator />
               <SegmentGroup.Items
                 items={[
-                  { value: 'dark', label: '🌙 Dark' },
-                  { value: 'light', label: '☀️ Light' },
+                  { value: 'dark', label: 'Dark' },
+                  { value: 'light', label: 'Light' },
                 ]}
               />
             </SegmentGroup.Root>
@@ -248,7 +248,7 @@ export default function SettingsPage() {
       {/* ─── Notifications ─── */}
       <Box {...retroCardProps} bg="dark.card" p={5}>
         <Text {...pixelFontProps} fontSize="xs" color="dark.text" mb={4}>
-          🔔 Notifications
+          Notifications
         </Text>
         <VStack align="stretch" gap={1}>
           <SettingSwitch
@@ -272,7 +272,7 @@ export default function SettingsPage() {
       {/* ─── Learning Preferences ─── */}
       <Box {...retroCardProps} bg="dark.card" p={5}>
         <Text {...pixelFontProps} fontSize="xs" color="dark.text" mb={4}>
-          📚 Learning Preferences
+          Learning Preferences
         </Text>
         <VStack align="stretch" gap={1}>
           <SettingSwitch
@@ -299,7 +299,7 @@ export default function SettingsPage() {
       {/* ─── Account ─── */}
       <Box {...retroCardProps} bg="dark.card" p={5}>
         <Text {...pixelFontProps} fontSize="xs" color="dark.text" mb={4}>
-          👤 Account
+          Account
         </Text>
         <VStack align="stretch" gap={3}>
           <Button
@@ -342,7 +342,7 @@ export default function SettingsPage() {
         boxShadow="4px 4px 0 var(--chakra-colors-game-error, #D13438)"
       >
         <Text {...pixelFontProps} fontSize="xs" color="game.error" mb={4}>
-          ⚠️ Danger Zone
+          Danger Zone
         </Text>
         <Button
           variant="outline"

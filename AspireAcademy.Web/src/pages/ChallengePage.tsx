@@ -10,16 +10,11 @@ import {
   Center,
   VStack,
   HStack,
-  Input,
-  Badge,
-  Drawer,
   Skeleton,
 } from '@chakra-ui/react';
 import {
   FiUpload,
   FiSun,
-  FiX,
-  FiSend,
   FiArrowLeft,
   FiArrowRight,
 } from 'react-icons/fi';
@@ -95,9 +90,10 @@ interface SubmitApiResponse {
   };
 }
 
-interface AiMessage {
-  role: 'user' | 'assistant';
-  content: string;
+// AI tutor feature hidden while not working
+// interface AiMessage {
+//   role: 'user' | 'assistant';
+//   content: string;
 }
 
 // ── Test case icon helper ────────────────────────────
@@ -135,11 +131,11 @@ export default function ChallengePage() {
   // Hints
   const [revealedHints, setRevealedHints] = useState(0);
 
-  // AI sidebar
-  const [aiOpen, setAiOpen] = useState(false);
-  const [aiMessages, setAiMessages] = useState<AiMessage[]>([]);
-  const [aiInput, setAiInput] = useState('');
-  const [aiLoading, setAiLoading] = useState(false);
+  // AI sidebar (hidden while not working)
+  // const [aiOpen, setAiOpen] = useState(false);
+  // const [aiMessages, setAiMessages] = useState<AiMessage[]>([]);
+  // const [aiInput, setAiInput] = useState('');
+  // const [aiLoading, setAiLoading] = useState(false);
 
   // Success / Failure
   const [showSuccess, setShowSuccess] = useState(false);
@@ -249,34 +245,7 @@ export default function ChallengePage() {
     setRevealedHints((n) => n + 1);
   }, []);
 
-  const handleAiSend = useCallback(async () => {
-    if (!aiInput.trim() || !challenge) return;
-    const userMsg: AiMessage = { role: 'user', content: aiInput.trim() };
-    setAiMessages((prev) => [...prev, userMsg]);
-    setAiInput('');
-    setAiLoading(true);
-    try {
-      const res = await api.post<{ reply: string }>('/ai/chat', {
-        message: userMsg.content,
-        context: {
-          challengeId: challenge.id,
-          code,
-        },
-      });
-      setAiMessages((prev) => [
-        ...prev,
-        { role: 'assistant', content: res.data.reply },
-      ]);
-    } catch {
-      console.error('[ChallengePage] Failed to get AI hint for challenge:', lessonId);
-      setAiMessages((prev) => [
-        ...prev,
-        { role: 'assistant', content: 'Sorry, I could not process your request right now.' },
-      ]);
-    } finally {
-      setAiLoading(false);
-    }
-  }, [aiInput, challenge, code, lessonId]);
+  // handleAiSend hidden while AI tutor not working
 
   // ── Loading ──────────────────────────────────────
 
@@ -375,7 +344,7 @@ export default function ChallengePage() {
             {...retroCardProps}
           >
             <Heading {...pixelFontProps} fontSize="md" mb={4}>
-              🎉 All Tests Passed!
+              All Tests Passed! 🎉
             </Heading>
             {xpEarned > 0 && (
               <Text
@@ -431,7 +400,7 @@ export default function ChallengePage() {
         gap={2}
       >
         <Heading size="sm" color="dark.text" display="flex" alignItems="center" gap={2}>
-          💻 {challenge.title}
+          {challenge.title}
         </Heading>
         <Button
           variant="ghost"
@@ -480,7 +449,7 @@ export default function ChallengePage() {
           {failureMessage && (
             <Box px={5} py={3} bg="red.900" borderTop="2px solid" borderBottom="2px solid" borderColor="red.500">
               <Text fontSize="sm" color="red.200" fontWeight="bold">
-                ❌ {failureMessage}
+                  ❌ {failureMessage}
               </Text>
             </Box>
           )}
@@ -547,16 +516,7 @@ export default function ChallengePage() {
                 </Button>
               );
             })}
-            <Button
-              size="xs"
-              variant="outline"
-              borderColor="aspire.600"
-              color="aspire.400"
-              _hover={{ bg: 'aspire.900' }}
-              onClick={() => setAiOpen(true)}
-            >
-              🤖 Ask AI
-            </Button>
+            {/* Ask AI button hidden while AI tutor not working */}
           </Flex>
         </Flex>
 
@@ -602,116 +562,14 @@ export default function ChallengePage() {
                 color="white"
                 _hover={{ bg: 'aspire.500' }}
               >
-                <RouterLink to="/register">🔐 Sign up to submit your code</RouterLink>
+                <RouterLink to="/register">Sign up to submit your code</RouterLink>
               </Button>
             )}
           </HStack>
         </Flex>
       </Flex>
 
-      {/* AI Tutor drawer */}
-      <Drawer.Root
-        open={aiOpen}
-        onOpenChange={(e) => setAiOpen(e.open)}
-        placement="end"
-        size="md"
-      >
-        <Drawer.Backdrop />
-        <Drawer.Positioner>
-          <Drawer.Content bg="dark.sidebar" color="whiteAlpha.900" borderLeft="3px solid" borderColor="game.pixelBorder">
-            <Drawer.Header borderBottom="2px solid" borderColor="game.pixelBorder">
-              <Flex justify="space-between" align="center" w="100%">
-                <Drawer.Title {...pixelFontProps} fontSize="xs">
-                  🤖 AI Tutor
-                </Drawer.Title>
-                <Drawer.CloseTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    color="gray.400"
-                    _hover={{ color: 'gray.200' }}
-                  >
-                    <FiX />
-                  </Button>
-                </Drawer.CloseTrigger>
-              </Flex>
-            </Drawer.Header>
-
-            <Drawer.Body display="flex" flexDirection="column" p={0}>
-              {/* Messages */}
-              <Flex
-                flex={1}
-                direction="column"
-                gap={3}
-                p={3}
-                overflowY="auto"
-              >
-                {aiMessages.length === 0 && (
-                  <Text color="dark.muted" p={3} fontStyle="italic" fontSize="sm">
-                    Ask me for hints about this challenge!
-                  </Text>
-                )}
-                {aiMessages.map((msg, i) => (
-                  <Box
-                    key={i}
-                    alignSelf={msg.role === 'user' ? 'flex-end' : 'flex-start'}
-                    maxW="85%"
-                    px={4}
-                    py={2}
-                    borderRadius="lg"
-                    fontSize="sm"
-                    lineHeight="tall"
-                    css={{ wordBreak: 'break-word' }}
-                    bg={msg.role === 'user' ? 'aspire.700' : 'whiteAlpha.100'}
-                    color={msg.role === 'user' ? 'white' : 'gray.200'}
-                  >
-                    {msg.content}
-                  </Box>
-                ))}
-                {aiLoading && (
-                  <Badge variant="outline" colorPalette="purple" alignSelf="flex-start">
-                    Thinking...
-                  </Badge>
-                )}
-              </Flex>
-
-              {/* Chat input */}
-              <HStack p={3} borderTop="2px solid" borderColor="game.pixelBorder" gap={2}>
-                <Input
-                  flex={1}
-                  placeholder="Ask for a hint..."
-                  value={aiInput}
-                  onChange={(e) => setAiInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleAiSend();
-                    }
-                  }}
-                  disabled={aiLoading}
-                  bg="whiteAlpha.100"
-                  border="2px solid"
-                  borderColor="game.pixelBorder"
-                  color="gray.100"
-                  _placeholder={{ color: 'dark.muted' }}
-                  _focus={{ borderColor: 'aspire.500' }}
-                  size="sm"
-                />
-                <Button
-                  size="sm"
-                  bg="aspire.600"
-                  color="white"
-                  _hover={{ bg: 'aspire.500' }}
-                  onClick={handleAiSend}
-                  disabled={aiLoading || !aiInput.trim()}
-                >
-                  <FiSend />
-                </Button>
-              </HStack>
-            </Drawer.Body>
-          </Drawer.Content>
-        </Drawer.Positioner>
-      </Drawer.Root>
+      {/* AI Tutor drawer hidden while not working */}
     </Flex>
   );
 }

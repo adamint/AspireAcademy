@@ -190,6 +190,87 @@ public class QuizEndpointsTests : TestFixture
     }
 
     [Fact]
+    public async Task SubmitQuiz_TotalXpIncludesAchievementBonusXp()
+    {
+        // Use a fresh user with prerequisites completed
+        var userId = Guid.Parse("88888888-8888-8888-8888-888888888888");
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AcademyDbContext>();
+
+            db.Users.Add(new User
+            {
+                Id = userId,
+                Username = "quizachuser",
+                Email = "quizachuser@example.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password1"),
+                DisplayName = "Quiz Ach User",
+                CreatedAt = DateTime.UtcNow,
+                LoginStreakDays = 0
+            });
+            db.UserXp.Add(new UserXp
+            {
+                UserId = userId,
+                TotalXp = 0,
+                CurrentLevel = 1,
+                CurrentRank = "aspire-intern",
+                WeeklyXp = 0,
+                WeekStart = DateOnly.FromDateTime(DateTime.UtcNow)
+            });
+
+            // Prereq: lesson-learn-1 completed so quiz is unlocked
+            db.UserProgress.Add(new UserProgress
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                LessonId = "lesson-learn-1",
+                Status = "completed",
+                Attempts = 1,
+                XpEarned = 50,
+                CompletedAt = DateTime.UtcNow
+            });
+
+            // Seed an achievement that triggers on first quiz pass
+            if (!db.Achievements.Any(a => a.Id == "test-quiz-pass-ach"))
+            {
+                db.Achievements.Add(new Achievement
+                {
+                    Id = "test-quiz-pass-ach",
+                    Name = "Quiz Whiz",
+                    Description = "Pass your first quiz",
+                    Icon = "📝",
+                    Category = "milestone",
+                    TriggerType = "quiz-pass",
+                    TriggerConfig = System.Text.Json.JsonDocument.Parse("{\"count\":1}"),
+                    XpReward = 40,
+                    Rarity = "common",
+                    SortOrder = 1
+                });
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        using var authClient = CreateAuthenticatedClient(userId, "quizachuser");
+
+        var request = new QuizSubmitRequest(
+        [
+            new QuizAnswer(QuizQuestion1Id, ["a"], null),
+            new QuizAnswer(QuizQuestion2Id, ["b"], null),
+        ]);
+
+        var response = await authClient.PostAsJsonAsync("/api/quizzes/lesson-quiz-1/submit", request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body = await ReadJsonAsync<QuizSubmitResponse>(response);
+        body!.Passed.Should().BeTrue();
+        body.XpEarned.Should().Be(100); // base quiz XP
+        body.AchievementsUnlocked.Should().Contain(a => a.Id == "test-quiz-pass-ach");
+        // TotalXp must include base (100) + perfect bonus (25) + achievement bonus (40) = 165
+        body.TotalXp.Should().Be(165);
+    }
+
+    [Fact]
     public async Task SubmitQuiz_WithoutAuth_Returns401()
     {
         var request = new QuizSubmitRequest([]);

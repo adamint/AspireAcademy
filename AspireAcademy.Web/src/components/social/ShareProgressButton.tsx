@@ -29,10 +29,10 @@ export default function ShareProgressButton({
       : 0;
 
     const text = [
-      `🎮 I'm Level ${level} (${formatRank(rank)}) on Aspire Learn!`,
-      `📚 ${completedLessons}/${totalLessons} lessons completed (${percentage}%)`,
-      `🏆 ${achievementCount} achievements unlocked`,
-      streakDays > 0 ? `🔥 ${streakDays}-day learning streak` : null,
+      `I'm Level ${level} (${formatRank(rank)}) on Aspire Learn!`,
+      `${completedLessons}/${totalLessons} lessons completed (${percentage}%)`,
+      `${achievementCount} achievements unlocked`,
+      streakDays > 0 ? `${streakDays}-day learning streak` : null,
       '',
       'Master distributed app development with Aspire!',
       'https://aspire.dev',

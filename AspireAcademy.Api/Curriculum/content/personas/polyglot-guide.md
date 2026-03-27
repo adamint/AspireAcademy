@@ -13,7 +13,7 @@ Your team uses multiple languages — C# APIs alongside TypeScript frontends, Py
 - Impossible to run the full stack locally without a 50-line Docker Compose file
 - Observability gaps — traces stop at language boundaries
 
-**With Aspire**, one AppHost (in C#, TypeScript, Go, or Python) declares every service. Service discovery works across languages automatically. OpenTelemetry traces flow from your C# API through your Go worker to your Python ML service. Everyone sees the same Dashboard.
+**With Aspire**, one AppHost (in C# or TypeScript) declares every service. Service discovery works across languages automatically. OpenTelemetry traces flow from your C# API through your Go worker to your Python ML service. Everyone sees the same Dashboard.
 
 ## Your Priority Worlds
 
@@ -38,11 +38,11 @@ Your team uses multiple languages — C# APIs alongside TypeScript frontends, Py
 
 1. **One AppHost, many languages** — `AddProject<T>()` for .NET, `AddNpmApp()` for Node, `AddPythonApp()` for Python, `AddContainer()` for anything else
 2. **`WithReference()` crosses language boundaries** — A TypeScript frontend can reference a C# API, and Aspire handles the URL injection
-3. **Polyglot AppHosts** — Your team can write the AppHost itself in TypeScript, Go, Python, or Java via RemoteHost
+3. **TypeScript AppHosts** — Your team can write the AppHost itself in TypeScript (in addition to C#) via RemoteHost
 4. **ATS (Application Type System)** generates type-safe bindings for each language from the Aspire resource model
 5. **OpenTelemetry is language-agnostic** — Traces, metrics, and logs flow through the Dashboard from all services
 6. **Code generation pipeline** turns the Aspire model into TypeScript stubs, Go structs, Python dataclasses, etc.
 
 ## Start Here
 
-Start with **[World 1](/worlds/world-1)** (everyone needs foundations), then go through **[World 3](/worlds/world-3)** paying special attention to Module 3.3 (polyglot resources). **[World 9](/worlds/world-9)** is your team's most important world — it explains how non-.NET AppHosts communicate with Aspire infrastructure. After that, follow the linear path through Worlds 4-6 for cross-service wiring and observability.
+Start with **[World 1](/worlds/world-1)** (everyone needs foundations), then go through **[World 3](/worlds/world-3)** paying special attention to Module 3.3 (polyglot resources). **[World 9](/worlds/world-9)** is important for TypeScript teams — it explains how the TypeScript AppHost communicates with Aspire infrastructure via RemoteHost. After that, follow the linear path through Worlds 4-6 for cross-service wiring and observability.

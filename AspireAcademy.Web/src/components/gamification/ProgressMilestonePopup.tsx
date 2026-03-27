@@ -199,7 +199,7 @@ export default function ProgressMilestonePopup({ worlds }: ProgressMilestonePopu
             onClick={handleDismiss}
             data-testid="milestone-dismiss-btn"
           >
-            {activeMilestone.milestone === 100 ? '🏆 Onward!' : 'Keep Going! 💪'}
+            {activeMilestone.milestone === 100 ? '🏆 Onward!' : 'Keep Going!'}
           </Button>
         </Box>
       </motion.div>

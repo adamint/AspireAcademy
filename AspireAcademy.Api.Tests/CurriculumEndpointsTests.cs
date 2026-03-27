@@ -276,4 +276,38 @@ public class CurriculumEndpointsTests : TestFixture
             validLayers.Should().Contain(layer, $"concept '{id}' references unknown layer '{layer}'");
         }
     }
+
+    // ── Cross-module navigation ──
+
+    [Fact]
+    public async Task GetLessonDetail_LastLessonInModule_HasNextLessonFromNextModule()
+    {
+        using var authClient = CreateAuthenticatedClient(TestUserId);
+
+        // lesson-challenge-1 is the last lesson in mod-1; mod-2 is the next module in world-1
+        var response = await authClient.GetAsync("/api/lessons/lesson-challenge-1");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var lesson = await ReadJsonAsync<LessonDetailDto>(response);
+        lesson.Should().NotBeNull();
+        lesson!.NextLessonId.Should().Be("lesson-locked-1",
+            "last lesson in a module should link to the first lesson of the next module in the same world");
+        lesson.NextLessonTitle.Should().Be("Locked Lesson");
+    }
+
+    [Fact]
+    public async Task GetLessonDetail_FirstLessonInModule_HasPreviousLessonFromPreviousModule()
+    {
+        using var authClient = CreateAuthenticatedClient(TestUserId);
+
+        // lesson-locked-1 is the first lesson in mod-2; mod-1 is the previous module in world-1
+        var response = await authClient.GetAsync("/api/lessons/lesson-locked-1");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var lesson = await ReadJsonAsync<LessonDetailDto>(response);
+        lesson.Should().NotBeNull();
+        lesson!.PreviousLessonId.Should().Be("lesson-challenge-1",
+            "first lesson in a module should link to the last lesson of the previous module in the same world");
+        lesson.PreviousLessonTitle.Should().Be("Code Challenge");
+    }
 }

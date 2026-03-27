@@ -304,10 +304,20 @@ public static class QuizEndpoints
             ? await gamification.CheckAchievementsAsync(userId)
             : [];
 
-        // Fetch current XP stats if no award happened (retake)
+        // Fetch current XP stats — always re-read from DB after achievement checks
+        // to include any achievement bonus XP that was awarded
         int totalXp, currentLevel, weeklyXp;
         string currentRank;
-        if (lastXpResult is not null)
+        if (lastXpResult is not null && achievements.Count > 0)
+        {
+            // Achievements may have awarded bonus XP — re-read from DB
+            var freshXp = await db.UserXp.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+            totalXp = freshXp?.TotalXp ?? lastXpResult.TotalXp;
+            currentLevel = freshXp?.CurrentLevel ?? lastXpResult.CurrentLevel;
+            currentRank = freshXp?.CurrentRank ?? lastXpResult.CurrentRank;
+            weeklyXp = freshXp?.WeeklyXp ?? lastXpResult.WeeklyXp;
+        }
+        else if (lastXpResult is not null)
         {
             totalXp = lastXpResult.TotalXp;
             currentLevel = lastXpResult.CurrentLevel;

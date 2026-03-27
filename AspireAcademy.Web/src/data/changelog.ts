@@ -13,7 +13,7 @@ export const changelog: ChangelogEntry[] = [
   {
     version: '1.3.0',
     date: '2026-03-27',
-    title: '🎮 The Big Update',
+    title: 'The Big Update',
     highlights: ['Architecture Playground', 'Weekly Challenges', 'Certificates'],
     entries: [
       { type: 'feature', text: 'Architecture Playground — visually design Aspire app models and see generated code' },
@@ -32,7 +32,7 @@ export const changelog: ChangelogEntry[] = [
   {
     version: '1.2.0',
     date: '2026-03-25',
-    title: '🔧 Challenge Overhaul',
+    title: 'Challenge Overhaul',
     highlights: ['Stronger test cases', 'Comment-aware checker', 'Failure banner'],
     entries: [
       { type: 'fix', text: 'Code checker now strips comments before validation — no more passing tests via TODO comments' },
@@ -45,7 +45,7 @@ export const changelog: ChangelogEntry[] = [
   {
     version: '1.1.0',
     date: '2026-03-20',
-    title: '🎨 Visual Refresh',
+    title: 'Visual Refresh',
     highlights: ['Dark theme', 'Retro aesthetic', 'DiceBear avatars'],
     entries: [
       { type: 'feature', text: 'Dark theme default with light mode toggle' },
@@ -58,7 +58,7 @@ export const changelog: ChangelogEntry[] = [
   {
     version: '1.0.0',
     date: '2026-03-15',
-    title: '🚀 Launch',
+    title: 'Launch',
     highlights: ['13 worlds', 'Code challenges', 'Gamification'],
     entries: [
       { type: 'feature', text: 'Initial release with 13 worlds of Aspire content' },

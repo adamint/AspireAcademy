@@ -102,11 +102,11 @@ export function copyCertificateSummary(data: CertificateData): void {
   const lines = [
     `🏆 Aspire Learn — ${isMaster ? 'Master Certificate' : 'Certificate of Completion'}`,
     '',
-    isMaster ? '🎓 Full Curriculum Mastery' : `${data.worldIcon} World ${data.worldSortOrder}: ${data.worldName}`,
+    isMaster ? 'Full Curriculum Mastery' : `${data.worldIcon} World ${data.worldSortOrder}: ${data.worldName}`,
     `Awarded to: ${data.displayName}`,
     `Date: ${formatDateLong(data.completedAt)}`,
     '',
-    `📚 ${data.lessonsCompleted} Lessons | ⭐ ${data.xpEarned.toLocaleString()} XP | ✅ ${data.quizzesPassed} Quizzes`,
+    `${data.lessonsCompleted} Lessons | ${data.xpEarned.toLocaleString()} XP | ${data.quizzesPassed} Quizzes`,
     '',
     `Certificate ID: ${data.certificateId}`,
     '',

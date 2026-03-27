@@ -4,16 +4,16 @@ import { motion } from 'framer-motion';
 import { pixelFontProps } from '../../theme/aspireTheme';
 
 const messages = [
-  '🔥 You\'re on fire!',
-  '⭐ Aspire expert in the making!',
-  '🚀 One step closer to production-ready apps!',
-  '💪 Keep crushing it!',
-  '🎯 Another lesson down — you\'re unstoppable!',
-  '🌟 Your Aspire skills are leveling up!',
-  '💎 Brilliant work! Keep going!',
-  '🏗️ Building distributed apps like a pro!',
-  '⚡ Lightning fast progress!',
-  '🎮 Achievement: Lesson Complete! +Respect',
+  'You\'re on fire!',
+  'Aspire expert in the making!',
+  'One step closer to production-ready apps!',
+  'Keep crushing it!',
+  'Another lesson down — you\'re unstoppable!',
+  'Your Aspire skills are leveling up!',
+  'Brilliant work! Keep going!',
+  'Building distributed apps like a pro!',
+  'Lightning fast progress!',
+  'Achievement: Lesson Complete! +Respect',
 ];
 
 interface EncouragingMessageProps {

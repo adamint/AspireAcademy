@@ -22,14 +22,14 @@ import type { LessonDetail, CompleteResponse } from '../types/curriculum';
 import MarkdownContent from '../components/common/MarkdownContent';
 import EncouragingMessage from '../components/gamification/EncouragingMessage';
 
-const lessonTypeLabel: Record<string, { emoji: string; label: string }> = {
-  learn: { emoji: '📖', label: 'Learn' },
-  quiz: { emoji: '🧪', label: 'Quiz' },
-  challenge: { emoji: '💻', label: 'Challenge' },
-  build: { emoji: '🏗️', label: 'Build' },
-  boss: { emoji: '🎮', label: 'Boss' },
-  'boss-battle': { emoji: '🎮', label: 'Boss Battle' },
-  'build-project': { emoji: '🏗️', label: 'Build Project' },
+const lessonTypeLabel: Record<string, string> = {
+  learn: '📖 Learn',
+  quiz: '🧪 Quiz',
+  challenge: '💻 Challenge',
+  build: '🏗️ Build',
+  boss: '🎮 Boss',
+  'boss-battle': '🎮 Boss Battle',
+  'build-project': '🏗️ Build Project',
 };
 
 export default function LessonPage() {
@@ -235,7 +235,7 @@ export default function LessonPage() {
       {/* Header */}
       <Flex align="center" gap="3" flexWrap="wrap">
         <Badge colorPalette="purple" variant="outline">
-          {typeInfo.emoji} {typeInfo.label}
+          {typeInfo}
         </Badge>
         <Flex align="center" gap="1" color="aspire.400">
           <FiClock size={14} />

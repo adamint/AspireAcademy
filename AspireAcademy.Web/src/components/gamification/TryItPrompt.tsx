@@ -28,7 +28,6 @@ export default function TryItPrompt({ lessonTitle }: TryItPromptProps) {
       data-testid="try-it-prompt"
     >
       <Flex align="center" gap={2} mb={2}>
-        <Text fontSize="lg">🛠️</Text>
         <Text {...pixelFontProps} fontSize="xs" color="dark.text">
           Try it in your own project!
         </Text>

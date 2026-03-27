@@ -30,7 +30,7 @@ questions:
   - id: d
     text: Generates documentation from code comments
     isCorrect: false
-  explanation: The extension detects AppHost entry points (CreateBuilder in C#, createBuilder in TypeScript, create_builder in Python, etc.) and places clickable Run/Debug code lenses above them.
+  explanation: The extension detects AppHost entry points (CreateBuilder in C#, createBuilder in TypeScript) and places clickable Run/Debug code lenses above them.
 - text: What transport does the Aspire MCP server use?
   type: multiple-choice
   options:

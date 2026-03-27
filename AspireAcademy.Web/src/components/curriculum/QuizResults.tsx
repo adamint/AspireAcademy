@@ -54,7 +54,7 @@ export default function QuizResults({
           {...pixelFontProps}
           fontSize="sm"
         >
-          📊 {quizName} — Results
+          {quizName} — Results
         </Heading>
 
         {/* Score row */}
@@ -109,7 +109,7 @@ export default function QuizResults({
                 },
               }}
             >
-              🎉 +{xpEarned} XP earned!
+              +{xpEarned} XP earned!
             </Text>
           </Box>
         )}

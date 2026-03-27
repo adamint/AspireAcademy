@@ -154,12 +154,12 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
     <Box {...retroCardProps} p={4} bg="dark.card">
       <Flex justify="space-between" align="center" mb={3} flexWrap="wrap" gap={2}>
         <Text {...pixelFontProps} fontSize="xs" color="dark.text">
-          📅 Activity
+          Activity
         </Text>
         <Flex gap={3} align="center">
           {streak > 0 && (
             <Text {...pixelFontProps} fontSize="8px" color="game.streak">
-              🔥 {streak} day streak
+              {streak} day streak
             </Text>
           )}
           <Text fontSize="xs" color="dark.muted">

@@ -59,14 +59,14 @@ export default function SkillRadar({ skills, size = 300 }: SkillRadarProps) {
 
   const handleCopySkills = () => {
     const lines = skills.map((s) => `${s.name}: ${s.score}%`);
-    const text = `🎯 My Aspire Learn Skills\n${lines.join('\n')}`;
+    const text = `My Aspire Learn Skills\n${lines.join('\n')}`;
     navigator.clipboard.writeText(text);
   };
 
   return (
     <Box {...retroCardProps} p={5} bg="dark.card">
       <Text {...pixelFontProps} fontSize="md" fontWeight="bold" mb={4} color="dark.text">
-        🎯 Skill Map
+        Skill Map
       </Text>
 
       <Flex justify="center" mb={4}>

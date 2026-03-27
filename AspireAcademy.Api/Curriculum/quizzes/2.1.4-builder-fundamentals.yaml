@@ -55,14 +55,14 @@ questions:
     options:
       - id: a
         text: "Python"
-        isCorrect: false
+        isCorrect: true
       - id: b
-        text: "Go"
+        text: "C# (single-file)"
         isCorrect: false
       - id: c
-        text: "Ruby"
-        isCorrect: true
-      - id: d
-        text: "Rust"
+        text: "TypeScript"
         isCorrect: false
-    explanation: "Aspire supports AppHosts in C#, TypeScript, Python, Go, Java, and Rust. Ruby is not currently supported as an AppHost language, though Ruby services can be orchestrated as container or executable resources."
+      - id: d
+        text: "C# (.csproj)"
+        isCorrect: false
+    explanation: "Aspire supports AppHosts in C# (both single-file and .csproj) and TypeScript only. Python, Go, Java, and Rust services can be orchestrated by Aspire, but the AppHost itself must be written in C# or TypeScript."

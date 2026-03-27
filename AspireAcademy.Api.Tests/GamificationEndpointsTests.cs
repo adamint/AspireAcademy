@@ -117,6 +117,47 @@ public class GamificationEndpointsTests : TestFixture
         body.WeeklyXp.Should().BeGreaterThanOrEqualTo(50);
     }
 
+    // ── XP includes achievement bonus (regression: TotalXp was stale before achievement check) ──
+
+    [Fact]
+    public async Task CompleteLesson_TotalXpIncludesAchievementBonusXp()
+    {
+        var userId = Guid.Parse("77777777-7777-7777-7777-777777777777");
+        await SeedUser(userId, "achxpuser");
+
+        // Seed an achievement that triggers on first lesson completion
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AcademyDbContext>();
+            db.Achievements.Add(new Achievement
+            {
+                Id = "test-first-lesson-ach",
+                Name = "First Lesson",
+                Description = "Complete one lesson",
+                Icon = "👣",
+                Category = "milestone",
+                TriggerType = "lesson-complete",
+                TriggerConfig = System.Text.Json.JsonDocument.Parse("{\"count\":1}"),
+                XpReward = 35,
+                Rarity = "common",
+                SortOrder = 1
+            });
+            await db.SaveChangesAsync();
+        }
+
+        using var client = CreateAuthenticatedClient(userId, "achxpuser");
+
+        var response = await client.PostAsJsonAsync("/api/progress/complete",
+            new ProgressCompleteRequest("lesson-learn-1"));
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body = await ReadJsonAsync<ProgressCompleteResponse>(response);
+        body!.XpEarned.Should().Be(50); // base XP for lesson-learn-1
+        body.AchievementsUnlocked.Should().Contain(a => a.Id == "test-first-lesson-ach");
+        // TotalXp must include both lesson XP (50) and achievement bonus (35) = 85
+        body.TotalXp.Should().Be(85);
+    }
+
     // ── Avatar ──
 
     [Fact]

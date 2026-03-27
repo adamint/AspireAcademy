@@ -86,7 +86,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
 
             {loginStreakDays > 0 && (
               <Text {...pixelFontProps} fontSize="10px" color="game.streak" whiteSpace="nowrap">
-                <Text as="span" aria-hidden="true">🔥</Text> {loginStreakDays}
+                🔥 {loginStreakDays}
               </Text>
             )}
 

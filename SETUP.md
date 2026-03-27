@@ -5,7 +5,7 @@
 - [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) or later
 - [Node.js 22+](https://nodejs.org/) (for the React frontend)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for PostgreSQL, Redis, and CodeRunner containers)
-- [Aspire CLI](https://learn.microsoft.com/dotnet/aspire/fundamentals/dotnet-aspire-cli) (`dotnet tool install -g aspire`)
+- [Aspire CLI](https://learn.microsoft.com/dotnet/aspire/fundamentals/setup-tooling) — install via `curl -sSL https://aspire.dev/install.sh | bash` (macOS/Linux) or `irm https://aspire.dev/install.ps1 | iex` (Windows)
 
 ## Required Configuration
 

@@ -63,5 +63,4 @@ questions:
   - id: d
     text: The ATS specification requires code generation
     isCorrect: false
-  explanation: Reimplementing the hosting SDK in 6 languages would mean maintaining 6 copies and keeping them in sync. The RemoteHost bridge lets every language use the one .NET SDK. Code generation provides
-    type safety and IDE autocomplete in each language.
+  explanation: Reimplementing the hosting SDK in every language would mean maintaining multiple copies and keeping them in sync. The RemoteHost bridge lets TypeScript use the one .NET SDK. Code generation provides type safety and IDE autocomplete.

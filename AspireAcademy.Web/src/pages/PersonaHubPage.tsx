@@ -28,7 +28,7 @@ export default function PersonaHubPage() {
   return (
     <Box maxW="900px" mx="auto" p="6">
       <Heading as="h1" size="xl" color="dark.text" mb="2" {...pixelFontProps}>
-        🎯 Learning Tracks
+        Learning Tracks
       </Heading>
       <Text color="dark.muted" mb="6" fontSize="sm">
         Choose a track that matches your role. This personalizes your learning experience

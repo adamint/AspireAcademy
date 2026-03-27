@@ -67,7 +67,7 @@ export default function LeaderboardPage() {
   return (
     <VStack maxW="800px" mx="auto" p={6} gap={5} align="stretch">
       <Text {...pixelFontProps} fontSize="xl" fontWeight="bold">
-        🏆 Leaderboard
+        Leaderboard
       </Text>
 
       <Tabs.Root value={tab} onValueChange={(d) => setTab(d.value as LeaderboardTab)}>
@@ -110,7 +110,7 @@ export default function LeaderboardPage() {
                   mt={3}
                 >
                   <Text {...pixelFontProps} fontSize="9px">
-                    🚀 Join the Competition!
+                    Join the Competition!
                   </Text>
                 </Button>
               )}

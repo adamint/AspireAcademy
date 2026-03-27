@@ -22,9 +22,9 @@ function buildStats(worlds: World[] | undefined) {
 }
 
 const HOW_IT_WORKS = [
-  { step: '1', icon: '📖', title: 'Learn', desc: 'Bite-sized lessons on every Aspire concept' },
-  { step: '2', icon: '💻', title: 'Practice', desc: 'Hands-on code challenges & quizzes' },
-  { step: '3', icon: '⭐', title: 'Master', desc: 'Earn XP, rank up, and unlock achievements' },
+  { step: '1', title: 'Learn', desc: 'Bite-sized lessons on every Aspire concept' },
+  { step: '2', title: 'Practice', desc: 'Hands-on code challenges & quizzes' },
+  { step: '3', title: 'Master', desc: 'Earn XP, rank up, and unlock achievements' },
 ];
 
 
@@ -388,7 +388,7 @@ export default function HomePage() {
                 mb="2"
               >
                 <Text {...pixelFontProps} fontSize={{ base: '10px', md: '12px' }} color="game.xpGold">
-                  Welcome back, {user.displayName || user.username}! 🎮
+                  Welcome back, {user.displayName || user.username}!
                 </Text>
                 <Text fontSize="sm" color="whiteAlpha.700" mt="1">
                   Continue your journey where you left off
@@ -408,7 +408,7 @@ export default function HomePage() {
             >
               ASPIRE
               <br />
-              ACADEMY
+              LEARN
             </Heading>
 
             {/* Tagline with typewriter */}
@@ -458,7 +458,7 @@ export default function HomePage() {
                 transition="all 0.2s"
                 onClick={() => navigate(isLoggedIn ? '/dashboard' : '/register')}
               >
-                🎮 {isLoggedIn ? 'Continue Journey' : 'Start Your Journey'}
+                {isLoggedIn ? 'Continue Journey' : 'Start Your Journey'}
               </Button>
 
               <Button
@@ -481,7 +481,7 @@ export default function HomePage() {
                 transition="all 0.2s"
                 onClick={() => navigate('/dashboard')}
               >
-                📖 Browse Curriculum
+                Browse Curriculum
               </Button>
             </Flex>
 
@@ -543,7 +543,7 @@ export default function HomePage() {
                 color="aspire.400"
                 mb="3"
               >
-                🎯 Built for Your Role
+                Built for Your Role
               </Heading>
               <Text textAlign="center" color="whiteAlpha.600" mb="10" maxW="600px" mx="auto">
                 Whether you're a DevOps engineer, a C# developer, a JS/TS developer, or leading a polyglot team —
@@ -682,7 +682,7 @@ export default function HomePage() {
               color="aspire.400"
               mb="12"
             >
-              ⚔️ How It Works
+              How It Works
             </Heading>
 
           <SimpleGrid columns={{ base: 1, md: 3 }} gap="8" maxW="900px" mx="auto">
@@ -698,7 +698,7 @@ export default function HomePage() {
                     borderColor="aspire.600"
                     borderRadius="md"
                   >
-                    <Text fontSize="32px">{item.icon}</Text>
+                    <Text {...pixelFontProps} fontSize="24px" color="game.xpGold">{item.step}</Text>
                   </Flex>
                   <Text {...pixelFontProps} fontSize="14px" color="game.xpGold">
                     {item.title}
@@ -746,14 +746,14 @@ export default function HomePage() {
               color="aspire.400"
               mb="12"
             >
-              🏆 Level Up Your Skills
+              Level Up Your Skills
             </Heading>
 
           <SimpleGrid columns={{ base: 1, md: 2 }} gap="8" maxW="900px" mx="auto">
             {/* Achievements preview */}
               <Box {...retroCardProps} bg="rgba(26,11,46,0.7)" p="5">
                 <Text {...pixelFontProps} fontSize="12px" color="game.xpGold" mb="4">
-                  🎖️ Achievements
+                  Achievements
                 </Text>
                 <Flex direction="column" gap="3">
                   {topAchievements.map((a) => (
@@ -785,7 +785,7 @@ export default function HomePage() {
               <Flex direction="column" gap="5">
                 <Box {...retroCardProps} bg="rgba(26,11,46,0.7)" p="5">
                   <Text {...pixelFontProps} fontSize="12px" color="game.xpGold" mb="4">
-                    📊 Leaderboard
+                    Leaderboard
                   </Text>
                   <Flex direction="column" gap="2">
                     {topLeaders.map((entry) => (
@@ -889,7 +889,7 @@ export default function HomePage() {
               transition="all 0.2s"
               onClick={() => navigate(isLoggedIn ? '/dashboard' : '/register')}
             >
-              🎮 {isLoggedIn ? 'Continue Journey' : 'Start Your Journey'}
+              {isLoggedIn ? 'Continue Journey' : 'Start Your Journey'}
             </Button>
         </Box>
 

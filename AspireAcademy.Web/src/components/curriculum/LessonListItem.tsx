@@ -103,7 +103,7 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       </Text>
       {relevance === 'high' && (
         <Badge fontSize="2xs" colorPalette="green" variant="subtle">
-          ⭐ For you
+          For you
         </Badge>
       )}
       {isLowRelevance && (
@@ -113,7 +113,7 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       )}
       {isLocked && (
         <Badge fontSize="2xs" colorPalette="gray" variant="subtle">
-          👁️ preview
+          preview
         </Badge>
       )}
       <Badge

@@ -151,7 +151,6 @@ export default function WeeklyChallengePage() {
           pointerEvents="none"
         />
 
-        <Text fontSize="3xl" mb={2}>🏆</Text>
         <Text {...pixelFontProps} fontSize="lg" fontWeight="bold" color="#FFD700">
           Weekly Challenge
         </Text>
@@ -191,7 +190,7 @@ export default function WeeklyChallengePage() {
           border="2px solid #B8860B"
           borderRadius="sm"
         >
-          ⭐ Complete for 2x XP!
+          Complete for 2x XP!
         </Badge>
       </Flex>
 
@@ -203,7 +202,7 @@ export default function WeeklyChallengePage() {
           <Flex justify="space-between" align="start" mb={3}>
             <Box flex={1}>
               <Text {...pixelFontProps} fontSize="sm" fontWeight="bold" color="dark.text" mb={2}>
-                📋 Challenge Details
+                Challenge Details
               </Text>
               <Text fontSize="sm" color="dark.muted">
                 {challenge.description}
@@ -247,7 +246,7 @@ export default function WeeklyChallengePage() {
                 _hover={{ opacity: 0.9 }}
               >
                 <Text {...pixelFontProps} fontSize="9px">
-                  {challenge.userCompleted ? 'View Challenge' : '⚔️ Accept Challenge'}
+                  {challenge.userCompleted ? 'View Challenge' : 'Accept Challenge'}
                 </Text>
               </Button>
             ) : (
@@ -259,7 +258,7 @@ export default function WeeklyChallengePage() {
                 _hover={{ opacity: 0.9 }}
               >
                 <Text {...pixelFontProps} fontSize="9px">
-                  🚀 Sign Up to Compete!
+                  Sign Up to Compete
                 </Text>
               </Button>
             )}
@@ -274,7 +273,7 @@ export default function WeeklyChallengePage() {
       {/* ── Weekly Leaderboard ── */}
       <Box>
         <Text {...pixelFontProps} fontSize="sm" fontWeight="bold" mb={3} color="#FFD700">
-          🏅 This Week&apos;s Top Completers
+          This Week's Top Completers
         </Text>
 
         {lbLoading ? (
@@ -346,7 +345,7 @@ export default function WeeklyChallengePage() {
         ) : (
           <Box {...goldCardProps} p={4} textAlign="center" bg="dark.card">
             <Text {...pixelFontProps} fontSize="10px" color="dark.muted">
-              No completers yet — be the first! 🚀
+              No completers yet — be the first!
             </Text>
           </Box>
         )}
@@ -356,7 +355,7 @@ export default function WeeklyChallengePage() {
       {previous && previous.length > 0 && (
         <Box>
           <Text {...pixelFontProps} fontSize="xs" fontWeight="bold" mb={2} color="dark.muted">
-            📜 Previous Weeks
+            Previous Weeks
           </Text>
           <VStack gap={1} align="stretch">
             {previous.map((p) => (
@@ -369,7 +368,7 @@ export default function WeeklyChallengePage() {
                 opacity={0.8}
               >
                 <Text fontSize="sm" flexShrink={0}>
-                  {p.userCompleted ? '✅' : '➖'}
+                  {p.userCompleted ? '✅' : '—'}
                 </Text>
                 <Box flex={1} minW={0}>
                   <Text fontSize="sm" fontWeight="bold" truncate>

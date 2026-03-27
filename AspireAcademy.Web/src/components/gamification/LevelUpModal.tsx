@@ -11,7 +11,6 @@ export default function LevelUpModal() {
   if (!pendingLevelUp) return null;
 
   const unlockedItems = pendingLevelUp.unlockedItems;
-  const rankEmoji = pendingLevelUp.previousRank !== pendingLevelUp.newRank ? '🎖️' : '⭐';
 
   return (
     <Box position="fixed" inset={0} zIndex={9999} display="flex" alignItems="center" justifyContent="center" role="dialog" aria-modal="true" aria-labelledby="levelup-title" onKeyDown={(e) => { if (e.key === 'Escape') setPendingLevelUp(null); }}>
@@ -51,7 +50,6 @@ export default function LevelUpModal() {
         </Text>
 
         <Text color="dark.text" fontSize="md">
-          {rankEmoji}{' '}
           {pendingLevelUp.previousRank !== pendingLevelUp.newRank ? (
             <>New Rank: <Text as="span" fontWeight="bold" color="game.xpGold">{pendingLevelUp.newRank}</Text></>
           ) : (
@@ -64,7 +62,7 @@ export default function LevelUpModal() {
             <Text {...pixelFontProps} fontSize="xs" color="game.xpGold">Unlocked:</Text>
             {unlockedItems.map((item, i) => (
               <Text key={i} fontSize="sm" color="dark.text">
-                ✨ {item.name} ({item.type})
+                {item.name} ({item.type})
               </Text>
             ))}
           </VStack>

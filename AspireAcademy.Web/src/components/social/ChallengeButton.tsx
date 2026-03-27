@@ -59,13 +59,13 @@ export default function ChallengeButton({ friendId, friendName }: ChallengeButto
           <Dialog.Content bg="dark.card" color="dark.text">
             <Dialog.Header>
               <Dialog.Title color="dark.text">
-                ⚔️ Challenge {friendName}
+                Challenge {friendName}
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
               {sent ? (
                 <VStack gap={3} py={4}>
-                  <Text fontSize="40px">🎯</Text>
+                  <Text fontSize="40px">!</Text>
                   <Text {...pixelFontProps} fontSize="xs" color="game.success">
                     Challenge sent!
                   </Text>
@@ -86,7 +86,7 @@ export default function ChallengeButton({ friendId, friendName }: ChallengeButto
                     w="100%"
                   >
                     <Text fontSize="xs" color="aspire.400">
-                      🏆 Both players earn <strong>bonus XP</strong> for completing lessons
+                      Both players earn <strong>bonus XP</strong> for completing lessons
                       during an active challenge!
                     </Text>
                   </Box>
@@ -113,7 +113,7 @@ export default function ChallengeButton({ friendId, friendName }: ChallengeButto
                   title="Send challenge"
                   aria-label={`Send challenge to ${friendName}`}
                 >
-                  {challengeMutation.isPending ? <Spinner size="sm" /> : '⚔️ Send Challenge'}
+                  {challengeMutation.isPending ? <Spinner size="sm" /> : 'Send Challenge'}
                 </Button>
               </Dialog.Footer>
             )}

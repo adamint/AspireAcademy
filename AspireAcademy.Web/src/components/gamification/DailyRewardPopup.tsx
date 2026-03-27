@@ -65,8 +65,6 @@ export default function DailyRewardPopup() {
 
   if (!visible || !rewardData) return null;
 
-  const streakFires = Math.min(rewardData.streakDays, 10);
-
   return (
     <AnimatePresence>
       <motion.div
@@ -105,14 +103,8 @@ export default function DailyRewardPopup() {
             Welcome back! Here&apos;s your daily bonus.
           </Text>
 
-          {/* Streak fires */}
-          <Flex justify="center" mb={3} aria-hidden="true">
-            {Array.from({ length: streakFires }, (_, i) => (
-              <Text key={i} fontSize="xl" mx="1px">🔥</Text>
-            ))}
-          </Flex>
           <Text {...pixelFontProps} fontSize="xs" color="game.streak" mb={4}>
-            {rewardData.streakDays} day streak!
+            🔥 {rewardData.streakDays} day streak!
           </Text>
 
           {/* XP Badge */}
@@ -146,7 +138,7 @@ export default function DailyRewardPopup() {
               title="Close daily reward popup"
               aria-label="Close daily reward popup"
             >
-              Awesome! 🎉
+              Awesome!
             </Button>
           </Box>
         </Box>

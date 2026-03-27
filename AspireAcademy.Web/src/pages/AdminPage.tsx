@@ -123,7 +123,7 @@ export default function AdminPage() {
       {/* Header */}
       <Flex justify="space-between" align="center" flexWrap="wrap" gap="3">
         <Heading as="h1" size="2xl" color="dark.text">
-          🛡️ Admin Dashboard
+          Admin Dashboard
         </Heading>
         <Badge {...pixelFontProps} fontSize="2xs" colorPalette="red" variant="solid" px="3" py="1">
           ADMIN
@@ -141,7 +141,7 @@ export default function AdminPage() {
           >
             <Card.Body p="3">
               <Text fontSize="sm" color="white">
-                {actionMessage.isError ? '❌' : '✅'} {actionMessage.text}
+                {actionMessage.text}
               </Text>
             </Card.Body>
           </Card.Root>
@@ -185,7 +185,7 @@ export default function AdminPage() {
               colorPalette="red"
               size="sm"
               onClick={() => {
-                if (window.confirm('⚠️ This will DROP all tables, recreate the schema, and reload curriculum. All user data will be lost. Continue?')) {
+                if (window.confirm('This will DROP all tables, recreate the schema, and reload curriculum. All user data will be lost. Continue?')) {
                   flushDb.mutate();
                 }
               }}
@@ -200,7 +200,7 @@ export default function AdminPage() {
               onClick={() => seedTestData.mutate()}
               disabled={seedTestData.isPending}
             >
-              {seedTestData.isPending ? 'Seeding…' : '🌱 Seed Test Data'}
+              {seedTestData.isPending ? 'Seeding…' : 'Seed Test Data'}
             </Button>
           </Flex>
         </Card.Body>

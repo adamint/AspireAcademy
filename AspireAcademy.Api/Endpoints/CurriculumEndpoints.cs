@@ -325,6 +325,41 @@ public static class CurriculumEndpoints
             ? siblingLessons[currentIndex + 1]
             : null;
 
+        // Cross module boundaries within the same world
+        if (nextLesson is null && module is not null)
+        {
+            var nextModule = await db.Modules
+                .Where(m => m.WorldId == module.WorldId && m.SortOrder > module.SortOrder)
+                .OrderBy(m => m.SortOrder)
+                .FirstOrDefaultAsync();
+
+            if (nextModule is not null)
+            {
+                nextLesson = await db.Lessons
+                    .Where(l => l.ModuleId == nextModule.Id)
+                    .OrderBy(l => l.SortOrder)
+                    .Select(l => new { l.Id, l.Title, l.Type, l.SortOrder })
+                    .FirstOrDefaultAsync();
+            }
+        }
+
+        if (previousLesson is null && module is not null)
+        {
+            var prevModule = await db.Modules
+                .Where(m => m.WorldId == module.WorldId && m.SortOrder < module.SortOrder)
+                .OrderByDescending(m => m.SortOrder)
+                .FirstOrDefaultAsync();
+
+            if (prevModule is not null)
+            {
+                previousLesson = await db.Lessons
+                    .Where(l => l.ModuleId == prevModule.Id)
+                    .OrderByDescending(l => l.SortOrder)
+                    .Select(l => new { l.Id, l.Title, l.Type, l.SortOrder })
+                    .FirstOrDefaultAsync();
+            }
+        }
+
         var isCompleted = progress?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect;
 
         QuizDto? quizDto = null;

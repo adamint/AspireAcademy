@@ -11,7 +11,7 @@ export const rarityColors: Record<string, string> = {
   legendary: '#FFD700',
 };
 
-/** Lesson status → emoji icon. */
+/** Lesson status → icon. */
 export const statusIcons: Record<LessonStatus, string> = {
   completed: '✅',
   perfect: '⭐',
@@ -21,7 +21,7 @@ export const statusIcons: Record<LessonStatus, string> = {
   skipped: '⏭️',
 };
 
-/** Lesson type → emoji icon. */
+/** Lesson type → icon. */
 export const typeIcons: Record<string, string> = {
   learn: '📖',
   quiz: '🧪',
@@ -32,10 +32,10 @@ export const typeIcons: Record<string, string> = {
   'build-project': '🏗️',
 };
 
-/** Leaderboard rank → medal emoji (top 3). */
+/** Leaderboard rank → medal (top 3). */
 export const medals: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
-/** Rank slug → emoji. */
+/** Rank slug → icon. */
 export const rankEmojis: Record<string, string> = {
   [Rank.AspireIntern]: '🌱',
   [Rank.AspireDeveloper]: '💻',
@@ -46,7 +46,7 @@ export const rankEmojis: Record<string, string> = {
   [Rank.AspireArchitect]: '🏗️',
 };
 
-/** XP event type → emoji icon. */
+/** XP event type → icon. */
 export const xpEventIcons: Record<XpEvent['type'], string> = {
   lesson: '✅',
   quiz: '📝',

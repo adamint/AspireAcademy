@@ -115,6 +115,93 @@ public class ChallengeEndpointsTests : TestFixture
     }
 
     [Fact]
+    public async Task SubmitChallenge_TotalXpIncludesAchievementBonusXp()
+    {
+        // Use a fresh user with prerequisites completed
+        var userId = Guid.Parse("99999999-9999-9999-9999-999999999999");
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AcademyDbContext>();
+
+            db.Users.Add(new User
+            {
+                Id = userId,
+                Username = "chalachuser",
+                Email = "chalachuser@example.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password1"),
+                DisplayName = "Chal Ach User",
+                CreatedAt = DateTime.UtcNow,
+                LoginStreakDays = 0
+            });
+            db.UserXp.Add(new UserXp
+            {
+                UserId = userId,
+                TotalXp = 0,
+                CurrentLevel = 1,
+                CurrentRank = "aspire-intern",
+                WeeklyXp = 0,
+                WeekStart = DateOnly.FromDateTime(DateTime.UtcNow)
+            });
+
+            // Prerequisites: lesson-learn-1 and lesson-quiz-1 completed
+            db.UserProgress.AddRange(
+                new UserProgress
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    LessonId = "lesson-learn-1",
+                    Status = "completed",
+                    Attempts = 1,
+                    XpEarned = 50,
+                    CompletedAt = DateTime.UtcNow
+                },
+                new UserProgress
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    LessonId = "lesson-quiz-1",
+                    Status = "completed",
+                    Attempts = 1,
+                    XpEarned = 100,
+                    CompletedAt = DateTime.UtcNow
+                });
+
+            // Seed an achievement that triggers after 3 lessons completed
+            if (!db.Achievements.Any(a => a.Id == "test-three-lessons-ach"))
+            {
+                db.Achievements.Add(new Achievement
+                {
+                    Id = "test-three-lessons-ach",
+                    Name = "Three Lessons",
+                    Description = "Complete three lessons",
+                    Icon = "📚",
+                    Category = "milestone",
+                    TriggerType = "lesson-complete",
+                    TriggerConfig = System.Text.Json.JsonDocument.Parse("{\"count\":3}"),
+                    XpReward = 60,
+                    Rarity = "common",
+                    SortOrder = 1
+                });
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        using var authClient = CreateAuthenticatedClient(userId, "chalachuser");
+
+        var request = new ChallengeRunRequest("Console.WriteLine(\"Hello World\");", 0);
+        var response = await authClient.PostAsJsonAsync("/api/challenges/lesson-challenge-1/submit", request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body = await ReadJsonAsync<ChallengeSubmitResponse>(response);
+        body!.AllPassed.Should().BeTrue();
+        body.XpEarned.Should().Be(150); // base challenge XP
+        body.AchievementsUnlocked.Should().Contain(a => a.Id == "test-three-lessons-ach");
+        // TotalXp must include base (150) + first-try bonus (50) + achievement bonus (60) = 260
+        body.TotalXp.Should().Be(260);
+    }
+
+    [Fact]
     public async Task SubmitChallenge_WithoutAuth_Returns401()
     {
         var request = new ChallengeRunRequest("code", 0);
