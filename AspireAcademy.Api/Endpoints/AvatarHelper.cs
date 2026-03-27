@@ -17,13 +17,14 @@ internal static class AvatarHelper
             return $"https://api.dicebear.com/9.x/pixel-art/svg?seed={Uri.EscapeDataString(avatarSeed)}";
         }
 
-        var emailHash = ComputeMd5Hash(email.Trim().ToLowerInvariant());
+        var emailHash = ComputeHash(email.Trim().ToLowerInvariant());
         return $"https://gravatar.com/avatar/{emailHash}?d=retro&s=128";
     }
 
-    private static string ComputeMd5Hash(string input)
+    private static string ComputeHash(string input)
     {
-        var hashBytes = MD5.HashData(Encoding.UTF8.GetBytes(input));
+        // Gravatar supports SHA256 hashes
+        var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
         return Convert.ToHexStringLower(hashBytes);
     }
 }

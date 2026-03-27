@@ -101,16 +101,16 @@ const markdownComponents: Partial<Components> = {
       </Box>
     );
   },
-  a({ href, children }) {
+  a({ href, children, node: _node, ...rest }) {
     if (href && href.startsWith('/')) {
       return (
-        <RouterLink to={href} style={{ color: 'var(--accent)', textDecoration: 'underline', textUnderlineOffset: '2px' }}>
+        <RouterLink to={href}>
           {children}
         </RouterLink>
       );
     }
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer">
+      <a {...rest} href={href} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     );

@@ -162,20 +162,25 @@ export default function DashboardPage() {
       )}
 
       {/* Persona Track */}
-      {isAuthenticated && user?.persona && (
+      {isAuthenticated && (
         <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg">
           <Card.Body p="4">
             <Flex align="center" gap="3">
-              <Text fontSize="lg">🎯</Text>
               <Box flex="1">
-                <Text fontSize="xs" color="aspire.300" mb="0.5">Your Learning Track</Text>
-                <Text fontSize="sm" color="dark.text" fontWeight="semibold" textTransform="capitalize">
-                  {user.persona === 'devops' ? '🔧 DevOps Engineer'
-                    : user.persona === 'csharp' ? '💜 C# Developer'
-                    : user.persona === 'javascript' ? '💛 JS/TS Developer'
-                    : user.persona === 'polyglot' ? '🌐 Polyglot Team'
-                    : user.persona}
-                </Text>
+                <Text fontSize="xs" color="aspire.300" mb="0.5">Learning Track</Text>
+                {user?.persona ? (
+                  <Text fontSize="sm" color="dark.text" fontWeight="semibold">
+                    {user.persona === 'devops' ? '🔧 DevOps Engineer'
+                      : user.persona === 'csharp' ? '💜 C# Developer'
+                      : user.persona === 'javascript' ? '💛 JS/TS Developer'
+                      : user.persona === 'polyglot' ? '🌐 Polyglot Team'
+                      : user.persona}
+                  </Text>
+                ) : (
+                  <Text fontSize="sm" color="dark.muted">
+                    No track selected — pick one to personalize your learning path
+                  </Text>
+                )}
               </Box>
               <Button
                 asChild
@@ -184,7 +189,9 @@ export default function DashboardPage() {
                 borderColor="aspire.600"
                 color="aspire.600"
               >
-                <RouterLink to={`/personas/${user.persona}`}>View Guide</RouterLink>
+                <RouterLink to={user?.persona ? `/personas/${user.persona}` : '/personas'}>
+                  {user?.persona ? 'Change' : 'Choose Track'}
+                </RouterLink>
               </Button>
             </Flex>
           </Card.Body>

@@ -185,6 +185,19 @@ if (app.Environment.IsDevelopment())
 app.UseCors("ReactDev");
 app.UseRateLimiter();
 
+// Security headers
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    if (!context.RequestServices.GetRequiredService<IWebHostEnvironment>().IsDevelopment())
+    {
+        context.Response.Headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
+    }
+    await next();
+});
+
 // Auth-endpoint guard: reject non-browser requests to /api/auth/register and /api/auth/login
 // unless they carry the test-client header in dev/testing environments.
 app.Use(async (context, next) =>

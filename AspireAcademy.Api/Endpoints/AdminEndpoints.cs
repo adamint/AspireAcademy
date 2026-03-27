@@ -36,20 +36,27 @@ public static class AdminEndpoints
         return app;
     }
 
-    // Well-known test credentials — displayed for convenience
-    private static readonly List<SeededUserInfo> s_seededCredentials =
+    // Default test credentials — only exposed in Development/Testing environments
+    private static readonly string s_testUserPassword = "TestPass1";
+    private static readonly string s_adminPassword = "AdminPass1!";
+
+    private static List<SeededUserInfo> GetSeededCredentialsList() =>
     [
-        new("testuser", "TestPass1", "test@aspireacademy.dev", "Pre-seeded test learner with sample progress"),
-        new("admin", "AdminPass1!", "admin@aspireacademy.dev", "Admin user with full access to /admin panel"),
+        new("testuser", s_testUserPassword, "test@aspireacademy.dev", "Pre-seeded test learner with sample progress"),
+        new("admin", s_adminPassword, "admin@aspireacademy.dev", "Admin user with full access to /admin panel"),
     ];
 
-    private static IResult GetSeededCredentials(ClaimsPrincipal principal, HttpRequest request)
+    private static IResult GetSeededCredentials(ClaimsPrincipal principal, HttpRequest request, IWebHostEnvironment env)
     {
         if (!IsAdmin(principal, request))
         {
             return Forbidden();
         }
-        return Results.Ok(s_seededCredentials);
+        if (!env.IsDevelopment() && env.EnvironmentName != "Testing")
+        {
+            return Results.Json(new ErrorResponse("Seeded credentials are only available in development."), statusCode: 403);
+        }
+        return Results.Ok(GetSeededCredentialsList());
     }
 
     private static IResult Forbidden() =>
@@ -268,11 +275,17 @@ public static class AdminEndpoints
         ClaimsPrincipal principal,
         HttpRequest request,
         AcademyDbContext db,
+        IWebHostEnvironment env,
         ILogger<AcademyDbContext> logger)
     {
         if (!IsAdmin(principal, request))
         {
             return Forbidden();
+        }
+
+        if (!env.IsDevelopment() && env.EnvironmentName != "Testing")
+        {
+            return Results.Json(new ErrorResponse("Seeding test data is only available in development."), statusCode: 403);
         }
 
         logger.LogInformation("Admin action: SeedTestData requested by {User}", principal.FindFirstValue(ClaimTypes.Name));
@@ -298,7 +311,7 @@ public static class AdminEndpoints
             Id = Guid.CreateVersion7(),
             Username = "testuser",
             Email = "test@aspireacademy.dev",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("TestPass1"),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(s_testUserPassword),
             DisplayName = "Test Learner",
             LoginStreakDays = 5,
             LastStreakDate = DateOnly.FromDateTime(now),
@@ -349,9 +362,8 @@ public static class AdminEndpoints
         }
 
         return Results.Ok(new AdminActionResponse(
-            $"Test user 'testuser' created (password: TestPass1) with {firstLessons.Count} completed lessons. " +
-            "Admin user 'admin' available (password: AdminPass1!). " +
-            "View all credentials at GET /api/admin/seeded-credentials"));
+            $"Test data seeded: 'testuser' and 'admin' users created with {firstLessons.Count} completed lessons. " +
+            "View credentials at GET /api/admin/seeded-credentials (dev only)."));
     }
     private static async Task CreateAdminUser(AcademyDbContext db, ILogger logger, DateTime now)
     {
@@ -360,7 +372,7 @@ public static class AdminEndpoints
             Id = Guid.CreateVersion7(),
             Username = "admin",
             Email = "admin@aspireacademy.dev",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("AdminPass1!"),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(s_adminPassword),
             DisplayName = "Admin",
             CreatedAt = now
         };
@@ -374,7 +386,7 @@ public static class AdminEndpoints
             WeekStart = DateOnly.FromDateTime(now)
         });
         await db.SaveChangesAsync();
-        logger.LogInformation("Admin action: Admin user created (username=admin, password=AdminPass1!)");
+        logger.LogInformation("Admin action: Admin user created (username=admin)");
     }
 }
 
