@@ -239,11 +239,17 @@ public class RealIntegrationTests : IClassFixture<AspireIntegrationFixture>
                         break;
                     }
                 }
-                else if (type == "learn" && !isLocked)
+                else if ((type == "learn" || type == "challenge") && !isLocked)
                 {
-                    // Complete learn lessons to unlock subsequent quiz lessons
-                    await AuthPost("/api/progress/complete", token,
+                    // Complete or skip lessons to unlock subsequent quiz lessons
+                    var completeResp = await AuthPost("/api/progress/complete", token,
                         new { LessonId = lesson.GetProperty("id").GetString() });
+                    if (completeResp.StatusCode != HttpStatusCode.OK)
+                    {
+                        // Challenge lessons can't be "completed" directly — skip them instead
+                        await AuthPost("/api/progress/skip", token,
+                            new { LessonId = lesson.GetProperty("id").GetString() });
+                    }
                 }
             }
 
