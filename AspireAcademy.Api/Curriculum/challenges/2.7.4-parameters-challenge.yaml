@@ -1,18 +1,102 @@
 instructions: |
-  # Parameters Challenge
-  Wire up a database with a secret password parameter and an external connection string.
+  # Using Parameters for Configuration
+
+  Parameters let you inject secrets and configuration values that vary by environment.
+
+  **Your task:**
+  1. Create the AppHost builder (provided)
+  2. Add a parameter named `"db-password"` as a secret: `builder.AddParameter("db-password", secret: true)`
+  3. Add PostgreSQL named `"postgres"` with the password parameter: `builder.AddPostgres("postgres", password: dbPassword)`
+  4. Add a database `"mydb"` on the PostgreSQL server
+  5. Add a connection string named `"external-api"`: `builder.AddConnectionString("external-api")`
+  6. Add a project `"api"` that references both the database and the connection string
+
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add a secret parameter "db-password"
+
+  // TODO: Add PostgreSQL with the password parameter, and a database "mydb"
+
+  // TODO: Add a connection string "external-api"
+
+  // TODO: Add project "api" referencing the database and connection string
+
+  builder.Build().Run();
+
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var dbPassword = builder.AddParameter("db-password", secret: true);
+
+  var postgres = builder.AddPostgres("postgres", password: dbPassword);
+  var mydb = postgres.AddDatabase("mydb");
+
+  var externalApi = builder.AddConnectionString("external-api");
+
+  builder.AddProject("api")
+      .WithReference(mydb)
+      .WithReference(externalApi);
+
+  builder.Build().Run();
+
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds parameter
+    type: code-contains
+    expected: AddParameter
+    description: Must use AddParameter for the password
+  - id: tc3
+    name: Names parameter "db-password"
+    type: code-contains
+    expected: '"db-password"'
+    description: Parameter must be named "db-password"
+  - id: tc4
+    name: Marks as secret
+    type: code-contains
+    expected: 'secret: true'
+    description: Password parameter must be marked as secret
+  - id: tc5
+    name: Adds PostgreSQL
+    type: code-contains
+    expected: AddPostgres
+    description: Must add PostgreSQL resource
+  - id: tc6
+    name: Passes password parameter
+    type: code-pattern
+    expected: 'AddPostgres.*password'
+    description: Must pass the password parameter to PostgreSQL
+  - id: tc7
+    name: Adds database
+    type: code-contains
+    expected: AddDatabase
+    description: Must add a database
+  - id: tc8
+    name: Adds connection string
+    type: code-contains
+    expected: AddConnectionString
+    description: Must add an external connection string
+  - id: tc9
+    name: Names connection string
+    type: code-contains
+    expected: '"external-api"'
+    description: Connection string must be named "external-api"
+  - id: tc10
+    name: References resources
+    type: code-contains
+    expected: WithReference
+    description: Must reference resources from the project
+
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - "AddParameter with secret: true marks the value as sensitive"
+  - "Pass the parameter variable to AddPostgres using the password: named parameter"
+  - "AddConnectionString creates a reference to an external connection"
+
+requiredPackages:
+  - Aspire.Hosting
 sortOrder: 0

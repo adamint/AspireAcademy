@@ -1,18 +1,98 @@
 instructions: |
-  # JavaScript Resources Challenge
-  Add a Vite frontend with WithPnpm and wire it to a .NET API backend.
+  # Adding JavaScript Resources
+
+  Aspire can orchestrate Node.js and Vite applications alongside .NET services.
+  Use `AddNodeApp` for general Node.js apps or `AddViteApp` for Vite-based frontends.
+
+  **Your task:**
+  1. Create the AppHost builder (provided)
+  2. Add a .NET project named `"api"` using `AddProject("api")`
+  3. Add a Node.js app named `"frontend"` from path `"../frontend"` with script `"server.js"` using `AddNodeApp("frontend", "../frontend", "server.js")`
+  4. Chain `.WithReference(api)` so the frontend can discover the API
+  5. Chain `.WithHttpEndpoint(env: "PORT")` to let the app use the assigned port
+  6. Chain `.WithExternalHttpEndpoints()` to expose the frontend externally
+
+  **Note:** Aspire provides two JavaScript hosting methods:
+  - `AddNodeApp(name, directory, scriptPath)` — runs a Node.js script
+  - `AddViteApp(name, directory, runScript)` — runs a Vite dev server
+
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add an API project named "api"
+
+  // TODO: Add a Node.js frontend app that references the API
+  //   - Named "frontend", path "../frontend", script "server.js"
+  //   - References the API
+  //   - HTTP endpoint with env var PORT
+  //   - External HTTP endpoints
+
+  builder.Build().Run();
+
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var api = builder.AddProject("api");
+
+  builder.AddNodeApp("frontend", "../frontend", "server.js")
+      .WithReference(api)
+      .WithHttpEndpoint(env: "PORT")
+      .WithExternalHttpEndpoints();
+
+  builder.Build().Run();
+
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds API project
+    type: code-contains
+    expected: AddProject
+    description: Must add a .NET project
+  - id: tc3
+    name: Names project "api"
+    type: code-contains
+    expected: '"api"'
+    description: Project must be named "api"
+  - id: tc4
+    name: Uses AddNodeApp or AddViteApp
+    type: code-pattern
+    expected: Add(Node|Vite)App
+    description: Must use AddNodeApp or AddViteApp for the frontend
+  - id: tc5
+    name: Names frontend
+    type: code-contains
+    expected: '"frontend"'
+    description: Frontend app must be named "frontend"
+  - id: tc6
+    name: Specifies script or entry point
+    type: code-pattern
+    expected: '"server\.js"|"dev"'
+    description: Must specify the script or entry point
+  - id: tc7
+    name: References API
+    type: code-contains
+    expected: WithReference
+    description: Frontend must reference the API
+  - id: tc8
+    name: Uses PORT env var
+    type: code-pattern
+    expected: 'WithHttpEndpoint.*PORT'
+    description: Must use PORT environment variable for the HTTP endpoint
+  - id: tc9
+    name: External endpoints
+    type: code-contains
+    expected: WithExternalHttpEndpoints
+    description: Must expose frontend externally
+
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - "AddNodeApp takes three arguments: name, directory path, and script path"
+  - "WithHttpEndpoint(env: \"PORT\") lets the Node.js app pick up the assigned port"
+  - "Store the API in a variable so you can pass it to WithReference"
+
+requiredPackages:
+  - Aspire.Hosting
 sortOrder: 0

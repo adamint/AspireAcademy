@@ -1,18 +1,90 @@
 instructions: |
-  # Python Resources Challenge
-  Add a FastAPI service with AddUvicornApp and wire it to a .NET API with service discovery.
+  # Adding Python Applications
+
+  Aspire can orchestrate Python applications alongside your .NET services.
+
+  **Your task:**
+  1. Create the AppHost builder (provided)
+  2. Add PostgreSQL named `"postgres"` with a database named `"analyticsdb"`
+  3. Add a Python app named `"analytics"` from path `"../analytics-service"` with entrypoint `"main.py"` using `AddPythonApp("analytics", "../analytics-service", "main.py")`
+  4. Chain `.WithReference(analyticsdb)` to give Python access to the database
+  5. Chain `.WithArgs("--workers", "4")` to pass command-line arguments
+
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add PostgreSQL with an "analyticsdb" database
+
+  // TODO: Add Python app "analytics" from "../analytics-service" with entrypoint "main.py"
+  //   - References the database
+  //   - Passes arguments: --workers 4
+
+  builder.Build().Run();
+
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var postgres = builder.AddPostgres("postgres");
+  var analyticsdb = postgres.AddDatabase("analyticsdb");
+
+  builder.AddPythonApp("analytics", "../analytics-service", "main.py")
+      .WithReference(analyticsdb)
+      .WithArgs("--workers", "4");
+
+  builder.Build().Run();
+
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds PostgreSQL
+    type: code-contains
+    expected: AddPostgres
+    description: Must add PostgreSQL resource
+  - id: tc3
+    name: Adds database
+    type: code-contains
+    expected: AddDatabase
+    description: Must add a database
+  - id: tc4
+    name: Names database "analyticsdb"
+    type: code-contains
+    expected: '"analyticsdb"'
+    description: Database must be named "analyticsdb"
+  - id: tc5
+    name: Uses AddPythonApp
+    type: code-contains
+    expected: AddPythonApp
+    description: Must use AddPythonApp for the Python service
+  - id: tc6
+    name: Names app "analytics"
+    type: code-contains
+    expected: '"analytics"'
+    description: Python app must be named "analytics"
+  - id: tc7
+    name: Specifies entrypoint
+    type: code-contains
+    expected: '"main.py"'
+    description: Must specify main.py as the entrypoint
+  - id: tc8
+    name: References database
+    type: code-contains
+    expected: WithReference
+    description: Must reference the database
+  - id: tc9
+    name: Passes arguments
+    type: code-contains
+    expected: WithArgs
+    description: Must pass command-line arguments
+
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - "AddPythonApp takes name, path, and entrypoint script"
+  - "Use .AddDatabase() on the postgres builder to create a database"
+  - "WithArgs passes arguments to the Python process"
+
+requiredPackages:
+  - Aspire.Hosting
 sortOrder: 0

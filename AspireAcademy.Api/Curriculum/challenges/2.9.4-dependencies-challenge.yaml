@@ -1,18 +1,113 @@
 instructions: |
-  # Dependencies Challenge
-  Configure a multi-service app with database init containers and health-based startup ordering.
+  # Resource Dependencies with WaitFor
+
+  Control startup ordering so services don't try to connect before their dependencies are ready.
+
+  **Your task:**
+  1. Add PostgreSQL `"postgres"` with database `"appdb"`
+  2. Add Redis `"cache"`
+  3. Add RabbitMQ `"messaging"`
+  4. Add project `"api"` that:
+     - References `appdb`, `cache`, and `messaging`
+     - WaitFor `postgres`, `cache`, and `messaging`
+  5. Add project `"worker"` that:
+     - References `messaging` only
+     - WaitFor `messaging`
+  6. Add project `"web"` that:
+     - References `api` only
+     - WaitFor `api` (cascading dependency)
+
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add PostgreSQL with database "appdb"
+  // TODO: Add Redis "cache"
+  // TODO: Add RabbitMQ "messaging"
+
+  // TODO: Add "api" project with all references and wait conditions
+  // TODO: Add "worker" project depending on messaging
+  // TODO: Add "web" project depending on api
+
+  builder.Build().Run();
+
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var postgres = builder.AddPostgres("postgres");
+  var appdb = postgres.AddDatabase("appdb");
+  var cache = builder.AddRedis("cache");
+  var messaging = builder.AddRabbitMQ("messaging");
+
+  var api = builder.AddProject("api")
+      .WithReference(appdb)
+      .WithReference(cache)
+      .WithReference(messaging)
+      .WaitFor(postgres)
+      .WaitFor(cache)
+      .WaitFor(messaging);
+
+  builder.AddProject("worker")
+      .WithReference(messaging)
+      .WaitFor(messaging);
+
+  builder.AddProject("web")
+      .WithReference(api)
+      .WaitFor(api);
+
+  builder.Build().Run();
+
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds PostgreSQL
+    type: code-contains
+    expected: AddPostgres
+    description: Must add PostgreSQL
+  - id: tc3
+    name: Adds database "appdb"
+    type: code-contains
+    expected: '"appdb"'
+    description: Must create database named "appdb"
+  - id: tc4
+    name: Adds Redis
+    type: code-contains
+    expected: AddRedis
+    description: Must add Redis
+  - id: tc5
+    name: Adds RabbitMQ
+    type: code-contains
+    expected: AddRabbitMQ
+    description: Must add RabbitMQ
+  - id: tc6
+    name: Uses WaitFor
+    type: code-contains
+    expected: WaitFor
+    description: Must use WaitFor for dependency ordering
+  - id: tc7
+    name: Has three projects
+    type: code-pattern
+    expected: 'AddProject.*"api"[\s\S]*AddProject.*"worker"[\s\S]*AddProject.*"web"'
+    description: Must add api, worker, and web projects
+  - id: tc8
+    name: Web depends on API
+    type: code-pattern
+    expected: 'AddProject.*"web"[\s\S]*WaitFor\(api\)'
+    description: Web must wait for API (cascading dependency)
+  - id: tc9
+    name: Uses WithReference
+    type: code-contains
+    expected: WithReference
+    description: Must connect resources with WithReference
+
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - "WaitFor prevents a resource from starting until its dependency is healthy"
+  - "Web only needs to reference the API - the API handles database/cache access"
+  - "Create all infrastructure resources first, then the projects that use them"
+
+requiredPackages:
+  - Aspire.Hosting
 sortOrder: 0

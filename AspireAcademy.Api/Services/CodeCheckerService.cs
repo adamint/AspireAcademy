@@ -18,15 +18,28 @@ public sealed class CodeCheckerService
         "AddAzureOpenAI", "AddContainer", "AddDockerfile", "AddConnectionString",
         // Project / app builders
         "AddProject", "AddCSharpApp", "AddViteApp", "AddPythonApp", "AddNodeApp",
-        "AddNpmApp", "AddExecutable",
+        "AddExecutable",
         // Database helpers
         "AddDatabase",
         // Fluent configuration
         "WithReference", "WaitFor", "WithVolume", "WithEndpoint", "WithHttpEndpoint",
         "WithHttpsEndpoint", "WithExternalHttpEndpoints", "WithEnvironment",
         "WithArgs", "WithBindMount", "WithContainerRuntimeArgs",
-        "WithDataVolume", "WithPgAdmin", "WithRedisCommander",
+        "WithDataVolume", "WithDataBindMount", "WithPgAdmin", "WithRedisCommander",
+        "WithMongoExpress", "WithKafkaUI", "WithManagementPlugin",
         "WithNpm", "WithPnpm", "WithYarn",
+        // Deployment / publish
+        "PublishAsDockerFile", "PublishAsKubernetesService",
+        // Lifecycle
+        "AddParameter", "AddCheck", "AddHealthChecks",
+        "AddOpenTelemetry", "WithTracing", "WithMetrics",
+        "AddStandardResilienceHandler", "AddServiceDiscovery",
+        // Docker compose
+        "AddDockerComposeEnvironment", "WithDashboard",
+        // Dev tunnels
+        "AddDevTunnel", "WithAnonymousAccess",
+        // Build args
+        "WithBuildArg", "WithBuildSecret",
         // Application lifecycle
         "CreateBuilder", "Build", "Run",
     };
@@ -107,7 +120,9 @@ public sealed class CodeCheckerService
         {
             "compiles" => (structureValid, structureValid ? null : "Code has structural issues"),
             "code-contains" => EvaluateCodeContains(code, expected),
+            "code-not-contains" => EvaluateCodeNotContains(code, expected),
             "code-pattern" => EvaluateCodePattern(code, expected),
+            "code-call" => EvaluateCodeCall(code, expected),
             "output-equals" => (false, "Skipped — requires runtime execution"),
             "output-contains" => (false, "Skipped — requires runtime execution"),
             _ => (false, $"Unknown test type: {type}")
@@ -125,6 +140,17 @@ public sealed class CodeCheckerService
         return (found, found ? null : $"Code does not contain: {expected}");
     }
 
+    private static (bool Passed, string? Detail) EvaluateCodeNotContains(string code, string? expected)
+    {
+        if (expected is null)
+        {
+            return (false, "No expected value specified");
+        }
+
+        var found = code.Contains(expected, StringComparison.Ordinal);
+        return (!found, found ? $"Code should not contain: {expected}" : null);
+    }
+
     private static (bool Passed, string? Detail) EvaluateCodePattern(string code, string? expected)
     {
         if (expected is null)
@@ -136,6 +162,27 @@ public sealed class CodeCheckerService
         {
             var matches = Regex.IsMatch(code, expected, RegexOptions.None, TimeSpan.FromSeconds(1));
             return (matches, matches ? null : $"Code does not match pattern: {expected}");
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return (false, "Pattern match timed out");
+        }
+    }
+
+    private static (bool Passed, string? Detail) EvaluateCodeCall(string code, string? expected)
+    {
+        if (expected is null)
+        {
+            return (false, "No expected call specified");
+        }
+
+        try
+        {
+            // Build a regex that matches the method call with the given arguments
+            // Allow whitespace flexibility
+            var pattern = Regex.Replace(expected, @"\s+", @"\s*");
+            var matches = Regex.IsMatch(code, pattern, RegexOptions.None, TimeSpan.FromSeconds(1));
+            return (matches, matches ? null : $"Expected call not found: {expected}");
         }
         catch (RegexMatchTimeoutException)
         {

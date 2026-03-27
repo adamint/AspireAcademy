@@ -1,18 +1,87 @@
 instructions: |
-  # The IResourceBuilder<T> Pattern
-  How the fluent builder pattern enables chained configuration with extension methods.
+  # The IResourceBuilder<T> Fluent Pattern
+
+  Aspire uses the builder pattern extensively. Each `Add*` method returns an `IResourceBuilder<T>`
+  that lets you chain configuration calls.
+
+  **Your task:**
+  1. Create an AppHost builder (already provided)
+  2. Add a Redis container named `"cache"` using `builder.AddRedis("cache")`
+  3. Chain `.WithDataVolume("redis-data")` to persist data
+  4. Add a project reference named `"api"` using `builder.AddProject("api")`
+  5. Chain `.WithReference(cache)` so the API can access Redis
+  6. Chain `.WithHttpEndpoint(port: 5000)` to expose port 5000
+  7. Call `builder.Build().Run()`
+
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add Redis named "cache" with a data volume "redis-data"
+
+  // TODO: Add a project "api" that references cache and has an HTTP endpoint on port 5000
+
+  builder.Build().Run();
+
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var cache = builder.AddRedis("cache")
+      .WithDataVolume("redis-data");
+
+  builder.AddProject("api")
+      .WithReference(cache)
+      .WithHttpEndpoint(port: 5000);
+
+  builder.Build().Run();
+
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds Redis resource
+    type: code-contains
+    expected: AddRedis
+    description: Must use AddRedis to add a Redis resource
+  - id: tc3
+    name: Names Redis "cache"
+    type: code-contains
+    expected: '"cache"'
+    description: Redis resource must be named "cache"
+  - id: tc4
+    name: Adds data volume
+    type: code-contains
+    expected: WithDataVolume
+    description: Must chain WithDataVolume for persistence
+  - id: tc5
+    name: Adds project reference
+    type: code-contains
+    expected: AddProject
+    description: Must add a project resource
+  - id: tc6
+    name: Chains WithReference
+    type: code-contains
+    expected: WithReference
+    description: Must chain WithReference to connect resources
+  - id: tc7
+    name: Adds HTTP endpoint
+    type: code-contains
+    expected: WithHttpEndpoint
+    description: Must chain WithHttpEndpoint to expose a port
+  - id: tc8
+    name: Builds and runs
+    type: code-contains
+    expected: Build().Run()
+    description: Must call Build().Run()
+
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - "Each Add* method returns an IResourceBuilder<T> — you can chain .With* calls on it"
+  - "Store the Redis builder in a variable (var cache = ...) so you can pass it to WithReference"
+  - "WithHttpEndpoint takes a named parameter: port: 5000"
+
+requiredPackages:
+  - Aspire.Hosting
+
 sortOrder: 0

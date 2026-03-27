@@ -1,18 +1,115 @@
 instructions: |
-  # Boss: Build a Single-File AppHost App
-  Build a 2-service app using a single-file AppHost with ServiceDefaults and the Dashboard.
+  # 🏰 Boss Challenge: Multi-Service Application
+
+  Build a complete AppHost with multiple resources, service references, and proper dependency ordering.
+
+  **Your task:**
+  1. Add PostgreSQL named `"postgres"` with a data volume `"pg-data"`
+  2. Add a database named `"catalogdb"` on the PostgreSQL server
+  3. Add Redis named `"cache"`
+  4. Add a project `"catalogapi"` that references `catalogdb` and `cache`, and waits for both
+  5. Add a project `"webapp"` that references `catalogapi`, waits for it, and has external HTTP endpoints
+
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add PostgreSQL with a database
+  // TODO: Add Redis
+  // TODO: Add catalog API project with references
+  // TODO: Add web app project that depends on the API
+
+  builder.Build().Run();
+
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var postgres = builder.AddPostgres("postgres")
+      .WithDataVolume("pg-data");
+  var catalogdb = postgres.AddDatabase("catalogdb");
+
+  var cache = builder.AddRedis("cache");
+
+  var catalogapi = builder.AddProject("catalogapi")
+      .WithReference(catalogdb)
+      .WithReference(cache)
+      .WaitFor(postgres)
+      .WaitFor(cache);
+
+  builder.AddProject("webapp")
+      .WithReference(catalogapi)
+      .WaitFor(catalogapi)
+      .WithExternalHttpEndpoints();
+
+  builder.Build().Run();
+
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds PostgreSQL
+    type: code-contains
+    expected: AddPostgres
+    description: Must add a PostgreSQL resource
+  - id: tc3
+    name: Names PostgreSQL "postgres"
+    type: code-contains
+    expected: '"postgres"'
+    description: PostgreSQL must be named "postgres"
+  - id: tc4
+    name: Adds data volume
+    type: code-contains
+    expected: WithDataVolume
+    description: Must add a data volume for persistence
+  - id: tc5
+    name: Adds database
+    type: code-contains
+    expected: AddDatabase
+    description: Must add a database on the PostgreSQL server
+  - id: tc6
+    name: Names database "catalogdb"
+    type: code-contains
+    expected: '"catalogdb"'
+    description: Database must be named "catalogdb"
+  - id: tc7
+    name: Adds Redis
+    type: code-contains
+    expected: AddRedis
+    description: Must add a Redis resource
+  - id: tc8
+    name: Names Redis "cache"
+    type: code-contains
+    expected: '"cache"'
+    description: Redis must be named "cache"
+  - id: tc9
+    name: Uses WithReference
+    type: code-contains
+    expected: WithReference
+    description: Must connect resources with WithReference
+  - id: tc10
+    name: Uses WaitFor
+    type: code-contains
+    expected: WaitFor
+    description: Must use WaitFor for dependency ordering
+  - id: tc11
+    name: Has external endpoints
+    type: code-contains
+    expected: WithExternalHttpEndpoints
+    description: Web app must have external HTTP endpoints
+  - id: tc12
+    name: Adds two projects
+    type: code-pattern
+    expected: AddProject.*catalogapi.*[\s\S]*AddProject.*webapp
+    description: Must add both catalogapi and webapp projects
+
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - "Use .AddDatabase() on the PostgreSQL builder to add a database"
+  - "Store resources in variables so you can pass them to WithReference"
+  - "WaitFor ensures a resource is ready before the dependent starts"
+
+requiredPackages:
+  - Aspire.Hosting
+
 sortOrder: 0

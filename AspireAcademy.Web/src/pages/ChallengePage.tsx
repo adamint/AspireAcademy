@@ -135,9 +135,10 @@ export default function ChallengePage() {
   const [aiInput, setAiInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
 
-  // Success
+  // Success / Failure
   const [showSuccess, setShowSuccess] = useState(false);
   const [xpEarned, setXpEarned] = useState(0);
+  const [failureMessage, setFailureMessage] = useState<string>('');
 
   // Fetch challenge data on mount
   const fetched = useState(false);
@@ -212,6 +213,7 @@ export default function ChallengePage() {
     setSubmitting(true);
     setOutput('');
     setErrors('');
+    setFailureMessage('');
     try {
       const res = await api.post<SubmitApiResponse>(
         `/challenges/${challenge.lessonId}/submit`,
@@ -230,6 +232,7 @@ export default function ChallengePage() {
       );
 
       if (res.data.allPassed) {
+        setFailureMessage('');
         setXpEarned(res.data.xpEarned);
         setShowSuccess(true);
         if (res.data.xpEarned > 0) {
@@ -242,6 +245,10 @@ export default function ChallengePage() {
             loginStreakDays: store.loginStreakDays,
           });
         }
+      } else {
+        const passed = res.data.testResults.filter((t) => t.passed).length;
+        const total = res.data.testResults.length;
+        setFailureMessage(`${passed}/${total} tests passed. Fix the failing tests and try again.`);
       }
     } catch {
       console.error('[ChallengePage] Failed to submit challenge:', lessonId);
@@ -476,6 +483,15 @@ export default function ChallengePage() {
             <MarkdownContent>{challenge.instructions}</MarkdownContent>
           </Box>
 
+          {/* Failure banner */}
+          {failureMessage && (
+            <Box px={5} py={3} bg="red.900" borderTop="2px solid" borderBottom="2px solid" borderColor="red.500">
+              <Text fontSize="sm" color="red.200" fontWeight="bold">
+                ❌ {failureMessage}
+              </Text>
+            </Box>
+          )}
+
           {/* Test cases */}
           <Box px={5} py={4} borderTop="2px solid" borderColor="game.pixelBorder">
             <Text
@@ -557,7 +573,7 @@ export default function ChallengePage() {
           <Box flex={1} minH="200px">
             <CodeEditor
               value={code}
-              onChange={setCode}
+              onChange={(v) => { setCode(v); setFailureMessage(''); }}
               language={challenge.language || 'csharp'}
             />
           </Box>

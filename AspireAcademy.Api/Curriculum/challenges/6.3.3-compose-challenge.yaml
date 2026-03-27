@@ -1,18 +1,110 @@
 instructions: |
-  # Docker Compose Challenge
-  Publish a multi-service Aspire app as a Docker Compose stack with custom service configuration.
+  # Custom Resource Lifecycle Challenge
+
+  Build an AppHost that uses custom container configuration and lifecycle management to set up a monitoring stack alongside your API.
+
+  **What to do:**
+  1. Add a container named `"prometheus"` using the `"prom/prometheus"` image
+  2. Configure Prometheus with a bind mount: `.WithBindMount("./prometheus.yml", "/etc/prometheus/prometheus.yml")`
+  3. Add an HTTP endpoint to Prometheus targeting port 9090 with `WithHttpEndpoint`
+  4. Add a container named `"grafana"` using the `"grafana/grafana"` image
+  5. Configure Grafana with an HTTP endpoint targeting port 3000
+  6. Set the Grafana admin password with `.WithEnvironment("GF_SECURITY_ADMIN_PASSWORD", "admin")`
+  7. Add a project named `"api"` using `Projects.ApiService` that references both Prometheus and Grafana
+
+  **Key concepts:**
+  - `AddContainer(name, image)` registers a custom container resource
+  - `WithBindMount(source, target)` mounts a host path into the container
+  - `WithHttpEndpoint(targetPort)` exposes an HTTP endpoint on a specific container port
+  - `WithEnvironment(key, value)` sets environment variables on a container
+  - `WithReference(resource)` connects services together
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add a Prometheus container with bind mount and HTTP endpoint
+
+  // TODO: Add a Grafana container with HTTP endpoint and environment variable
+
+  // TODO: Add an API project that references both containers
+
+  builder.Build().Run();
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var prometheus = builder.AddContainer("prometheus", "prom/prometheus")
+                          .WithBindMount("./prometheus.yml", "/etc/prometheus/prometheus.yml")
+                          .WithHttpEndpoint(targetPort: 9090);
+
+  var grafana = builder.AddContainer("grafana", "grafana/grafana")
+                       .WithHttpEndpoint(targetPort: 3000)
+                       .WithEnvironment("GF_SECURITY_ADMIN_PASSWORD", "admin");
+
+  builder.AddProject<Projects.ApiService>("api")
+         .WithReference(prometheus)
+         .WithReference(grafana);
+
+  builder.Build().Run();
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Uses AddContainer
+    type: code-contains
+    expected: AddContainer
+    description: Must use AddContainer to register custom containers
+  - id: tc3
+    name: Names the Prometheus container
+    type: code-contains
+    expected: '"prometheus"'
+    description: Prometheus container must be named 'prometheus'
+  - id: tc4
+    name: Uses Prometheus image
+    type: code-contains
+    expected: '"prom/prometheus"'
+    description: Must use the prom/prometheus container image
+  - id: tc5
+    name: Uses WithBindMount
+    type: code-contains
+    expected: WithBindMount
+    description: Must configure Prometheus with a bind mount for its config file
+  - id: tc6
+    name: Names the Grafana container
+    type: code-contains
+    expected: '"grafana"'
+    description: Grafana container must be named 'grafana'
+  - id: tc7
+    name: Uses Grafana image
+    type: code-contains
+    expected: '"grafana/grafana"'
+    description: Must use the grafana/grafana container image
+  - id: tc8
+    name: Uses WithHttpEndpoint
+    type: code-contains
+    expected: WithHttpEndpoint
+    description: Must expose HTTP endpoints on the containers
+  - id: tc9
+    name: Uses WithEnvironment
+    type: code-contains
+    expected: WithEnvironment
+    description: Must set environment variables on the Grafana container
+  - id: tc10
+    name: Uses WithReference
+    type: code-contains
+    expected: WithReference
+    description: API project must reference the container resources
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - 'Use builder.AddContainer("prometheus", "prom/prometheus") to create the Prometheus container'
+  - 'Chain .WithBindMount("./prometheus.yml", "/etc/prometheus/prometheus.yml") to mount the Prometheus config'
+  - 'Use .WithHttpEndpoint(targetPort: 9090) to expose Prometheus and .WithHttpEndpoint(targetPort: 3000) for Grafana'
+  - 'Set Grafana''s admin password with .WithEnvironment("GF_SECURITY_ADMIN_PASSWORD", "admin")'
+requiredPackages:
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
 sortOrder: 0

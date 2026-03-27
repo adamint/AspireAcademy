@@ -1,18 +1,94 @@
 instructions: |
-  # C# App Challenge
-  Add a C# app by path and configure its endpoints and environment.
+  # C# App with Custom Configuration
+
+  Use `AddCSharpApp` to add a standalone C# application and configure it with
+  environment variables, endpoints, and resource references.
+
+  **Your task:**
+  1. Create the AppHost builder (provided)
+  2. Add Redis named `"cache"`
+  3. Add a C# app named `"worker"` from path `"../Worker"` using `AddCSharpApp("worker", "../Worker")`
+  4. Chain `.WithReference(cache)` to give the worker access to Redis
+  5. Chain `.WithEnvironment("WORKER_MODE", "batch")` to set an environment variable
+  6. Chain `.WithHttpEndpoint(port: 8080)` to expose an HTTP endpoint
+  7. Call `builder.Build().Run()`
+
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add Redis named "cache"
+
+  // TODO: Add a C# app "worker" from "../Worker" with:
+  //   - Reference to cache
+  //   - Environment variable WORKER_MODE = "batch"
+  //   - HTTP endpoint on port 8080
+
+  builder.Build().Run();
+
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var cache = builder.AddRedis("cache");
+
+  builder.AddCSharpApp("worker", "../Worker")
+      .WithReference(cache)
+      .WithEnvironment("WORKER_MODE", "batch")
+      .WithHttpEndpoint(port: 8080);
+
+  builder.Build().Run();
+
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Uses AddCSharpApp
+    type: code-contains
+    expected: AddCSharpApp
+    description: Must use AddCSharpApp to add a C# application
+  - id: tc3
+    name: Names app "worker"
+    type: code-contains
+    expected: '"worker"'
+    description: App must be named "worker"
+  - id: tc4
+    name: Specifies path
+    type: code-contains
+    expected: '"../Worker"'
+    description: Must specify the project path
+  - id: tc5
+    name: Adds Redis
+    type: code-contains
+    expected: AddRedis
+    description: Must add Redis resource
+  - id: tc6
+    name: References cache
+    type: code-contains
+    expected: WithReference
+    description: Must connect worker to cache
+  - id: tc7
+    name: Sets environment variable
+    type: code-contains
+    expected: WithEnvironment
+    description: Must set environment variables
+  - id: tc8
+    name: Sets WORKER_MODE
+    type: code-contains
+    expected: '"WORKER_MODE"'
+    description: Must set the WORKER_MODE variable
+  - id: tc9
+    name: Exposes HTTP endpoint
+    type: code-contains
+    expected: WithHttpEndpoint
+    description: Must expose an HTTP endpoint
+
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - "AddCSharpApp takes a name and a path to the project"
+  - "WithEnvironment takes a key and value as strings"
+  - "Chain all configuration after AddCSharpApp"
+
+requiredPackages:
+  - Aspire.Hosting
 sortOrder: 0

@@ -1,18 +1,99 @@
 instructions: |
-  # Client Integrations Challenge
-  Wire up a full-stack app with database, cache, and messaging client integrations.
+  # Client Integration Setup Challenge
+
+  Configure a .NET service to use Aspire client integrations for PostgreSQL, Redis, and RabbitMQ.
+
+  **What to do:**
+  1. Register a PostgreSQL data source with `builder.AddNpgsqlDataSource("catalogdb")`
+  2. Register a Redis client with `builder.AddRedisClient("cache")`
+  3. Register a RabbitMQ client with `builder.AddRabbitMQClient("messaging")`
+  4. Map a health checks endpoint at `"/health"` using `app.MapHealthChecks("/health")`
+
+  **Key concepts:**
+  - `AddNpgsqlDataSource(connectionName)` registers an `NpgsqlDataSource` in DI with health checks, metrics, and tracing
+  - `AddRedisClient(connectionName)` registers an `IConnectionMultiplexer` in DI
+  - `AddRabbitMQClient(connectionName)` registers an `IConnection` in DI
+  - Connection names must match the names used in the AppHost's `WithReference` calls
+  - `MapHealthChecks` exposes health check results at an HTTP endpoint
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  var builder = WebApplication.CreateBuilder(args);
+
+  // TODO: Register PostgreSQL data source for "catalogdb"
+
+  // TODO: Register Redis client for "cache"
+
+  // TODO: Register RabbitMQ client for "messaging"
+
+  var app = builder.Build();
+
+  // TODO: Map health checks endpoint at "/health"
+
+  app.Run();
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  var builder = WebApplication.CreateBuilder(args);
+
+  builder.AddNpgsqlDataSource("catalogdb");
+  builder.AddRedisClient("cache");
+  builder.AddRabbitMQClient("messaging");
+
+  var app = builder.Build();
+
+  app.MapHealthChecks("/health");
+
+  app.Run();
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Registers PostgreSQL
+    type: code-contains
+    expected: AddNpgsqlDataSource
+    description: Must register the Npgsql data source
+  - id: tc3
+    name: Uses catalogdb connection name
+    type: code-contains
+    expected: '"catalogdb"'
+    description: PostgreSQL must use connection name 'catalogdb'
+  - id: tc4
+    name: Registers Redis client
+    type: code-contains
+    expected: AddRedisClient
+    description: Must register the Redis client integration
+  - id: tc5
+    name: Uses cache connection name
+    type: code-contains
+    expected: '"cache"'
+    description: Redis must use connection name 'cache'
+  - id: tc6
+    name: Registers RabbitMQ client
+    type: code-contains
+    expected: AddRabbitMQClient
+    description: Must register the RabbitMQ client integration
+  - id: tc7
+    name: Uses messaging connection name
+    type: code-contains
+    expected: '"messaging"'
+    description: RabbitMQ must use connection name 'messaging'
+  - id: tc8
+    name: Maps health checks endpoint
+    type: code-contains
+    expected: MapHealthChecks
+    description: Must map a health checks endpoint
+  - id: tc9
+    name: Health endpoint path
+    type: code-contains
+    expected: '"/health"'
+    description: Health checks must be mapped to the /health path
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - Client integrations are called on the builder (WebApplication.CreateBuilder), not the app
+  - The connection name in AddNpgsqlDataSource must match the name used in the AppHost
+  - Call app.MapHealthChecks("/health") after builder.Build() to expose health status
+  - Each Add*Client method automatically registers health checks, metrics, and tracing
+requiredPackages:
+  - Aspire.Npgsql
+  - Aspire.StackExchange.Redis
+  - Aspire.RabbitMQ.Client
 sortOrder: 0

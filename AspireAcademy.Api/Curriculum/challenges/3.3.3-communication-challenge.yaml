@@ -1,18 +1,103 @@
 instructions: |
-  # Communication Patterns Challenge
-  Wire up an HTTP API, a gRPC service, and a message broker in a single AppHost.
+  # Service Communication Challenge
+
+  Build an AppHost that wires up service-to-service communication using references and startup ordering.
+
+  **What to do:**
+  1. Add a PostgreSQL server named `"postgres"` and a database named `"catalogdb"`
+  2. Add a backend project named `"backend"` using `Projects.BackendService` that references the database
+  3. Add an API project named `"api"` using `Projects.ApiService` that references the backend
+  4. Use `WaitFor` so the backend waits for the database and the API waits for the backend
+  5. Add a web frontend named `"web"` using `Projects.Web` that references the API with external HTTP endpoints
+
+  **Key concepts:**
+  - `WithReference(resource)` creates service discovery environment variables so services can find each other
+  - `WaitFor(resource)` ensures a resource is healthy before the dependent starts
+  - References form a dependency graph: web → api → backend → database
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add a PostgreSQL server and database
+
+  // TODO: Add a backend project that references the database
+
+  // TODO: Add an API project that references the backend
+
+  // TODO: Add a web frontend that references the API with external endpoints
+
+  builder.Build().Run();
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  using Aspire.Hosting;
+
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var postgres = builder.AddPostgres("postgres")
+                        .AddDatabase("catalogdb");
+
+  var backend = builder.AddProject<Projects.BackendService>("backend")
+                       .WithReference(postgres)
+                       .WaitFor(postgres);
+
+  var api = builder.AddProject<Projects.ApiService>("api")
+                   .WithReference(backend)
+                   .WaitFor(backend);
+
+  builder.AddProject<Projects.Web>("web")
+         .WithExternalHttpEndpoints()
+         .WithReference(api)
+         .WaitFor(api);
+
+  builder.Build().Run();
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds PostgreSQL server
+    type: code-contains
+    expected: AddPostgres
+    description: Must add a PostgreSQL server resource
+  - id: tc3
+    name: Adds a database
+    type: code-contains
+    expected: AddDatabase
+    description: Must add a database from the PostgreSQL server
+  - id: tc4
+    name: Adds backend project
+    type: code-pattern
+    expected: 'AddProject.*"backend"'
+    description: Must add a project named 'backend'
+  - id: tc5
+    name: Adds API project
+    type: code-pattern
+    expected: 'AddProject.*"api"'
+    description: Must add a project named 'api'
+  - id: tc6
+    name: Backend references database
+    type: code-contains
+    expected: WithReference(postgres)
+    description: Backend must reference the database resource
+  - id: tc7
+    name: Uses WaitFor ordering
+    type: code-contains
+    expected: WaitFor
+    description: Must use WaitFor to control startup ordering
+  - id: tc8
+    name: Web has external endpoints
+    type: code-contains
+    expected: WithExternalHttpEndpoints
+    description: Web frontend must have external HTTP endpoints
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - Start with builder.AddPostgres("postgres").AddDatabase("catalogdb") and store the database in a variable
+  - Chain .WithReference(postgres) and .WaitFor(postgres) on the backend project
+  - The API project should reference the backend, not the database directly
+  - Don't forget .WithExternalHttpEndpoints() on the web frontend
+requiredPackages:
+  - Aspire.Hosting
+  - Aspire.Hosting.AppHost
+  - Aspire.Hosting.PostgreSQL
 sortOrder: 0

@@ -1,18 +1,95 @@
 instructions: |
-  # Health Checks: /health and /alive
-  How MapDefaultEndpoints() sets up health check endpoints and how Aspire monitors them.
+  # Configuring Health Checks
+
+  Aspire ServiceDefaults registers standard health check endpoints. In this challenge,
+  you'll set up a WebApplication with health checks.
+
+  **Your task:**
+  1. Create a WebApplication builder (already provided)
+  2. Add health checks with `builder.Services.AddHealthChecks()`
+  3. Add a custom health check named `"self"` using `.AddCheck("self", () => HealthCheckResult.Healthy())`
+  4. Build the app
+  5. Map the health check endpoint with `app.MapHealthChecks("/health")`
+  6. Map an alive endpoint with `app.MapHealthChecks("/alive")`
+
 starterCode: |
-  // TODO: Complete the challenge
-  Console.WriteLine("Hello Aspire!");
+  using Microsoft.AspNetCore.Builder;
+  using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+  var builder = WebApplication.CreateBuilder(args);
+
+  // TODO: Add health checks with a custom check named "self"
+
+  var app = builder.Build();
+
+  // TODO: Map health check endpoints at "/health" and "/alive"
+
+  app.Run();
+
 solutionCode: |
-  Console.WriteLine("Hello Aspire!");
+  using Microsoft.AspNetCore.Builder;
+  using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+  var builder = WebApplication.CreateBuilder(args);
+
+  builder.Services.AddHealthChecks()
+      .AddCheck("self", () => HealthCheckResult.Healthy());
+
+  var app = builder.Build();
+
+  app.MapHealthChecks("/health");
+  app.MapHealthChecks("/alive");
+
+  app.Run();
+
 testCases:
   - id: tc1
-    name: "Compiles successfully"
+    name: Compiles successfully
     type: compiles
     expected: null
-    description: "Code must compile"
+    description: Code must compile without errors
+  - id: tc2
+    name: Adds health checks
+    type: code-contains
+    expected: AddHealthChecks
+    description: Must call AddHealthChecks() to register health check services
+  - id: tc3
+    name: Adds custom check named "self"
+    type: code-contains
+    expected: '"self"'
+    description: Must add a health check named "self"
+  - id: tc4
+    name: Uses AddCheck
+    type: code-contains
+    expected: AddCheck
+    description: Must use AddCheck to register the custom health check
+  - id: tc5
+    name: Uses HealthCheckResult
+    type: code-contains
+    expected: HealthCheckResult.Healthy
+    description: Must return HealthCheckResult.Healthy()
+  - id: tc6
+    name: Maps /health endpoint
+    type: code-contains
+    expected: '"/health"'
+    description: Must map health checks to /health
+  - id: tc7
+    name: Maps /alive endpoint
+    type: code-contains
+    expected: '"/alive"'
+    description: Must map health checks to /alive
+  - id: tc8
+    name: Uses MapHealthChecks
+    type: code-contains
+    expected: MapHealthChecks
+    description: Must use MapHealthChecks to expose endpoints
+
 hints:
-  - "Read the lesson content for guidance"
-requiredPackages: []
+  - "Chain .AddCheck() after .AddHealthChecks()"
+  - "HealthCheckResult.Healthy() returns a healthy status"
+  - "MapHealthChecks maps a health check endpoint at the given path"
+
+requiredPackages:
+  - Microsoft.AspNetCore
+
 sortOrder: 0
