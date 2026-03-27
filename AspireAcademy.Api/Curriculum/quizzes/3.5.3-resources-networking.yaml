@@ -1,0 +1,36 @@
+questions:
+- text: 'In WithHttpEndpoint(port: 8080, targetPort: 80), what is the difference between
+    port and targetPort?'
+  type: multiple-choice
+  options:
+  - id: a
+    text: port is inside the container, targetPort is on the host
+    isCorrect: false
+  - id: b
+    text: port is on the host, targetPort is inside the container
+    isCorrect: true
+  - id: c
+    text: They are interchangeable
+    isCorrect: false
+  - id: d
+    text: targetPort is for HTTPS only
+    isCorrect: false
+  explanation: port is the host port (what you connect to from outside). targetPort
+    is the container port (what the process inside listens on).
+- text: How does a Python service read a connection string injected by WithReference?
+  type: multiple-choice
+  options:
+  - id: a
+    text: from aspire import get_connection_string
+    isCorrect: false
+  - id: b
+    text: os.environ["ConnectionStrings__resource_name"]
+    isCorrect: true
+  - id: c
+    text: It reads from a JSON config file
+    isCorrect: false
+  - id: d
+    text: Connection strings only work with .NET services
+    isCorrect: false
+  explanation: Connection strings are injected as environment variables. Every language
+    reads them the same way — from the environment. The format is ConnectionStrings__<resource-name>.

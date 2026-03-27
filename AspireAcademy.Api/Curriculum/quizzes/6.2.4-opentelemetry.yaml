@@ -1,0 +1,37 @@
+questions:
+- text: What three signal types does OpenTelemetry define?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Logs, events, and alerts
+    isCorrect: false
+  - id: b
+    text: Traces, metrics, and logs
+    isCorrect: true
+  - id: c
+    text: Spans, counters, and exceptions
+    isCorrect: false
+  - id: d
+    text: Requests, responses, and errors
+    isCorrect: false
+  explanation: The three pillars of observability in OpenTelemetry are traces (distributed
+    request tracking), metrics (numerical measurements), and logs (structured event
+    records). All three flow via OTLP to the Aspire Dashboard.
+- text: How does a trace span propagate from a C# API to a Python ML service via HTTP?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Through a shared database
+    isCorrect: false
+  - id: b
+    text: Via the W3C traceparent HTTP header
+    isCorrect: true
+  - id: c
+    text: Through a message queue
+    isCorrect: false
+  - id: d
+    text: Via the Aspire Dashboard
+    isCorrect: false
+  explanation: W3C TraceContext propagation uses the traceparent HTTP header to pass
+    the trace ID and span ID between services. Both the C# HttpClient and Python requests
+    library (with OpenTelemetry instrumentation) handle this automatically.

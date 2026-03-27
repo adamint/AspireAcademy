@@ -1,0 +1,19 @@
+questions:
+- text: How does the Aspire CLI communicate with a running AppHost?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Via HTTP REST API
+    isCorrect: false
+  - id: b
+    text: Via JSON-RPC over a backchannel Unix socket
+    isCorrect: true
+  - id: c
+    text: Via shared memory
+    isCorrect: false
+  - id: d
+    text: Via gRPC
+    isCorrect: false
+  explanation: The CLI uses a JSON-RPC backchannel over Unix sockets to communicate
+    with the AppHost process. This is how aspire ps, aspire logs, and other commands
+    query the running application.

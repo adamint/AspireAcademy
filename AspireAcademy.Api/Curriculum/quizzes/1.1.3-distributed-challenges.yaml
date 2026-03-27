@@ -1,0 +1,85 @@
+questions:
+  - text: "Your Python ML service cannot connect to PostgreSQL on startup because the database container has not finished initializing. Which of the five distributed system headaches does this illustrate?"
+    type: multiple-choice
+    options:
+      - id: a
+        text: "Service discovery"
+        isCorrect: false
+      - id: b
+        text: "Configuration management"
+        isCorrect: false
+      - id: c
+        text: "Resilience and startup ordering"
+        isCorrect: true
+      - id: d
+        text: "Observability gaps"
+        isCorrect: false
+    explanation: "This is a resilience and startup ordering problem. The Python service starts before its dependency (PostgreSQL) is ready. In Aspire, WaitFor() solves this by holding a service until its dependency passes health checks."
+
+  - text: "A user reports that search responses are slow. The request flows from the TypeScript frontend → C# API → Python recommendation engine → PostgreSQL. You have four separate log files. Which headache makes it hardest to diagnose?"
+    type: multiple-choice
+    options:
+      - id: a
+        text: "The inner-loop tax"
+        isCorrect: false
+      - id: b
+        text: "Observability gaps"
+        isCorrect: true
+      - id: c
+        text: "Configuration management"
+        isCorrect: false
+      - id: d
+        text: "Service discovery"
+        isCorrect: false
+    explanation: "Without distributed tracing, correlating a single request across four services requires reading four separate log files and guessing which entries belong together. Aspire's OpenTelemetry integration and Dashboard solve this by assigning a trace ID that follows the request end-to-end."
+
+  - text: "You change the PostgreSQL password in docker-compose.yml but forget to update the connection string in two of your four services' startup scripts. Which headache is this?"
+    type: multiple-choice
+    options:
+      - id: a
+        text: "Configuration management"
+        isCorrect: true
+      - id: b
+        text: "Service discovery"
+        isCorrect: false
+      - id: c
+        text: "The inner-loop tax"
+        isCorrect: false
+      - id: d
+        text: "Resilience"
+        isCorrect: false
+    explanation: "Configuration management is the challenge of keeping connection strings, ports, and secrets in sync across multiple services and environments. Aspire solves this by having the AppHost be the single source of truth — WithReference() injects the correct connection string into every service automatically."
+
+  - text: "A new team member joins and spends two hours trying to get the development environment working by following an outdated README. Which headache is this?"
+    type: multiple-choice
+    options:
+      - id: a
+        text: "The inner-loop tax"
+        isCorrect: true
+      - id: b
+        text: "Observability gaps"
+        isCorrect: false
+      - id: c
+        text: "Resilience"
+        isCorrect: false
+      - id: d
+        text: "Service discovery"
+        isCorrect: false
+    explanation: "The inner-loop tax is the friction developers face every time they need to set up, configure, and run their distributed application locally. Aspire reduces this to a single file (the AppHost) and a single command (aspire run)."
+
+  - text: "Which of the following is NOT one of the five distributed system headaches?"
+    type: multiple-choice
+    options:
+      - id: a
+        text: "Service discovery"
+        isCorrect: false
+      - id: b
+        text: "Type safety across services"
+        isCorrect: true
+      - id: c
+        text: "Configuration management"
+        isCorrect: false
+      - id: d
+        text: "Observability gaps"
+        isCorrect: false
+    explanation: "The five headaches are service discovery, configuration management, observability gaps, resilience, and the inner-loop tax. Type safety across services (e.g., shared contracts) is a valid concern but not one of the five core headaches this lesson covers."

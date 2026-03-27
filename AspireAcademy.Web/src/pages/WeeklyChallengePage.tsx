@@ -9,8 +9,8 @@ import {
   Skeleton,
   VStack,
   HStack,
+  Button,
 } from '@chakra-ui/react';
-import { Button } from '../components/ui/button';
 import api from '../services/apiClient';
 import { useAuthStore } from '../store/authStore';
 import AvatarDisplay from '../components/gamification/AvatarDisplay';

@@ -1,0 +1,19 @@
+questions:
+- text: What three technologies power the Aspire Dashboard?
+  type: multiple-choice
+  options:
+  - id: a
+    text: React, REST API, and Prometheus
+    isCorrect: false
+  - id: b
+    text: Blazor Server, gRPC resource service, and OTLP receiver
+    isCorrect: true
+  - id: c
+    text: Angular, GraphQL, and Jaeger
+    isCorrect: false
+  - id: d
+    text: Vue.js, WebSockets, and Elasticsearch
+    isCorrect: false
+  explanation: The Dashboard uses Blazor Server for the UI, a gRPC service for receiving
+    resource state from the AppHost, and an OTLP receiver for ingesting traces, metrics,
+    and logs.

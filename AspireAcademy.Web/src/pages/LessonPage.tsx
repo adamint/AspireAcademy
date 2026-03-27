@@ -28,6 +28,8 @@ const lessonTypeLabel: Record<string, { emoji: string; label: string }> = {
   challenge: { emoji: '💻', label: 'Challenge' },
   build: { emoji: '🏗️', label: 'Build' },
   boss: { emoji: '🎮', label: 'Boss' },
+  'boss-battle': { emoji: '🎮', label: 'Boss Battle' },
+  'build-project': { emoji: '🏗️', label: 'Build Project' },
 };
 
 export default function LessonPage() {
@@ -131,6 +133,8 @@ export default function LessonPage() {
         break;
       case LessonType.Challenge:
       case LessonType.Build:
+      case LessonType.BossBattle:
+      case LessonType.BuildProject:
         navigate(`/challenges/${id}`);
         break;
       default:
@@ -138,6 +142,14 @@ export default function LessonPage() {
         break;
     }
   };
+
+  // Redirect non-learn lessons to the correct page
+  useEffect(() => {
+    if (!lesson || isLoading) return;
+    if (lesson.type !== LessonType.Learn) {
+      navigateToLesson(lesson.id, lesson.type);
+    }
+  }, [lesson, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
     return (

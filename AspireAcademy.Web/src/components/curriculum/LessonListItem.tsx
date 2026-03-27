@@ -17,12 +17,14 @@ const statusIcons: Record<LessonStatus, string> = {
   skipped: '⏭️',
 };
 
-const typeIcons: Record<LessonType, string> = {
+const typeIcons: Record<string, string> = {
   learn: '📖',
   quiz: '🧪',
   challenge: '💻',
   build: '🏗️',
   boss: '🎮',
+  'boss-battle': '🎮',
+  'build-project': '🏗️',
 };
 
 export default function LessonListItem({ lesson }: LessonListItemProps) {
@@ -40,6 +42,8 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       case LessonType.Challenge:
       case LessonType.Build:
       case LessonType.Boss:
+      case LessonType.BossBattle:
+      case LessonType.BuildProject:
         navigate(`/challenges/${lesson.id}`);
         break;
       default:

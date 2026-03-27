@@ -1,0 +1,35 @@
+questions:
+- text: What does WithReference inject for a PostgreSQL database resource?
+  type: multiple-choice
+  options:
+  - id: a
+    text: The database container ID
+    isCorrect: false
+  - id: b
+    text: A full connection string (host, port, database, credentials)
+    isCorrect: true
+  - id: c
+    text: Just the hostname
+    isCorrect: false
+  - id: d
+    text: A Docker network name
+    isCorrect: false
+  explanation: For database resources, WithReference injects a full connection string
+    as ConnectionStrings__<name>. This includes host, port, database name, and credentials.
+- text: What does WithReference inject for a service resource (like an API)?
+  type: multiple-choice
+  options:
+  - id: a
+    text: A connection string
+    isCorrect: false
+  - id: b
+    text: The service endpoint URL (e.g., http://localhost:5001)
+    isCorrect: true
+  - id: c
+    text: The service source code path
+    isCorrect: false
+  - id: d
+    text: A gRPC channel
+    isCorrect: false
+  explanation: For service resources, WithReference injects the endpoint URL as services__<name>__<scheme>__<index>.
+    This is how service discovery works in Aspire.

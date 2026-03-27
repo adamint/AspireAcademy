@@ -1,0 +1,10 @@
+starterCode: |
+  // TODO: Implement the challenge
+solutionCode: |
+  // Solution code
+testCases:
+  - type: compiles
+    description: "Code should compile"
+hints:
+  - "Start by reading the instructions carefully"
+requiredPackages: []

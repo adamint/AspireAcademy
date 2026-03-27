@@ -22,7 +22,6 @@ const CertificatesPage = lazy(() => import('./pages/CertificatesPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const PlaygroundPage = lazy(() => import('./pages/PlaygroundPage'));
-const CheatSheetPage = lazy(() => import('./pages/CheatSheetPage'));
 const ConceptMapPage = lazy(() => import('./pages/ConceptMapPage'));
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const WeeklyChallengePage = lazy(() => import('./pages/WeeklyChallengePage'));
@@ -56,7 +55,6 @@ export default function App() {
           <Route path="/challenges/:lessonId" element={<ChallengePage />} />
           <Route path="/quizzes/:lessonId" element={<QuizPage />} />
           <Route path="/playground" element={<PlaygroundPage />} />
-          <Route path="/cheatsheet" element={<CheatSheetPage />} />
           <Route path="/concept-map" element={<ConceptMapPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/whats-new" element={<WhatsNewPage />} />

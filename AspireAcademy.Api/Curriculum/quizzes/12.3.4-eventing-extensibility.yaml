@@ -1,0 +1,18 @@
+questions:
+- text: Which event fires when a resource's health check passes for the first time?
+  type: multiple-choice
+  options:
+  - id: a
+    text: BeforeStartEvent
+    isCorrect: false
+  - id: b
+    text: AfterResourcesCreatedEvent
+    isCorrect: false
+  - id: c
+    text: ResourceReadyEvent
+    isCorrect: true
+  - id: d
+    text: BeforeResourceStartedEvent
+    isCorrect: false
+  explanation: ResourceReadyEvent fires the first time a resource transitions to a
+    healthy running state. This is the event that WaitFor listens for internally.

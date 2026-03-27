@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Box, Flex, Text, Heading, Button, SimpleGrid, Card } from '@chakra-ui/react';
 import { useAuthStore } from '../store/authStore';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
@@ -166,16 +166,15 @@ function NetworkCanvas() {
   }, []);
 
   return (
-    <canvas
+    <Box
       ref={canvasRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}
+      as="canvas"
+      position="absolute"
+      inset="0"
+      w="100%"
+      h="100%"
+      pointerEvents="none"
+      zIndex={0}
     />
   );
 }
@@ -245,7 +244,7 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
   return (
     <Text
       as="span"
-      ref={ref}
+      ref={ref as React.Ref<HTMLParagraphElement>}
       {...pixelFontProps}
       fontSize={{ base: '24px', md: '36px' }}
       color="game.xpGold"
@@ -366,6 +365,28 @@ export default function HomePage() {
             >
               How It Works
             </Text>
+            <Box display={{ base: 'none', md: 'block' }}>
+              <a
+                href="https://aspire.dev/docs/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Text fontSize="sm" color="whiteAlpha.800" cursor="pointer" _hover={{ color: 'game.xpGold' }}>
+                  Docs
+                </Text>
+              </a>
+            </Box>
+            <Box display={{ base: 'none', md: 'block' }}>
+              <a
+                href="https://github.com/microsoft/aspire"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Text fontSize="sm" color="whiteAlpha.800" cursor="pointer" _hover={{ color: 'game.xpGold' }}>
+                  GitHub
+                </Text>
+              </a>
+            </Box>
 
             {isLoggedIn ? (
               <Button
@@ -875,6 +896,26 @@ export default function HomePage() {
           <Text fontSize="xs" color="whiteAlpha.400">
             Learn Aspire · Build distributed apps · Have fun doing it
           </Text>
+          <Flex gap="4" mt="2">
+            <a
+              href="https://aspire.dev/docs/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Text fontSize="xs" color="whiteAlpha.500" _hover={{ color: 'aspire.400' }}>
+                Aspire Docs
+              </Text>
+            </a>
+            <a
+              href="https://github.com/microsoft/aspire"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Text fontSize="xs" color="whiteAlpha.500" _hover={{ color: 'aspire.400' }}>
+                GitHub
+              </Text>
+            </a>
+          </Flex>
         </Flex>
       </Box>
     </>

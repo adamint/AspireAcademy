@@ -13,11 +13,12 @@ import {
   FiLock,
   FiShield,
   FiCpu,
-  FiBook,
   FiMap,
   FiImage,
   FiTarget,
   FiStar,
+  FiExternalLink,
+  FiGithub,
 } from 'react-icons/fi';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -268,9 +269,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <SideNavLink to="/playground" icon={<FiCpu size={16} />} onClose={onClose}>
             Playground
           </SideNavLink>
-          <SideNavLink to="/cheatsheet" icon={<FiBook size={16} />} onClose={onClose}>
-            Cheat Sheet
-          </SideNavLink>
           <SideNavLink to="/concept-map" icon={<FiMap size={16} />} onClose={onClose}>
             Concept Map
           </SideNavLink>
@@ -315,6 +313,65 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <SideNavLink to="/certificates" icon={<FiFileText size={16} />} onClose={onClose}>
             Certificates
           </SideNavLink>
+        </Box>
+
+        {/* Aspire Links */}
+        <Box px="2" mt="2">
+          <Text
+            fontSize="10px"
+            fontWeight="700"
+            color="whiteAlpha.700"
+            textTransform="uppercase"
+            letterSpacing="0.5px"
+            px="3"
+            pt="3"
+            pb="1"
+            fontFamily="pixel"
+          >
+            Aspire
+          </Text>
+          <a
+            href="https://aspire.dev/docs/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Flex
+              align="center"
+              gap="3"
+              px="3"
+              py="2"
+              borderRadius="md"
+              color="whiteAlpha.800"
+              fontSize="13px"
+              fontFamily="pixel"
+              transition="background 0.15s"
+              _hover={{ bg: 'whiteAlpha.100', color: 'white' }}
+            >
+              <FiExternalLink size={16} />
+              <Text fontSize="2xs">Aspire Docs</Text>
+            </Flex>
+          </a>
+          <a
+            href="https://github.com/microsoft/aspire"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Flex
+              align="center"
+              gap="3"
+              px="3"
+              py="2"
+              borderRadius="md"
+              color="whiteAlpha.800"
+              fontSize="13px"
+              fontFamily="pixel"
+              transition="background 0.15s"
+              _hover={{ bg: 'whiteAlpha.100', color: 'white' }}
+            >
+              <FiGithub size={16} />
+              <Text fontSize="2xs">Aspire on GitHub</Text>
+            </Flex>
+          </a>
         </Box>
 
         {/* Admin */}

@@ -1,0 +1,20 @@
+questions:
+- text: What is a PipelineStep in Aspire's publishing architecture?
+  type: multiple-choice
+  options:
+  - id: a
+    text: A Docker build stage
+    isCorrect: false
+  - id: b
+    text: A unit of work in a DAG with Name, Action, DependsOn, and RequiredBy
+    isCorrect: true
+  - id: c
+    text: A Kubernetes deployment step
+    isCorrect: false
+  - id: d
+    text: A CI/CD pipeline stage
+    isCorrect: false
+  explanation: PipelineStep is the building block of Aspire's publishing pipeline.
+    Each step has a Name, an async Action, and dependency edges (DependsOn/RequiredBy)
+    that form a directed acyclic graph. Steps with satisfied dependencies execute
+    concurrently.

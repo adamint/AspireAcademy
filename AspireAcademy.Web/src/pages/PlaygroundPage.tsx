@@ -9,6 +9,8 @@ import {
   Input,
   IconButton,
   Badge,
+  Tabs,
+  SimpleGrid,
 } from '@chakra-ui/react';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import {
@@ -17,6 +19,7 @@ import {
   SiMongodb,
   SiRabbitmq,
   SiApachekafka,
+  SiPython,
 } from 'react-icons/si';
 import {
   TbDatabase,
@@ -30,12 +33,19 @@ import {
   TbUnlink,
   TbPlayerPlay,
   TbPackage,
+  TbFileText,
+  TbBrandNodejs,
+  TbCloud,
+  TbLock,
+  TbVariable,
 } from 'react-icons/tb';
 import type { IconType } from 'react-icons';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
+
+type CodeLanguage = 'csharp' | 'typescript';
 
 type ResourceType =
   | 'postgres'
@@ -45,7 +55,17 @@ type ResourceType =
   | 'rabbitmq'
   | 'kafka'
   | 'project'
-  | 'container';
+  | 'container'
+  | 'npmapp'
+  | 'pythonapp'
+  | 'azurestorage'
+  | 'keyvault'
+  | 'parameter';
+
+interface EnvVar {
+  key: string;
+  value: string;
+}
 
 interface PlaygroundResource {
   id: string;
@@ -58,6 +78,13 @@ interface PlaygroundResource {
   hasDataVolume: boolean;
   hasExternalEndpoints: boolean;
   ports: string;
+  envVars: EnvVar[];
+  isPersistent: boolean;
+  isSecret: boolean; // for parameter type
+  args: string; // for containers
+  scriptPath: string; // for python apps
+  projectPath: string; // for npm / python relative path
+  projectLanguage: CodeLanguage;
 }
 
 interface ResourceTemplate {
@@ -67,20 +94,54 @@ interface ResourceTemplate {
   color: string;
   defaultName: string;
   supportsDatabases: boolean;
-  isContainer: boolean;
+  category: 'infrastructure' | 'hosting' | 'azure' | 'config';
 }
+
+interface LanguageOption {
+  id: CodeLanguage;
+  label: string;
+  icon: string;
+  monacoLang: string;
+}
+
+interface ProjectScaffoldFile {
+  path: string;
+  content: string;
+  language: string;
+}
+
+const LANGUAGES: LanguageOption[] = [
+  { id: 'csharp', label: 'C#', icon: '🟣', monacoLang: 'csharp' },
+  { id: 'typescript', label: 'TypeScript', icon: '🔷', monacoLang: 'typescript' },
+];
 
 // ─── Resource templates ───────────────────────────────────────────────────────
 
 const RESOURCE_TEMPLATES: ResourceTemplate[] = [
-  { type: 'postgres', label: 'PostgreSQL', icon: SiPostgresql, color: '#336791', defaultName: 'postgres', supportsDatabases: true, isContainer: false },
-  { type: 'redis', label: 'Redis', icon: SiRedis, color: '#DC382D', defaultName: 'cache', supportsDatabases: false, isContainer: false },
-  { type: 'sqlserver', label: 'SQL Server', icon: TbDatabase, color: '#CC2927', defaultName: 'sqlserver', supportsDatabases: true, isContainer: false },
-  { type: 'mongodb', label: 'MongoDB', icon: SiMongodb, color: '#47A248', defaultName: 'mongodb', supportsDatabases: true, isContainer: false },
-  { type: 'rabbitmq', label: 'RabbitMQ', icon: SiRabbitmq, color: '#FF6600', defaultName: 'rabbitmq', supportsDatabases: false, isContainer: false },
-  { type: 'kafka', label: 'Kafka', icon: SiApachekafka, color: '#231F20', defaultName: 'kafka', supportsDatabases: false, isContainer: false },
-  { type: 'project', label: 'Project', icon: TbCode, color: '#6B4FBB', defaultName: 'myservice', supportsDatabases: false, isContainer: false },
-  { type: 'container', label: 'Container', icon: TbBox, color: '#2496ED', defaultName: 'mycontainer', supportsDatabases: false, isContainer: true },
+  // Infrastructure
+  { type: 'postgres', label: 'PostgreSQL', icon: SiPostgresql, color: '#336791', defaultName: 'postgres', supportsDatabases: true, category: 'infrastructure' },
+  { type: 'redis', label: 'Redis', icon: SiRedis, color: '#DC382D', defaultName: 'cache', supportsDatabases: false, category: 'infrastructure' },
+  { type: 'sqlserver', label: 'SQL Server', icon: TbDatabase, color: '#CC2927', defaultName: 'sqlserver', supportsDatabases: true, category: 'infrastructure' },
+  { type: 'mongodb', label: 'MongoDB', icon: SiMongodb, color: '#47A248', defaultName: 'mongodb', supportsDatabases: true, category: 'infrastructure' },
+  { type: 'rabbitmq', label: 'RabbitMQ', icon: SiRabbitmq, color: '#FF6600', defaultName: 'rabbitmq', supportsDatabases: false, category: 'infrastructure' },
+  { type: 'kafka', label: 'Kafka', icon: SiApachekafka, color: '#999', defaultName: 'kafka', supportsDatabases: false, category: 'infrastructure' },
+  // Hosting
+  { type: 'project', label: '.NET Project', icon: TbCode, color: '#6B4FBB', defaultName: 'myservice', supportsDatabases: false, category: 'hosting' },
+  { type: 'container', label: 'Container', icon: TbBox, color: '#2496ED', defaultName: 'mycontainer', supportsDatabases: false, category: 'hosting' },
+  { type: 'npmapp', label: 'Vite / JS App', icon: TbBrandNodejs, color: '#68A063', defaultName: 'frontend', supportsDatabases: false, category: 'hosting' },
+  { type: 'pythonapp', label: 'Python (Uvicorn)', icon: SiPython, color: '#3776AB', defaultName: 'pyworker', supportsDatabases: false, category: 'hosting' },
+  // Azure
+  { type: 'azurestorage', label: 'Azure Storage', icon: TbCloud, color: '#0078D4', defaultName: 'storage', supportsDatabases: false, category: 'azure' },
+  { type: 'keyvault', label: 'Key Vault', icon: TbLock, color: '#0078D4', defaultName: 'keyvault', supportsDatabases: false, category: 'azure' },
+  // Config
+  { type: 'parameter', label: 'Parameter', icon: TbVariable, color: '#E8912D', defaultName: 'my-param', supportsDatabases: false, category: 'config' },
+];
+
+const CATEGORIES: { key: ResourceTemplate['category']; label: string; emoji: string }[] = [
+  { key: 'infrastructure', label: 'Infrastructure', emoji: '🗄️' },
+  { key: 'hosting', label: 'Hosting', emoji: '🚀' },
+  { key: 'azure', label: 'Azure', emoji: '☁️' },
+  { key: 'config', label: 'Config', emoji: '⚙️' },
 ];
 
 // ─── Pre-built examples ──────────────────────────────────────────────────────
@@ -95,30 +156,37 @@ function makeId(): string {
   return `r-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+function makeResource(overrides: Partial<PlaygroundResource> & { id: string; type: ResourceType; name: string }): PlaygroundResource {
+  return {
+    databases: [],
+    image: '',
+    references: [],
+    waitFor: [],
+    hasDataVolume: false,
+    hasExternalEndpoints: false,
+    ports: '',
+    envVars: [],
+    isPersistent: false,
+    isSecret: false,
+    args: '',
+    scriptPath: '',
+    projectPath: '',
+    projectLanguage: 'csharp',
+    ...overrides,
+  };
+}
+
 function buildExamples(): Example[] {
-  const ecomIds = { pg: makeId(), cache: makeId(), api: makeId(), web: makeId() };
+  const ecomIds = { pg: makeId(), cache: makeId(), mq: makeId(), api: makeId(), web: makeId() };
   const ecommerce: Example = {
     name: 'E-Commerce',
     emoji: '🛒',
     resources: [
-      { id: ecomIds.pg, type: 'postgres', name: 'postgres', databases: ['catalogdb'], image: '', references: [], waitFor: [], hasDataVolume: true, hasExternalEndpoints: false, ports: '' },
-      { id: ecomIds.cache, type: 'redis', name: 'cache', databases: [], image: '', references: [], waitFor: [], hasDataVolume: false, hasExternalEndpoints: false, ports: '' },
-      { id: ecomIds.api, type: 'project', name: 'api', databases: [], image: '', references: [ecomIds.pg, ecomIds.cache], waitFor: [ecomIds.pg, ecomIds.cache], hasDataVolume: false, hasExternalEndpoints: false, ports: '' },
-      { id: ecomIds.web, type: 'project', name: 'web', databases: [], image: '', references: [ecomIds.api], waitFor: [ecomIds.api], hasDataVolume: false, hasExternalEndpoints: true, ports: '' },
-    ],
-  };
-
-  const msIds = { pg: makeId(), mq: makeId(), orders: makeId(), inventory: makeId(), notifications: makeId(), gateway: makeId() };
-  const microservices: Example = {
-    name: 'Microservices',
-    emoji: '🔗',
-    resources: [
-      { id: msIds.pg, type: 'postgres', name: 'postgres', databases: ['ordersdb', 'inventorydb'], image: '', references: [], waitFor: [], hasDataVolume: true, hasExternalEndpoints: false, ports: '' },
-      { id: msIds.mq, type: 'rabbitmq', name: 'messaging', databases: [], image: '', references: [], waitFor: [], hasDataVolume: false, hasExternalEndpoints: false, ports: '' },
-      { id: msIds.orders, type: 'project', name: 'orders-service', databases: [], image: '', references: [msIds.pg, msIds.mq], waitFor: [msIds.pg, msIds.mq], hasDataVolume: false, hasExternalEndpoints: false, ports: '' },
-      { id: msIds.inventory, type: 'project', name: 'inventory-service', databases: [], image: '', references: [msIds.pg, msIds.mq], waitFor: [msIds.pg, msIds.mq], hasDataVolume: false, hasExternalEndpoints: false, ports: '' },
-      { id: msIds.notifications, type: 'project', name: 'notification-service', databases: [], image: '', references: [msIds.mq], waitFor: [msIds.mq], hasDataVolume: false, hasExternalEndpoints: false, ports: '' },
-      { id: msIds.gateway, type: 'project', name: 'gateway', databases: [], image: '', references: [msIds.orders, msIds.inventory, msIds.notifications], waitFor: [msIds.orders, msIds.inventory, msIds.notifications], hasDataVolume: false, hasExternalEndpoints: true, ports: '' },
+      makeResource({ id: ecomIds.pg, type: 'postgres', name: 'postgres', databases: ['catalogdb'], hasDataVolume: true }),
+      makeResource({ id: ecomIds.cache, type: 'redis', name: 'cache' }),
+      makeResource({ id: ecomIds.mq, type: 'rabbitmq', name: 'messaging' }),
+      makeResource({ id: ecomIds.api, type: 'project', name: 'api', references: [ecomIds.pg, ecomIds.cache, ecomIds.mq], waitFor: [ecomIds.pg, ecomIds.cache] }),
+      makeResource({ id: ecomIds.web, type: 'project', name: 'web', references: [ecomIds.api], waitFor: [ecomIds.api], hasExternalEndpoints: true }),
     ],
   };
 
@@ -127,19 +195,47 @@ function buildExamples(): Example[] {
     name: 'Full Stack',
     emoji: '🏗️',
     resources: [
-      { id: fsIds.pg, type: 'postgres', name: 'postgres', databases: ['appdb'], image: '', references: [], waitFor: [], hasDataVolume: true, hasExternalEndpoints: false, ports: '' },
-      { id: fsIds.cache, type: 'redis', name: 'cache', databases: [], image: '', references: [], waitFor: [], hasDataVolume: false, hasExternalEndpoints: false, ports: '' },
-      { id: fsIds.api, type: 'project', name: 'api', databases: [], image: '', references: [fsIds.pg, fsIds.cache], waitFor: [fsIds.pg, fsIds.cache], hasDataVolume: false, hasExternalEndpoints: false, ports: '' },
-      { id: fsIds.frontend, type: 'container', name: 'frontend', databases: [], image: 'node:20-slim', references: [fsIds.api], waitFor: [fsIds.api], hasDataVolume: false, hasExternalEndpoints: true, ports: '3000' },
+      makeResource({ id: fsIds.pg, type: 'postgres', name: 'postgres', databases: ['appdb'], hasDataVolume: true }),
+      makeResource({ id: fsIds.cache, type: 'redis', name: 'cache' }),
+      makeResource({ id: fsIds.api, type: 'project', name: 'api', references: [fsIds.pg, fsIds.cache], waitFor: [fsIds.pg, fsIds.cache] }),
+      makeResource({ id: fsIds.frontend, type: 'npmapp', name: 'frontend', projectPath: '../frontend', references: [fsIds.api], waitFor: [fsIds.api], hasExternalEndpoints: true }),
     ],
   };
 
-  return [ecommerce, microservices, fullstack];
+  const mlIds = { redis: makeId(), pg: makeId(), trainer: makeId(), api: makeId(), minio: makeId() };
+  const mlPipeline: Example = {
+    name: 'ML Pipeline',
+    emoji: '🤖',
+    resources: [
+      makeResource({ id: mlIds.pg, type: 'postgres', name: 'metadata-db', databases: ['experiments'], hasDataVolume: true }),
+      makeResource({ id: mlIds.redis, type: 'redis', name: 'job-queue' }),
+      makeResource({ id: mlIds.minio, type: 'container', name: 'model-store', image: 'minio/minio', ports: '9000', args: 'server /data', envVars: [{ key: 'MINIO_ROOT_USER', value: 'admin' }, { key: 'MINIO_ROOT_PASSWORD', value: 'password' }] }),
+      makeResource({ id: mlIds.trainer, type: 'pythonapp', name: 'trainer', scriptPath: 'main:app', projectPath: '../ml-trainer', references: [mlIds.redis, mlIds.pg], waitFor: [mlIds.pg] }),
+      makeResource({ id: mlIds.api, type: 'project', name: 'inference-api', references: [mlIds.redis, mlIds.minio], hasExternalEndpoints: true }),
+    ],
+  };
+
+  const saasIds = { pg: makeId(), redis: makeId(), blob: makeId(), kv: makeId(), dbPwd: makeId(), auth: makeId(), api: makeId() };
+  const saas: Example = {
+    name: 'SaaS App',
+    emoji: '🏢',
+    resources: [
+      makeResource({ id: saasIds.dbPwd, type: 'parameter', name: 'db-password', isSecret: true }),
+      makeResource({ id: saasIds.pg, type: 'postgres', name: 'postgres', databases: ['tenantdb'], hasDataVolume: true }),
+      makeResource({ id: saasIds.redis, type: 'redis', name: 'cache' }),
+      makeResource({ id: saasIds.blob, type: 'azurestorage', name: 'storage' }),
+      makeResource({ id: saasIds.kv, type: 'keyvault', name: 'secrets' }),
+      makeResource({ id: saasIds.auth, type: 'project', name: 'auth-service', references: [saasIds.pg, saasIds.kv] }),
+      makeResource({ id: saasIds.api, type: 'project', name: 'tenant-api', references: [saasIds.pg, saasIds.redis, saasIds.blob, saasIds.auth], hasExternalEndpoints: true }),
+    ],
+  };
+
+  return [ecommerce, fullstack, mlPipeline, saas];
 }
 
 // ─── Code generation ─────────────────────────────────────────────────────────
 
-const ADD_METHOD: Record<ResourceType, string> = {
+const CS_ADD: Record<ResourceType, string> = {
   postgres: 'AddPostgres',
   redis: 'AddRedis',
   sqlserver: 'AddSqlServer',
@@ -148,6 +244,27 @@ const ADD_METHOD: Record<ResourceType, string> = {
   kafka: 'AddKafka',
   project: 'AddProject',
   container: 'AddContainer',
+  npmapp: 'AddViteApp',
+  pythonapp: 'AddUvicornApp',
+  azurestorage: 'AddAzureStorage',
+  keyvault: 'AddAzureKeyVault',
+  parameter: 'AddParameter',
+};
+
+const TS_ADD: Record<ResourceType, string> = {
+  postgres: 'addPostgres',
+  redis: 'addRedis',
+  sqlserver: 'addSqlServer',
+  mongodb: 'addMongoDB',
+  rabbitmq: 'addRabbitMQ',
+  kafka: 'addKafka',
+  project: 'addProject',
+  container: 'addContainer',
+  npmapp: 'addViteApp',
+  pythonapp: 'addUvicornApp',
+  azurestorage: 'addAzureStorage',
+  keyvault: 'addAzureKeyVault',
+  parameter: 'addParameter',
 };
 
 function toVarName(name: string): string {
@@ -158,20 +275,9 @@ function toVarName(name: string): string {
     .replace(/_$/, '') || 'resource';
 }
 
-function generateAppHostCode(resources: PlaygroundResource[]): string {
-  if (resources.length === 0) {
-    return `var builder = DistributedApplication.CreateBuilder(args);
-
-// 👈 Add resources from the palette to get started!
-
-builder.Build().Run();
-`;
-  }
-
+function assignVarNames(resources: PlaygroundResource[]): Map<string, string> {
   const idToVar = new Map<string, string>();
   const usedVars = new Set<string>();
-
-  // Assign unique variable names
   for (const r of resources) {
     let v = toVarName(r.name);
     if (usedVars.has(v)) {
@@ -182,33 +288,75 @@ builder.Build().Run();
     usedVars.add(v);
     idToVar.set(r.id, v);
   }
+  return idToVar;
+}
 
+function generateCSharpCode(resources: PlaygroundResource[]): string {
+  if (resources.length === 0) {
+    return `var builder = DistributedApplication.CreateBuilder(args);
+
+// 👈 Add resources from the palette to get started!
+
+builder.Build().Run();
+`;
+  }
+
+  const idToVar = assignVarNames(resources);
   const lines: string[] = ['var builder = DistributedApplication.CreateBuilder(args);', ''];
 
   for (const r of resources) {
     const varName = idToVar.get(r.id)!;
-    const method = ADD_METHOD[r.type];
+    const method = CS_ADD[r.type];
     const parts: string[] = [];
 
-    // Opening call
+    // Opening call with type-specific args
     if (r.type === 'container') {
-      const img = r.image || 'myregistry/myimage';
-      parts.push(`var ${varName} = builder.${method}("${r.name}", "${img}")`);
+      parts.push(`var ${varName} = builder.${method}("${r.name}", "${r.image || 'myregistry/myimage'}")`);
+    } else if (r.type === 'npmapp') {
+      parts.push(`var ${varName} = builder.${method}("${r.name}", "${r.projectPath || '../' + r.name}")`);
+    } else if (r.type === 'pythonapp') {
+      parts.push(`var ${varName} = builder.${method}("${r.name}", "${r.projectPath || '../' + r.name}", "${r.scriptPath || 'main:app'}")`);
+    } else if (r.type === 'parameter') {
+      parts.push(`var ${varName} = builder.${method}("${r.name}"${r.isSecret ? ', secret: true' : ''})`);
+    } else if (r.type === 'project') {
+      parts.push(`var ${varName} = builder.AddProject<Projects.${toPascalCase(r.name)}>("${r.name}")`);
     } else {
       parts.push(`var ${varName} = builder.${method}("${r.name}")`);
     }
 
     // Data volume
-    if (r.hasDataVolume && r.type !== 'project' && r.type !== 'container') {
-      parts.push(`    .WithDataVolume("${r.name}-data")`);
+    if (r.hasDataVolume && !isAppType(r.type) && r.type !== 'parameter') {
+      parts.push('    .WithDataVolume()');
+    }
+
+    // Persistent lifetime
+    if (r.isPersistent && r.type !== 'parameter') {
+      parts.push('    .WithLifetime(ContainerLifetime.Persistent)');
     }
 
     // External endpoints
     if (r.hasExternalEndpoints) {
       if (r.type === 'project') {
         parts.push('    .WithExternalHttpEndpoints()');
+      } else if (r.type === 'npmapp') {
+        parts.push('    .WithHttpEndpoint(env: "PORT")');
+      } else if (r.type === 'pythonapp') {
+        parts.push(`    .WithHttpEndpoint(${r.ports ? `port: ${r.ports}, ` : ''}env: "PORT")`);
       } else if (r.type === 'container' && r.ports) {
         parts.push(`    .WithHttpEndpoint(targetPort: ${r.ports})`);
+      }
+    }
+
+    // Container args
+    if (r.type === 'container' && r.args) {
+      const argParts = r.args.split(/\s+/).map((a) => `"${a}"`).join(', ');
+      parts.push(`    .WithArgs(${argParts})`);
+    }
+
+    // Environment variables
+    for (const env of r.envVars) {
+      if (env.key && env.value) {
+        parts.push(`    .WithEnvironment("${env.key}", "${env.value}")`);
       }
     }
 
@@ -217,11 +365,10 @@ builder.Build().Run();
       const refResource = resources.find((x) => x.id === refId);
       if (!refResource) continue;
       const refVar = idToVar.get(refId)!;
-
-      // If the referenced resource has databases, reference the first one
       if (refResource.databases.length > 0) {
-        const dbVarName = toVarName(refResource.databases[0]);
-        parts.push(`    .WithReference(${dbVarName})`);
+        parts.push(`    .WithReference(${toVarName(refResource.databases[0])})`);
+      } else if (refResource.type === 'azurestorage') {
+        parts.push(`    .WithReference(${refVar}Blobs)`);
       } else {
         parts.push(`    .WithReference(${refVar})`);
       }
@@ -230,18 +377,20 @@ builder.Build().Run();
     // WaitFor
     for (const wfId of r.waitFor) {
       const wfVar = idToVar.get(wfId);
-      if (wfVar) {
-        parts.push(`    .WaitFor(${wfVar})`);
-      }
+      if (wfVar) parts.push(`    .WaitFor(${wfVar})`);
     }
 
-    // Close with semicolon
     lines.push(parts.join('\n') + ';');
 
     // Databases
     for (const db of r.databases) {
       const dbVar = toVarName(db);
       lines.push(`var ${dbVar} = ${varName}.AddDatabase("${db}");`);
+    }
+
+    // Azure storage → blobs
+    if (r.type === 'azurestorage') {
+      lines.push(`var ${varName}Blobs = ${varName}.AddBlobs("blobs");`);
     }
 
     lines.push('');
@@ -251,40 +400,309 @@ builder.Build().Run();
   return lines.join('\n');
 }
 
+function generateTypeScriptCode(resources: PlaygroundResource[]): string {
+  if (resources.length === 0) {
+    return `import { DistributedApplication } from '@aspire/hosting';
+
+const builder = DistributedApplication.createBuilder();
+
+// 👈 Add resources from the palette to get started!
+
+builder.build().run();
+`;
+  }
+
+  const idToVar = assignVarNames(resources);
+  const lines: string[] = [
+    `import { DistributedApplication } from '@aspire/hosting';`,
+    '',
+    'const builder = DistributedApplication.createBuilder();',
+    '',
+  ];
+
+  for (const r of resources) {
+    const varName = idToVar.get(r.id)!;
+    const method = TS_ADD[r.type];
+    const parts: string[] = [];
+
+    if (r.type === 'container') {
+      parts.push(`const ${varName} = builder.${method}("${r.name}", "${r.image || 'myregistry/myimage'}")`);
+    } else if (r.type === 'npmapp') {
+      parts.push(`const ${varName} = builder.${method}("${r.name}", "${r.projectPath || '../' + r.name}")`);
+    } else if (r.type === 'pythonapp') {
+      parts.push(`const ${varName} = builder.${method}("${r.name}", "${r.projectPath || '../' + r.name}", "${r.scriptPath || 'main:app'}")`);
+    } else if (r.type === 'parameter') {
+      parts.push(`const ${varName} = builder.${method}("${r.name}"${r.isSecret ? ', { secret: true }' : ''})`);
+    } else {
+      parts.push(`const ${varName} = builder.${method}("${r.name}")`);
+    }
+
+    if (r.hasDataVolume && !isAppType(r.type) && r.type !== 'parameter') {
+      parts.push('    .withDataVolume()');
+    }
+    if (r.isPersistent && r.type !== 'parameter') {
+      parts.push('    .withLifetime("persistent")');
+    }
+    if (r.hasExternalEndpoints) {
+      if (r.type === 'project') parts.push('    .withExternalHttpEndpoints()');
+      else if (r.type === 'npmapp') parts.push('    .withHttpEndpoint({ env: "PORT" })');
+      else if (r.type === 'pythonapp') {
+        parts.push(`    .withHttpEndpoint({ ${r.ports ? `port: ${r.ports}, ` : ''}env: "PORT" })`);
+      } else if (r.type === 'container' && r.ports) {
+        parts.push(`    .withHttpEndpoint({ targetPort: ${r.ports} })`);
+      }
+    }
+    if (r.type === 'container' && r.args) {
+      const argParts = r.args.split(/\s+/).map((a) => `"${a}"`).join(', ');
+      parts.push(`    .withArgs(${argParts})`);
+    }
+    for (const env of r.envVars) {
+      if (env.key && env.value) parts.push(`    .withEnvironment("${env.key}", "${env.value}")`);
+    }
+    for (const refId of r.references) {
+      const refRes = resources.find((x) => x.id === refId);
+      if (!refRes) continue;
+      const refVar = idToVar.get(refId)!;
+      if (refRes.databases.length > 0) parts.push(`    .withReference(${toVarName(refRes.databases[0])})`);
+      else if (refRes.type === 'azurestorage') parts.push(`    .withReference(${refVar}Blobs)`);
+      else parts.push(`    .withReference(${refVar})`);
+    }
+    for (const wfId of r.waitFor) {
+      const wfVar = idToVar.get(wfId);
+      if (wfVar) parts.push(`    .waitFor(${wfVar})`);
+    }
+
+    lines.push(parts.join('\n') + ';');
+    for (const db of r.databases) {
+      lines.push(`const ${toVarName(db)} = ${varName}.addDatabase("${db}");`);
+    }
+    if (r.type === 'azurestorage') {
+      lines.push(`const ${varName}Blobs = ${varName}.addBlobs("blobs");`);
+    }
+    lines.push('');
+  }
+
+  lines.push('builder.build().run();');
+  return lines.join('\n');
+}
+
+// ─── Scaffold generation ─────────────────────────────────────────────────────
+
+function isAppType(t: ResourceType): boolean {
+  return t === 'project' || t === 'npmapp' || t === 'pythonapp' || t === 'container';
+}
+
+function toPascalCase(s: string): string {
+  return s.replace(/(^|[-_ ])([a-z])/g, (_, __, c: string) => c.toUpperCase()).replace(/[-_ ]/g, '');
+}
+
+function generateProjectScaffolds(
+  resources: PlaygroundResource[],
+): { name: string; lang: string; files: ProjectScaffoldFile[] }[] {
+  return resources
+    .filter((r) => r.type === 'project' || r.type === 'npmapp' || r.type === 'pythonapp')
+    .map((project) => {
+      const refs = project.references
+        .map((id) => resources.find((r) => r.id === id))
+        .filter((r): r is PlaygroundResource => r !== undefined);
+
+      if (project.type === 'npmapp') {
+        return { name: project.name, lang: 'Node.js', files: makeNodeScaffold(project.name, refs) };
+      }
+      if (project.type === 'pythonapp') {
+        return { name: project.name, lang: 'Python', files: makePythonScaffold(project.name, project.scriptPath, refs) };
+      }
+      return { name: project.name, lang: 'C#', files: makeCSharpScaffold(project.name, refs) };
+    });
+}
+
+function makeNodeScaffold(name: string, refs: PlaygroundResource[]): ProjectScaffoldFile[] {
+  const imports: string[] = [];
+  const setup: string[] = [];
+  const deps: Record<string, string> = { express: '^4.21.0' };
+
+  for (const ref of refs) {
+    if (ref.type === 'postgres') {
+      imports.push("import pg from 'pg';");
+      setup.push(`const pool = new pg.Pool({ connectionString: process.env.ConnectionStrings__${toVarName(ref.databases[0] || ref.name)} });`);
+      deps['pg'] = '^8.13.0';
+    } else if (ref.type === 'redis') {
+      imports.push("import { createClient } from 'redis';");
+      setup.push(`const redis = createClient({ url: process.env.ConnectionStrings__${toVarName(ref.name)} });`, 'await redis.connect();');
+      deps['redis'] = '^4.7.0';
+    } else if (ref.type === 'mongodb') {
+      imports.push("import { MongoClient } from 'mongodb';");
+      setup.push(`const mongo = new MongoClient(process.env.ConnectionStrings__${toVarName(ref.databases[0] || ref.name)}!);`);
+      deps['mongodb'] = '^6.12.0';
+    } else if (ref.type === 'rabbitmq') {
+      imports.push("import amqplib from 'amqplib';");
+      setup.push(`const mq = await amqplib.connect(process.env.ConnectionStrings__${toVarName(ref.name)}!);`);
+      deps['amqplib'] = '^0.10.0';
+    }
+  }
+
+  return [
+    {
+      path: `${name}/src/index.ts`,
+      language: 'typescript',
+      content: [
+        "import express from 'express';",
+        ...imports, '',
+        'const app = express();',
+        'const port = process.env.PORT ?? 3000;',
+        'app.use(express.json());',
+        ...(setup.length > 0 ? ['', ...setup] : []),
+        '',
+        `app.get('/', (_req, res) => res.json({ service: '${name}', status: 'running' }));`,
+        `app.get('/health', (_req, res) => res.json({ status: 'healthy' }));`,
+        '',
+        `app.listen(port, () => console.log(\`${name} listening on \${port}\`));`,
+      ].join('\n'),
+    },
+    {
+      path: `${name}/package.json`,
+      language: 'json',
+      content: JSON.stringify({
+        name, version: '1.0.0', type: 'module',
+        scripts: { dev: 'tsx watch src/index.ts', build: 'tsc', start: 'node dist/index.js' },
+        dependencies: deps,
+        devDependencies: { '@types/express': '^5.0.0', '@types/node': '^22.0.0', typescript: '^5.7.0', tsx: '^4.19.0' },
+      }, null, 2),
+    },
+  ];
+}
+
+function makePythonScaffold(name: string, scriptPath: string, refs: PlaygroundResource[]): ProjectScaffoldFile[] {
+  const imports: string[] = ['import os'];
+  const setup: string[] = [];
+  const reqs: string[] = ['fastapi', 'uvicorn'];
+
+  for (const ref of refs) {
+    if (ref.type === 'postgres') {
+      imports.push('import psycopg2');
+      setup.push(`db_url = os.environ.get("ConnectionStrings__${toVarName(ref.databases[0] || ref.name)}")`);
+      reqs.push('psycopg2-binary');
+    } else if (ref.type === 'redis') {
+      imports.push('import redis');
+      setup.push(`cache = redis.from_url(os.environ.get("ConnectionStrings__${toVarName(ref.name)}", ""))`);
+      reqs.push('redis');
+    } else if (ref.type === 'mongodb') {
+      imports.push('from pymongo import MongoClient');
+      setup.push(`mongo = MongoClient(os.environ.get("ConnectionStrings__${toVarName(ref.databases[0] || ref.name)}"))`);
+      reqs.push('pymongo');
+    }
+  }
+
+  // Extract module name from uvicorn notation (e.g. "main:app" → "main.py")
+  const moduleName = (scriptPath || 'main:app').split(':')[0];
+  const fileName = `${moduleName}.py`;
+  return [
+    {
+      path: `${name}/${fileName}`,
+      language: 'python',
+      content: [
+        ...imports,
+        'from fastapi import FastAPI',
+        '',
+        'app = FastAPI()',
+        ...(setup.length > 0 ? ['', ...setup] : []),
+        '',
+        '@app.get("/")',
+        'def root():',
+        `    return {"service": "${name}", "status": "running"}`,
+        '',
+        '@app.get("/health")',
+        'def health():',
+        '    return {"status": "healthy"}',
+        '',
+        'if __name__ == "__main__":',
+        '    import uvicorn',
+        `    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", "8000")))`,
+      ].join('\n'),
+    },
+    {
+      path: `${name}/requirements.txt`,
+      language: 'text',
+      content: reqs.join('\n'),
+    },
+  ];
+}
+
+function makeCSharpScaffold(name: string, refs: PlaygroundResource[]): ProjectScaffoldFile[] {
+  const packages: string[] = [];
+  const services: string[] = [];
+
+  for (const ref of refs) {
+    if (ref.type === 'postgres') { packages.push('    <PackageReference Include="Aspire.Npgsql" Version="9.1.0" />'); services.push(`builder.AddNpgsqlDataSource("${ref.databases[0] || ref.name}");`); }
+    else if (ref.type === 'redis') { packages.push('    <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="9.1.0" />'); services.push(`builder.AddRedisDistributedCache("${ref.name}");`); }
+    else if (ref.type === 'mongodb') { packages.push('    <PackageReference Include="Aspire.MongoDB.Driver" Version="9.1.0" />'); services.push(`builder.AddMongoDBClient("${ref.databases[0] || ref.name}");`); }
+    else if (ref.type === 'rabbitmq') { packages.push('    <PackageReference Include="Aspire.RabbitMQ.Client" Version="9.1.0" />'); services.push(`builder.AddRabbitMQClient("${ref.name}");`); }
+    else if (ref.type === 'kafka') { packages.push('    <PackageReference Include="Aspire.Confluent.Kafka" Version="9.1.0" />'); services.push(`builder.AddKafkaProducer<string, string>("${ref.name}");`); }
+    else if (ref.type === 'sqlserver') { packages.push('    <PackageReference Include="Aspire.Microsoft.Data.SqlClient" Version="9.1.0" />'); services.push(`builder.AddSqlServerClient("${ref.databases[0] || ref.name}");`); }
+    else if (ref.type === 'azurestorage') { packages.push('    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="9.1.0" />'); services.push(`builder.AddAzureBlobClient("blobs");`); }
+    else if (ref.type === 'keyvault') { packages.push('    <PackageReference Include="Aspire.Azure.Security.KeyVault" Version="9.1.0" />'); services.push(`builder.AddAzureKeyVaultClient("${ref.name}");`); }
+  }
+
+  return [
+    {
+      path: `${toPascalCase(name)}/Program.cs`,
+      language: 'csharp',
+      content: [
+        'var builder = WebApplication.CreateBuilder(args);',
+        '', 'builder.AddServiceDefaults();',
+        ...(services.length > 0 ? ['', ...services] : []),
+        '', 'var app = builder.Build();', '', 'app.MapDefaultEndpoints();',
+        '', `app.MapGet("/", () => Results.Json(new { service = "${name}", status = "running" }));`,
+        '', 'app.Run();',
+      ].join('\n'),
+    },
+    {
+      path: `${toPascalCase(name)}/${toPascalCase(name)}.csproj`,
+      language: 'xml',
+      content: [
+        '<Project Sdk="Microsoft.NET.Sdk.Web">', '',
+        '  <PropertyGroup>', '    <TargetFramework>net9.0</TargetFramework>',
+        '    <ImplicitUsings>enable</ImplicitUsings>', '    <Nullable>enable</Nullable>',
+        '  </PropertyGroup>', '', '  <ItemGroup>',
+        '    <ProjectReference Include="../ServiceDefaults/ServiceDefaults.csproj" />',
+        ...packages, '  </ItemGroup>', '', '</Project>',
+      ].join('\n'),
+    },
+  ];
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function PlaygroundPage() {
   const [resources, setResources] = useState<PlaygroundResource[]>([]);
   const [connectingFrom, setConnectingFrom] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [activeLanguage, setActiveLanguage] = useState<CodeLanguage>('csharp');
+  const [showScaffolds, setShowScaffolds] = useState(false);
+  const [activeTab, setActiveTab] = useState('canvas');
 
   const examples = useMemo(() => buildExamples(), []);
 
-  const generatedCode = useMemo(() => generateAppHostCode(resources), [resources]);
+  const generatedCode = useMemo(
+    () => activeLanguage === 'typescript' ? generateTypeScriptCode(resources) : generateCSharpCode(resources),
+    [resources, activeLanguage],
+  );
 
-  const findTemplate = useCallback((type: ResourceType) =>
-    RESOURCE_TEMPLATES.find((t) => t.type === type)!, []);
+  const scaffolds = useMemo(() => generateProjectScaffolds(resources), [resources]);
 
   const addResource = useCallback((type: ResourceType) => {
     const tmpl = RESOURCE_TEMPLATES.find((t) => t.type === type)!;
     let name = tmpl.defaultName;
     const existing = resources.filter((r) => r.type === type);
-    if (existing.length > 0) {
-      name = `${tmpl.defaultName}${existing.length + 1}`;
-    }
-    const newResource: PlaygroundResource = {
+    if (existing.length > 0) name = `${tmpl.defaultName}${existing.length + 1}`;
+    setResources((prev) => [...prev, makeResource({
       id: makeId(),
       type,
       name,
-      databases: [],
       image: type === 'container' ? 'myregistry/myimage' : '',
-      references: [],
-      waitFor: [],
-      hasDataVolume: false,
-      hasExternalEndpoints: false,
-      ports: '',
-    };
-    setResources((prev) => [...prev, newResource]);
+      scriptPath: type === 'pythonapp' ? 'main:app' : '',
+      projectPath: type === 'npmapp' || type === 'pythonapp' ? `../${name}` : '',
+    })]);
   }, [resources]);
 
   const updateResource = useCallback((id: string, updates: Partial<PlaygroundResource>) => {
@@ -293,13 +711,11 @@ export default function PlaygroundPage() {
 
   const removeResource = useCallback((id: string) => {
     setResources((prev) =>
-      prev
-        .filter((r) => r.id !== id)
-        .map((r) => ({
-          ...r,
-          references: r.references.filter((ref) => ref !== id),
-          waitFor: r.waitFor.filter((wf) => wf !== id),
-        })),
+      prev.filter((r) => r.id !== id).map((r) => ({
+        ...r,
+        references: r.references.filter((ref) => ref !== id),
+        waitFor: r.waitFor.filter((wf) => wf !== id),
+      })),
     );
     if (connectingFrom === id) setConnectingFrom(null);
   }, [connectingFrom]);
@@ -319,8 +735,7 @@ export default function PlaygroundPage() {
   const addDatabase = useCallback((id: string) => {
     setResources((prev) => prev.map((r) => {
       if (r.id !== id) return r;
-      const dbName = `db${r.databases.length + 1}`;
-      return { ...r, databases: [...r.databases, dbName] };
+      return { ...r, databases: [...r.databases, `db${r.databases.length + 1}`] };
     }));
   }, []);
 
@@ -340,14 +755,35 @@ export default function PlaygroundPage() {
     }));
   }, []);
 
+  const addEnvVar = useCallback((id: string) => {
+    setResources((prev) => prev.map((r) => {
+      if (r.id !== id) return r;
+      return { ...r, envVars: [...r.envVars, { key: '', value: '' }] };
+    }));
+  }, []);
+
+  const removeEnvVar = useCallback((id: string, idx: number) => {
+    setResources((prev) => prev.map((r) => {
+      if (r.id !== id) return r;
+      return { ...r, envVars: r.envVars.filter((_, i) => i !== idx) };
+    }));
+  }, []);
+
+  const updateEnvVar = useCallback((id: string, idx: number, field: 'key' | 'value', val: string) => {
+    setResources((prev) => prev.map((r) => {
+      if (r.id !== id) return r;
+      const envVars = [...r.envVars];
+      envVars[idx] = { ...envVars[idx], [field]: val };
+      return { ...r, envVars };
+    }));
+  }, []);
+
   const copyCode = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(generatedCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback: select text
-    }
+    } catch { /* ignore */ }
   }, [generatedCode]);
 
   const reset = useCallback(() => {
@@ -361,374 +797,364 @@ export default function PlaygroundPage() {
   }, []);
 
   const handleConnect = useCallback((resourceId: string) => {
-    if (connectingFrom === null) {
-      setConnectingFrom(resourceId);
-    } else if (connectingFrom === resourceId) {
-      setConnectingFrom(null);
-    } else {
-      toggleReference(connectingFrom, resourceId);
-      setConnectingFrom(null);
-    }
+    if (connectingFrom === null) setConnectingFrom(resourceId);
+    else if (connectingFrom === resourceId) setConnectingFrom(null);
+    else { toggleReference(connectingFrom, resourceId); setConnectingFrom(null); }
   }, [connectingFrom, toggleReference]);
 
-  const getResourceName = useCallback((id: string) => {
-    return resources.find((r) => r.id === id)?.name ?? id;
-  }, [resources]);
+  const getResourceName = useCallback((id: string) =>
+    resources.find((r) => r.id === id)?.name ?? id, [resources]);
+
+  const findTemplate = useCallback((type: ResourceType) =>
+    RESOURCE_TEMPLATES.find((t) => t.type === type)!, []);
 
   return (
-    <Box maxW="1400px" mx="auto" p="4" data-testid="playground-page">
+    <Box maxW="1600px" mx="auto" px={{ base: '4', md: '6' }} py="6" data-testid="playground-page">
       {/* Header */}
-      <Flex justify="space-between" align="center" mb="4" flexWrap="wrap" gap="3">
+      <Flex justify="space-between" align="flex-start" mb="6" flexWrap="wrap" gap="4">
         <Box>
-          <Heading as="h1" size="xl" color="dark.text" display="flex" alignItems="center" gap="2">
-            <Text as="span">🏗️</Text>
+          <Heading as="h1" size="xl" color="dark.text" display="flex" alignItems="center" gap="3">
+            <Text as="span" fontSize="2xl">🏗️</Text>
             <Text as="span" {...pixelFontProps} fontSize="lg">Architecture Playground</Text>
           </Heading>
-          <Text color="dark.muted" fontSize="sm" mt="1">
-            Design your Aspire app model and get generated AppHost code
+          <Text color="dark.muted" fontSize="sm" mt="2" maxW="500px">
+            Design your Aspire distributed app — add resources, connect them, and generate AppHost code in C# or TypeScript
           </Text>
         </Box>
-        <Flex gap="2" flexWrap="wrap">
+        <Flex gap="2" flexWrap="wrap" align="center">
           {examples.map((ex) => (
             <Button
-              key={ex.name}
-              size="sm"
-              variant="outline"
-              colorPalette="purple"
+              key={ex.name} size="sm" variant="outline" colorPalette="purple"
               onClick={() => loadExample(ex)}
               data-testid={`example-${ex.name.toLowerCase().replace(/\s+/g, '-')}`}
             >
               {ex.emoji} {ex.name}
             </Button>
           ))}
-          <Button
-            size="sm"
-            variant="outline"
-            colorPalette="red"
-            onClick={reset}
-            data-testid="reset-btn"
-          >
+          <Button size="sm" variant="outline" colorPalette="red" onClick={reset} data-testid="reset-btn">
             <TbRefresh /> Reset
           </Button>
         </Flex>
       </Flex>
 
-      <Flex gap="4" direction={{ base: 'column', lg: 'row' }}>
-        {/* ── Left sidebar: Resource Palette ─────────────────────────────── */}
-        <Box w={{ base: '100%', lg: '200px' }} flexShrink={0}>
-          <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg">
-            <Card.Body p="3">
-              <Text {...pixelFontProps} fontSize="2xs" color="aspire.300" mb="3">
-                📦 Resources
-              </Text>
-              <Flex direction="column" gap="2">
-                {RESOURCE_TEMPLATES.map((tmpl) => (
-                  <Button
-                    key={tmpl.type}
-                    size="sm"
-                    variant="outline"
-                    colorPalette="purple"
-                    justifyContent="flex-start"
-                    onClick={() => addResource(tmpl.type)}
-                    data-testid={`add-${tmpl.type}`}
-                    css={{
-                      transition: 'all 0.15s',
-                      '&:hover': { transform: 'translateX(4px)' },
-                    }}
-                  >
-                    <Box as={tmpl.icon} color={tmpl.color} />
-                    <Text fontSize="xs">{tmpl.label}</Text>
-                  </Button>
-                ))}
-              </Flex>
-            </Card.Body>
-          </Card.Root>
-        </Box>
-
-        {/* ── Center: Canvas ─────────────────────────────────────────────── */}
-        <Box flex="1" minW="0">
-          <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg" minH="500px">
-            <Card.Body p="4">
-              <Flex justify="space-between" align="center" mb="3">
-                <Text {...pixelFontProps} fontSize="2xs" color="aspire.300">
-                  🎮 Canvas — {resources.length} resource{resources.length !== 1 ? 's' : ''}
+      {/* Resource Palette */}
+      <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg" mb="6" data-testid="resource-palette" role="region" aria-label="Resource palette">
+        <Card.Body p="5">
+          <Flex gap="6" flexWrap="wrap">
+            {CATEGORIES.map((cat) => (
+              <Box key={cat.key} minW="160px">
+                <Text {...pixelFontProps} fontSize="2xs" color="aspire.300" mb="3">
+                  {cat.emoji} {cat.label}
                 </Text>
-                {connectingFrom && (
-                  <Badge colorPalette="yellow" variant="solid" {...pixelFontProps} fontSize="2xs">
-                    🔗 Click another resource to connect
-                  </Badge>
-                )}
-              </Flex>
+                <Flex direction="column" gap="2">
+                  {RESOURCE_TEMPLATES.filter((t) => t.category === cat.key).map((tmpl) => (
+                    <Button
+                      key={tmpl.type} size="sm" variant="outline" colorPalette="purple"
+                      justifyContent="flex-start" gap="2"
+                      onClick={() => addResource(tmpl.type)}
+                      data-testid={`add-${tmpl.type}`}
+                      css={{ transition: 'all 0.15s', '&:hover': { transform: 'translateX(3px)' } }}
+                    >
+                      <Box as={tmpl.icon} color={tmpl.color} />
+                      <Text fontSize="xs">{tmpl.label}</Text>
+                    </Button>
+                  ))}
+                </Flex>
+              </Box>
+            ))}
+          </Flex>
+        </Card.Body>
+      </Card.Root>
 
-              {resources.length === 0 ? (
-                <Flex
-                  direction="column"
-                  align="center"
-                  justify="center"
-                  minH="400px"
-                  gap="3"
-                  data-testid="canvas-empty"
-                >
+      {/* Main area: Tabs for Canvas / Code */}
+      <Tabs.Root value={activeTab} onValueChange={(d) => setActiveTab(d.value)}>
+        <Tabs.List
+          bg="dark.surface" border="2px solid" borderColor="dark.border"
+          borderRadius="sm" p="1" gap="1" mb="5"
+        >
+          <Tabs.Trigger value="canvas"
+            fontSize="10px" px="5" py="2" {...pixelFontProps}
+            color="dark.muted" _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            borderRadius="sm"
+          >
+            🎮 Canvas ({resources.length})
+          </Tabs.Trigger>
+          <Tabs.Trigger value="code"
+            fontSize="10px" px="5" py="2" {...pixelFontProps}
+            color="dark.muted" _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            borderRadius="sm"
+          >
+            💻 Code
+          </Tabs.Trigger>
+        </Tabs.List>
+
+        {/* ── Canvas Tab ───────────────────────────────────────────── */}
+        <Tabs.Content value="canvas">
+          {connectingFrom && (
+            <Badge colorPalette="yellow" variant="solid" {...pixelFontProps} fontSize="2xs" mb="4" role="status" aria-live="polite">
+              🔗 Click another resource to connect
+            </Badge>
+          )}
+
+          {resources.length === 0 ? (
+            <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg">
+              <Card.Body p="5">
+                <Flex direction="column" align="center" justify="center" minH="300px" gap="4" data-testid="canvas-empty">
                   <Text fontSize="4xl">🎯</Text>
                   <Text {...pixelFontProps} fontSize="xs" color="dark.muted" textAlign="center">
-                    Click a resource from the palette
+                    Add resources from the palette above
                   </Text>
                   <Text fontSize="sm" color="dark.muted" textAlign="center">
                     or load an example to get started
                   </Text>
                 </Flex>
-              ) : (
-                <Flex flexWrap="wrap" gap="3" data-testid="canvas-resources">
-                  {resources.map((resource) => {
-                    const tmpl = findTemplate(resource.type);
-                    const isConnecting = connectingFrom === resource.id;
-                    const isConnectTarget = connectingFrom !== null && connectingFrom !== resource.id;
+              </Card.Body>
+            </Card.Root>
+          ) : (
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} gap="5" data-testid="canvas-resources">
+              {resources.map((resource) => {
+                const tmpl = findTemplate(resource.type);
+                const isConnecting = connectingFrom === resource.id;
+                const isTarget = connectingFrom !== null && connectingFrom !== resource.id;
 
-                    return (
-                      <Card.Root
-                        key={resource.id}
-                        variant="outline"
-                        w={{ base: '100%', sm: '280px' }}
-                        {...retroCardProps}
-                        borderColor={
-                          isConnecting
-                            ? 'game.xpGold'
-                            : isConnectTarget
-                              ? 'aspire.600'
-                              : 'game.pixelBorder'
-                        }
-                        css={isConnecting ? {
-                          animation: 'pulse 1s ease-in-out infinite',
-                          '@keyframes pulse': {
-                            '0%, 100%': { boxShadow: '4px 4px 0 #FFD700' },
-                            '50%': { boxShadow: '4px 4px 0 #FFD700, 0 0 12px rgba(255, 215, 0, 0.4)' },
-                          },
-                        } : isConnectTarget ? {
-                          cursor: 'pointer',
-                          '&:hover': { borderColor: '#FFD700', transform: 'scale(1.02)' },
-                          transition: 'all 0.15s',
-                        } : undefined}
-                        onClick={isConnectTarget ? () => handleConnect(resource.id) : undefined}
-                        data-testid={`resource-card-${resource.name}`}
-                      >
-                        <Card.Body p="3" display="flex" flexDirection="column" gap="2">
-                          {/* Header */}
-                          <Flex justify="space-between" align="center">
-                            <Flex align="center" gap="2">
-                              <Box as={tmpl.icon} color={tmpl.color} fontSize="lg" />
-                              <Badge
-                                colorPalette="purple"
-                                variant="subtle"
-                                fontSize="2xs"
-                              >
-                                {tmpl.label}
-                              </Badge>
-                            </Flex>
-                            <Flex gap="1">
-                              <IconButton
-                                aria-label="Connect"
-                                size="xs"
-                                variant={isConnecting ? 'solid' : 'outline'}
-                                colorPalette={isConnecting ? 'yellow' : 'purple'}
-                                onClick={(e) => { e.stopPropagation(); handleConnect(resource.id); }}
-                                data-testid={`connect-${resource.name}`}
-                              >
-                                {isConnecting ? <TbUnlink /> : <TbLink />}
-                              </IconButton>
-                              <IconButton
-                                aria-label="Delete"
-                                size="xs"
-                                variant="outline"
-                                colorPalette="red"
-                                onClick={(e) => { e.stopPropagation(); removeResource(resource.id); }}
-                                data-testid={`delete-${resource.name}`}
+                return (
+                  <Card.Root
+                    key={resource.id} variant="outline" {...retroCardProps}
+                    borderColor={isConnecting ? 'game.xpGold' : isTarget ? 'aspire.600' : 'game.pixelBorder'}
+                    role="article" aria-label={`${tmpl.label}: ${resource.name}`}
+                    css={isConnecting ? {
+                      animation: 'pulse 1s ease-in-out infinite',
+                      '@keyframes pulse': {
+                        '0%, 100%': { boxShadow: '4px 4px 0 #FFD700' },
+                        '50%': { boxShadow: '4px 4px 0 #FFD700, 0 0 12px rgba(255, 215, 0, 0.4)' },
+                      },
+                    } : isTarget ? {
+                      cursor: 'pointer', transition: 'all 0.15s',
+                      '&:hover': { borderColor: '#FFD700', transform: 'scale(1.02)' },
+                    } : undefined}
+                    onClick={isTarget ? () => handleConnect(resource.id) : undefined}
+                    data-testid={`resource-card-${resource.name}`}
+                  >
+                    <Card.Body p="4" display="flex" flexDirection="column" gap="3">
+                      {/* Header */}
+                      <Flex justify="space-between" align="center">
+                        <Flex align="center" gap="2" minW="0">
+                          <Box as={tmpl.icon} color={tmpl.color} fontSize="lg" flexShrink={0} />
+                          <Badge colorPalette="purple" variant="subtle" fontSize="2xs">
+                            {tmpl.label}
+                          </Badge>
+                        </Flex>
+                        <Flex gap="1">
+                          {resource.type !== 'parameter' && (
+                            <IconButton aria-label="Connect" size="xs"
+                              variant={isConnecting ? 'solid' : 'ghost'}
+                              colorPalette={isConnecting ? 'yellow' : 'purple'}
+                              onClick={(e) => { e.stopPropagation(); handleConnect(resource.id); }}
+                              data-testid={`connect-${resource.name}`}
+                            >
+                              {isConnecting ? <TbUnlink /> : <TbLink />}
+                            </IconButton>
+                          )}
+                          <IconButton aria-label={`Delete ${resource.name}`} size="xs" variant="ghost" colorPalette="red"
+                            onClick={(e) => { e.stopPropagation(); removeResource(resource.id); }}
+                            data-testid={`delete-${resource.name}`}
+                          >
+                            <TbTrash />
+                          </IconButton>
+                        </Flex>
+                      </Flex>
+
+                      {/* Name */}
+                      <Input size="sm" value={resource.name}
+                        onChange={(e) => updateResource(resource.id, { name: e.target.value })}
+                        placeholder="Resource name" onClick={(e) => e.stopPropagation()}
+                        aria-label={`Name for ${tmpl.label} resource`}
+                        data-testid={`name-input-${resource.name}`}
+                        css={{ fontFamily: '"Press Start 2P", monospace', fontSize: '9px' }}
+                      />
+
+                      {/* Toggle options */}
+                      <Flex gap="1.5" flexWrap="wrap">
+                        {!isAppType(resource.type) && resource.type !== 'parameter' && resource.type !== 'azurestorage' && resource.type !== 'keyvault' && (
+                          <Button size="xs"
+                            variant={resource.hasDataVolume ? 'solid' : 'outline'}
+                            colorPalette={resource.hasDataVolume ? 'green' : 'gray'}
+                            aria-pressed={resource.hasDataVolume}
+                            onClick={(e) => { e.stopPropagation(); updateResource(resource.id, { hasDataVolume: !resource.hasDataVolume }); }}
+                            data-testid={`volume-${resource.name}`}
+                          >
+                            <TbPackage /> Vol
+                          </Button>
+                        )}
+                        {(resource.type === 'project' || resource.type === 'npmapp' || resource.type === 'container' || resource.type === 'pythonapp') && (
+                          <Button size="xs"
+                            variant={resource.hasExternalEndpoints ? 'solid' : 'outline'}
+                            colorPalette={resource.hasExternalEndpoints ? 'green' : 'gray'}
+                            aria-pressed={resource.hasExternalEndpoints}
+                            onClick={(e) => { e.stopPropagation(); updateResource(resource.id, { hasExternalEndpoints: !resource.hasExternalEndpoints }); }}
+                            data-testid={`external-${resource.name}`}
+                          >
+                            <TbPlayerPlay /> Ext
+                          </Button>
+                        )}
+                        {resource.type !== 'parameter' && resource.type !== 'azurestorage' && resource.type !== 'keyvault' && (
+                          <Button size="xs"
+                            variant={resource.isPersistent ? 'solid' : 'outline'}
+                            colorPalette={resource.isPersistent ? 'blue' : 'gray'}
+                            aria-pressed={resource.isPersistent}
+                            aria-label="Persistent lifetime"
+                            onClick={(e) => { e.stopPropagation(); updateResource(resource.id, { isPersistent: !resource.isPersistent }); }}
+                          >
+                            💾
+                          </Button>
+                        )}
+                        {resource.type === 'parameter' && (
+                          <Button size="xs"
+                            variant={resource.isSecret ? 'solid' : 'outline'}
+                            colorPalette={resource.isSecret ? 'red' : 'gray'}
+                            aria-pressed={resource.isSecret}
+                            onClick={(e) => { e.stopPropagation(); updateResource(resource.id, { isSecret: !resource.isSecret }); }}
+                          >
+                            <TbLock /> Secret
+                          </Button>
+                        )}
+                      </Flex>
+
+                      {/* Type-specific config */}
+                      {resource.type === 'container' && (
+                        <Flex direction="column" gap="2">
+                          <Input size="xs" value={resource.image}
+                            onChange={(e) => updateResource(resource.id, { image: e.target.value })}
+                            placeholder="Image (e.g. nginx:latest)" onClick={(e) => e.stopPropagation()}
+                            aria-label="Container image"
+                            data-testid={`image-input-${resource.name}`}
+                          />
+                          <Flex gap="2">
+                            <Input size="xs" value={resource.ports} flex="1"
+                              onChange={(e) => updateResource(resource.id, { ports: e.target.value })}
+                              placeholder="Port" onClick={(e) => e.stopPropagation()}
+                              aria-label="Target port"
+                              data-testid={`port-input-${resource.name}`}
+                            />
+                            <Input size="xs" value={resource.args} flex="1"
+                              onChange={(e) => updateResource(resource.id, { args: e.target.value })}
+                              placeholder="Args" onClick={(e) => e.stopPropagation()}
+                              aria-label="Container arguments"
+                            />
+                          </Flex>
+                        </Flex>
+                      )}
+                      {resource.type === 'npmapp' && (
+                        <Input size="xs" value={resource.projectPath}
+                          onChange={(e) => updateResource(resource.id, { projectPath: e.target.value })}
+                          placeholder="Path (e.g. ../frontend)" onClick={(e) => e.stopPropagation()}
+                        />
+                      )}
+                      {resource.type === 'pythonapp' && (
+                        <Flex gap="2">
+                          <Input size="xs" value={resource.projectPath} flex="1"
+                            onChange={(e) => updateResource(resource.id, { projectPath: e.target.value })}
+                            placeholder="Dir (../ml)" onClick={(e) => e.stopPropagation()}
+                            aria-label="Project directory"
+                          />
+                          <Input size="xs" value={resource.scriptPath} flex="1"
+                            onChange={(e) => updateResource(resource.id, { scriptPath: e.target.value })}
+                            placeholder="main:app" onClick={(e) => e.stopPropagation()}
+                            aria-label="Uvicorn app name"
+                          />
+                        </Flex>
+                      )}
+
+                      {/* Databases */}
+                      {tmpl.supportsDatabases && (
+                        <Box>
+                          <Flex justify="space-between" align="center" mb="1.5">
+                            <Text fontSize="2xs" color="dark.muted" fontWeight="bold">DBs</Text>
+                            <IconButton aria-label="Add database" size="xs" variant="ghost" colorPalette="purple"
+                              onClick={(e) => { e.stopPropagation(); addDatabase(resource.id); }}
+                              data-testid={`add-db-${resource.name}`}
+                            >
+                              <TbPlus />
+                            </IconButton>
+                          </Flex>
+                          {resource.databases.map((db, idx) => (
+                            <Flex key={idx} gap="1" mb="1.5" align="center">
+                              <Input size="xs" value={db} flex="1"
+                                onChange={(e) => { e.stopPropagation(); updateDatabase(resource.id, idx, e.target.value); }}
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label={`Database name ${idx + 1}`}
+                                data-testid={`db-input-${resource.name}-${idx}`}
+                              />
+                              <IconButton aria-label={`Remove database ${db}`} size="xs" variant="ghost" colorPalette="red"
+                                onClick={(e) => { e.stopPropagation(); removeDatabase(resource.id, idx); }}
                               >
                                 <TbTrash />
                               </IconButton>
                             </Flex>
-                          </Flex>
+                          ))}
+                        </Box>
+                      )}
 
-                          {/* Name input */}
-                          <Input
-                            size="sm"
-                            value={resource.name}
-                            onChange={(e) => updateResource(resource.id, { name: e.target.value })}
-                            placeholder="Resource name"
-                            onClick={(e) => e.stopPropagation()}
-                            data-testid={`name-input-${resource.name}`}
-                            css={{
-                              fontFamily: '"Press Start 2P", monospace',
-                              fontSize: '10px',
-                            }}
-                          />
+                      {/* References */}
+                      {resource.references.length > 0 && (
+                        <Flex gap="1.5" flexWrap="wrap" role="list" aria-label="Referenced resources">
+                          {resource.references.map((refId) => (
+                            <Badge key={refId} colorPalette="purple" variant="subtle" fontSize="2xs"
+                              cursor="pointer" role="listitem"
+                              tabIndex={0}
+                              onClick={(e) => { e.stopPropagation(); toggleReference(resource.id, refId); }}
+                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleReference(resource.id, refId); } }}
+                              aria-label={`Remove reference to ${getResourceName(refId)}`}
+                              data-testid={`ref-badge-${resource.name}-${getResourceName(refId)}`}
+                            >
+                              🔗 {getResourceName(refId)} ✕
+                            </Badge>
+                          ))}
+                        </Flex>
+                      )}
+                    </Card.Body>
+                  </Card.Root>
+                );
+              })}
+            </SimpleGrid>
+          )}
+        </Tabs.Content>
 
-                          {/* Container image */}
-                          {resource.type === 'container' && (
-                            <Input
-                              size="sm"
-                              value={resource.image}
-                              onChange={(e) => updateResource(resource.id, { image: e.target.value })}
-                              placeholder="Image (e.g. nginx:latest)"
-                              onClick={(e) => e.stopPropagation()}
-                              data-testid={`image-input-${resource.name}`}
-                            />
-                          )}
-
-                          {/* Container ports */}
-                          {resource.type === 'container' && (
-                            <Input
-                              size="sm"
-                              value={resource.ports}
-                              onChange={(e) => updateResource(resource.id, { ports: e.target.value })}
-                              placeholder="Port (e.g. 8080)"
-                              onClick={(e) => e.stopPropagation()}
-                              data-testid={`port-input-${resource.name}`}
-                            />
-                          )}
-
-                          {/* Options */}
-                          <Flex gap="2" flexWrap="wrap">
-                            {resource.type !== 'project' && resource.type !== 'container' && (
-                              <Button
-                                size="xs"
-                                variant={resource.hasDataVolume ? 'solid' : 'outline'}
-                                colorPalette={resource.hasDataVolume ? 'green' : 'gray'}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateResource(resource.id, { hasDataVolume: !resource.hasDataVolume });
-                                }}
-                                data-testid={`volume-${resource.name}`}
-                              >
-                                <TbPackage /> Volume
-                              </Button>
-                            )}
-                            {(resource.type === 'project' || resource.type === 'container') && (
-                              <Button
-                                size="xs"
-                                variant={resource.hasExternalEndpoints ? 'solid' : 'outline'}
-                                colorPalette={resource.hasExternalEndpoints ? 'green' : 'gray'}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateResource(resource.id, { hasExternalEndpoints: !resource.hasExternalEndpoints });
-                                }}
-                                data-testid={`external-${resource.name}`}
-                              >
-                                <TbPlayerPlay /> External
-                              </Button>
-                            )}
-                          </Flex>
-
-                          {/* Databases */}
-                          {tmpl.supportsDatabases && (
-                            <Box>
-                              <Flex justify="space-between" align="center" mb="1">
-                                <Text fontSize="xs" color="dark.muted">Databases</Text>
-                                <Button
-                                  size="xs"
-                                  variant="outline"
-                                  colorPalette="purple"
-                                  onClick={(e) => { e.stopPropagation(); addDatabase(resource.id); }}
-                                  data-testid={`add-db-${resource.name}`}
-                                >
-                                  <TbPlus /> Add DB
-                                </Button>
-                              </Flex>
-                              {resource.databases.map((db, idx) => (
-                                <Flex key={idx} gap="1" mb="1" align="center">
-                                  <Text fontSize="xs" color="aspire.400">💾</Text>
-                                  <Input
-                                    size="xs"
-                                    value={db}
-                                    onChange={(e) => { e.stopPropagation(); updateDatabase(resource.id, idx, e.target.value); }}
-                                    onClick={(e) => e.stopPropagation()}
-                                    flex="1"
-                                    data-testid={`db-input-${resource.name}-${idx}`}
-                                  />
-                                  <IconButton
-                                    aria-label="Remove database"
-                                    size="xs"
-                                    variant="ghost"
-                                    colorPalette="red"
-                                    onClick={(e) => { e.stopPropagation(); removeDatabase(resource.id, idx); }}
-                                  >
-                                    <TbTrash />
-                                  </IconButton>
-                                </Flex>
-                              ))}
-                            </Box>
-                          )}
-
-                          {/* References */}
-                          {resource.references.length > 0 && (
-                            <Box>
-                              <Text fontSize="xs" color="dark.muted" mb="1">References</Text>
-                              <Flex gap="1" flexWrap="wrap">
-                                {resource.references.map((refId) => (
-                                  <Badge
-                                    key={refId}
-                                    colorPalette="purple"
-                                    variant="subtle"
-                                    fontSize="2xs"
-                                    cursor="pointer"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      toggleReference(resource.id, refId);
-                                    }}
-                                    data-testid={`ref-badge-${resource.name}-${getResourceName(refId)}`}
-                                  >
-                                    🔗 {getResourceName(refId)} ✕
-                                  </Badge>
-                                ))}
-                              </Flex>
-                            </Box>
-                          )}
-                        </Card.Body>
-                      </Card.Root>
-                    );
-                  })}
-                </Flex>
-              )}
-            </Card.Body>
-          </Card.Root>
-        </Box>
-
-        {/* ── Right panel: Generated Code ────────────────────────────────── */}
-        <Box w={{ base: '100%', lg: '380px' }} flexShrink={0}>
-          <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg" position="sticky" top="4">
-            <Card.Body p="3">
-              <Flex justify="space-between" align="center" mb="3">
-                <Text {...pixelFontProps} fontSize="2xs" color="aspire.300">
-                  💻 AppHost Code
-                </Text>
-                <Button
-                  size="xs"
-                  variant="outline"
+        {/* ── Code Tab ─────────────────────────────────────────────── */}
+        <Tabs.Content value="code">
+          <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg">
+            <Card.Body p="5">
+              <Flex justify="space-between" align="center" mb="4">
+                <Tabs.Root value={activeLanguage} onValueChange={(d) => setActiveLanguage(d.value as CodeLanguage)}>
+                  <Tabs.List gap="1">
+                    {LANGUAGES.map((lang) => (
+                      <Tabs.Trigger key={lang.id} value={lang.id}
+                        fontSize="10px" px="3" py="1.5" {...pixelFontProps}
+                        color="dark.muted"
+                        _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+                        borderRadius="sm" data-testid={`lang-tab-${lang.id}`}
+                      >
+                        {lang.icon} {lang.label}
+                      </Tabs.Trigger>
+                    ))}
+                  </Tabs.List>
+                </Tabs.Root>
+                <Button size="xs" variant="outline"
                   colorPalette={copied ? 'green' : 'purple'}
-                  onClick={copyCode}
-                  data-testid="copy-code-btn"
+                  onClick={copyCode} data-testid="copy-code-btn"
                 >
                   <TbCopy /> {copied ? 'Copied!' : 'Copy'}
                 </Button>
               </Flex>
-              <Box
-                borderRadius="sm"
-                overflow="auto"
-                maxH="600px"
-                css={{
-                  '& pre': { margin: 0, borderRadius: '4px', fontSize: '12px !important' },
-                }}
+
+              <Box borderRadius="sm" overflow="auto" maxH="600px" role="region" aria-label="Generated AppHost code"
+                css={{ '& pre': { margin: 0, borderRadius: '4px', fontSize: '13px !important' } }}
                 data-testid="generated-code"
               >
                 <SyntaxHighlighter
-                  language="csharp"
+                  language={activeLanguage === 'typescript' ? 'typescript' : 'csharp'}
                   style={vscDarkPlus}
-                  customStyle={{
-                    background: '#0D0B1A',
-                    padding: '12px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    lineHeight: '1.5',
-                  }}
+                  customStyle={{ background: '#0D0B1A', padding: '20px', borderRadius: '4px', fontSize: '13px', lineHeight: '1.6' }}
                   showLineNumbers
                 >
                   {generatedCode}
@@ -736,8 +1162,62 @@ export default function PlaygroundPage() {
               </Box>
             </Card.Body>
           </Card.Root>
-        </Box>
-      </Flex>
+
+          {/* Scaffolds */}
+          {scaffolds.length > 0 && (
+            <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg" mt="4">
+              <Card.Body p="5">
+                <Flex justify="space-between" align="center" mb="3">
+                  <Text {...pixelFontProps} fontSize="2xs" color="aspire.300">
+                    📂 Project Scaffolds
+                  </Text>
+                  <Button size="xs" variant={showScaffolds ? 'solid' : 'outline'} colorPalette="purple"
+                    onClick={() => setShowScaffolds(!showScaffolds)} data-testid="toggle-scaffolds"
+                  >
+                    <TbFileText /> {showScaffolds ? 'Hide' : 'Show'} Files
+                  </Button>
+                </Flex>
+
+                {showScaffolds ? (
+                  <Flex direction="column" gap="5">
+                    {scaffolds.map((scaffold) => (
+                      <Box key={scaffold.name}>
+                        <Flex align="center" gap="2" mb="3">
+                          <Text fontSize="xs" color="dark.text" fontWeight="bold">📦 {scaffold.name}</Text>
+                          <Badge fontSize="7px" colorPalette={scaffold.lang === 'TypeScript' || scaffold.lang === 'Node.js' ? 'blue' : scaffold.lang === 'Python' ? 'green' : 'purple'} variant="subtle">
+                            {scaffold.lang}
+                          </Badge>
+                        </Flex>
+                        {scaffold.files.map((file) => (
+                          <Box key={file.path} mb="3">
+                            <Text fontSize="2xs" color="aspire.400" mb="1" fontFamily="mono">📄 {file.path}</Text>
+                            <Box borderRadius="sm" overflow="auto" maxH="200px"
+                              css={{ '& pre': { margin: 0, borderRadius: '4px', fontSize: '11px !important' } }}
+                            >
+                              <SyntaxHighlighter
+                                language={file.language === 'text' ? 'plaintext' : file.language}
+                                style={vscDarkPlus}
+                                customStyle={{ background: '#0D0B1A', padding: '12px', borderRadius: '4px', fontSize: '11px', lineHeight: '1.5' }}
+                                showLineNumbers
+                              >
+                                {file.content}
+                              </SyntaxHighlighter>
+                            </Box>
+                          </Box>
+                        ))}
+                      </Box>
+                    ))}
+                  </Flex>
+                ) : (
+                  <Text fontSize="xs" color="dark.muted">
+                    {scaffolds.length} project{scaffolds.length !== 1 ? 's' : ''} with generated starter code
+                  </Text>
+                )}
+              </Card.Body>
+            </Card.Root>
+          )}
+        </Tabs.Content>
+      </Tabs.Root>
     </Box>
   );
 }

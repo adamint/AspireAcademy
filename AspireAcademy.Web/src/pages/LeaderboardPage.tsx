@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Flex, Text, Badge, Skeleton, VStack, Tabs } from '@chakra-ui/react';
+import { Box, Flex, Text, Badge, Skeleton, VStack, Tabs, Button } from '@chakra-ui/react';
 import { FiGithub } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/button';
 import api from '../services/apiClient';
 import { useAuthStore } from '../store/authStore';
 import AvatarDisplay from '../components/gamification/AvatarDisplay';

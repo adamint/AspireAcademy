@@ -1,0 +1,55 @@
+starterCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var redis = builder.AddRedis("cache");
+  var postgres = builder.AddPostgres("pg").AddDatabase("mydb");
+
+  var api = builder.AddProject<Projects.Api>("api")
+      .WithReference(postgres)
+      .WithReference(redis)
+      .WaitFor(postgres);
+
+  // TODO: Use builder.Eventing to subscribe to BeforeStartEvent
+  // In the event handler, iterate over the app model's resources
+  // and log each resource's name and annotation count
+
+  builder.Build().Run();
+solutionCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var redis = builder.AddRedis("cache");
+  var postgres = builder.AddPostgres("pg").AddDatabase("mydb");
+
+  var api = builder.AddProject<Projects.Api>("api")
+      .WithReference(postgres)
+      .WithReference(redis)
+      .WaitFor(postgres);
+
+  builder.Eventing.Subscribe<BeforeStartEvent>((evt, ct) =>
+  {
+      foreach (var resource in evt.Model.Resources)
+      {
+          Console.WriteLine($"Resource: {resource.Name}, Annotations: {resource.Annotations.Count}");
+      }
+      return Task.CompletedTask;
+  });
+
+  builder.Build().Run();
+testCases:
+  - type: code-contains
+    description: "Must subscribe to BeforeStartEvent"
+    value: "BeforeStartEvent"
+  - type: code-contains
+    description: "Must iterate over resources"
+    value: "Resources"
+  - type: code-contains
+    description: "Must access resource name"
+    value: ".Name"
+  - type: code-contains
+    description: "Must access annotations"
+    value: "Annotations"
+hints:
+  - "Use builder.Eventing.Subscribe<BeforeStartEvent>(...) to hook into app startup"
+  - "The event gives you access to evt.Model.Resources"
+  - "Each resource has .Name and .Annotations properties"
+requiredPackages: []

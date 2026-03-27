@@ -1,0 +1,54 @@
+questions:
+- text: What is the difference between AddContainer and AddRedis?
+  type: multiple-choice
+  options:
+  - id: a
+    text: AddContainer is for Linux only
+    isCorrect: false
+  - id: b
+    text: AddRedis adds health checks, connection strings, and default ports automatically
+    isCorrect: true
+  - id: c
+    text: AddContainer starts containers faster
+    isCorrect: false
+  - id: d
+    text: There is no difference
+    isCorrect: false
+  explanation: Hosting integrations like AddRedis() add integration-specific behavior
+    on top of the base container — health checks, connection string format, default
+    image/tag, and port configuration. AddContainer() is a raw container with no integration
+    behavior.
+- text: What does ContainerLifetime.Persistent do?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Makes the container restart automatically on crash
+    isCorrect: false
+  - id: b
+    text: Keeps the container running after the AppHost stops
+    isCorrect: true
+  - id: c
+    text: Persists container logs to disk
+    isCorrect: false
+  - id: d
+    text: Enables container health checks
+    isCorrect: false
+  explanation: Persistent containers survive AppHost restarts. This is useful for
+    databases where you want to preserve data across development sessions.
+- text: How does Aspire inject environment variables into a container?
+  type: multiple-choice
+  options:
+  - id: a
+    text: By modifying the Dockerfile
+    isCorrect: false
+  - id: b
+    text: By passing -e flags to the Docker CLI
+    isCorrect: false
+  - id: c
+    text: Via EnvironmentCallbackAnnotation, resolved when DCP starts the container
+    isCorrect: true
+  - id: d
+    text: By writing a .env file to the container filesystem
+    isCorrect: false
+  explanation: Environment variables are resolved from annotations at runtime. WithEnvironment()
+    adds an EnvironmentCallbackAnnotation that DCP evaluates when starting the container.

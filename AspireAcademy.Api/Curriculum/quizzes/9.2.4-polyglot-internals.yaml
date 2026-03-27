@@ -1,0 +1,37 @@
+questions:
+- text: What protocol does the RemoteHost bridge use for communication?
+  type: multiple-choice
+  options:
+  - id: a
+    text: HTTP REST API
+    isCorrect: false
+  - id: b
+    text: gRPC
+    isCorrect: false
+  - id: c
+    text: JSON-RPC over Unix domain sockets
+    isCorrect: true
+  - id: d
+    text: WebSocket with Protocol Buffers
+    isCorrect: false
+  explanation: The RemoteHost bridge uses JSON-RPC 2.0 over Unix domain sockets (or
+    named pipes on Windows). This provides low-latency local communication with a
+    simple text-based protocol.
+- text: What are the three type categories in the Application Type System (ATS)?
+  type: multiple-choice
+  options:
+  - id: a
+    text: Classes, interfaces, and enums
+    isCorrect: false
+  - id: b
+    text: Handle types, DTO types, and Enum types
+    isCorrect: true
+  - id: c
+    text: Resources, annotations, and builders
+    isCorrect: false
+  - id: d
+    text: Input types, output types, and error types
+    isCorrect: false
+  explanation: 'ATS categorizes types into: Handle types (passed by reference with
+    opaque IDs, marked with [AspireExport]), DTO types (passed by value as JSON, marked
+    with [AspireDto]), and Enum types (serialized as strings).'

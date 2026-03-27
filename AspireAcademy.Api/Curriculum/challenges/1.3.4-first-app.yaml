@@ -1,0 +1,33 @@
+starterCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  // TODO: Add a Redis cache resource named "cache"
+
+  // TODO: Add a container resource for Nginx named "proxy" using the "nginx" image
+
+  builder.Build().Run();
+solutionCode: |
+  var builder = DistributedApplication.CreateBuilder(args);
+
+  var cache = builder.AddRedis("cache");
+
+  builder.AddContainer("proxy", "nginx")
+      .WithHttpEndpoint(port: 8080, targetPort: 80);
+
+  builder.Build().Run();
+testCases:
+  - type: code-contains
+    description: "Must call AddRedis with the name 'cache'"
+    value: "AddRedis(\"cache\")"
+  - type: code-contains
+    description: "Must call AddContainer with the name 'proxy' and image 'nginx'"
+    value: "AddContainer(\"proxy\", \"nginx\")"
+  - type: code-contains
+    description: "Must call Build().Run()"
+    value: "Build().Run()"
+hints:
+  - "Use builder.AddRedis(\"cache\") to add a Redis resource"
+  - "Use builder.AddContainer(\"proxy\", \"nginx\") to add an Nginx container"
+  - "You can add an HTTP endpoint to Nginx with .WithHttpEndpoint(port: 8080, targetPort: 80)"
+requiredPackages:
+  - Aspire.Hosting.Redis

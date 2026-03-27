@@ -47,6 +47,34 @@ const markdownComponents: Partial<Components> = {
       </code>
     );
   },
+  table({ children }) {
+    return (
+      <Box
+        as="table"
+        width="100%"
+        my="4"
+        borderRadius="sm"
+        overflow="hidden"
+        css={{
+          borderCollapse: 'collapse',
+          '& th, & td': {
+            padding: '10px 14px',
+            textAlign: 'left',
+            borderBottom: '1px solid var(--chakra-colors-dark-border, #2B1260)',
+          },
+          '& th': {
+            fontWeight: 600,
+            background: 'var(--chakra-colors-aspire-50, #2A2445)',
+          },
+          '& tr:last-child td': {
+            borderBottom: 'none',
+          },
+        }}
+      >
+        {children}
+      </Box>
+    );
+  },
   blockquote({ children }) {
     const text = extractText(children);
     const isInsight = text.startsWith('💡');

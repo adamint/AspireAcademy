@@ -704,6 +704,405 @@ builder.Build().Run();`,
   },
 ];
 
+// ─── Project File Generation ───────────────────────────────────────────────────
+
+interface ProjectFile {
+  path: string;
+  content: string;
+  language: string;
+}
+
+function toVarName(name: string): string {
+  return name.replace(/\n/g, '').replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+}
+
+function buildProjectFiles(entry: GalleryEntry): ProjectFile[] {
+  const files: ProjectFile[] = [];
+
+  // AppHost/Program.cs
+  files.push({ path: 'AppHost/Program.cs', content: entry.code, language: 'csharp' });
+
+  // AppHost .csproj
+  const projectRefs = entry.services
+    .filter((s) => s.type === 'api' || s.type === 'worker' || s.type === 'frontend')
+    .map((s) => {
+      const name = toVarName(s.name);
+      return `    <ProjectReference Include="..\\${name}\\${name}.csproj" />`;
+    });
+  files.push({
+    path: 'AppHost/AppHost.csproj',
+    content: `<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.1.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+${projectRefs.join('\n')}
+  </ItemGroup>
+
+</Project>`,
+    language: 'xml',
+  });
+
+  // ServiceDefaults
+  files.push({
+    path: 'ServiceDefaults/Extensions.cs',
+    content: `using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+
+namespace ServiceDefaults;
+
+public static class Extensions
+{
+    public static IHostApplicationBuilder AddServiceDefaults(
+        this IHostApplicationBuilder builder)
+    {
+        builder.ConfigureOpenTelemetry();
+        builder.AddDefaultHealthChecks();
+
+        builder.Services.AddServiceDiscovery();
+        builder.Services.ConfigureHttpClientDefaults(http =>
+        {
+            http.AddStandardResilienceHandler();
+            http.AddServiceDiscovery();
+        });
+
+        return builder;
+    }
+
+    public static IHostApplicationBuilder ConfigureOpenTelemetry(
+        this IHostApplicationBuilder builder)
+    {
+        builder.Logging.AddOpenTelemetry(logging =>
+        {
+            logging.IncludeFormattedMessage = true;
+            logging.IncludeScopes = true;
+        });
+
+        builder.Services.AddOpenTelemetry()
+            .WithMetrics(metrics => metrics
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddRuntimeInstrumentation())
+            .WithTracing(tracing => tracing
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation());
+
+        builder.AddOpenTelemetryExporters();
+        return builder;
+    }
+
+    // ... additional helper methods
+}`,
+    language: 'csharp',
+  });
+
+  files.push({
+    path: 'ServiceDefaults/ServiceDefaults.csproj',
+    content: `<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireSharedProject>true</IsAspireSharedProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.1.0" />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" Version="9.1.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.10.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.10.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.10.0" />
+  </ItemGroup>
+
+</Project>`,
+    language: 'xml',
+  });
+
+  // Per-service files
+  for (const svc of entry.services) {
+    if (svc.type === 'database' || svc.type === 'cache' || svc.type === 'messaging') continue;
+
+    const name = toVarName(svc.name);
+    const incoming = entry.connections
+      .filter((c) => c.to === svc.id)
+      .map((c) => entry.services.find((s) => s.id === c.from)?.name.replace(/\n/g, ' ') ?? c.from);
+    const outgoing = entry.connections
+      .filter((c) => c.from === svc.id)
+      .map((c) => entry.services.find((s) => s.id === c.to)?.name.replace(/\n/g, ' ') ?? c.to);
+
+    // Check if it's a Node.js/npm project (heuristic from code)
+    const isNpm = entry.code.includes('AddNpmApp') && entry.code.toLowerCase().includes(svc.id);
+
+    if (isNpm) {
+      files.push({
+        path: `${name}/package.json`,
+        content: JSON.stringify({
+          name: name.toLowerCase(),
+          version: '1.0.0',
+          type: 'module',
+          scripts: { dev: 'vite', build: 'vite build', start: 'node dist/index.js' },
+          dependencies: { react: '^19.0.0', 'react-dom': '^19.0.0' },
+          devDependencies: { vite: '^6.0.0', '@vitejs/plugin-react': '^4.0.0', typescript: '^5.7.0' },
+        }, null, 2),
+        language: 'json',
+      });
+      files.push({
+        path: `${name}/src/App.tsx`,
+        content: `import { useEffect, useState } from 'react';
+
+export default function App() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/health')
+      .then((r) => r.json())
+      .then(setData);
+  }, []);
+
+  return (
+    <div>
+      <h1>${svc.name.replace(/\n/g, ' ')}</h1>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
+  );
+}`,
+        language: 'typescriptreact',
+      });
+    } else if (svc.type === 'worker') {
+      const aspirePackages = getAspirePackages(svc, entry);
+      files.push({
+        path: `${name}/Program.cs`,
+        content: `var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddServiceDefaults();
+${aspirePackages.services.length > 0 ? '\n' + aspirePackages.services.join('\n') + '\n' : ''}
+builder.Services.AddHostedService<${name}Worker>();
+
+var host = builder.Build();
+host.Run();
+
+// Background worker${incoming.length > 0 ? `\n// Consumes from: ${incoming.join(', ')}` : ''}${outgoing.length > 0 ? `\n// Produces to: ${outgoing.join(', ')}` : ''}
+public class ${name}Worker(ILogger<${name}Worker> logger) : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+        {
+            logger.LogInformation("${name} processing at {Time}", DateTimeOffset.Now);
+            await Task.Delay(5000, ct);
+        }
+    }
+}`,
+        language: 'csharp',
+      });
+    } else {
+      // API or frontend .NET service
+      const aspirePackages = getAspirePackages(svc, entry);
+      files.push({
+        path: `${name}/Program.cs`,
+        content: `var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
+${aspirePackages.services.length > 0 ? '\n' + aspirePackages.services.join('\n') + '\n' : ''}
+var app = builder.Build();
+
+app.MapDefaultEndpoints();
+${incoming.length > 0 ? `\n// Receives requests from: ${incoming.join(', ')}` : ''}${outgoing.length > 0 ? `\n// Depends on: ${outgoing.join(', ')}` : ''}
+
+app.MapGet("/", () => Results.Json(new { service = "${name}", status = "running" }));
+
+app.Run();`,
+        language: 'csharp',
+      });
+    }
+  }
+
+  return files;
+}
+
+function getAspirePackages(svc: ServiceNode, entry: GalleryEntry): { services: string[] } {
+  const services: string[] = [];
+  const outRefs = entry.connections
+    .filter((c) => c.from === svc.id)
+    .map((c) => entry.services.find((s) => s.id === c.to))
+    .filter((s): s is ServiceNode => s !== undefined);
+
+  for (const ref of outRefs) {
+    switch (ref.type) {
+      case 'database':
+        if (ref.name.toLowerCase().includes('mongo')) {
+          services.push(`builder.AddMongoDBClient("${ref.id}");`);
+        } else {
+          services.push(`builder.AddNpgsqlDataSource("${ref.id}");`);
+        }
+        break;
+      case 'cache':
+        services.push(`builder.AddRedisDistributedCache("${ref.id}");`);
+        break;
+      case 'messaging':
+        if (ref.name.toLowerCase().includes('kafka')) {
+          services.push(`builder.AddKafkaProducer<string, string>("${ref.id}");`);
+        } else {
+          services.push(`builder.AddRabbitMQClient("${ref.id}");`);
+        }
+        break;
+    }
+  }
+
+  return { services };
+}
+
+// ─── File Browser Component ────────────────────────────────────────────────────
+
+function FileBrowser({ files }: { files: ProjectFile[] }) {
+  const [selectedPath, setSelectedPath] = useState<string>(files[0]?.path ?? '');
+
+  const selectedFile = files.find((f) => f.path === selectedPath);
+
+  // Build tree structure from flat file list
+  const tree = useMemo(() => {
+    const folders = new Map<string, string[]>();
+    for (const f of files) {
+      const parts = f.path.split('/');
+      const folder = parts.length > 1 ? parts.slice(0, -1).join('/') : '';
+      if (!folders.has(folder)) folders.set(folder, []);
+      folders.get(folder)!.push(f.path);
+    }
+    return folders;
+  }, [files]);
+
+  return (
+    <Flex direction={{ base: 'column', md: 'row' }} gap="4" minH="400px">
+      {/* File tree */}
+      <Box
+        w={{ base: '100%', md: '220px' }}
+        flexShrink={0}
+        bg="dark.surface"
+        borderRadius="sm"
+        border="1px solid"
+        borderColor="dark.border"
+        overflow="auto"
+        maxH="600px"
+        p="2"
+      >
+        <Text fontSize="8px" color="dark.muted" {...pixelFontProps} mb="2" px="1">
+          📁 Project Structure
+        </Text>
+        {Array.from(tree.entries()).map(([folder, paths]) => (
+          <Box key={folder} mb="2">
+            {folder && (
+              <Text
+                fontSize="9px"
+                color="aspire.400"
+                fontWeight="bold"
+                px="1"
+                mb="1"
+                {...pixelFontProps}
+              >
+                📂 {folder}/
+              </Text>
+            )}
+            {paths.map((path) => {
+              const fileName = path.split('/').pop()!;
+              const isSelected = path === selectedPath;
+              return (
+                <Box
+                  key={path}
+                  px="2"
+                  py="1.5"
+                  ml={folder ? '3' : '0'}
+                  cursor="pointer"
+                  borderRadius="sm"
+                  bg={isSelected ? 'aspire.200' : 'transparent'}
+                  color={isSelected ? 'aspire.400' : 'dark.muted'}
+                  _hover={{ bg: isSelected ? 'aspire.200' : 'dark.card' }}
+                  onClick={() => setSelectedPath(path)}
+                  transition="all 0.1s"
+                >
+                  <Text fontSize="10px" fontFamily="mono">
+                    {getFileIcon(fileName)} {fileName}
+                  </Text>
+                </Box>
+              );
+            })}
+          </Box>
+        ))}
+      </Box>
+
+      {/* File content */}
+      <Box flex="1" minW="0">
+        {selectedFile ? (
+          <Box>
+            <Flex justify="space-between" align="center" mb="2">
+              <Text fontSize="10px" color="dark.muted" fontFamily="mono">
+                {selectedFile.path}
+              </Text>
+              <CopyButton text={selectedFile.content} />
+            </Flex>
+            <Box
+              borderRadius="sm"
+              overflow="auto"
+              maxH="550px"
+              border="1px solid"
+              borderColor="dark.border"
+              css={{
+                '& pre': {
+                  margin: '0 !important',
+                  borderRadius: '4px !important',
+                  fontSize: '12px !important',
+                  lineHeight: '1.5 !important',
+                },
+              }}
+            >
+              <SyntaxHighlighter
+                language={selectedFile.language === 'typescriptreact' ? 'tsx' : selectedFile.language}
+                style={vscDarkPlus}
+                customStyle={{
+                  background: '#0D0B1A',
+                  padding: '16px',
+                  borderRadius: '4px',
+                }}
+                showLineNumbers
+              >
+                {selectedFile.content}
+              </SyntaxHighlighter>
+            </Box>
+          </Box>
+        ) : (
+          <Flex align="center" justify="center" h="100%" color="dark.muted">
+            <Text fontSize="sm">Select a file to view</Text>
+          </Flex>
+        )}
+      </Box>
+    </Flex>
+  );
+}
+
+function getFileIcon(fileName: string): string {
+  if (fileName.endsWith('.cs')) return '🟣';
+  if (fileName.endsWith('.csproj') || fileName.endsWith('.xml')) return '📋';
+  if (fileName.endsWith('.json')) return '📦';
+  if (fileName.endsWith('.ts') || fileName.endsWith('.tsx')) return '🔷';
+  if (fileName.endsWith('.py')) return '🐍';
+  if (fileName.endsWith('.sln')) return '🗂️';
+  if (fileName.endsWith('.txt')) return '📝';
+  return '📄';
+}
+
 // ─── Gallery Card Component ───────────────────────────────────────────────────
 
 function GalleryCard({
@@ -791,6 +1190,8 @@ function GalleryDetail({
   entry: GalleryEntry;
   onBack: () => void;
 }) {
+  const projectFiles = useMemo(() => buildProjectFiles(entry), [entry]);
+
   return (
     <Box>
       {/* Header */}
@@ -866,6 +1267,18 @@ function GalleryDetail({
             borderRadius="sm"
           >
             💻 AppHost Code
+          </Tabs.Trigger>
+          <Tabs.Trigger
+            value="files"
+            fontSize="10px"
+            px="4"
+            py="2"
+            {...pixelFontProps}
+            color="dark.muted"
+            _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            borderRadius="sm"
+          >
+            📁 Project Files
           </Tabs.Trigger>
           <Tabs.Trigger
             value="explanation"
@@ -954,6 +1367,18 @@ function GalleryDetail({
                   {entry.code}
                 </SyntaxHighlighter>
               </Box>
+            </Card.Body>
+          </Card.Root>
+        </Tabs.Content>
+
+        {/* Project Files Tab */}
+        <Tabs.Content value="files">
+          <Card.Root {...retroCardProps} bg="dark.card" p="4">
+            <Card.Body>
+              <Heading size="sm" mb="4" color="dark.text" {...pixelFontProps}>
+                Full Project Structure ({projectFiles.length} files)
+              </Heading>
+              <FileBrowser files={projectFiles} />
             </Card.Body>
           </Card.Root>
         </Tabs.Content>

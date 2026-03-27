@@ -1,186 +1,84 @@
-instructions: |
-  # Boss Challenge: Custom ServiceDefaults
-
-  Configure a complete ServiceDefaults file with custom tracing, a custom health check, and tuned resilience policies. This is what a production-ready ServiceDefaults looks like.
-
-  **What to do:**
-  1. In `ConfigureOpenTelemetry`:
-     - Add OpenTelemetry logging with `IncludeFormattedMessage = true` and `IncludeScopes = true`
-     - Add metrics with ASP.NET Core and HTTP client instrumentation
-     - Add tracing with a custom `ActivitySource` named `"MyApp"`, plus ASP.NET Core and HTTP client instrumentation
-  2. In `AddDefaultHealthChecks`:
-     - Register a liveness check named `"self"` tagged `["live"]`
-     - Register an additional check named `"ready"` that returns `HealthCheckResult.Healthy()`
-  3. In `ConfigureResilience`:
-     - Use `ConfigureHttpClientDefaults` to add `AddStandardResilienceHandler()` and `AddServiceDiscovery()`
-
-  **Key concepts:**
-  - `AddOpenTelemetry()` with `.WithMetrics()` and `.WithTracing()` for telemetry
-  - `AddHealthChecks()` with `.AddCheck()` for health monitoring
-  - `ConfigureHttpClientDefaults()` with `AddStandardResilienceHandler()` for resilience
 starterCode: |
-  using Microsoft.AspNetCore.Builder;
-  using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-  using Microsoft.Extensions.DependencyInjection;
-  using Microsoft.Extensions.Diagnostics.HealthChecks;
-  using Microsoft.Extensions.Hosting;
-  using Microsoft.Extensions.Logging;
-  using OpenTelemetry;
-  using OpenTelemetry.Metrics;
-  using OpenTelemetry.Trace;
+  var builder = DistributedApplication.CreateBuilder(args);
 
-  var builder = WebApplication.CreateBuilder(args);
-  builder.AddServiceDefaults();
+  // Atlas AppHost — wire up all six resources
+  // Infrastructure:
+  //   - PostgreSQL server "pg" with a database "atlas-db"
+  //   - Redis cache "cache"
+  //   - RabbitMQ message broker "messaging"
+  //
+  // Services:
+  //   - C# API project "api" that references postgres, redis, and rabbitmq
+  //   - Vite frontend "frontend" at "../atlas-web" that references the api
+  //   - Python ML service "ml" at "../atlas-ml" with entry point "app:app"
+  //     that references rabbitmq
+  //
+  // Dependencies:
+  //   - api waits for postgres, redis, and rabbitmq
+  //   - frontend waits for api
+  //   - ml waits for rabbitmq
+
+  // TODO: Add your resources here
+
   builder.Build().Run();
-
-  public static class Extensions
-  {
-      public static IHostApplicationBuilder AddServiceDefaults(
-          this IHostApplicationBuilder builder)
-      {
-          builder.ConfigureOpenTelemetry();
-          builder.AddDefaultHealthChecks();
-          builder.ConfigureResilience();
-          return builder;
-      }
-
-      public static IHostApplicationBuilder ConfigureOpenTelemetry(
-          this IHostApplicationBuilder builder)
-      {
-          // TODO: Configure OpenTelemetry logging
-          // builder.Logging.AddOpenTelemetry(logging => { ... });
-
-          // TODO: Configure metrics and tracing
-          // builder.Services.AddOpenTelemetry()
-          //     .WithMetrics(metrics => { ... })
-          //     .WithTracing(tracing => { ... });
-
-          return builder;
-      }
-
-      public static IHostApplicationBuilder AddDefaultHealthChecks(
-          this IHostApplicationBuilder builder)
-      {
-          // TODO: Register health checks
-          // - "self" check with tag ["live"]
-          // - "ready" check
-
-          return builder;
-      }
-
-      public static IHostApplicationBuilder ConfigureResilience(
-          this IHostApplicationBuilder builder)
-      {
-          // TODO: Configure HTTP client defaults with resilience and service discovery
-
-          return builder;
-      }
-  }
 solutionCode: |
-  using Microsoft.AspNetCore.Builder;
-  using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-  using Microsoft.Extensions.DependencyInjection;
-  using Microsoft.Extensions.Diagnostics.HealthChecks;
-  using Microsoft.Extensions.Hosting;
-  using Microsoft.Extensions.Logging;
-  using OpenTelemetry;
-  using OpenTelemetry.Metrics;
-  using OpenTelemetry.Trace;
+  var builder = DistributedApplication.CreateBuilder(args);
 
-  var builder = WebApplication.CreateBuilder(args);
-  builder.AddServiceDefaults();
+  var postgres = builder.AddPostgres("pg").AddDatabase("atlas-db");
+  var redis = builder.AddRedis("cache");
+  var rabbitmq = builder.AddRabbitMQ("messaging");
+
+  var api = builder.AddProject<Projects.AtlasApi>("api")
+      .WithReference(postgres)
+      .WithReference(redis)
+      .WithReference(rabbitmq)
+      .WaitFor(postgres)
+      .WaitFor(redis)
+      .WaitFor(rabbitmq);
+
+  builder.AddViteApp("frontend", "../atlas-web")
+      .WithReference(api)
+      .WaitFor(api);
+
+  builder.AddPythonApp("ml", "../atlas-ml", "app:app")
+      .WithReference(rabbitmq)
+      .WaitFor(rabbitmq);
+
   builder.Build().Run();
-
-  public static class Extensions
-  {
-      public static IHostApplicationBuilder AddServiceDefaults(
-          this IHostApplicationBuilder builder)
-      {
-          builder.ConfigureOpenTelemetry();
-          builder.AddDefaultHealthChecks();
-          builder.ConfigureResilience();
-          return builder;
-      }
-
-      public static IHostApplicationBuilder ConfigureOpenTelemetry(
-          this IHostApplicationBuilder builder)
-      {
-          builder.Logging.AddOpenTelemetry(logging =>
-          {
-              logging.IncludeFormattedMessage = true;
-              logging.IncludeScopes = true;
-          });
-
-          builder.Services.AddOpenTelemetry()
-              .WithMetrics(metrics =>
-              {
-                  metrics.AddAspNetCoreInstrumentation()
-                      .AddHttpClientInstrumentation()
-                      .AddRuntimeInstrumentation();
-              })
-              .WithTracing(tracing =>
-              {
-                  tracing.AddSource("MyApp")
-                      .AddAspNetCoreInstrumentation()
-                      .AddHttpClientInstrumentation();
-              });
-
-          return builder;
-      }
-
-      public static IHostApplicationBuilder AddDefaultHealthChecks(
-          this IHostApplicationBuilder builder)
-      {
-          builder.Services.AddHealthChecks()
-              .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"])
-              .AddCheck("ready", () => HealthCheckResult.Healthy());
-
-          return builder;
-      }
-
-      public static IHostApplicationBuilder ConfigureResilience(
-          this IHostApplicationBuilder builder)
-      {
-          builder.Services.ConfigureHttpClientDefaults(http =>
-          {
-              http.AddStandardResilienceHandler();
-              http.AddServiceDiscovery();
-          });
-
-          return builder;
-      }
-  }
 testCases:
-  - id: tc1
-    name: Compiles successfully
-    type: compiles
-    expected: null
-    description: Code must compile without errors
-  - id: tc2
-    name: Configures OpenTelemetry
-    type: code-contains
-    expected: AddOpenTelemetry
-    description: Code must call AddOpenTelemetry to configure telemetry
-  - id: tc3
-    name: Registers health checks
-    type: code-contains
-    expected: AddHealthChecks
-    description: Code must call AddHealthChecks to register health monitoring
-  - id: tc4
-    name: Adds standard resilience handler
-    type: code-contains
-    expected: AddStandardResilienceHandler
-    description: Code must add the standard HTTP resilience handler with retry, circuit breaker, and timeout
+  - type: code-contains
+    description: "Must add PostgreSQL with AddPostgres"
+    value: "AddPostgres"
+  - type: code-contains
+    description: "Must add a database with AddDatabase"
+    value: "AddDatabase"
+  - type: code-contains
+    description: "Must add Redis with AddRedis"
+    value: "AddRedis"
+  - type: code-contains
+    description: "Must add RabbitMQ with AddRabbitMQ"
+    value: "AddRabbitMQ"
+  - type: code-contains
+    description: "Must use WithReference to wire services"
+    value: "WithReference"
+  - type: code-contains
+    description: "Must use WaitFor for startup ordering"
+    value: "WaitFor"
+  - type: code-contains
+    description: "Must add a Vite frontend"
+    value: "AddViteApp"
+  - type: code-contains
+    description: "Must add a Python ML service"
+    value: "AddPythonApp"
 hints:
-  - For OpenTelemetry, start with builder.Logging.AddOpenTelemetry(...) for logging, then builder.Services.AddOpenTelemetry().WithMetrics(...).WithTracing(...) for metrics and tracing
-  - 'For health checks, chain: builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]).AddCheck("ready", () => HealthCheckResult.Healthy())'
-  - For resilience, use builder.Services.ConfigureHttpClientDefaults(http => { http.AddStandardResilienceHandler(); http.AddServiceDiscovery(); })
+  - "Start with infrastructure: AddPostgres, AddRedis, AddRabbitMQ"
+  - "AddPostgres(\"pg\").AddDatabase(\"atlas-db\") creates a server and a database"
+  - "Use .WithReference() to inject connection strings and .WaitFor() for startup ordering"
+  - "AddViteApp(\"frontend\", \"../atlas-web\") adds a TypeScript/Vite frontend"
+  - "AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\") adds a Python FastAPI service"
 requiredPackages:
-  - Microsoft.Extensions.Http.Resilience
-  - Microsoft.Extensions.ServiceDiscovery
-  - OpenTelemetry.Extensions.Hosting
-  - OpenTelemetry.Instrumentation.AspNetCore
-  - OpenTelemetry.Instrumentation.Http
-  - OpenTelemetry.Instrumentation.Runtime
-  - Aspire.Hosting
-sortOrder: 0
+  - Aspire.Hosting.PostgreSQL
+  - Aspire.Hosting.Redis
+  - Aspire.Hosting.RabbitMQ
+  - Aspire.Hosting.NodeJs
+  - Aspire.Hosting.Python

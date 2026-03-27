@@ -1,0 +1,20 @@
+questions:
+- text: What is the relationship between an AppHost and DCP?
+  type: multiple-choice
+  options:
+  - id: a
+    text: DCP is a library linked into the AppHost
+    isCorrect: false
+  - id: b
+    text: The AppHost is declarative (what to run); DCP is imperative (executes the
+      plan) via gRPC
+    isCorrect: true
+  - id: c
+    text: DCP replaces the AppHost in production
+    isCorrect: false
+  - id: d
+    text: They are the same process
+    isCorrect: false
+  explanation: The AppHost builds the declarative app model. DCP is a separate process
+    that receives the model via gRPC and executes it — pulling images, starting containers,
+    allocating ports, and reporting state changes back.

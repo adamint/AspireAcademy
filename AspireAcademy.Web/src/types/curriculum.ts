@@ -1,4 +1,4 @@
-export type LessonType = 'learn' | 'quiz' | 'challenge' | 'build' | 'boss';
+export type LessonType = 'learn' | 'quiz' | 'challenge' | 'build' | 'boss' | 'boss-battle' | 'build-project';
 export type LessonStatus = 'completed' | 'perfect' | 'in_progress' | 'available' | 'locked' | 'skipped';
 
 export interface Lesson {

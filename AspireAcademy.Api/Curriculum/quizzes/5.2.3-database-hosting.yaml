@@ -1,0 +1,38 @@
+questions:
+- text: Which method adds a logical database to a PostgreSQL server?
+  type: multiple-choice
+  options:
+  - id: a
+    text: builder.AddPostgresDatabase("mydb")
+    isCorrect: false
+  - id: b
+    text: builder.AddPostgres("pg").AddDatabase("mydb")
+    isCorrect: true
+  - id: c
+    text: builder.AddDatabase("mydb", DatabaseType.Postgres)
+    isCorrect: false
+  - id: d
+    text: builder.AddPostgres("mydb")
+    isCorrect: false
+  explanation: AddPostgres creates the server. AddDatabase (chained from the server)
+    creates a logical database within it. The database resource is what you pass to
+    WithReference.
+- text: What happens if you add WithLifetime(ContainerLifetime.Persistent) to a PostgreSQL
+    resource?
+  type: multiple-choice
+  options:
+  - id: a
+    text: PostgreSQL writes data to a cloud storage account
+    isCorrect: false
+  - id: b
+    text: The container and its data survive AppHost restarts
+    isCorrect: true
+  - id: c
+    text: PostgreSQL enables WAL archiving
+    isCorrect: false
+  - id: d
+    text: The container cannot be stopped
+    isCorrect: false
+  explanation: Persistent lifetime keeps the container alive across AppHost restarts.
+    Combined with a data volume, your database retains its data between development
+    sessions.

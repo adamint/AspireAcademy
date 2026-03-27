@@ -227,7 +227,7 @@ export default function DashboardPage() {
                   const path =
                     lesson.type === LessonType.Quiz
                       ? `/quizzes/${lesson.id}`
-                      : lesson.type === LessonType.Challenge || lesson.type === LessonType.Build
+                      : lesson.type === LessonType.Challenge || lesson.type === LessonType.Build || lesson.type === LessonType.BossBattle || lesson.type === LessonType.BuildProject
                         ? `/challenges/${lesson.id}`
                         : `/lessons/${lesson.id}`;
                   navigate(path);

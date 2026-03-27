@@ -1,0 +1,19 @@
+questions:
+- text: What does DistributedApplicationTestingBuilder provide?
+  type: multiple-choice
+  options:
+  - id: a
+    text: A mock Dashboard for visual testing
+    isCorrect: false
+  - id: b
+    text: An in-memory AppHost with HttpClient access to resources
+    isCorrect: true
+  - id: c
+    text: A Kubernetes test cluster
+    isCorrect: false
+  - id: d
+    text: A Docker Compose test runner
+    isCorrect: false
+  explanation: DistributedApplicationTestingBuilder creates an in-memory version of
+    your AppHost that you can use in xUnit/NUnit/MSTest tests. It provides methods
+    to get typed HttpClients for any resource.
