@@ -4,9 +4,8 @@ using static AspireAcademy.Api.Tests.E2E.E2EHelpers;
 
 namespace AspireAcademy.Api.Tests.E2E;
 
-[Collection("AppHost")]
 [Trait("Category", "E2E")]
-public class ThemeTests(AppHostPlaywrightFixture fixture)
+public class ThemeTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHostPlaywrightFixture>
 {
     [Fact]
     public async Task ThemeToggleButtonIsVisible()

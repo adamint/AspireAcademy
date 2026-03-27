@@ -7,9 +7,8 @@ namespace AspireAcademy.Api.Tests.E2E;
 /// <summary>
 /// Adversarial/edge-case tests: double-click prevention, validation, auth persistence, etc.
 /// </summary>
-[Collection("AppHost")]
 [Trait("Category", "E2E")]
-public class AdversarialTests(AppHostPlaywrightFixture fixture)
+public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHostPlaywrightFixture>
 {
     [Fact]
     public async Task MarkCompleteButtonDisabledAfterSuccess()

@@ -15,7 +15,6 @@ import {
   Skeleton,
 } from '@chakra-ui/react';
 import {
-  FiPlay,
   FiUpload,
   FiSun,
   FiX,
@@ -28,7 +27,6 @@ import api from '../services/apiClient';
 import { useGamificationStore } from '../store/gamificationStore';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import CodeEditor from '../components/curriculum/CodeEditor';
-import OutputPanel from '../components/curriculum/OutputPanel';
 import MarkdownContent from '../components/common/MarkdownContent';
 
 // ── Types ────────────────────────────────────────────
@@ -73,14 +71,6 @@ interface LessonDetailResponse {
   challengeSteps?: ChallengeStepDto[];
 }
 
-interface RunApiResponse {
-  compilationSuccess: boolean;
-  compilationOutput: string;
-  executionOutput: string;
-  executionTimeMs?: number;
-  error?: string | null;
-}
-
 interface SubmitApiResponse {
   compilationSuccess: boolean;
   compilationOutput: string;
@@ -120,9 +110,6 @@ export default function ChallengePage() {
 
   // Editor state
   const [code, setCode] = useState('');
-  const [output, setOutput] = useState('');
-  const [errors, setErrors] = useState('');
-  const [running, setRunning] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
 
@@ -184,43 +171,19 @@ export default function ChallengePage() {
 
   // ── Handlers ─────────────────────────────────────
 
-  const handleRun = useCallback(async () => {
-    if (!challenge || running || submitting) return;
-    setRunning(true);
-    setOutput('');
-    setErrors('');
-    try {
-      const res = await api.post<RunApiResponse>(
-        `/challenges/${challenge.lessonId}/run`,
-        { code }
-      );
-      setOutput(res.data.executionOutput ?? '');
-      setErrors(res.data.error || res.data.compilationOutput || '');
-    } catch {
-      console.error('[ChallengePage] Failed to execute code for challenge:', lessonId);
-      setErrors('Failed to execute code. Please try again.');
-    } finally {
-      setRunning(false);
-    }
-  }, [challenge, code, running, submitting, lessonId]);
-
   const handleSubmit = useCallback(async () => {
-    if (!challenge || running || submitting || showSuccess) return;
+    if (!challenge || submitting || showSuccess) return;
     if (!code.trim()) {
-      setErrors('Please write some code before submitting.');
+      setFailureMessage('Please write some code before submitting.');
       return;
     }
     setSubmitting(true);
-    setOutput('');
-    setErrors('');
     setFailureMessage('');
     try {
       const res = await api.post<SubmitApiResponse>(
         `/challenges/${challenge.lessonId}/submit`,
         { code }
       );
-      setOutput(res.data.executionOutput ?? '');
-      setErrors(res.data.compilationOutput || '');
 
       setTestCases((prev) =>
         prev.map((tc) => {
@@ -252,11 +215,11 @@ export default function ChallengePage() {
       }
     } catch {
       console.error('[ChallengePage] Failed to submit challenge:', lessonId);
-      setErrors('Submission failed. Please try again.');
+      setFailureMessage('Submission failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
-  }, [challenge, code, syncFromServer, running, submitting, showSuccess, lessonId]);
+  }, [challenge, code, syncFromServer, submitting, showSuccess, lessonId]);
 
   const handleRevealHint = useCallback(() => {
     setRevealedHints((n) => n + 1);
@@ -567,23 +530,14 @@ export default function ChallengePage() {
           </Flex>
         </Flex>
 
-        {/* Right panel: editor + output + actions */}
+        {/* Right panel: editor + actions */}
         <Flex direction="column" flex={1} overflow="hidden">
           {/* Editor */}
-          <Box flex={1} minH="200px">
+          <Box flex={1} minH="300px">
             <CodeEditor
               value={code}
               onChange={(v) => { setCode(v); setFailureMessage(''); }}
               language={challenge.language || 'csharp'}
-            />
-          </Box>
-
-          {/* Output */}
-          <Box h="180px" minH="100px">
-            <OutputPanel
-              output={output}
-              errors={errors}
-              isLoading={running || submitting}
             />
           </Box>
 
@@ -604,7 +558,7 @@ export default function ChallengePage() {
               color="white"
               _hover={{ bg: 'aspire.500' }}
               onClick={handleSubmit}
-              disabled={running || submitting || showSuccess || !code.trim() || isLocked}
+              disabled={submitting || showSuccess || !code.trim() || isLocked}
             >
               <FiUpload />
               {submitting ? 'Checking...' : 'Check & Submit'}

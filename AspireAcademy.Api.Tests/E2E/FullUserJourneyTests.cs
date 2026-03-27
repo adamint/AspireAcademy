@@ -7,9 +7,8 @@ namespace AspireAcademy.Api.Tests.E2E;
 /// <summary>
 /// Full user journey: register → dashboard → world → lesson → quiz → profile → leaderboard → achievements → sidebar → theme.
 /// </summary>
-[Collection("AppHost")]
 [Trait("Category", "E2E")]
-public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
+public class FullUserJourneyTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHostPlaywrightFixture>
 {
     [Fact]
     public async Task CompleteFirstSessionUserJourney()

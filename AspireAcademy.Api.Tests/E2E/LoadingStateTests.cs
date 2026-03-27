@@ -8,9 +8,8 @@ namespace AspireAcademy.Api.Tests.E2E;
 /// Loading/skeleton state tests — verify pages render gracefully under slow APIs.
 /// These tests mock API routes to simulate slow responses.
 /// </summary>
-[Collection("AppHost")]
 [Trait("Category", "E2E")]
-public class LoadingStateTests(AppHostPlaywrightFixture fixture)
+public class LoadingStateTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHostPlaywrightFixture>
 {
     private static readonly object FakeUser = new
     {

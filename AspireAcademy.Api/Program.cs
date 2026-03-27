@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<AcademyDbContext>("academydb");
 builder.AddRedisClient("cache");
+builder.AddOpenAIClientFromConfiguration("openai");
 builder.Services.AddOpenApi();
 
 // Services

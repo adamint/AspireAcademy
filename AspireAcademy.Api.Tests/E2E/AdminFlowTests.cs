@@ -7,9 +7,8 @@ using static AspireAcademy.Api.Tests.E2E.E2EHelpers;
 
 namespace AspireAcademy.Api.Tests.E2E;
 
-[Collection("AppHost")]
 [Trait("Category", "E2E")]
-public class AdminFlowTests(AppHostPlaywrightFixture fixture)
+public class AdminFlowTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHostPlaywrightFixture>
 {
     private const string AdminPassword = "TestPassword1!";
 

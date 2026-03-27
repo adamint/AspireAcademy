@@ -4,9 +4,8 @@ using static AspireAcademy.Api.Tests.E2E.E2EHelpers;
 
 namespace AspireAcademy.Api.Tests.E2E;
 
-[Collection("AppHost")]
 [Trait("Category", "E2E")]
-public class QuizTests(AppHostPlaywrightFixture fixture)
+public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHostPlaywrightFixture>
 {
     private async Task<bool> NavigateToQuiz(IPage page, string username)
     {

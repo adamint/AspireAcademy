@@ -1,4 +1,3 @@
-using System.ClientModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using OpenAI;
@@ -7,7 +6,8 @@ using OpenAI.Chat;
 namespace AspireAcademy.Api.Services;
 
 /// <summary>
-/// Wrapper service for OpenAI chat completions used by the AI tutor endpoints.
+/// Wrapper service for Azure AI Foundry / OpenAI chat completions used by the AI tutor endpoints.
+/// Uses the Aspire Azure.AI.OpenAI client integration which auto-detects Azure vs plain OpenAI.
 /// </summary>
 public sealed class AiTutorService
 {
@@ -16,42 +16,40 @@ public sealed class AiTutorService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    private readonly ChatClient? _chatClient;
+    private readonly OpenAIClient? _openAIClient;
+    private readonly string _modelDeployment;
     private readonly string? _configError;
     private readonly ILogger<AiTutorService> _logger;
 
-    public AiTutorService(IConfiguration configuration, ILogger<AiTutorService> logger)
+    public AiTutorService(IConfiguration configuration, ILogger<AiTutorService> logger, OpenAIClient? openAIClient = null)
     {
         _logger = logger;
-        var connectionString = configuration.GetConnectionString("openai");
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            _configError = "OpenAI connection string 'openai' is not configured. Set it via: aspire secret set ConnectionStrings:openai \"Key=sk-...\"";
-            _logger.LogWarning("OpenAI not configured: {Reason}", _configError);
-            return;
-        }
+        _openAIClient = openAIClient;
+        _modelDeployment = configuration["AI:ModelDeployment"] ?? "gpt-4o";
 
-        try
+        if (_openAIClient is null)
         {
-            var (endpoint, apiKey) = ParseConnectionString(connectionString);
-            _logger.LogInformation("OpenAI client initialized with endpoint={Endpoint}", endpoint ?? "(default)");
-            var client = endpoint is not null
-                ? new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) })
-                : new OpenAIClient(apiKey);
-            _chatClient = client.GetChatClient("gpt-4o");
+            _configError = "OpenAI client not configured. Set ConnectionStrings:openai to \"Endpoint=https://your-resource.services.ai.azure.com/;Key=your-key\" or \"Key=sk-...\"";
+            _logger.LogWarning("AI not configured: {Reason}", _configError);
         }
-        catch (Exception ex)
+        else
         {
-            _configError = $"Failed to initialize OpenAI client: {ex.Message}";
-            _logger.LogError(ex, "OpenAI client initialization failed: {Message}", ex.Message);
+            _logger.LogInformation("AI tutor initialized with model deployment={Model}", _modelDeployment);
         }
     }
 
-    private ChatClient GetClientOrThrow() =>
-        _chatClient ?? throw new InvalidOperationException(_configError ?? "AI tutor is not configured.");
+    private ChatClient GetClientOrThrow()
+    {
+        if (_openAIClient is null)
+        {
+            throw new InvalidOperationException(_configError ?? "AI tutor is not configured.");
+        }
+
+        return _openAIClient.GetChatClient(_modelDeployment);
+    }
 
     /// <summary>
-    /// Streams a chat response from OpenAI given a user message, conversation history, and lesson context.
+    /// Streams a chat response given a user message, conversation history, and lesson context.
     /// </summary>
     public async IAsyncEnumerable<string> ChatAsync(
         string message,
@@ -83,9 +81,10 @@ public sealed class AiTutorService
 
         messages.Add(ChatMessage.CreateUserMessage(message));
 
-        _logger.LogInformation("AI chat request, model=gpt-4o, messageCount={MessageCount}", messages.Count);
+        _logger.LogInformation("AI chat request, model={Model}, messageCount={MessageCount}", _modelDeployment, messages.Count);
 
-        var updates = GetClientOrThrow().CompleteChatStreamingAsync(messages, cancellationToken: cancellationToken);
+        var chatClient = GetClientOrThrow();
+        var updates = chatClient.CompleteChatStreamingAsync(messages, cancellationToken: cancellationToken);
 
         await foreach (var update in updates)
         {
@@ -100,7 +99,7 @@ public sealed class AiTutorService
     }
 
     /// <summary>
-    /// Returns a hint for the given challenge. Uses stored hints when available, otherwise generates via OpenAI.
+    /// Returns a hint for the given challenge. Uses stored hints when available, otherwise generates via AI.
     /// </summary>
     public async Task<string> GetHintAsync(CodeChallengeInfo challenge, string currentCode, int hintLevel)
     {
@@ -124,7 +123,8 @@ public sealed class AiTutorService
                 $"Challenge instructions:\n{challenge.Instructions}\n\nStudent's current code:\n```csharp\n{currentCode}\n```\n\nProvide a helpful hint.")
         };
 
-        var result = await GetClientOrThrow().CompleteChatAsync(messages);
+        var chatClient = GetClientOrThrow();
+        var result = await chatClient.CompleteChatAsync(messages);
 
         return result.Value.Content[0].Text;
     }
@@ -154,7 +154,8 @@ public sealed class AiTutorService
                 $"Challenge:\n{challengeInstructions}\n\nStudent's code:\n```csharp\n{code}\n```")
         };
 
-        var result = await GetClientOrThrow().CompleteChatAsync(messages);
+        var chatClient = GetClientOrThrow();
+        var result = await chatClient.CompleteChatAsync(messages);
         var responseText = result.Value.Content[0].Text;
 
         try
@@ -166,37 +167,6 @@ public sealed class AiTutorService
         {
             return new CodeReview(responseText, [], "good");
         }
-    }
-
-    private static (string? Endpoint, string ApiKey) ParseConnectionString(string connectionString)
-    {
-        if (!connectionString.Contains('='))
-        {
-            return (null, connectionString);
-        }
-
-        string? endpoint = null;
-        var apiKey = string.Empty;
-
-        foreach (var part in connectionString.Split(';', StringSplitOptions.RemoveEmptyEntries))
-        {
-            var kvp = part.Split('=', 2);
-            if (kvp.Length is not 2)
-            {
-                continue;
-            }
-
-            if (kvp[0].Equals("Endpoint", StringComparison.OrdinalIgnoreCase))
-            {
-                endpoint = kvp[1];
-            }
-            else if (kvp[0].Equals("Key", StringComparison.OrdinalIgnoreCase))
-            {
-                apiKey = kvp[1];
-            }
-        }
-
-        return (endpoint, apiKey);
     }
 }
 

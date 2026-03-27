@@ -116,17 +116,91 @@ public sealed class CodeCheckerService
     private static (bool Passed, string? Detail) EvaluateTestCase(
         string type, string code, string? expected, bool structureValid)
     {
+        // For code-contains/code-pattern/code-call checks, strip comments so that
+        // TODO comments in starter code don't satisfy the checks.
+        var codeForChecks = type is "compiles" or "output-equals" or "output-contains"
+            ? code
+            : StripComments(code);
+
         return type switch
         {
             "compiles" => (structureValid, structureValid ? null : "Code has structural issues"),
-            "code-contains" => EvaluateCodeContains(code, expected),
-            "code-not-contains" => EvaluateCodeNotContains(code, expected),
-            "code-pattern" => EvaluateCodePattern(code, expected),
-            "code-call" => EvaluateCodeCall(code, expected),
+            "code-contains" => EvaluateCodeContains(codeForChecks, expected),
+            "code-not-contains" => EvaluateCodeNotContains(codeForChecks, expected),
+            "code-pattern" => EvaluateCodePattern(codeForChecks, expected),
+            "code-call" => EvaluateCodeCall(codeForChecks, expected),
             "output-equals" => (false, "Skipped — requires runtime execution"),
             "output-contains" => (false, "Skipped — requires runtime execution"),
             _ => (false, $"Unknown test type: {type}")
         };
+    }
+
+    /// <summary>
+    /// Removes single-line (//) and multi-line (/* */) comments from code
+    /// so that test checks only match actual code, not TODO comments or hints.
+    /// </summary>
+    private static string StripComments(string code)
+    {
+        var sb = new System.Text.StringBuilder(code.Length);
+        var inString = false;
+        var inVerbatim = false;
+        var inChar = false;
+
+        for (var i = 0; i < code.Length; i++)
+        {
+            var c = code[i];
+            var next = i + 1 < code.Length ? code[i + 1] : '\0';
+
+            if (inChar)
+            {
+                sb.Append(c);
+                if (c == '\\') { i++; if (i < code.Length) sb.Append(code[i]); }
+                else if (c == '\'') inChar = false;
+                continue;
+            }
+
+            if (inVerbatim)
+            {
+                sb.Append(c);
+                if (c == '"' && next == '"') { sb.Append(next); i++; }
+                else if (c == '"') inVerbatim = false;
+                continue;
+            }
+
+            if (inString)
+            {
+                sb.Append(c);
+                if (c == '\\') { i++; if (i < code.Length) sb.Append(code[i]); }
+                else if (c == '"') inString = false;
+                continue;
+            }
+
+            // Single-line comment — skip to end of line
+            if (c == '/' && next == '/')
+            {
+                while (i < code.Length && code[i] != '\n') i++;
+                if (i < code.Length) sb.Append('\n'); // preserve line structure
+                continue;
+            }
+
+            // Multi-line comment — skip to closing */
+            if (c == '/' && next == '*')
+            {
+                i += 2;
+                while (i < code.Length - 1 && !(code[i] == '*' && code[i + 1] == '/')) i++;
+                i++; // skip past '/'
+                continue;
+            }
+
+            // String literal starts
+            if (c == '@' && next == '"') { sb.Append(c); sb.Append(next); i++; inVerbatim = true; continue; }
+            if (c == '"') { sb.Append(c); inString = true; continue; }
+            if (c == '\'') { sb.Append(c); inChar = true; continue; }
+
+            sb.Append(c);
+        }
+
+        return sb.ToString();
     }
 
     private static (bool Passed, string? Detail) EvaluateCodeContains(string code, string? expected)
