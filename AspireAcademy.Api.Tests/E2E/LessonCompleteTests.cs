@@ -22,7 +22,7 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture)
             var btn = page.GetByTestId("mark-complete-btn");
             await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(btn).ToBeEnabledAsync();
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("mark complete", RegexOptions.IgnoreCase));
+            await Assertions.Expect(btn).ToContainTextAsync("Mark Complete", new() { Timeout = 5_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -50,7 +50,7 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture)
 
             await btn.ClickAsync();
             await Assertions.Expect(btn).ToBeDisabledAsync(new() { Timeout = 5_000 });
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("completed", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
             await Assertions.Expect(btn).ToBeDisabledAsync();
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -73,7 +73,7 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture)
             }
 
             await uncompleted.First.ClickAsync();
-            await page.WaitForURLAsync("**/lessons/**", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
 
             var btn = page.GetByTestId("mark-complete-btn");
             await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 10_000 });

@@ -1,0 +1,487 @@
+Test run for /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/bin/Debug/net11.0/AspireAcademy.Api.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+/Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/bin/Debug/net11.0/AspireAcademy.Api.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 11.0.0-preview.1.26104.118)
+[xUnit.net 00:00:00.03]   Discovering: AspireAcademy.Api.Tests
+[xUnit.net 00:00:00.06]   Discovered:  AspireAcademy.Api.Tests
+[xUnit.net 00:00:00.08]   Starting:    AspireAcademy.Api.Tests
+[E2E] API seed SUCCESS for deepback_86282234_7a52
+[E2E] API seed SUCCESS for deepworld_86283223_0ea7
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.BrowserBackButtonWorksAfterNavigation [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectWorldUrlWorksWhenAuthenticated [2 s]
+[E2E] API seed SUCCESS for deeplesson_86285639_157b
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectLessonUrlWorksWhenAuthenticated [2 s]
+[E2E] API seed SUCCESS for topbarxp_86287789_ef66
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.XpProgressBarIsVisibleInTopBar [954 ms]
+[E2E] API seed SUCCESS for topbarprof_86288728_31e6
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuProfileNavigatesToProfile [1 s]
+[E2E] API seed SUCCESS for topbarlogout_86290269_4cc3
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuLogOutNavigatesToLogin [1 s]
+[E2E] API seed SUCCESS for topbar_86291820_6a49
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuShowsProfileAndLogoutOptions [1 s]
+[E2E] API seed SUCCESS for themepersist_86293356_6fd3
+  Passed AspireAcademy.Api.Tests.E2E.ThemeTests.ThemePersistsAfterPageRefresh [1 s]
+[E2E] API seed SUCCESS for themetoggle_86295334_769d
+  Passed AspireAcademy.Api.Tests.E2E.ThemeTests.ClickingThemeToggleSwitchesTheme [1 s]
+[E2E] API seed SUCCESS for theme_86296866_e6a6
+  Passed AspireAcademy.Api.Tests.E2E.ThemeTests.ThemeToggleButtonIsVisible [984 ms]
+[E2E] API seed SUCCESS for thmrefresh_86297841_aa90
+  Passed AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossPageRefresh [1 s]
+[E2E] API seed SUCCESS for thmnav_86299779_d410
+  Passed AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossLessonNavigation [1 s]
+[E2E] API seed SUCCESS for socA_86301408_4e65
+[E2E] API seed SUCCESS for socB_86301408_0505
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove [6 s]
+[E2E] API seed SUCCESS for socdecA_86307573_69a3
+[E2E] API seed SUCCESS for socdecB_86307573_50f1
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.DeclineFriendRequest_RemovedFromPending [1 s]
+[E2E] API seed SUCCESS for socach_86308748_b112
+[E2E] API seed SUCCESS for socself_86309869_c870
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.AchievementUnlocks_AfterCompletingFirstLesson [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.CannotFriendYourself_ErrorShown [415 ms]
+[E2E] API seed SUCCESS for soclb_86310278_53e7
+[xUnit.net 00:00:33.33]     AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp [FAIL]
+[xUnit.net 00:00:33.33]       User should appear in all-time leaderboard after earning XP
+[xUnit.net 00:00:33.33]       Stack Trace:
+[xUnit.net 00:00:33.33]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(177,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp()
+[xUnit.net 00:00:33.33]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(180,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp()
+[xUnit.net 00:00:33.33]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp [4 s]
+  Error Message:
+   User should appear in all-time leaderboard after earning XP
+  Stack Trace:
+     at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 177
+   at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 180
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for sociallock_86314371_882d
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LockedAchievementShowsLockIndicator [3 s]
+[E2E] API seed SUCCESS for socialwk_86318254_06a0
+[E2E] API seed SUCCESS for socialfilt_86319176_4de4
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardWeeklyTabRenders [928 ms]
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementFilterTabsSwitchContent [2 s]
+[E2E] API seed SUCCESS for socialat_86322164_c80a
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardAllTimeTabRenders [1 s]
+[E2E] API seed SUCCESS for sociallb_86324149_b403
+[xUnit.net 00:00:46.22]     AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp [FAIL]
+[xUnit.net 00:00:46.22]       User should appear in leaderboard with (you) marker or rank footer after earning XP
+[xUnit.net 00:00:46.22]       Stack Trace:
+[xUnit.net 00:00:46.22]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(102,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp()
+[xUnit.net 00:00:46.22]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(105,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp()
+[xUnit.net 00:00:46.22]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp [3 s]
+  Error Message:
+   User should appear in leaderboard with (you) marker or rank footer after earning XP
+  Stack Trace:
+     at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 102
+   at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 105
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for socialfr_86327252_e6bc
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardFriendsTabRenders [2 s]
+[E2E] API seed SUCCESS for socialach_86330258_a3cc
+[E2E] API seed SUCCESS for skipunlock_86331119_8f7f
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementsGridRendersWithCards [876 ms]
+[E2E] API seed SUCCESS for skipbanner_86332500_2e18
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonUnlocksNextLesson [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonShowsSkippedBannerAndUndoButton [1 s]
+[E2E] API seed SUCCESS for skip_86334479_c0c4
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkipLessonButtonIsVisibleOnUncompletedLesson [1 s]
+[E2E] API seed SUCCESS for unskip_86336332_591d
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.UnskipViaApiThenCompleteForXp [2 s]
+[E2E] API seed SUCCESS for sidebar_86338408_4ca9
+[E2E] API seed SUCCESS for sidenav_86339196_3642
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.SidebarShowsWorldsSectionWithWorldNames [797 ms]
+[E2E] API seed SUCCESS for sidecollapse_86340051_c0a3
+[E2E] API seed SUCCESS for sideexpand_86340905_3811
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingModuleNavigatesToWorldPage [852 ms]
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingExpandedWorldCollapsesModules [853 ms]
+[E2E] API seed SUCCESS for quizsel_86341723_66f2
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingUnlockedWorldExpandsToShowModules [819 ms]
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.SelectingAnswerEnablesSubmitButton [10 s]
+[E2E] API seed SUCCESS for quizsub_86352634_8cae
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.SubmittingAnswerShowsFeedback [10 s]
+[E2E] API seed SUCCESS for quizerr_86363549_2532
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.InvalidQuizId_ShowsError [1 s]
+[E2E] API seed SUCCESS for quizload_86364672_d421
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.QuizPageLoadsWithQuestionAndDisabledSubmit [10 s]
+[E2E] API seed SUCCESS for qgretake_86375507_e13d
+[E2E] API seed SUCCESS for qgwrong_86376085_cf9e
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.CannotReEarnXp_OnQuizRetake [599 ms]
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.SubmitWrongAnswer_ShowsRedFeedbackWithIncorrectText [15 s]
+[E2E] API seed SUCCESS for qgperfect_86391913_eddf
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.PerfectScore_ShowsBonusXpAndConfetti [15 s]
+[E2E] API seed SUCCESS for qgcorrect_86407751_8d24
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithCorrectText [15 s]
+[E2E] API seed SUCCESS for quizcorrect_86423586_23ba
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithPoints [15 s]
+[E2E] API seed SUCCESS for quizresults_86439423_9395
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.CompleteAllQuestions_ShowsResultsWithScoreFormat [15 s]
+[E2E] API seed SUCCESS for quizxp_86455273_f9f7
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.QuizCompletion_XpBarIncreases [16 s]
+[E2E] API seed SUCCESS for quizwrong_86471552_e2b2
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitWrongAnswer_ShowsRedFeedbackWithZeroPoints [15 s]
+[E2E] API seed SUCCESS for profcancel_86487404_6a64
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.CancelButtonClosesEditDialog [1 s]
+[E2E] API seed SUCCESS for profile_86488753_b894
+[E2E] API seed SUCCESS for profedit_86489600_9362
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.ProfilePageShowsOwnUserInfo [849 ms]
+[E2E] API seed SUCCESS for profavatar_86490508_04c8
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.EditProfileButtonOpensDialogWithFormFields [907 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.RandomizeAvatarButtonWorksWithoutError [2 s]
+[E2E] API seed SUCCESS for profeditname_86493391_c02a
+  Passed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.EditDisplayName_SaveRefresh_NamePersisted [4 s]
+[E2E] API seed SUCCESS for profavatar2_86497876_74f9
+  Passed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.RandomizeAvatar_AvatarImageSrcChanges [3 s]
+[E2E] API seed SUCCESS for profuser_86501756_5f79
+[E2E] API seed SUCCESS for profxp_86502617_ee04
+  Passed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.OwnProfileShowsCorrectUsername [864 ms]
+[xUnit.net 00:03:52.13]     AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp [FAIL]
+[xUnit.net 00:03:52.13]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:03:52.13]       Error: element(s) not found 
+[xUnit.net 00:03:52.13]       Call log:
+[xUnit.net 00:03:52.13]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:03:52.13]         - waiting for GetByTestId("profile-stats")
+[xUnit.net 00:03:52.13]       Stack Trace:
+[xUnit.net 00:03:52.13]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:03:52.13]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:03:52.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(42,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp()
+[xUnit.net 00:03:52.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(55,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp()
+[xUnit.net 00:03:52.13]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp [10 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByTestId("profile-stats")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 42
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 55
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for prfviewA_86513166_fabe
+[E2E] API seed SUCCESS for prfviewB_86513166_c80a
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.ViewAnotherUsersProfile_ShowsTheirInfo [1 s]
+[E2E] API seed SUCCESS for prfavatar_86514433_eec3
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.RandomizeAvatar_AvatarImageSrcChanges [3 s]
+[E2E] API seed SUCCESS for prfname_86518317_feae
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.EditDisplayName_SaveRefreshPage_NewNamePersists [3 s]
+[E2E] API seed SUCCESS for nav404_86522277_90e0
+[E2E] API seed SUCCESS for navback_86522760_f4ca
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.NotFoundPageShows404ForInvalidUrl [490 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.WorldPageBackToDashboardLinkWorks [1 s]
+[E2E] API seed SUCCESS for navfriend_86523772_8f0a
+[E2E] API seed SUCCESS for navdeep_86524569_379a
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarFriendsLinkNavigates [802 ms]
+[E2E] API seed SUCCESS for navworld_86525895_877f
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.DeepLinkToWorldWorksWhenAuthed [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.DashboardClickWorldNavigatesToWorldPage [825 ms]
+[E2E] API seed SUCCESS for navhistory_86526720_b19d
+[E2E] API seed SUCCESS for navlb_86527349_a9e0
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.BrowserBackButtonWorksAfterNavigation [632 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarLeaderboardLinkNavigates [793 ms]
+[E2E] API seed SUCCESS for navach_86528144_6ed8
+[E2E] API seed SUCCESS for navprof_86528936_5bc5
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarAchievementsLinkNavigates [791 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarProfileLinkNavigates [797 ms]
+[E2E] API seed SUCCESS for nav_86529734_6530
+[E2E] API seed SUCCESS for navdash_86530561_6c43
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarHomeLinkNavigates [811 ms]
+[E2E] API seed SUCCESS for navtheme2_86531902_45ad
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarDashboardLinkNavigates [1 s]
+[E2E] API seed SUCCESS for navthemep2_86533226_524f
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemeToggle_PageColorsChange [1 s]
+[E2E] API seed SUCCESS for navworld2_86534991_5248
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemePersistsOnRefresh [1 s]
+[E2E] API seed SUCCESS for naverr2_86536025_5ebd
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.SidebarClickWorld_ModulesAppear [827 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.DeepLinkLessonUnauthenticated_RedirectsToLogin [209 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.InvalidLessonUrl_ShowsError [2 s]
+[E2E] API seed SUCCESS for navmod2_86538435_0a61
+[E2E] API seed SUCCESS for navdeep2_86539287_4259
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.SidebarClickModule_NavigatesToWorldPage [860 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.DeepLinkLessonAuthenticated_ShowsLesson [899 ms]
+[E2E] API seed SUCCESS for navback2_86540189_2b4d
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.BrowserBackButtonWorks [637 ms]
+  Passed AspireAcademy.Api.Tests.E2E.LoadingStateTests.DashboardShowsContentWhileApiIsSlow [4 s]
+[E2E] API seed SUCCESS for loadlb_86544964_d661
+[E2E] API seed SUCCESS for lscompleted_86545858_daf6
+  Passed AspireAcademy.Api.Tests.E2E.LoadingStateTests.LeaderboardShowsTabsWhileFetching [901 ms]
+[E2E] API seed SUCCESS for lslast_86546838_eb42
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.AlreadyCompletedLesson_ShowsCompletedButtonFromStart [979 ms]
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.NextButtonHidden_OnLastLessonInModule [3 s]
+[E2E] API seed SUCCESS for lslocked_86550640_1758
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.PreviewLockedLesson_ContentVisibleButMarkCompleteHidden [3 s]
+[E2E] API seed SUCCESS for lsreset_86554361_707a
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson [2 s]
+[E2E] API seed SUCCESS for lsskip_86556472_8162
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.SkipLesson_ShowsSkipIconAndUnlocksNext [2 s]
+[E2E] API seed SUCCESS for back_86558564_ea12
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.BackButtonNavigatesAwayFromLessonPage [1 s]
+[E2E] API seed SUCCESS for backtext_86559994_2e67
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.BackButtonTextContainsBackTo [1 s]
+[E2E] API seed SUCCESS for prevnext_86561389_75fe
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.LessonPageShowsPreviousAndNextButtons [1 s]
+[E2E] API seed SUCCESS for next_86563352_b23f
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.NextButtonNavigatesToDifferentPage [2 s]
+[E2E] API seed SUCCESS for prev_86565370_1d29
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.PreviousButtonNavigatesBack [1 s]
+[E2E] API seed SUCCESS for flowback_86566978_f8d3
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage [1 s]
+[E2E] API seed SUCCESS for flownext_86568397_bebf
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.NextButtonNavigates_UrlChanges [1 s]
+[E2E] API seed SUCCESS for flowxp_86570364_9e71
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_XpBarValueIncreases [4 s]
+[E2E] API seed SUCCESS for flowprev_86574384_582c
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.PreviousButtonHiddenOnFirstLesson [1 s]
+[E2E] API seed SUCCESS for flowcomplete_86576248_cdbe
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled [2 s]
+[E2E] API seed SUCCESS for flowdbl_86578509_c783
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted [1 s]
+[E2E] API seed SUCCESS for lessonmd_86580482_8986
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.NavigateToLearnLesson_ShowsMarkdownContent [1 s]
+[E2E] API seed SUCCESS for markdone_86581904_05fd
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.ClickingMarkComplete_ShowsCompletedState [2 s]
+[E2E] API seed SUCCESS for revisit_86583926_428f
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.RevisitingCompletedLesson_ShowsMarkCompleteButton [1 s]
+[E2E] API seed SUCCESS for dblclick_86585828_a3c7
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.RapidDoubleClick_HandledGracefully [1 s]
+[E2E] API seed SUCCESS for complete_86587738_fde7
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson [1 s]
+[E2E] API seed SUCCESS for lballtime_86589603_c233
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.SwitchingToAllTimeTabLoadsData [2 s]
+[E2E] API seed SUCCESS for lbweekly_86591635_8866
+[E2E] API seed SUCCESS for lbfriends_86592572_4d02
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.WeeklyTabShowsResetsMondayNote [938 ms]
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.SwitchingToFriendsTabShowsRelevantContent [3 s]
+[E2E] API seed SUCCESS for leader_86595602_6117
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.LeaderboardPageLoadsWithWeeklyTabActive [964 ms]
+[xUnit.net 00:05:33.46]     AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney [FAIL]
+[xUnit.net 00:05:33.46]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:05:33.46]       Error: element(s) not found 
+[xUnit.net 00:05:33.46]       Call log:
+[xUnit.net 00:05:33.46]         - Expect "ToBeVisibleAsync" with timeout 15000ms
+[xUnit.net 00:05:33.46]         - waiting for GetByTestId("quiz-submit")
+[xUnit.net 00:05:33.46]       Stack Trace:
+[xUnit.net 00:05:33.46]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:05:33.46]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:05:33.46]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs(145,0): at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney()
+[xUnit.net 00:05:33.46]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs(249,0): at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney()
+[xUnit.net 00:05:33.46]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney [17 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 15000ms
+  - waiting for GetByTestId("quiz-submit")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs:line 145
+   at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs:line 249
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for shortsearch_86614505_f4be
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.SearchInputWithShortQueryDoesNotSearch [1 s]
+[E2E] API seed SUCCESS for adder_86615910_e0e7
+[E2E] API seed SUCCESS for addee_86615910_ae88
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.AddFriendButtonSendsFriendRequest [3 s]
+[E2E] API seed SUCCESS for friend_86619884_24d1
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.FriendsPageLoadsWithTabs [1 s]
+[E2E] API seed SUCCESS for searcher_86620913_dc2d
+[E2E] API seed SUCCESS for searchee_86620913_5400
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.SearchFindsUsers [1 s]
+[E2E] API seed SUCCESS for nofriend_86622901_e210
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.EmptyFriendsListShowsEmptyState [1 s]
+[E2E] API seed SUCCESS for error404btn_86623959_c843
+[E2E] API seed SUCCESS for errworld_86625012_a5b5
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.NotFoundPage_GoToDashboardButtonWorks [673 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedDashboardRedirectsToLogin [381 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidWorldIdShowsNotFound [2 s]
+[E2E] API seed SUCCESS for erruser_86627549_c7cb
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidUserProfileShowsErrorOrEmptyState [3 s]
+[E2E] API seed SUCCESS for errlesson_86632004_0483
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedLeaderboardRedirectsToLogin [409 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedFriendsRedirectsToLogin [391 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidLessonIdShowsNotFound [2 s]
+[E2E] API seed SUCCESS for errquiz_86634602_503e
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidQuizIdShowsError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedAchievementsRedirectsToLogin [399 ms]
+[E2E] API seed SUCCESS for error404_86636472_9d04
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedLessonsRedirectsToLogin [390 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidUrlShows404Page [633 ms]
+[E2E] API seed SUCCESS for errchallenge_86637107_cd4a
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidChallengeIdShowsError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedProfileRedirectsToLogin [398 ms]
+[E2E] API seed SUCCESS for errlesson2_86639094_b733
+  Passed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.ProtectedPageWithoutAuth_RedirectsToLogin [450 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidLessonId_ShowsErrorState [2 s]
+[E2E] API seed SUCCESS for errworld2_86641689_d6d5
+  Passed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidWorldId_ShowsErrorState [2 s]
+[E2E] API seed SUCCESS for icons_86644240_811a
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.LessonListShowsCorrectTypeIcons [1 s]
+[E2E] API seed SUCCESS for worldback_86645771_c805
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.WorldPageBackToDashboardWorks [1 s]
+[E2E] API seed SUCCESS for dashxp_86647357_e8ec
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.DashboardShowsXpStats [1 s]
+[E2E] API seed SUCCESS for quizclick_86648409_0e02
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingQuizLessonNavigatesToQuizzesPage [1 s]
+[E2E] API seed SUCCESS for lessonclick_86650278_41a5
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingLearnLessonNavigatesToLessonsPage [1 s]
+[E2E] API seed SUCCESS for module_86651866_bc60
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.WorldPageShowsModulesWithLessons [1 s]
+[E2E] API seed SUCCESS for dashclick_86653399_7abe
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingWorldCardNavigatesToWorldPage [1 s]
+[E2E] API seed SUCCESS for dash_86654408_9162
+[E2E] API seed SUCCESS for chalclick_86655371_2853
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.DashboardShowsWelcomeMessageAndWorldCards [964 ms]
+[E2E] API seed SUCCESS for chalhint_86657242_eadb
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingChallengeLessonNavigatesToChallengesPage [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.HintButtonRevealsFirstHint [3 s]
+[E2E] API seed SUCCESS for chalinstr_86660278_85fc
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.InstructionsPanelShowsChallengeDescription [2 s]
+[E2E] API seed SUCCESS for chaltests_86663284_4928
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.TestCaseDescriptionsListedWithUncheckedIcons [2 s]
+[E2E] API seed SUCCESS for chalmonaco_86666271_1346
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.NavigateToChallenge_MonacoEditorLoads [3 s]
+[E2E] API seed SUCCESS for chalstarter_86669347_3ebe
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.EditorHasStarterCodePreFilled [3 s]
+[E2E] API seed SUCCESS for chalinst_86672435_dbcf
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.InstructionsPanelShowsChallengeDescription [3 s]
+[E2E] API seed SUCCESS for chalrun_86675514_97f7
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible [3 s]
+[E2E] API seed SUCCESS for chalhint2_86678669_7e5f
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickFirstHintButton_HintTextAppears [3 s]
+[E2E] API seed SUCCESS for chalsubmit_86681782_ee60
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickSubmit_TestResultsSectionAppears [8 s]
+[E2E] API seed SUCCESS for chaltests_86689866_dc37
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TestCaseDescriptionsListed [2 s]
+[E2E] API seed SUCCESS for chaltype_86692853_ecc1
+[xUnit.net 00:06:55.60]     AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges [FAIL]
+[xUnit.net 00:06:55.60]       Assert.Contains() Failure: Sub-string not found
+[xUnit.net 00:06:55.60]       String:    "using Aspire.Hosting;\n\nvar builder = Dist"···
+[xUnit.net 00:06:55.60]       Not found: "E2E test comment"
+[xUnit.net 00:06:55.60]       Stack Trace:
+[xUnit.net 00:06:55.60]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(118,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges()
+[xUnit.net 00:06:55.60]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(120,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges()
+[xUnit.net 00:06:55.60]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges [3 s]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "using Aspire.Hosting;\n\nvar builder = Dist"···
+Not found: "E2E test comment"
+  Stack Trace:
+     at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 118
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 120
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for chalload_86696637_f203
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ChallengePageLoads_MonacoEditorVisible [3 s]
+[E2E] API seed SUCCESS for cflhints_86699637_e140
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.HintsRevealProgressively [5 s]
+[E2E] API seed SUCCESS for cflautoc_86704869_cedf
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.AutocompletePopup_AppearsWhenTypingBuilderAdd [6 s]
+[E2E] API seed SUCCESS for cflnav_86711611_f019
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.NavigateToChallenge_AfterCompletingPrerequisitesViaApi [3 s]
+[E2E] API seed SUCCESS for cflsubmit_86714697_720a
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickSubmit_TestCaseResultsShownWithIcons [8 s]
+[E2E] API seed SUCCESS for cflrun_86722874_f81b
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults [3 s]
+[E2E] API seed SUCCESS for cflmonaco_86726032_4fa6
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.MonacoEditorLoads_WithStarterCodeVisible [3 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithMismatchedPasswords_ShowsValidationError [496 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithEmptyEmail_ShowsValidationError [466 ms]
+[E2E] API seed SUCCESS for auth_86730088_2b01
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithValidData_RedirectsToDashboard [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterShowsDashboardWelcomeWithDisplayName [855 ms]
+[E2E] API seed SUCCESS for regvisit_86732437_aa78
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.VisitProtectedPageWhileLoggedOut_RedirectsToLogin [474 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.VisitRegisterWhileLoggedIn_ShowsRegisterPage [635 ms]
+[E2E] API seed SUCCESS for wrongpw_86733072_f1e5
+[E2E] API seed SUCCESS for dup_86734147_d44c
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithWrongPassword_ShowsErrorMessage [1 s]
+[E2E] API seed SUCCESS for logoutblock_86735737_9dde
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithDuplicateUsername_ShowsServerError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithEmptyFields_StaysOnLoginPage [414 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LogoutPreventsAccessToDashboard [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithShortPassword_ShowsValidationError [479 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginShowsDashboardWithCorrectDisplayName [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithEmptyUsername_ShowsValidationError [467 ms]
+[E2E] API seed SUCCESS for logout_86739265_2e24
+[E2E] API seed SUCCESS for login_86740267_0d2b
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.Logout_RedirectsToLogin [1 s]
+[E2E] API seed SUCCESS for refresh_86741505_dc4b
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithValidCredentials_RedirectsToDashboard [1 s]
+[E2E] API seed SUCCESS for advquiz_86743479_eca1
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RefreshWhileLoggedIn_StaysOnDashboard [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithNonExistentUser_ShowsErrorMessage [560 ms]
+[xUnit.net 00:07:53.43]     AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer [FAIL]
+[xUnit.net 00:07:53.43]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:07:53.43]       Error: element(s) not found 
+[xUnit.net 00:07:53.43]       Call log:
+[xUnit.net 00:07:53.43]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:07:53.43]         - waiting for GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) })
+[xUnit.net 00:07:53.43]       Stack Trace:
+[xUnit.net 00:07:53.43]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:07:53.43]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:07:53.43]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(56,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer()
+[xUnit.net 00:07:53.43]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(59,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer()
+[xUnit.net 00:07:53.43]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer [10 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) })
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 56
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 59
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for advlesson_86754476_1fb6
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.MarkCompleteButtonDisabledAfterSuccess [2 s]
+[E2E] API seed SUCCESS for advsidebar_86757577_cdf7
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.RegisterValidationErrorsShowForEmptyFields [441 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.ValidationErrorsClearWhenUserStartsTyping [448 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.SidebarWorldExpandShowsModules [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.PasswordMismatchShowsError [477 ms]
+[E2E] API seed SUCCESS for advpersist_86759114_e8a1
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.RefreshDashboardAfterLoginStaysLoggedIn [1 s]
+[E2E] API seed SUCCESS for advclear_86760621_b557
+[E2E] API seed SUCCESS for advback_86761703_6168
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.ClearingAuthRedirectsToLogin [1 s]
+[E2E] API seed SUCCESS for advprofile_86763344_93a5
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState [3 s]
+[E2E] API seed SUCCESS for nonadmin_86767003_dfb3
+  Passed AspireAcademy.Api.Tests.E2E.AdminTests.NonAdminUserDoesNotSeeAdminLink [979 ms]
+[E2E] API seed SUCCESS for noadmin2_86767974_74ed
+  Passed AspireAcademy.Api.Tests.E2E.AdminTests.NonAdminNavigatingToAdmin_NoAdminContent [3 s]
+[E2E] API register failed for admin: Conflict - {"error":"Username or email is already taken.","details":null}
+[E2E] Cannot authenticate admin user — may have been created with a different password in a previous session
+[E2E] API register failed for admin: Conflict - {"error":"Username or email is already taken.","details":null}
+[E2E] Cannot authenticate admin user — may have been created with a different password in a previous session
+[E2E] API register failed for admin: Conflict - {"error":"Username or email is already taken.","details":null}
+[E2E] Cannot authenticate admin — stale user from previous session
+[E2E] API seed SUCCESS for admnonadm_86772049_97ca
+  Passed AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards [152 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar [137 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot [134 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AdminFlowTests.NonAdminNavigatingToAdmin_RedirectedToDashboard [3 s]
+[E2E] API register failed for admin: Conflict - {"error":"Username or email is already taken.","details":null}
+[E2E] Cannot authenticate admin — stale user from previous session
+[E2E] API seed SUCCESS for achlocked_86775843_8b72
+  Passed AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works [157 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.LockedAchievementsAreVisuallyDistinct [4 s]
+[E2E] API seed SUCCESS for achieve_86779883_239a
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.AchievementsPageLoadsWithAllTab [1 s]
+[E2E] API seed SUCCESS for achfilter_86780970_5cbc
+[xUnit.net 00:08:22.14]   Finished:    AspireAcademy.Api.Tests
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.SwitchingCategoryTabsFiltersAchievements [2 s]
+
+Test Run Failed.
+Total tests: 187
+     Passed: 181
+     Failed: 6
+ Total time: 8.3724 Minutes

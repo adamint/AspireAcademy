@@ -246,7 +246,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.Locator("#reg-pass").FillAsync("TestPassword1!");
             await page.Locator("#reg-confirm").FillAsync("TestPassword1!");
             await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
-            await page.WaitForURLAsync("**/dashboard**", new() { Timeout = 15_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 15_000 });
 
             await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByRole(AriaRole.Heading, new() { Level = 1 })).ToContainTextAsync(displayName, new() { Timeout = 10_000 });
@@ -269,7 +269,7 @@ public class AuthTests(AppHostPlaywrightFixture fixture)
             await page.Locator("#reg-pass").FillAsync("TestPassword1!");
             await page.Locator("#reg-confirm").FillAsync("TestPassword1!");
             await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
-            await page.WaitForURLAsync("**/dashboard**", new() { Timeout = 15_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 15_000 });
 
             await LogoutUser(page);
             await LoginUser(page, username);

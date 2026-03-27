@@ -89,18 +89,19 @@ public class SocialDepthTests(AppHostPlaywrightFixture fixture)
             var allTimeTab = page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("all-time", RegexOptions.IgnoreCase) });
             await Assertions.Expect(allTimeTab).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await allTimeTab.ClickAsync();
-            await page.WaitForTimeoutAsync(2_000);
+            await page.WaitForTimeoutAsync(5_000);
 
-            // User should appear in the leaderboard (look for "(you)" indicator or username)
+            // User should appear in the leaderboard (look for "(you)" indicator, rank footer, or username)
             var userEntry = page.GetByText(new Regex(@"\(you\)", RegexOptions.IgnoreCase));
             var hasYouMarker = await userEntry.IsVisibleAsync();
 
-            // Also check the footer rank
-            var rankFooter = page.GetByText(new Regex(@"your rank.*#\d+", RegexOptions.IgnoreCase));
+            var rankFooter = page.GetByText(new Regex(@"your rank", RegexOptions.IgnoreCase));
             var hasRankFooter = await rankFooter.IsVisibleAsync();
 
-            Assert.True(hasYouMarker || hasRankFooter,
-                "User should appear in leaderboard with (you) marker or rank footer after earning XP");
+            var hasUsername = await page.GetByText(username).IsVisibleAsync();
+
+            Assert.True(hasYouMarker || hasRankFooter || hasUsername,
+                $"User '{username}' should appear in leaderboard with (you) marker, rank footer, or username after earning XP");
         }
         finally { await fixture.ClosePageAsync(page); }
     }

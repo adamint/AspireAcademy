@@ -302,19 +302,26 @@ export default function ProfilePage() {
           <Text {...pixelFontProps} fontSize="md" fontWeight="bold" mb={3} color="dark.text">Showcase</Text>
           <Flex gap={4} flexWrap="wrap">
             {profile.showcaseAchievements.slice(0, 5).map((ach) => (
-              <Tooltip key={ach.id} content={`Unlocked ${new Date(ach.unlockedAt).toLocaleDateString()}`}>
-                <VStack
-                  gap={1}
-                  p={2}
-                  borderRadius="sm"
-                  border="2px solid"
-                  borderColor={rarityColors[ach.rarity] ?? rarityColors.common}
-                  cursor="default"
-                >
-                  <Text fontSize="28px" lineHeight="1">{ach.icon}</Text>
-                  <Text {...pixelFontProps} fontSize="8px" color="dark.text">{ach.name}</Text>
-                </VStack>
-              </Tooltip>
+              <Tooltip.Root key={ach.id} openDelay={300} closeDelay={100}>
+                <Tooltip.Trigger asChild>
+                  <VStack
+                    gap={1}
+                    p={2}
+                    borderRadius="sm"
+                    border="2px solid"
+                    borderColor={rarityColors[ach.rarity] ?? rarityColors.common}
+                    cursor="default"
+                  >
+                    <Text fontSize="28px" lineHeight="1">{ach.icon}</Text>
+                    <Text {...pixelFontProps} fontSize="8px" color="dark.text">{ach.name}</Text>
+                  </VStack>
+                </Tooltip.Trigger>
+                <Tooltip.Positioner>
+                  <Tooltip.Content>
+                    {ach.unlockedAt ? `Unlocked ${new Date(ach.unlockedAt).toLocaleDateString()}` : ach.name}
+                  </Tooltip.Content>
+                </Tooltip.Positioner>
+              </Tooltip.Root>
             ))}
           </Flex>
         </Box>

@@ -1,0 +1,1591 @@
+Test run for /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/bin/Debug/net11.0/AspireAcademy.Api.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+/Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/bin/Debug/net11.0/AspireAcademy.Api.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 11.0.0-preview.1.26104.118)
+[xUnit.net 00:00:00.03]   Discovering: AspireAcademy.Api.Tests
+[xUnit.net 00:00:00.07]   Discovered:  AspireAcademy.Api.Tests
+[xUnit.net 00:00:00.08]   Starting:    AspireAcademy.Api.Tests
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.BrowserBackButtonWorksAfterNavigation [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectWorldUrlWorksWhenAuthenticated [1 s]
+[xUnit.net 00:00:49.72]     AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectLessonUrlWorksWhenAuthenticated [FAIL]
+[xUnit.net 00:00:49.72]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:00:49.72]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:00:49.72]       Call log:
+[xUnit.net 00:00:49.72]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:00:49.72]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:00:49.72]       Stack Trace:
+[xUnit.net 00:00:49.72]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:00:49.72]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:00:49.72]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:00:49.72]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:00:49.72]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs(105,0): at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectLessonUrlWorksWhenAuthenticated()
+[xUnit.net 00:00:49.72]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs(119,0): at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectLessonUrlWorksWhenAuthenticated()
+[xUnit.net 00:00:49.72]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectLessonUrlWorksWhenAuthenticated [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectLessonUrlWorksWhenAuthenticated() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs:line 105
+   at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectLessonUrlWorksWhenAuthenticated() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs:line 119
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.XpProgressBarIsVisibleInTopBar [986 ms]
+[xUnit.net 00:01:36.30]     AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuProfileNavigatesToProfile [FAIL]
+[xUnit.net 00:01:36.30]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:01:36.30]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:01:36.30]       Call log:
+[xUnit.net 00:01:36.30]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:01:36.30]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:01:36.30]       Stack Trace:
+[xUnit.net 00:01:36.30]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:01:36.30]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:01:36.30]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:01:36.30]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:01:36.30]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs(37,0): at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuProfileNavigatesToProfile()
+[xUnit.net 00:01:36.30]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs(46,0): at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuProfileNavigatesToProfile()
+[xUnit.net 00:01:36.30]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuProfileNavigatesToProfile [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuProfileNavigatesToProfile() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs:line 37
+   at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuProfileNavigatesToProfile() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs:line 46
+--- End of stack trace from previous location ---
+[xUnit.net 00:02:21.91]     AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuLogOutNavigatesToLogin [FAIL]
+[xUnit.net 00:02:21.91]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:02:21.91]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:02:21.91]       Call log:
+[xUnit.net 00:02:21.91]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:02:21.91]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:02:21.91]       Stack Trace:
+[xUnit.net 00:02:21.91]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:02:21.91]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:02:21.91]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:02:21.91]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:02:21.91]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs(56,0): at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuLogOutNavigatesToLogin()
+[xUnit.net 00:02:21.91]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs(62,0): at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuLogOutNavigatesToLogin()
+[xUnit.net 00:02:21.91]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuLogOutNavigatesToLogin [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuLogOutNavigatesToLogin() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs:line 56
+   at AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuLogOutNavigatesToLogin() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/TopBarDeepLinkTests.cs:line 62
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuShowsProfileAndLogoutOptions [1 s]
+[xUnit.net 00:03:08.99]     AspireAcademy.Api.Tests.E2E.ThemeTests.ThemePersistsAfterPageRefresh [FAIL]
+[xUnit.net 00:03:08.99]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:03:08.99]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:03:08.99]       Call log:
+[xUnit.net 00:03:08.99]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:03:08.99]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:03:08.99]       Stack Trace:
+[xUnit.net 00:03:08.99]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:03:08.99]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:03:08.99]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:03:08.99]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:03:08.99]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemeTests.cs(52,0): at AspireAcademy.Api.Tests.E2E.ThemeTests.ThemePersistsAfterPageRefresh()
+[xUnit.net 00:03:08.99]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemeTests.cs(67,0): at AspireAcademy.Api.Tests.E2E.ThemeTests.ThemePersistsAfterPageRefresh()
+[xUnit.net 00:03:08.99]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ThemeTests.ThemePersistsAfterPageRefresh [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ThemeTests.ThemePersistsAfterPageRefresh() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemeTests.cs:line 52
+   at AspireAcademy.Api.Tests.E2E.ThemeTests.ThemePersistsAfterPageRefresh() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemeTests.cs:line 67
+--- End of stack trace from previous location ---
+[xUnit.net 00:03:54.61]     AspireAcademy.Api.Tests.E2E.ThemeTests.ClickingThemeToggleSwitchesTheme [FAIL]
+[xUnit.net 00:03:54.61]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:03:54.61]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:03:54.61]       Call log:
+[xUnit.net 00:03:54.61]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:03:54.61]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:03:54.61]       Stack Trace:
+[xUnit.net 00:03:54.61]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:03:54.61]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:03:54.61]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:03:54.61]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:03:54.61]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemeTests.cs(32,0): at AspireAcademy.Api.Tests.E2E.ThemeTests.ClickingThemeToggleSwitchesTheme()
+[xUnit.net 00:03:54.61]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemeTests.cs(42,0): at AspireAcademy.Api.Tests.E2E.ThemeTests.ClickingThemeToggleSwitchesTheme()
+[xUnit.net 00:03:54.61]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ThemeTests.ClickingThemeToggleSwitchesTheme [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ThemeTests.ClickingThemeToggleSwitchesTheme() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemeTests.cs:line 32
+   at AspireAcademy.Api.Tests.E2E.ThemeTests.ClickingThemeToggleSwitchesTheme() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemeTests.cs:line 42
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ThemeTests.ThemeToggleButtonIsVisible [1 s]
+[xUnit.net 00:04:41.23]     AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossPageRefresh [FAIL]
+[xUnit.net 00:04:41.23]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:04:41.23]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:04:41.23]       Call log:
+[xUnit.net 00:04:41.23]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:04:41.23]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:04:41.23]       Stack Trace:
+[xUnit.net 00:04:41.23]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:04:41.23]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:04:41.23]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:04:41.23]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:04:41.23]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemePersistenceTests.cs(65,0): at AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossPageRefresh()
+[xUnit.net 00:04:41.23]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemePersistenceTests.cs(96,0): at AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossPageRefresh()
+[xUnit.net 00:04:41.23]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossPageRefresh [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossPageRefresh() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemePersistenceTests.cs:line 65
+   at AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossPageRefresh() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ThemePersistenceTests.cs:line 96
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossLessonNavigation [1 s]
+[xUnit.net 00:04:54.18]     AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove [FAIL]
+[xUnit.net 00:04:54.18]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:04:54.18]       Error: element(s) not found 
+[xUnit.net 00:04:54.18]       Call log:
+[xUnit.net 00:04:54.18]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:04:54.18]         - waiting for GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("^friends$", RegexOptions.IgnoreCase) })
+[xUnit.net 00:04:54.18]       Stack Trace:
+[xUnit.net 00:04:54.18]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:04:54.18]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:04:54.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(48,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove()
+[xUnit.net 00:04:54.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(77,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove()
+[xUnit.net 00:04:54.18]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove [11 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("^friends$", RegexOptions.IgnoreCase) })
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 48
+   at AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 77
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.DeclineFriendRequest_RemovedFromPending [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.AchievementUnlocks_AfterCompletingFirstLesson [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.CannotFriendYourself_ErrorShown [576 ms]
+[xUnit.net 00:05:01.32]     AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp [FAIL]
+[xUnit.net 00:05:01.32]       User should appear in all-time leaderboard after earning XP
+[xUnit.net 00:05:01.32]       Stack Trace:
+[xUnit.net 00:05:01.32]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(177,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp()
+[xUnit.net 00:05:01.32]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(180,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp()
+[xUnit.net 00:05:01.32]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp [4 s]
+  Error Message:
+   User should appear in all-time leaderboard after earning XP
+  Stack Trace:
+     at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 177
+   at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 180
+--- End of stack trace from previous location ---
+[xUnit.net 00:05:46.93]     AspireAcademy.Api.Tests.E2E.SocialDepthTests.LockedAchievementShowsLockIndicator [FAIL]
+[xUnit.net 00:05:46.93]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:05:46.93]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:05:46.93]       Call log:
+[xUnit.net 00:05:46.93]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:05:46.93]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:05:46.93]       Stack Trace:
+[xUnit.net 00:05:46.93]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:05:46.93]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:05:46.93]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:05:46.93]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:05:46.93]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(170,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.LockedAchievementShowsLockIndicator()
+[xUnit.net 00:05:46.93]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(191,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.LockedAchievementShowsLockIndicator()
+[xUnit.net 00:05:46.93]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LockedAchievementShowsLockIndicator [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.SocialDepthTests.LockedAchievementShowsLockIndicator() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 170
+   at AspireAcademy.Api.Tests.E2E.SocialDepthTests.LockedAchievementShowsLockIndicator() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 191
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardWeeklyTabRenders [1 s]
+[xUnit.net 00:06:33.67]     AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementFilterTabsSwitchContent [FAIL]
+[xUnit.net 00:06:33.67]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:06:33.67]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:06:33.67]       Call log:
+[xUnit.net 00:06:33.67]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:06:33.67]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:06:33.67]       Stack Trace:
+[xUnit.net 00:06:33.67]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:06:33.67]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:06:33.67]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:06:33.67]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:06:33.67]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(138,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementFilterTabsSwitchContent()
+[xUnit.net 00:06:33.67]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(160,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementFilterTabsSwitchContent()
+[xUnit.net 00:06:33.67]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementFilterTabsSwitchContent [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementFilterTabsSwitchContent() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 138
+   at AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementFilterTabsSwitchContent() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 160
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardAllTimeTabRenders [2 s]
+[xUnit.net 00:06:39.13]     AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp [FAIL]
+[xUnit.net 00:06:39.13]       User should appear in leaderboard with (you) marker or rank footer after earning XP
+[xUnit.net 00:06:39.13]       Stack Trace:
+[xUnit.net 00:06:39.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(102,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp()
+[xUnit.net 00:06:39.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(105,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp()
+[xUnit.net 00:06:39.13]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp [3 s]
+  Error Message:
+   User should appear in leaderboard with (you) marker or rank footer after earning XP
+  Stack Trace:
+     at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 102
+   at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 105
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardFriendsTabRenders [3 s]
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementsGridRendersWithCards [1 s]
+[xUnit.net 00:07:29.02]     AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonUnlocksNextLesson [FAIL]
+[xUnit.net 00:07:29.02]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:07:29.02]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:07:29.02]       Call log:
+[xUnit.net 00:07:29.02]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:07:29.02]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:07:29.02]       Stack Trace:
+[xUnit.net 00:07:29.02]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:07:29.02]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:07:29.02]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:07:29.02]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:07:29.02]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SkipLessonE2ETests.cs(63,0): at AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonUnlocksNextLesson()
+[xUnit.net 00:07:29.02]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SkipLessonE2ETests.cs(69,0): at AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonUnlocksNextLesson()
+[xUnit.net 00:07:29.02]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonUnlocksNextLesson [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonUnlocksNextLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SkipLessonE2ETests.cs:line 63
+   at AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonUnlocksNextLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SkipLessonE2ETests.cs:line 69
+--- End of stack trace from previous location ---
+[xUnit.net 00:08:14.62]     AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonShowsSkippedBannerAndUndoButton [FAIL]
+[xUnit.net 00:08:14.62]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:08:14.62]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:08:14.62]       Call log:
+[xUnit.net 00:08:14.62]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:08:14.62]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:08:14.62]       Stack Trace:
+[xUnit.net 00:08:14.62]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:08:14.62]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:08:14.62]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:08:14.62]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:08:14.62]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SkipLessonE2ETests.cs(36,0): at AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonShowsSkippedBannerAndUndoButton()
+[xUnit.net 00:08:14.62]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SkipLessonE2ETests.cs(53,0): at AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonShowsSkippedBannerAndUndoButton()
+[xUnit.net 00:08:14.62]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonShowsSkippedBannerAndUndoButton [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonShowsSkippedBannerAndUndoButton() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SkipLessonE2ETests.cs:line 36
+   at AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonShowsSkippedBannerAndUndoButton() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SkipLessonE2ETests.cs:line 53
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkipLessonButtonIsVisibleOnUncompletedLesson [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.UnskipViaApiThenCompleteForXp [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.SidebarShowsWorldsSectionWithWorldNames [966 ms]
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingModuleNavigatesToWorldPage [1 s]
+[xUnit.net 00:09:06.50]     AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingExpandedWorldCollapsesModules [FAIL]
+[xUnit.net 00:09:06.50]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:09:06.50]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:09:06.50]       Call log:
+[xUnit.net 00:09:06.50]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:09:06.50]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:09:06.50]       Stack Trace:
+[xUnit.net 00:09:06.50]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:09:06.50]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:09:06.50]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:09:06.50]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:09:06.50]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SidebarTests.cs(49,0): at AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingExpandedWorldCollapsesModules()
+[xUnit.net 00:09:06.50]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SidebarTests.cs(59,0): at AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingExpandedWorldCollapsesModules()
+[xUnit.net 00:09:06.50]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingExpandedWorldCollapsesModules [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingExpandedWorldCollapsesModules() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SidebarTests.cs:line 49
+   at AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingExpandedWorldCollapsesModules() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SidebarTests.cs:line 59
+--- End of stack trace from previous location ---
+[xUnit.net 00:09:52.13]     AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingUnlockedWorldExpandsToShowModules [FAIL]
+[xUnit.net 00:09:52.13]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:09:52.13]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:09:52.13]       Call log:
+[xUnit.net 00:09:52.13]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:09:52.13]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:09:52.13]       Stack Trace:
+[xUnit.net 00:09:52.13]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:09:52.13]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:09:52.13]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:09:52.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:09:52.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SidebarTests.cs(33,0): at AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingUnlockedWorldExpandsToShowModules()
+[xUnit.net 00:09:52.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SidebarTests.cs(39,0): at AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingUnlockedWorldExpandsToShowModules()
+[xUnit.net 00:09:52.13]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingUnlockedWorldExpandsToShowModules [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingUnlockedWorldExpandsToShowModules() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SidebarTests.cs:line 33
+   at AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingUnlockedWorldExpandsToShowModules() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SidebarTests.cs:line 39
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.SelectingAnswerEnablesSubmitButton [11 s]
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.SubmittingAnswerShowsFeedback [11 s]
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.InvalidQuizId_ShowsError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.QuizPageLoadsWithQuestionAndDisabledSubmit [11 s]
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.CannotReEarnXp_OnQuizRetake [745 ms]
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.SubmitWrongAnswer_ShowsRedFeedbackWithIncorrectText [16 s]
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.PerfectScore_ShowsBonusXpAndConfetti [16 s]
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithCorrectText [16 s]
+[xUnit.net 00:12:02.73]     AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithPoints [FAIL]
+[xUnit.net 00:12:02.73]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:12:02.73]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:12:02.73]       Call log:
+[xUnit.net 00:12:02.73]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:12:02.73]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:12:02.73]       Stack Trace:
+[xUnit.net 00:12:02.73]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:12:02.73]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:12:02.73]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:12:02.73]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:12:02.73]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/QuizDepthTests.cs(56,0): at AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithPoints()
+[xUnit.net 00:12:02.73]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/QuizDepthTests.cs(132,0): at AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithPoints()
+[xUnit.net 00:12:02.73]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithPoints [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithPoints() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/QuizDepthTests.cs:line 56
+   at AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithPoints() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/QuizDepthTests.cs:line 132
+--- End of stack trace from previous location ---
+[xUnit.net 00:12:48.35]     AspireAcademy.Api.Tests.E2E.QuizDepthTests.CompleteAllQuestions_ShowsResultsWithScoreFormat [FAIL]
+[xUnit.net 00:12:48.35]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:12:48.35]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:12:48.35]       Call log:
+[xUnit.net 00:12:48.35]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:12:48.35]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:12:48.35]       Stack Trace:
+[xUnit.net 00:12:48.35]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:12:48.35]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:12:48.35]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:12:48.35]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:12:48.35]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/QuizDepthTests.cs(210,0): at AspireAcademy.Api.Tests.E2E.QuizDepthTests.CompleteAllQuestions_ShowsResultsWithScoreFormat()
+[xUnit.net 00:12:48.35]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/QuizDepthTests.cs(286,0): at AspireAcademy.Api.Tests.E2E.QuizDepthTests.CompleteAllQuestions_ShowsResultsWithScoreFormat()
+[xUnit.net 00:12:48.35]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.QuizDepthTests.CompleteAllQuestions_ShowsResultsWithScoreFormat [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.QuizDepthTests.CompleteAllQuestions_ShowsResultsWithScoreFormat() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/QuizDepthTests.cs:line 210
+   at AspireAcademy.Api.Tests.E2E.QuizDepthTests.CompleteAllQuestions_ShowsResultsWithScoreFormat() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/QuizDepthTests.cs:line 286
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.QuizCompletion_XpBarIncreases [16 s]
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitWrongAnswer_ShowsRedFeedbackWithZeroPoints [16 s]
+[xUnit.net 00:14:06.85]     AspireAcademy.Api.Tests.E2E.ProfileTests.CancelButtonClosesEditDialog [FAIL]
+[xUnit.net 00:14:06.85]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:14:06.85]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:14:06.85]       Call log:
+[xUnit.net 00:14:06.85]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:14:06.85]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:14:06.85]       Stack Trace:
+[xUnit.net 00:14:06.85]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:14:06.85]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:14:06.85]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:14:06.85]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:14:06.85]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileTests.cs(55,0): at AspireAcademy.Api.Tests.E2E.ProfileTests.CancelButtonClosesEditDialog()
+[xUnit.net 00:14:06.85]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileTests.cs(66,0): at AspireAcademy.Api.Tests.E2E.ProfileTests.CancelButtonClosesEditDialog()
+[xUnit.net 00:14:06.85]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ProfileTests.CancelButtonClosesEditDialog [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ProfileTests.CancelButtonClosesEditDialog() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileTests.cs:line 55
+   at AspireAcademy.Api.Tests.E2E.ProfileTests.CancelButtonClosesEditDialog() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileTests.cs:line 66
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.ProfilePageShowsOwnUserInfo [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.EditProfileButtonOpensDialogWithFormFields [1 s]
+[xUnit.net 00:14:54.58]     AspireAcademy.Api.Tests.E2E.ProfileTests.RandomizeAvatarButtonWorksWithoutError [FAIL]
+[xUnit.net 00:14:54.58]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:14:54.58]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:14:54.58]       Call log:
+[xUnit.net 00:14:54.58]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:14:54.58]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:14:54.58]       Stack Trace:
+[xUnit.net 00:14:54.58]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:14:54.58]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:14:54.58]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:14:54.58]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:14:54.58]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileTests.cs(76,0): at AspireAcademy.Api.Tests.E2E.ProfileTests.RandomizeAvatarButtonWorksWithoutError()
+[xUnit.net 00:14:54.58]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileTests.cs(86,0): at AspireAcademy.Api.Tests.E2E.ProfileTests.RandomizeAvatarButtonWorksWithoutError()
+[xUnit.net 00:14:54.58]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ProfileTests.RandomizeAvatarButtonWorksWithoutError [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ProfileTests.RandomizeAvatarButtonWorksWithoutError() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileTests.cs:line 76
+   at AspireAcademy.Api.Tests.E2E.ProfileTests.RandomizeAvatarButtonWorksWithoutError() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileTests.cs:line 86
+--- End of stack trace from previous location ---
+[xUnit.net 00:15:40.21]     AspireAcademy.Api.Tests.E2E.ProfileDepthTests.EditDisplayName_SaveRefresh_NamePersisted [FAIL]
+[xUnit.net 00:15:40.21]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:15:40.21]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:15:40.21]       Call log:
+[xUnit.net 00:15:40.21]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:15:40.21]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:15:40.21]       Stack Trace:
+[xUnit.net 00:15:40.21]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:15:40.21]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:15:40.21]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:15:40.21]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:15:40.21]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(65,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.EditDisplayName_SaveRefresh_NamePersisted()
+[xUnit.net 00:15:40.21]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(94,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.EditDisplayName_SaveRefresh_NamePersisted()
+[xUnit.net 00:15:40.21]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.EditDisplayName_SaveRefresh_NamePersisted [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.EditDisplayName_SaveRefresh_NamePersisted() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 65
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.EditDisplayName_SaveRefresh_NamePersisted() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 94
+--- End of stack trace from previous location ---
+[xUnit.net 00:16:25.84]     AspireAcademy.Api.Tests.E2E.ProfileDepthTests.RandomizeAvatar_AvatarImageSrcChanges [FAIL]
+[xUnit.net 00:16:25.84]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:16:25.84]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:16:25.84]       Call log:
+[xUnit.net 00:16:25.84]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:16:25.84]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:16:25.84]       Stack Trace:
+[xUnit.net 00:16:25.84]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:16:25.84]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:16:25.84]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:16:25.84]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:16:25.84]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(104,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.RandomizeAvatar_AvatarImageSrcChanges()
+[xUnit.net 00:16:25.84]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(141,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.RandomizeAvatar_AvatarImageSrcChanges()
+[xUnit.net 00:16:25.84]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.RandomizeAvatar_AvatarImageSrcChanges [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.RandomizeAvatar_AvatarImageSrcChanges() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 104
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.RandomizeAvatar_AvatarImageSrcChanges() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 141
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.OwnProfileShowsCorrectUsername [1 s]
+[xUnit.net 00:16:37.59]     AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp [FAIL]
+[xUnit.net 00:16:37.59]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:16:37.59]       Error: element(s) not found 
+[xUnit.net 00:16:37.59]       Call log:
+[xUnit.net 00:16:37.59]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:16:37.59]         - waiting for GetByTestId("profile-stats")
+[xUnit.net 00:16:37.59]       Stack Trace:
+[xUnit.net 00:16:37.59]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:16:37.59]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:16:37.59]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(42,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp()
+[xUnit.net 00:16:37.59]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(55,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp()
+[xUnit.net 00:16:37.59]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp [10 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByTestId("profile-stats")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 42
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 55
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.ViewAnotherUsersProfile_ShowsTheirInfo [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.RandomizeAvatar_AvatarImageSrcChanges [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.EditDisplayName_SaveRefreshPage_NewNamePersists [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.NotFoundPageShows404ForInvalidUrl [693 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.WorldPageBackToDashboardLinkWorks [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarFriendsLinkNavigates [968 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.DeepLinkToWorldWorksWhenAuthed [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.DashboardClickWorldNavigatesToWorldPage [970 ms]
+[xUnit.net 00:17:38.32]     AspireAcademy.Api.Tests.E2E.NavigationTests.BrowserBackButtonWorksAfterNavigation [FAIL]
+[xUnit.net 00:17:38.32]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:17:38.32]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:17:38.32]       Call log:
+[xUnit.net 00:17:38.32]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:17:38.32]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:17:38.32]       Stack Trace:
+[xUnit.net 00:17:38.32]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:17:38.32]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:17:38.32]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:17:38.32]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:17:38.32]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/NavigationTests.cs(173,0): at AspireAcademy.Api.Tests.E2E.NavigationTests.BrowserBackButtonWorksAfterNavigation()
+[xUnit.net 00:17:38.32]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/NavigationTests.cs(181,0): at AspireAcademy.Api.Tests.E2E.NavigationTests.BrowserBackButtonWorksAfterNavigation()
+[xUnit.net 00:17:38.32]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.NavigationTests.BrowserBackButtonWorksAfterNavigation [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.NavigationTests.BrowserBackButtonWorksAfterNavigation() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/NavigationTests.cs:line 173
+   at AspireAcademy.Api.Tests.E2E.NavigationTests.BrowserBackButtonWorksAfterNavigation() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/NavigationTests.cs:line 181
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarLeaderboardLinkNavigates [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarAchievementsLinkNavigates [959 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarProfileLinkNavigates [966 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarHomeLinkNavigates [960 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarDashboardLinkNavigates [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemeToggle_PageColorsChange [1 s]
+[xUnit.net 00:18:30.79]     AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemePersistsOnRefresh [FAIL]
+[xUnit.net 00:18:30.79]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:18:30.79]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:18:30.79]       Call log:
+[xUnit.net 00:18:30.79]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:18:30.79]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:18:30.79]       Stack Trace:
+[xUnit.net 00:18:30.79]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:18:30.79]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:18:30.79]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:18:30.79]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:18:30.79]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/NavigationDepthTests.cs(131,0): at AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemePersistsOnRefresh()
+[xUnit.net 00:18:30.79]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/NavigationDepthTests.cs(146,0): at AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemePersistsOnRefresh()
+[xUnit.net 00:18:30.79]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemePersistsOnRefresh [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemePersistsOnRefresh() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/NavigationDepthTests.cs:line 131
+   at AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemePersistsOnRefresh() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/NavigationDepthTests.cs:line 146
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.SidebarClickWorld_ModulesAppear [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.DeepLinkLessonUnauthenticated_RedirectsToLogin [388 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.InvalidLessonUrl_ShowsError [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.SidebarClickModule_NavigatesToWorldPage [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.DeepLinkLessonAuthenticated_ShowsLesson [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.BrowserBackButtonWorks [809 ms]
+  Passed AspireAcademy.Api.Tests.E2E.LoadingStateTests.DashboardShowsContentWhileApiIsSlow [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.LoadingStateTests.LeaderboardShowsTabsWhileFetching [1 s]
+[xUnit.net 00:19:28.80]     AspireAcademy.Api.Tests.E2E.LessonStateTests.AlreadyCompletedLesson_ShowsCompletedButtonFromStart [FAIL]
+[xUnit.net 00:19:28.80]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:19:28.80]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:19:28.80]       Call log:
+[xUnit.net 00:19:28.80]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:19:28.80]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:19:28.80]       Stack Trace:
+[xUnit.net 00:19:28.80]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:19:28.80]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:19:28.80]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:19:28.80]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:19:28.80]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs(52,0): at AspireAcademy.Api.Tests.E2E.LessonStateTests.AlreadyCompletedLesson_ShowsCompletedButtonFromStart()
+[xUnit.net 00:19:28.80]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs(64,0): at AspireAcademy.Api.Tests.E2E.LessonStateTests.AlreadyCompletedLesson_ShowsCompletedButtonFromStart()
+[xUnit.net 00:19:28.80]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonStateTests.AlreadyCompletedLesson_ShowsCompletedButtonFromStart [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.LessonStateTests.AlreadyCompletedLesson_ShowsCompletedButtonFromStart() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs:line 52
+   at AspireAcademy.Api.Tests.E2E.LessonStateTests.AlreadyCompletedLesson_ShowsCompletedButtonFromStart() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs:line 64
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.NextButtonHidden_OnLastLessonInModule [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.PreviewLockedLesson_ContentVisibleButMarkCompleteHidden [4 s]
+[xUnit.net 00:19:44.40]     AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson [FAIL]
+[xUnit.net 00:19:44.40]       Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+[xUnit.net 00:19:44.40]       But was: 'Mark Complete (+50 XP)' 
+[xUnit.net 00:19:44.40]       Call log:
+[xUnit.net 00:19:44.40]         - Expect "ToHaveTextAsync" with timeout 5000ms
+[xUnit.net 00:19:44.40]         - waiting for GetByTestId("mark-complete-btn")
+[xUnit.net 00:19:44.40]           2 × locator resolved to <button disabled type="button" data-testid="mark-complete-btn" class="chakra-button css-1776wcc">✅ Completed</button>
+[xUnit.net 00:19:44.40]             - unexpected value "✅ Completed"
+[xUnit.net 00:19:44.40]           7 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+[xUnit.net 00:19:44.40]             - unexpected value "Mark Complete (+50 XP)"
+[xUnit.net 00:19:44.40]       Stack Trace:
+[xUnit.net 00:19:44.40]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:19:44.40]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:19:44.40]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:19:44.40]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs(39,0): at AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson()
+[xUnit.net 00:19:44.40]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs(42,0): at AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson()
+[xUnit.net 00:19:44.40]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson [7 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+But was: 'Mark Complete (+50 XP)' 
+Call log:
+  - Expect "ToHaveTextAsync" with timeout 5000ms
+  - waiting for GetByTestId("mark-complete-btn")
+    2 × locator resolved to <button disabled type="button" data-testid="mark-complete-btn" class="chakra-button css-1776wcc">✅ Completed</button>
+      - unexpected value "✅ Completed"
+    7 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+      - unexpected value "Mark Complete (+50 XP)"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs:line 39
+   at AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs:line 42
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.SkipLesson_ShowsSkipIconAndUnlocksNext [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.BackButtonNavigatesAwayFromLessonPage [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.BackButtonTextContainsBackTo [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.LessonPageShowsPreviousAndNextButtons [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.NextButtonNavigatesToDifferentPage [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.PreviousButtonNavigatesBack [1 s]
+[xUnit.net 00:20:07.64]     AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage [FAIL]
+[xUnit.net 00:20:07.64]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/worlds/'
+[xUnit.net 00:20:07.64]       But was: 'http://localhost:5173/dashboard' 
+[xUnit.net 00:20:07.64]       Call log:
+[xUnit.net 00:20:07.64]         - Expect "ToHaveURLAsync" with timeout 10000ms
+[xUnit.net 00:20:07.64]           14 × unexpected value "http://localhost:5173/dashboard"
+[xUnit.net 00:20:07.64]       Stack Trace:
+[xUnit.net 00:20:07.64]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:20:07.64]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:20:07.64]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:20:07.64]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(193,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage()
+[xUnit.net 00:20:07.64]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(195,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage()
+[xUnit.net 00:20:07.64]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage [11 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/worlds/'
+But was: 'http://localhost:5173/dashboard' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 10000ms
+    14 × unexpected value "http://localhost:5173/dashboard"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 193
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 195
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.NextButtonNavigates_UrlChanges [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_XpBarValueIncreases [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.PreviousButtonHiddenOnFirstLesson [2 s]
+[xUnit.net 00:21:01.75]     AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled [FAIL]
+[xUnit.net 00:21:01.75]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:21:01.75]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:21:01.75]       Call log:
+[xUnit.net 00:21:01.75]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:21:01.75]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:21:01.75]       Stack Trace:
+[xUnit.net 00:21:01.75]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:21:01.75]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:21:01.75]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:21:01.75]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:21:01.75]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(44,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled()
+[xUnit.net 00:21:01.75]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(57,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled()
+[xUnit.net 00:21:01.75]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 44
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 57
+--- End of stack trace from previous location ---
+[xUnit.net 00:21:09.18]     AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted [FAIL]
+[xUnit.net 00:21:09.18]       Microsoft.Playwright.PlaywrightException : Locator expected not to be visible 
+[xUnit.net 00:21:09.18]       Call log:
+[xUnit.net 00:21:09.18]         - Expect "ToBeVisibleAsync" with timeout 5000ms
+[xUnit.net 00:21:09.18]         - waiting for GetByText(new Regex("failed to mark complete|error", RegexOptions.IgnoreCase))
+[xUnit.net 00:21:09.18]           9 × locator resolved to <p>…</p>
+[xUnit.net 00:21:09.18]             - unexpected value "visible"
+[xUnit.net 00:21:09.18]       Stack Trace:
+[xUnit.net 00:21:09.18]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:21:09.18]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:21:09.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(115,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted()
+[xUnit.net 00:21:09.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(118,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted()
+[xUnit.net 00:21:09.18]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted [7 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected not to be visible 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 5000ms
+  - waiting for GetByText(new Regex("failed to mark complete|error", RegexOptions.IgnoreCase))
+    9 × locator resolved to <p>…</p>
+      - unexpected value "visible"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 115
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 118
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.NavigateToLearnLesson_ShowsMarkdownContent [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.ClickingMarkComplete_ShowsCompletedState [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.RevisitingCompletedLesson_ShowsMarkCompleteButton [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.RapidDoubleClick_HandledGracefully [2 s]
+[xUnit.net 00:21:24.14]     AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson [FAIL]
+[xUnit.net 00:21:24.14]       Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+[xUnit.net 00:21:24.14]       But was: 'Mark Complete (+50 XP)' 
+[xUnit.net 00:21:24.14]       Call log:
+[xUnit.net 00:21:24.14]         - Expect "ToHaveTextAsync" with timeout 5000ms
+[xUnit.net 00:21:24.14]         - waiting for GetByTestId("mark-complete-btn")
+[xUnit.net 00:21:24.14]           9 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+[xUnit.net 00:21:24.14]             - unexpected value "Mark Complete (+50 XP)"
+[xUnit.net 00:21:24.14]       Stack Trace:
+[xUnit.net 00:21:24.14]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:21:24.14]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:21:24.14]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:21:24.14]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonCompleteTests.cs(25,0): at AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson()
+[xUnit.net 00:21:24.14]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonCompleteTests.cs(27,0): at AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson()
+[xUnit.net 00:21:24.14]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson [7 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+But was: 'Mark Complete (+50 XP)' 
+Call log:
+  - Expect "ToHaveTextAsync" with timeout 5000ms
+  - waiting for GetByTestId("mark-complete-btn")
+    9 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+      - unexpected value "Mark Complete (+50 XP)"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonCompleteTests.cs:line 25
+   at AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonCompleteTests.cs:line 27
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.SwitchingToAllTimeTabLoadsData [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.WeeklyTabShowsResetsMondayNote [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.SwitchingToFriendsTabShowsRelevantContent [3 s]
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.LeaderboardPageLoadsWithWeeklyTabActive [1 s]
+[xUnit.net 00:21:49.79]     AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney [FAIL]
+[xUnit.net 00:21:49.79]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:21:49.79]       Error: element(s) not found 
+[xUnit.net 00:21:49.79]       Call log:
+[xUnit.net 00:21:49.79]         - Expect "ToBeVisibleAsync" with timeout 15000ms
+[xUnit.net 00:21:49.79]         - waiting for GetByTestId("quiz-submit")
+[xUnit.net 00:21:49.79]       Stack Trace:
+[xUnit.net 00:21:49.79]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:21:49.79]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:21:49.79]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs(149,0): at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney()
+[xUnit.net 00:21:49.79]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs(253,0): at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney()
+[xUnit.net 00:21:49.79]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney [18 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 15000ms
+  - waiting for GetByTestId("quiz-submit")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs:line 149
+   at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs:line 253
+--- End of stack trace from previous location ---
+[xUnit.net 00:22:35.50]     AspireAcademy.Api.Tests.E2E.FriendsTests.SearchInputWithShortQueryDoesNotSearch [FAIL]
+[xUnit.net 00:22:35.50]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:22:35.50]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:22:35.50]       Call log:
+[xUnit.net 00:22:35.50]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:22:35.50]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:22:35.50]       Stack Trace:
+[xUnit.net 00:22:35.50]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:22:35.50]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:22:35.50]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:22:35.50]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:22:35.50]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FriendsTests.cs(48,0): at AspireAcademy.Api.Tests.E2E.FriendsTests.SearchInputWithShortQueryDoesNotSearch()
+[xUnit.net 00:22:35.50]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FriendsTests.cs(58,0): at AspireAcademy.Api.Tests.E2E.FriendsTests.SearchInputWithShortQueryDoesNotSearch()
+[xUnit.net 00:22:35.50]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.FriendsTests.SearchInputWithShortQueryDoesNotSearch [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.FriendsTests.SearchInputWithShortQueryDoesNotSearch() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FriendsTests.cs:line 48
+   at AspireAcademy.Api.Tests.E2E.FriendsTests.SearchInputWithShortQueryDoesNotSearch() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FriendsTests.cs:line 58
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.AddFriendButtonSendsFriendRequest [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.FriendsPageLoadsWithTabs [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.SearchFindsUsers [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.EmptyFriendsListShowsEmptyState [1 s]
+[xUnit.net 00:23:29.24]     AspireAcademy.Api.Tests.E2E.ErrorStateTests.NotFoundPage_GoToDashboardButtonWorks [FAIL]
+[xUnit.net 00:23:29.24]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:23:29.24]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:23:29.24]       Call log:
+[xUnit.net 00:23:29.24]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:23:29.24]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:23:29.24]       Stack Trace:
+[xUnit.net 00:23:29.24]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:23:29.24]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:23:29.24]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:23:29.24]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:23:29.24]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorStateTests.cs(33,0): at AspireAcademy.Api.Tests.E2E.ErrorStateTests.NotFoundPage_GoToDashboardButtonWorks()
+[xUnit.net 00:23:29.24]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorStateTests.cs(39,0): at AspireAcademy.Api.Tests.E2E.ErrorStateTests.NotFoundPage_GoToDashboardButtonWorks()
+[xUnit.net 00:23:29.24]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ErrorStateTests.NotFoundPage_GoToDashboardButtonWorks [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ErrorStateTests.NotFoundPage_GoToDashboardButtonWorks() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorStateTests.cs:line 33
+   at AspireAcademy.Api.Tests.E2E.ErrorStateTests.NotFoundPage_GoToDashboardButtonWorks() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorStateTests.cs:line 39
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedDashboardRedirectsToLogin [457 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidWorldIdShowsNotFound [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidUserProfileShowsErrorOrEmptyState [3 s]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedLeaderboardRedirectsToLogin [403 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedFriendsRedirectsToLogin [370 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidLessonIdShowsNotFound [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidQuizIdShowsError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedAchievementsRedirectsToLogin [430 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedLessonsRedirectsToLogin [376 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidUrlShows404Page [665 ms]
+[xUnit.net 00:24:27.41]     AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidChallengeIdShowsError [FAIL]
+[xUnit.net 00:24:27.41]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:24:27.41]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:24:27.41]       Call log:
+[xUnit.net 00:24:27.41]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:24:27.41]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:24:27.41]       Stack Trace:
+[xUnit.net 00:24:27.41]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:24:27.41]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:24:27.41]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:24:27.41]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:24:27.41]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorStateTests.cs(77,0): at AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidChallengeIdShowsError()
+[xUnit.net 00:24:27.41]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorStateTests.cs(81,0): at AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidChallengeIdShowsError()
+[xUnit.net 00:24:27.41]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidChallengeIdShowsError [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidChallengeIdShowsError() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorStateTests.cs:line 77
+   at AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidChallengeIdShowsError() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorStateTests.cs:line 81
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedProfileRedirectsToLogin [411 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.ProtectedPageWithoutAuth_RedirectsToLogin [445 ms]
+[xUnit.net 00:25:13.86]     AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidLessonId_ShowsErrorState [FAIL]
+[xUnit.net 00:25:13.86]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:25:13.86]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:25:13.86]       Call log:
+[xUnit.net 00:25:13.86]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:25:13.86]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:25:13.86]       Stack Trace:
+[xUnit.net 00:25:13.86]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:25:13.86]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:25:13.86]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:25:13.86]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:25:13.86]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorHandlingTests.cs(18,0): at AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidLessonId_ShowsErrorState()
+[xUnit.net 00:25:13.86]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorHandlingTests.cs(27,0): at AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidLessonId_ShowsErrorState()
+[xUnit.net 00:25:13.86]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidLessonId_ShowsErrorState [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidLessonId_ShowsErrorState() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorHandlingTests.cs:line 18
+   at AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidLessonId_ShowsErrorState() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ErrorHandlingTests.cs:line 27
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidWorldId_ShowsErrorState [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.LessonListShowsCorrectTypeIcons [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.WorldPageBackToDashboardWorks [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.DashboardShowsXpStats [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingQuizLessonNavigatesToQuizzesPage [1 s]
+[xUnit.net 00:26:08.17]     AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingLearnLessonNavigatesToLessonsPage [FAIL]
+[xUnit.net 00:26:08.17]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:26:08.17]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:26:08.17]       Call log:
+[xUnit.net 00:26:08.17]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:26:08.17]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:26:08.17]       Stack Trace:
+[xUnit.net 00:26:08.17]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:26:08.17]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:26:08.17]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:26:08.17]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:26:08.17]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/DashboardWorldTests.cs(107,0): at AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingLearnLessonNavigatesToLessonsPage()
+[xUnit.net 00:26:08.17]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/DashboardWorldTests.cs(114,0): at AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingLearnLessonNavigatesToLessonsPage()
+[xUnit.net 00:26:08.17]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingLearnLessonNavigatesToLessonsPage [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingLearnLessonNavigatesToLessonsPage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/DashboardWorldTests.cs:line 107
+   at AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingLearnLessonNavigatesToLessonsPage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/DashboardWorldTests.cs:line 114
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.WorldPageShowsModulesWithLessons [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingWorldCardNavigatesToWorldPage [972 ms]
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.DashboardShowsWelcomeMessageAndWorldCards [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingChallengeLessonNavigatesToChallengesPage [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.HintButtonRevealsFirstHint [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.InstructionsPanelShowsChallengeDescription [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.TestCaseDescriptionsListedWithUncheckedIcons [4 s]
+[xUnit.net 00:27:12.05]     AspireAcademy.Api.Tests.E2E.ChallengeTests.NavigateToChallenge_MonacoEditorLoads [FAIL]
+[xUnit.net 00:27:12.05]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:27:12.05]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:27:12.05]       Call log:
+[xUnit.net 00:27:12.05]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:27:12.05]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:27:12.05]       Stack Trace:
+[xUnit.net 00:27:12.05]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:27:12.05]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:27:12.05]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:27:12.05]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:27:12.05]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeTests.cs(18,0): at AspireAcademy.Api.Tests.E2E.ChallengeTests.NavigateToChallenge_MonacoEditorLoads()
+[xUnit.net 00:27:12.05]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeTests.cs(24,0): at AspireAcademy.Api.Tests.E2E.ChallengeTests.NavigateToChallenge_MonacoEditorLoads()
+[xUnit.net 00:27:12.05]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeTests.NavigateToChallenge_MonacoEditorLoads [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ChallengeTests.NavigateToChallenge_MonacoEditorLoads() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeTests.cs:line 18
+   at AspireAcademy.Api.Tests.E2E.ChallengeTests.NavigateToChallenge_MonacoEditorLoads() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeTests.cs:line 24
+--- End of stack trace from previous location ---
+[xUnit.net 00:27:57.66]     AspireAcademy.Api.Tests.E2E.ChallengeTests.EditorHasStarterCodePreFilled [FAIL]
+[xUnit.net 00:27:57.66]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:27:57.66]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:27:57.66]       Call log:
+[xUnit.net 00:27:57.66]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:27:57.66]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:27:57.66]       Stack Trace:
+[xUnit.net 00:27:57.66]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:27:57.66]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:27:57.66]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:27:57.66]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:27:57.66]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeTests.cs(34,0): at AspireAcademy.Api.Tests.E2E.ChallengeTests.EditorHasStarterCodePreFilled()
+[xUnit.net 00:27:57.66]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeTests.cs(41,0): at AspireAcademy.Api.Tests.E2E.ChallengeTests.EditorHasStarterCodePreFilled()
+[xUnit.net 00:27:57.66]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeTests.EditorHasStarterCodePreFilled [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ChallengeTests.EditorHasStarterCodePreFilled() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeTests.cs:line 34
+   at AspireAcademy.Api.Tests.E2E.ChallengeTests.EditorHasStarterCodePreFilled() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeTests.cs:line 41
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.InstructionsPanelShowsChallengeDescription [3 s]
+[xUnit.net 00:28:14.20]     AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible [FAIL]
+[xUnit.net 00:28:14.20]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:28:14.20]       Error: element(s) not found 
+[xUnit.net 00:28:14.20]       Call log:
+[xUnit.net 00:28:14.20]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:28:14.20]         - waiting for GetByTestId("challenge-run")
+[xUnit.net 00:28:14.20]       Stack Trace:
+[xUnit.net 00:28:14.20]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:28:14.20]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:28:14.20]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(138,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible()
+[xUnit.net 00:28:14.20]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(145,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible()
+[xUnit.net 00:28:14.20]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible [13 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByTestId("challenge-run")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 138
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 145
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickFirstHintButton_HintTextAppears [3 s]
+[xUnit.net 00:29:03.13]     AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickSubmit_TestResultsSectionAppears [FAIL]
+[xUnit.net 00:29:03.13]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:29:03.13]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:29:03.13]       Call log:
+[xUnit.net 00:29:03.13]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:29:03.13]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:29:03.13]       Stack Trace:
+[xUnit.net 00:29:03.13]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:29:03.13]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:29:03.13]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:29:03.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:29:03.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(155,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickSubmit_TestResultsSectionAppears()
+[xUnit.net 00:29:03.13]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(172,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickSubmit_TestResultsSectionAppears()
+[xUnit.net 00:29:03.13]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickSubmit_TestResultsSectionAppears [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickSubmit_TestResultsSectionAppears() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 155
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickSubmit_TestResultsSectionAppears() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 172
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TestCaseDescriptionsListed [3 s]
+[xUnit.net 00:29:10.40]     AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges [FAIL]
+[xUnit.net 00:29:10.40]       Assert.Contains() Failure: Sub-string not found
+[xUnit.net 00:29:10.40]       String:    "using Aspire.Hosting;\n\nvar builder = Dist"···
+[xUnit.net 00:29:10.40]       Not found: "E2E test comment"
+[xUnit.net 00:29:10.40]       Stack Trace:
+[xUnit.net 00:29:10.40]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(118,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges()
+[xUnit.net 00:29:10.40]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(120,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges()
+[xUnit.net 00:29:10.40]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges [4 s]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "using Aspire.Hosting;\n\nvar builder = Dist"···
+Not found: "E2E test comment"
+  Stack Trace:
+     at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 118
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 120
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ChallengePageLoads_MonacoEditorVisible [3 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.HintsRevealProgressively [5 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.AutocompletePopup_AppearsWhenTypingBuilderAdd [6 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.NavigateToChallenge_AfterCompletingPrerequisitesViaApi [3 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickSubmit_TestCaseResultsShownWithIcons [8 s]
+[xUnit.net 00:29:52.10]     AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults [FAIL]
+[xUnit.net 00:29:52.10]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:29:52.10]       Error: element(s) not found 
+[xUnit.net 00:29:52.10]       Call log:
+[xUnit.net 00:29:52.10]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:29:52.10]         - waiting for GetByTestId("challenge-run")
+[xUnit.net 00:29:52.10]       Stack Trace:
+[xUnit.net 00:29:52.10]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:29:52.10]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:29:52.10]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeFlowTests.cs(131,0): at AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults()
+[xUnit.net 00:29:52.10]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeFlowTests.cs(142,0): at AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults()
+[xUnit.net 00:29:52.10]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults [14 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByTestId("challenge-run")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeFlowTests.cs:line 131
+   at AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeFlowTests.cs:line 142
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.MonacoEditorLoads_WithStarterCodeVisible [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithMismatchedPasswords_ShowsValidationError [497 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithEmptyEmail_ShowsValidationError [490 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithValidData_RedirectsToDashboard [968 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterShowsDashboardWelcomeWithDisplayName [889 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.VisitProtectedPageWhileLoggedOut_RedirectsToLogin [465 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.VisitRegisterWhileLoggedIn_ShowsRegisterPage [639 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithWrongPassword_ShowsErrorMessage [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithDuplicateUsername_ShowsServerError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithEmptyFields_StaysOnLoginPage [442 ms]
+[xUnit.net 00:30:48.71]     AspireAcademy.Api.Tests.E2E.AuthTests.LogoutPreventsAccessToDashboard [FAIL]
+[xUnit.net 00:30:48.71]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:30:48.71]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:30:48.71]       Call log:
+[xUnit.net 00:30:48.71]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:30:48.71]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:30:48.71]       Stack Trace:
+[xUnit.net 00:30:48.71]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:30:48.71]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:30:48.71]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:30:48.71]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:30:48.71]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AuthTests.cs(289,0): at AspireAcademy.Api.Tests.E2E.AuthTests.LogoutPreventsAccessToDashboard()
+[xUnit.net 00:30:48.71]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AuthTests.cs(297,0): at AspireAcademy.Api.Tests.E2E.AuthTests.LogoutPreventsAccessToDashboard()
+[xUnit.net 00:30:48.71]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AuthTests.LogoutPreventsAccessToDashboard [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.AuthTests.LogoutPreventsAccessToDashboard() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AuthTests.cs:line 289
+   at AspireAcademy.Api.Tests.E2E.AuthTests.LogoutPreventsAccessToDashboard() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AuthTests.cs:line 297
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithShortPassword_ShowsValidationError [491 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginShowsDashboardWithCorrectDisplayName [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithEmptyUsername_ShowsValidationError [478 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.Logout_RedirectsToLogin [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithValidCredentials_RedirectsToDashboard [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RefreshWhileLoggedIn_StaysOnDashboard [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithNonExistentUser_ShowsErrorMessage [560 ms]
+[xUnit.net 00:31:06.38]     AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer [FAIL]
+[xUnit.net 00:31:06.38]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:31:06.38]       Error: element(s) not found 
+[xUnit.net 00:31:06.38]       Call log:
+[xUnit.net 00:31:06.38]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:31:06.38]         - waiting for GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) })
+[xUnit.net 00:31:06.38]       Stack Trace:
+[xUnit.net 00:31:06.38]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:31:06.38]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:31:06.38]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(56,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer()
+[xUnit.net 00:31:06.38]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(59,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer()
+[xUnit.net 00:31:06.38]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer [11 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) })
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 56
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 59
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.MarkCompleteButtonDisabledAfterSuccess [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.RegisterValidationErrorsShowForEmptyFields [447 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.ValidationErrorsClearWhenUserStartsTyping [442 ms]
+[xUnit.net 00:31:55.32]     AspireAcademy.Api.Tests.E2E.AdversarialTests.SidebarWorldExpandShowsModules [FAIL]
+[xUnit.net 00:31:55.32]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:31:55.32]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:31:55.32]       Call log:
+[xUnit.net 00:31:55.32]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:31:55.32]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:31:55.32]       Stack Trace:
+[xUnit.net 00:31:55.32]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:31:55.32]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:31:55.32]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:31:55.32]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:31:55.32]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(199,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.SidebarWorldExpandShowsModules()
+[xUnit.net 00:31:55.32]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(206,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.SidebarWorldExpandShowsModules()
+[xUnit.net 00:31:55.33]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.SidebarWorldExpandShowsModules [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.SidebarWorldExpandShowsModules() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 199
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.SidebarWorldExpandShowsModules() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 206
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.PasswordMismatchShowsError [494 ms]
+[xUnit.net 00:32:41.41]     AspireAcademy.Api.Tests.E2E.AdversarialTests.RefreshDashboardAfterLoginStaysLoggedIn [FAIL]
+[xUnit.net 00:32:41.41]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:32:41.41]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:32:41.41]       Call log:
+[xUnit.net 00:32:41.41]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:32:41.41]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:32:41.41]       Stack Trace:
+[xUnit.net 00:32:41.41]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:32:41.41]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:32:41.41]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:32:41.41]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:32:41.41]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(117,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.RefreshDashboardAfterLoginStaysLoggedIn()
+[xUnit.net 00:32:41.41]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(125,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.RefreshDashboardAfterLoginStaysLoggedIn()
+[xUnit.net 00:32:41.41]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.RefreshDashboardAfterLoginStaysLoggedIn [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.RefreshDashboardAfterLoginStaysLoggedIn() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 117
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.RefreshDashboardAfterLoginStaysLoggedIn() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 125
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.ClearingAuthRedirectsToLogin [1 s]
+[xUnit.net 00:32:54.10]     AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage [FAIL]
+[xUnit.net 00:32:54.10]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/worlds/'
+[xUnit.net 00:32:54.10]       But was: 'http://localhost:5173/dashboard' 
+[xUnit.net 00:32:54.10]       Call log:
+[xUnit.net 00:32:54.10]         - Expect "ToHaveURLAsync" with timeout 10000ms
+[xUnit.net 00:32:54.10]           14 × unexpected value "http://localhost:5173/dashboard"
+[xUnit.net 00:32:54.10]       Stack Trace:
+[xUnit.net 00:32:54.10]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:32:54.10]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:32:54.10]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:32:54.10]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(187,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage()
+[xUnit.net 00:32:54.10]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(189,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage()
+[xUnit.net 00:32:54.10]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage [11 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/worlds/'
+But was: 'http://localhost:5173/dashboard' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 10000ms
+    14 × unexpected value "http://localhost:5173/dashboard"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 187
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 189
+--- End of stack trace from previous location ---
+[xUnit.net 00:33:39.72]     AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState [FAIL]
+[xUnit.net 00:33:39.72]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:33:39.72]       But was: 'http://localhost:5173/register' 
+[xUnit.net 00:33:39.72]       Call log:
+[xUnit.net 00:33:39.72]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:33:39.72]           19 × unexpected value "http://localhost:5173/register"
+[xUnit.net 00:33:39.72]       Stack Trace:
+[xUnit.net 00:33:39.72]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:33:39.72]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:33:39.72]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:33:39.72]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(64,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password)
+[xUnit.net 00:33:39.72]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(153,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState()
+[xUnit.net 00:33:39.72]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(162,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState()
+[xUnit.net 00:33:39.72]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState [45 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/register' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/register"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.RegisterUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 64
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 153
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 162
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.AdminTests.NonAdminUserDoesNotSeeAdminLink [996 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AdminTests.NonAdminNavigatingToAdmin_NoAdminContent [3 s]
+[xUnit.net 00:33:59.87]     AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards [FAIL]
+[xUnit.net 00:33:59.87]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:33:59.87]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:33:59.87]       Call log:
+[xUnit.net 00:33:59.87]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:33:59.87]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:33:59.87]       Stack Trace:
+[xUnit.net 00:33:59.87]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:33:59.87]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:33:59.87]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:33:59.87]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(36,0): at AspireAcademy.Api.Tests.E2E.AdminTests.EnsureAdminLoggedIn(IPage page)
+[xUnit.net 00:33:59.87]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(77,0): at AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards()
+[xUnit.net 00:33:59.87]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(89,0): at AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards()
+[xUnit.net 00:33:59.87]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.AdminTests.EnsureAdminLoggedIn(IPage page) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 36
+   at AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 77
+   at AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 89
+--- End of stack trace from previous location ---
+[xUnit.net 00:34:15.35]     AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar [FAIL]
+[xUnit.net 00:34:15.35]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:34:15.35]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:34:15.35]       Call log:
+[xUnit.net 00:34:15.35]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:34:15.35]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:34:15.35]       Stack Trace:
+[xUnit.net 00:34:15.35]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:34:15.35]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:34:15.35]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:34:15.35]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(36,0): at AspireAcademy.Api.Tests.E2E.AdminTests.EnsureAdminLoggedIn(IPage page)
+[xUnit.net 00:34:15.35]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(45,0): at AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar()
+[xUnit.net 00:34:15.35]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(49,0): at AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar()
+[xUnit.net 00:34:15.35]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.AdminTests.EnsureAdminLoggedIn(IPage page) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 36
+   at AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 45
+   at AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 49
+--- End of stack trace from previous location ---
+[xUnit.net 00:34:30.83]     AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot [FAIL]
+[xUnit.net 00:34:30.83]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:34:30.83]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:34:30.83]       Call log:
+[xUnit.net 00:34:30.83]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:34:30.83]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:34:30.83]       Stack Trace:
+[xUnit.net 00:34:30.83]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:34:30.83]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:34:30.83]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:34:30.83]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(122,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password)
+[xUnit.net 00:34:30.83]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs(121,0): at AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot()
+[xUnit.net 00:34:30.83]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs(126,0): at AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot()
+[xUnit.net 00:34:30.83]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 122
+   at AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs:line 121
+   at AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs:line 126
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.AdminFlowTests.NonAdminNavigatingToAdmin_RedirectedToDashboard [3 s]
+[xUnit.net 00:34:50.05]     AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works [FAIL]
+[xUnit.net 00:34:50.05]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:34:50.05]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:34:50.05]       Call log:
+[xUnit.net 00:34:50.05]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:34:50.05]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:34:50.05]       Stack Trace:
+[xUnit.net 00:34:50.05]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:34:50.05]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:34:50.05]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:34:50.05]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(122,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password)
+[xUnit.net 00:34:50.05]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs(38,0): at AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works()
+[xUnit.net 00:34:50.05]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs(82,0): at AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works()
+[xUnit.net 00:34:50.05]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 122
+   at AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs:line 38
+   at AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs:line 82
+--- End of stack trace from previous location ---
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.LockedAchievementsAreVisuallyDistinct [4 s]
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.AchievementsPageLoadsWithAllTab [1 s]
+[xUnit.net 00:34:57.32]   Finished:    AspireAcademy.Api.Tests
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.SwitchingCategoryTabsFiltersAchievements [2 s]
+
+Test Run Failed.
+Total tests: 187
+     Passed: 135
+     Failed: 52
+ Total time: 34.9589 Minutes

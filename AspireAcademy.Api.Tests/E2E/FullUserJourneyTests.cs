@@ -35,14 +35,14 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
         {
             // Step 1: Navigate to app → see login page
             await page.GotoAsync(fixture.WebBaseUrl + "/");
-            await page.WaitForURLAsync("**/login", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText("Aspire Academy")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText("Welcome back, adventurer!")).ToBeVisibleAsync();
             await AssertNoFatalError(page);
 
             // Step 2: Click Register link → see register form
             await page.GetByRole(AriaRole.Link, new() { Name = "Register" }).ClickAsync();
-            await page.WaitForURLAsync("**/register", new() { Timeout = 5_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/register"), new() { Timeout = 5_000 });
             await Assertions.Expect(page.GetByText("Create your hero account")).ToBeVisibleAsync();
             await Assertions.Expect(page.Locator("#reg-user")).ToBeVisibleAsync();
 
@@ -55,7 +55,7 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
 
             // Step 4: Submit registration → redirect to dashboard
             await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
-            await page.WaitForURLAsync("**/{dashboard,}", new() { Timeout = 15_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 15_000 });
             await AssertNoFatalError(page);
 
             // Step 5: Dashboard shows welcome message
@@ -72,7 +72,7 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
 
             // Step 8: Click world card → see module list
             await page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations").ClickAsync();
-            await page.WaitForURLAsync("**/worlds/**", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("back to dashboard", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Step 9: First module with lessons visible
@@ -88,7 +88,7 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
 
             // Step 11: Click first lesson → see content
             await firstLesson.ClickAsync();
-            await page.WaitForURLAsync("**/lessons/**", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("back to", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await AssertNoFatalError(page);
 
@@ -119,14 +119,14 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
             var nextBtn = prevNextButtons.Last;
             await Assertions.Expect(nextBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
             await nextBtn.ClickAsync();
-            await page.WaitForURLAsync("**/lessons/**", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
 
             // Step 17: Second lesson content visible
             await Assertions.Expect(page.GetByText(new Regex("back to", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Step 18: Click back → module page
             await page.GetByText(new Regex("back to", RegexOptions.IgnoreCase)).ClickAsync();
-            await page.WaitForURLAsync("**/worlds/**", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
 
             // Step 19: First lesson shows completed ✅ icon
             var completedLesson = page.Locator("[role='button']").Filter(new() { HasText = "✅" }).First;
@@ -134,18 +134,24 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
 
             // Step 20: Navigate to quiz (completing prereqs via API)
             var token = await GetAuthToken(page);
-            await page.APIRequest.PostAsync(fixture.ApiBaseUrl + "/api/progress/complete", new()
+            foreach (var prereq in new[] { "1.1.2", "1.1.2a" })
             {
-                Headers = new Dictionary<string, string>
+                using var completeReq = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, fixture.ApiBaseUrl + "/api/progress/complete");
+                completeReq.Headers.Add("Authorization", $"Bearer {token}");
+                completeReq.Content = System.Net.Http.Json.JsonContent.Create(new { lessonId = prereq });
+                var completeResp = await SendApiRequestAsync(completeReq);
+
+                // If not a 'learn' type (e.g. challenge 1.1.2a), skip it to satisfy prereqs
+                if (!completeResp.IsSuccessStatusCode)
                 {
-                    ["Authorization"] = $"Bearer {token}",
-                    ["Content-Type"] = "application/json",
-                    ["X-Test-Client"] = "true",
-                },
-                DataObject = new { lessonId = "1.1.2" },
-            });
+                    using var skipReq = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, fixture.ApiBaseUrl + "/api/progress/skip");
+                    skipReq.Headers.Add("Authorization", $"Bearer {token}");
+                    skipReq.Content = System.Net.Http.Json.JsonContent.Create(new { lessonId = prereq });
+                    await SendApiRequestAsync(skipReq);
+                }
+            }
             await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/1.1.3");
-            await page.WaitForURLAsync("**/quizzes/**", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByTestId("quiz-submit")).ToBeVisibleAsync(new() { Timeout = 15_000 });
 
             // Step 21: Quiz shows question with options
@@ -215,18 +221,29 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture)
             // Step 26: Navigate to profile → see stats
             var sidebar = page.GetByRole(AriaRole.Navigation);
             await sidebar.GetByText("Profile").ClickAsync();
-            await page.WaitForURLAsync("**/profile", new() { Timeout = 10_000 });
-            await Assertions.Expect(page.GetByText(displayName)).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/profile"), new() { Timeout = 10_000 });
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            // Profile page shows displayName or username — wait for either, reload once if needed
+            var profileLoaded = page.GetByText(displayName).Or(page.GetByText(username));
+            try
+            {
+                await Assertions.Expect(profileLoaded).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            }
+            catch
+            {
+                await page.ReloadAsync(new() { WaitUntil = WaitUntilState.NetworkIdle });
+                await Assertions.Expect(profileLoaded).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            }
             await Assertions.Expect(page.GetByText("Total XP")).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
             // Step 27: Leaderboard shows entries
             await sidebar.GetByText("Leaderboard").ClickAsync();
-            await page.WaitForURLAsync("**/leaderboard", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/leaderboard"), new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText("🏆 Leaderboard")).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Step 28: Achievements page renders
             await sidebar.GetByText("Achievements").ClickAsync();
-            await page.WaitForURLAsync("**/achievements", new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/achievements"), new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText("🎖️ Achievements")).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Step 29: Sidebar world dropdown expands

@@ -23,7 +23,7 @@ public class LessonStateTests(AppHostPlaywrightFixture fixture)
             var btn = page.GetByTestId("mark-complete-btn");
             await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 15_000 });
             await btn.ClickAsync();
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("completed", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
 
             // Click Next to go to 1.1.2
             var mainButtons = page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button);
@@ -36,7 +36,7 @@ public class LessonStateTests(AppHostPlaywrightFixture fixture)
             // On the new lesson, button should say "Mark Complete" (not "Completed")
             var newBtn = page.GetByTestId("mark-complete-btn");
             await Assertions.Expect(newBtn).ToBeVisibleAsync(new() { Timeout = 15_000 });
-            await Assertions.Expect(newBtn).ToHaveTextAsync(new Regex("mark complete", RegexOptions.IgnoreCase));
+            await Assertions.Expect(newBtn).ToContainTextAsync("Mark Complete", new() { Timeout = 5_000 });
             await Assertions.Expect(newBtn).ToBeEnabledAsync();
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -58,7 +58,7 @@ public class LessonStateTests(AppHostPlaywrightFixture fixture)
             await page.GotoAsync(fixture.WebBaseUrl + "/lessons/1.1.1");
             var btn = page.GetByTestId("mark-complete-btn");
             await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 15_000 });
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("completed", RegexOptions.IgnoreCase));
+            await Assertions.Expect(btn).ToContainTextAsync("Completed");
             await Assertions.Expect(btn).ToBeDisabledAsync();
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -74,7 +74,7 @@ public class LessonStateTests(AppHostPlaywrightFixture fixture)
             await RegisterUser(page, username);
 
             // Complete all lessons in module 1.1 so we can reach the last one
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             // Navigate to the last lesson in module 1.1 (1.1.2 is the last learn lesson before quiz 1.1.3)
             await LoginUser(page, username);
@@ -159,7 +159,7 @@ public class LessonStateTests(AppHostPlaywrightFixture fixture)
             Assert.True(mainText?.Length > 30, "Locked lesson should still show content");
 
             // A locked banner should be visible
-            var lockedBanner = page.GetByText(new Regex("locked|complete the previous", RegexOptions.IgnoreCase));
+            var lockedBanner = page.GetByText(new Regex("preview mode|complete prerequisites|unlock", RegexOptions.IgnoreCase));
             await Assertions.Expect(lockedBanner.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Mark Complete button should NOT be visible for a locked lesson

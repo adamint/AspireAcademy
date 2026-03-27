@@ -126,13 +126,13 @@ public class ChallengeFlowTests(AppHostPlaywrightFixture fixture)
                 return;
             }
 
-            // Click the Run button
-            var runBtn = page.GetByTestId("challenge-run");
-            await Assertions.Expect(runBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await runBtn.ClickAsync();
+            // Click the Check & Submit button (Run button was removed)
+            var submitBtn = page.GetByTestId("challenge-submit");
+            await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await submitBtn.ClickAsync();
 
             // Output panel should show validation results (not a Docker error)
-            var outputText = page.GetByText(new Regex("output|running|compilation|validation|error|warning", RegexOptions.IgnoreCase));
+            var outputText = page.GetByText(new Regex("output|checking|compilation|validation|result|pass|fail", RegexOptions.IgnoreCase));
             await Assertions.Expect(outputText.First).ToBeVisibleAsync(new() { Timeout = 15_000 });
 
             // Should NOT show Docker-related errors since CodeRunner was replaced

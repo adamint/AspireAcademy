@@ -120,7 +120,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             var main = page.GetByRole(AriaRole.Main);
             await Assertions.Expect(main.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await main.GetByText("Aspire Foundations").ClickAsync();
-            await page.WaitForURLAsync("**/worlds/**");
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
             await page.GetByText("Back to Dashboard").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"));
         }
@@ -153,7 +153,7 @@ public class NavigationTests(AppHostPlaywrightFixture fixture)
             var main = page.GetByRole(AriaRole.Main);
             await Assertions.Expect(main.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await main.GetByText("Aspire Foundations").ClickAsync();
-            await page.WaitForURLAsync("**/worlds/**");
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
             var worldUrl = page.Url;
 
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");

@@ -1,0 +1,873 @@
+Test run for /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/bin/Debug/net11.0/AspireAcademy.Api.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+/Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/bin/Debug/net11.0/AspireAcademy.Api.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 11.0.0-preview.1.26104.118)
+[xUnit.net 00:00:00.03]   Discovering: AspireAcademy.Api.Tests
+[xUnit.net 00:00:00.06]   Discovered:  AspireAcademy.Api.Tests
+[xUnit.net 00:00:00.08]   Starting:    AspireAcademy.Api.Tests
+[E2E] API seed SUCCESS for deepback_84627434_9f20
+[E2E] API seed SUCCESS for deepworld_84628344_c3c9
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.BrowserBackButtonWorksAfterNavigation [908 ms]
+[E2E] API seed SUCCESS for deeplesson_84630289_58ad
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectWorldUrlWorksWhenAuthenticated [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.DirectLessonUrlWorksWhenAuthenticated [2 s]
+[E2E] API seed SUCCESS for topbarxp_84632424_d55d
+[E2E] API seed SUCCESS for topbarprof_84633381_2ad5
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.XpProgressBarIsVisibleInTopBar [962 ms]
+[E2E] API seed SUCCESS for topbarlogout_84634889_10b7
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuProfileNavigatesToProfile [1 s]
+[E2E] API seed SUCCESS for topbar_84636441_5c74
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuLogOutNavigatesToLogin [1 s]
+[E2E] API seed SUCCESS for themepersist_84637944_5d82
+  Passed AspireAcademy.Api.Tests.E2E.TopBarDeepLinkTests.UserMenuShowsProfileAndLogoutOptions [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ThemeTests.ThemePersistsAfterPageRefresh [1 s]
+[E2E] API seed SUCCESS for themetoggle_84639886_c137
+  Passed AspireAcademy.Api.Tests.E2E.ThemeTests.ClickingThemeToggleSwitchesTheme [1 s]
+[E2E] API seed SUCCESS for theme_84641371_2492
+[E2E] API seed SUCCESS for thmrefresh_84642340_ab93
+  Passed AspireAcademy.Api.Tests.E2E.ThemeTests.ThemeToggleButtonIsVisible [977 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossPageRefresh [1 s]
+[E2E] API seed SUCCESS for thmnav_84644303_9c0c
+  Passed AspireAcademy.Api.Tests.E2E.ThemePersistenceTests.ThemePersists_AcrossLessonNavigation [1 s]
+[E2E] API seed SUCCESS for socA_84645924_ff2b
+[E2E] API seed SUCCESS for socB_84645924_aa59
+[xUnit.net 00:00:30.34]     AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove [FAIL]
+[xUnit.net 00:00:30.34]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:00:30.34]       Error: element(s) not found 
+[xUnit.net 00:00:30.34]       Call log:
+[xUnit.net 00:00:30.34]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:00:30.34]         - waiting for GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("^friends$", RegexOptions.IgnoreCase) })
+[xUnit.net 00:00:30.34]       Stack Trace:
+[xUnit.net 00:00:30.34]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:00:30.34]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:00:30.34]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(48,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove()
+[xUnit.net 00:00:30.34]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(77,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove()
+[xUnit.net 00:00:30.35]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove [11 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("^friends$", RegexOptions.IgnoreCase) })
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 48
+   at AspireAcademy.Api.Tests.E2E.SocialFlowTests.FullFriendLifecycle_RequestAcceptListRemove() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 77
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for socdecA_84657209_2364
+[E2E] API seed SUCCESS for socdecB_84657209_0fbe
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.DeclineFriendRequest_RemovedFromPending [1 s]
+[E2E] API seed SUCCESS for socach_84658381_dbd2
+[E2E] API seed SUCCESS for socself_84659472_2e1a
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.AchievementUnlocks_AfterCompletingFirstLesson [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.SocialFlowTests.CannotFriendYourself_ErrorShown [599 ms]
+[E2E] API seed SUCCESS for soclb_84660069_a91f
+[xUnit.net 00:00:37.41]     AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp [FAIL]
+[xUnit.net 00:00:37.41]       User should appear in all-time leaderboard after earning XP
+[xUnit.net 00:00:37.41]       Stack Trace:
+[xUnit.net 00:00:37.41]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(177,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp()
+[xUnit.net 00:00:37.41]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs(180,0): at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp()
+[xUnit.net 00:00:37.41]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp [4 s]
+  Error Message:
+   User should appear in all-time leaderboard after earning XP
+  Stack Trace:
+     at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 177
+   at AspireAcademy.Api.Tests.E2E.SocialFlowTests.UserAppearsInAllTimeLeaderboard_AfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialFlowTests.cs:line 180
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for sociallock_84664284_7dee
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LockedAchievementShowsLockIndicator [4 s]
+[E2E] API seed SUCCESS for socialwk_84668332_19c2
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardWeeklyTabRenders [1 s]
+[E2E] API seed SUCCESS for socialfilt_84669417_bbcb
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementFilterTabsSwitchContent [3 s]
+[E2E] API seed SUCCESS for socialat_84672573_7169
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardAllTimeTabRenders [2 s]
+[E2E] API seed SUCCESS for sociallb_84674769_591d
+[xUnit.net 00:00:51.18]     AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp [FAIL]
+[xUnit.net 00:00:51.18]       User should appear in leaderboard with (you) marker or rank footer after earning XP
+[xUnit.net 00:00:51.18]       Stack Trace:
+[xUnit.net 00:00:51.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(102,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp()
+[xUnit.net 00:00:51.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs(105,0): at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp()
+[xUnit.net 00:00:51.18]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp [3 s]
+  Error Message:
+   User should appear in leaderboard with (you) marker or rank footer after earning XP
+  Stack Trace:
+     at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 102
+   at AspireAcademy.Api.Tests.E2E.SocialDepthTests.UserAppearsInAllTimeLeaderboardAfterEarningXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/SocialDepthTests.cs:line 105
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for socialfr_84678050_4b0f
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.LeaderboardFriendsTabRenders [3 s]
+[E2E] API seed SUCCESS for socialach_84681248_940a
+  Passed AspireAcademy.Api.Tests.E2E.SocialDepthTests.AchievementsGridRendersWithCards [1 s]
+[E2E] API seed SUCCESS for skipunlock_84682301_e299
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonUnlocksNextLesson [1 s]
+[E2E] API seed SUCCESS for skipbanner_84683930_8764
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkippingLessonShowsSkippedBannerAndUndoButton [2 s]
+[E2E] API seed SUCCESS for skip_84686122_3327
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.SkipLessonButtonIsVisibleOnUncompletedLesson [2 s]
+[E2E] API seed SUCCESS for unskip_84688155_4cc5
+  Passed AspireAcademy.Api.Tests.E2E.SkipLessonTests.UnskipViaApiThenCompleteForXp [2 s]
+[E2E] API seed SUCCESS for sidebar_84690405_7e91
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.SidebarShowsWorldsSectionWithWorldNames [960 ms]
+[E2E] API seed SUCCESS for sidenav_84691362_d75b
+[E2E] API seed SUCCESS for sidecollapse_84692390_f268
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingModuleNavigatesToWorldPage [1 s]
+[E2E] API seed SUCCESS for sideexpand_84693418_bfab
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingExpandedWorldCollapsesModules [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.SidebarTests.ClickingUnlockedWorldExpandsToShowModules [993 ms]
+[E2E] API seed SUCCESS for quizsel_84694412_bdea
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.SelectingAnswerEnablesSubmitButton [11 s]
+[E2E] API seed SUCCESS for quizsub_84705670_0bb0
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.SubmittingAnswerShowsFeedback [11 s]
+[E2E] API seed SUCCESS for quizerr_84716973_7d18
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.InvalidQuizId_ShowsError [1 s]
+[E2E] API seed SUCCESS for quizload_84718537_e4a5
+  Passed AspireAcademy.Api.Tests.E2E.QuizTests.QuizPageLoadsWithQuestionAndDisabledSubmit [11 s]
+[E2E] API seed SUCCESS for qgretake_84729825_a7d0
+[E2E] API seed SUCCESS for qgwrong_84730571_29df
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.CannotReEarnXp_OnQuizRetake [761 ms]
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.SubmitWrongAnswer_ShowsRedFeedbackWithIncorrectText [16 s]
+[E2E] API seed SUCCESS for qgperfect_84746831_5bbc
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.PerfectScore_ShowsBonusXpAndConfetti [16 s]
+[E2E] API seed SUCCESS for qgcorrect_84763128_191f
+  Passed AspireAcademy.Api.Tests.E2E.QuizGradingTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithCorrectText [16 s]
+[E2E] API seed SUCCESS for quizcorrect_84779417_a6e5
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitCorrectAnswer_ShowsGreenFeedbackWithPoints [16 s]
+[E2E] API seed SUCCESS for quizresults_84795670_202f
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.CompleteAllQuestions_ShowsResultsWithScoreFormat [16 s]
+[E2E] API seed SUCCESS for quizxp_84811949_9739
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.QuizCompletion_XpBarIncreases [16 s]
+[E2E] API seed SUCCESS for quizwrong_84828568_c674
+  Passed AspireAcademy.Api.Tests.E2E.QuizDepthTests.SubmitWrongAnswer_ShowsRedFeedbackWithZeroPoints [16 s]
+[E2E] API seed SUCCESS for profcancel_84844845_3b23
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.CancelButtonClosesEditDialog [1 s]
+[E2E] API seed SUCCESS for profile_84846390_bb37
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.ProfilePageShowsOwnUserInfo [1 s]
+[E2E] API seed SUCCESS for profedit_84847930_ffa9
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.EditProfileButtonOpensDialogWithFormFields [1 s]
+[E2E] API seed SUCCESS for profavatar_84849023_a6c0
+  Passed AspireAcademy.Api.Tests.E2E.ProfileTests.RandomizeAvatarButtonWorksWithoutError [3 s]
+[E2E] API seed SUCCESS for profeditname_84852079_f046
+  Passed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.EditDisplayName_SaveRefresh_NamePersisted [4 s]
+[E2E] API seed SUCCESS for profavatar2_84856212_0312
+  Passed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.RandomizeAvatar_AvatarImageSrcChanges [4 s]
+[E2E] API seed SUCCESS for profuser_84860249_d996
+  Passed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.OwnProfileShowsCorrectUsername [1 s]
+[E2E] API seed SUCCESS for profxp_84861272_fd70
+[xUnit.net 00:04:05.20]     AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp [FAIL]
+[xUnit.net 00:04:05.20]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:04:05.20]       Error: element(s) not found 
+[xUnit.net 00:04:05.20]       Call log:
+[xUnit.net 00:04:05.20]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:04:05.20]         - waiting for GetByTestId("profile-stats")
+[xUnit.net 00:04:05.20]       Stack Trace:
+[xUnit.net 00:04:05.20]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:04:05.20]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:04:05.20]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(42,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp()
+[xUnit.net 00:04:05.20]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs(55,0): at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp()
+[xUnit.net 00:04:05.20]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp [10 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByTestId("profile-stats")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 42
+   at AspireAcademy.Api.Tests.E2E.ProfileDepthTests.ProfileStatsShowCorrectXp() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ProfileDepthTests.cs:line 55
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for prfviewA_84872081_4bc8
+[E2E] API seed SUCCESS for prfviewB_84872081_71a4
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.ViewAnotherUsersProfile_ShowsTheirInfo [1 s]
+[E2E] API seed SUCCESS for prfavatar_84873686_f7ba
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.RandomizeAvatar_AvatarImageSrcChanges [4 s]
+[E2E] API seed SUCCESS for prfname_84877779_b6a0
+  Passed AspireAcademy.Api.Tests.E2E.ProfileActionsTests.EditDisplayName_SaveRefreshPage_NewNamePersists [4 s]
+[E2E] API seed SUCCESS for nav404_84881900_6e37
+[E2E] API seed SUCCESS for navback_84882567_0459
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.NotFoundPageShows404ForInvalidUrl [671 ms]
+[E2E] API seed SUCCESS for navfriend_84883675_b6eb
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.WorldPageBackToDashboardLinkWorks [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarFriendsLinkNavigates [985 ms]
+[E2E] API seed SUCCESS for navdeep_84884661_4640
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.DeepLinkToWorldWorksWhenAuthed [1 s]
+[E2E] API seed SUCCESS for navworld_84886175_e0e9
+[E2E] API seed SUCCESS for navhistory_84887151_2f19
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.DashboardClickWorldNavigatesToWorldPage [978 ms]
+[E2E] API seed SUCCESS for navlb_84887940_f838
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.BrowserBackButtonWorksAfterNavigation [788 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarLeaderboardLinkNavigates [1 s]
+[E2E] API seed SUCCESS for navach_84888943_63ed
+[E2E] API seed SUCCESS for navprof_84889918_a2e6
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarAchievementsLinkNavigates [974 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarProfileLinkNavigates [908 ms]
+[E2E] API seed SUCCESS for nav_84890829_9ea6
+[E2E] API seed SUCCESS for navdash_84891821_c9f7
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarHomeLinkNavigates [995 ms]
+[E2E] API seed SUCCESS for navtheme2_84893311_0839
+  Passed AspireAcademy.Api.Tests.E2E.NavigationTests.SidebarDashboardLinkNavigates [1 s]
+[E2E] API seed SUCCESS for navthemep2_84894813_ba34
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemeToggle_PageColorsChange [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.ThemePersistsOnRefresh [1 s]
+[E2E] API seed SUCCESS for navworld2_84896762_4345
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.SidebarClickWorld_ModulesAppear [995 ms]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.DeepLinkLessonUnauthenticated_RedirectsToLogin [448 ms]
+[E2E] API seed SUCCESS for naverr2_84898202_7294
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.InvalidLessonUrl_ShowsError [2 s]
+[E2E] API seed SUCCESS for navmod2_84900781_c76f
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.SidebarClickModule_NavigatesToWorldPage [1 s]
+[E2E] API seed SUCCESS for navdeep2_84901825_e1b4
+[E2E] API seed SUCCESS for navback2_84902910_f6fb
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.DeepLinkLessonAuthenticated_ShowsLesson [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.NavigationDepthTests.BrowserBackButtonWorks [813 ms]
+  Passed AspireAcademy.Api.Tests.E2E.LoadingStateTests.DashboardShowsContentWhileApiIsSlow [4 s]
+[E2E] API seed SUCCESS for loadlb_84908008_9c8d
+  Passed AspireAcademy.Api.Tests.E2E.LoadingStateTests.LeaderboardShowsTabsWhileFetching [1 s]
+[E2E] API seed SUCCESS for lscompleted_84909128_f745
+[E2E] API seed SUCCESS for lslast_84910287_3580
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.AlreadyCompletedLesson_ShowsCompletedButtonFromStart [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.NextButtonHidden_OnLastLessonInModule [4 s]
+[E2E] API seed SUCCESS for lslocked_84914555_dfb5
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.PreviewLockedLesson_ContentVisibleButMarkCompleteHidden [4 s]
+[E2E] API seed SUCCESS for lsreset_84918791_2103
+[xUnit.net 00:04:59.23]     AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson [FAIL]
+[xUnit.net 00:04:59.23]       Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+[xUnit.net 00:04:59.23]       But was: 'Mark Complete (+50 XP)' 
+[xUnit.net 00:04:59.23]       Call log:
+[xUnit.net 00:04:59.23]         - Expect "ToHaveTextAsync" with timeout 5000ms
+[xUnit.net 00:04:59.23]         - waiting for GetByTestId("mark-complete-btn")
+[xUnit.net 00:04:59.23]           9 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+[xUnit.net 00:04:59.23]             - unexpected value "Mark Complete (+50 XP)"
+[xUnit.net 00:04:59.23]       Stack Trace:
+[xUnit.net 00:04:59.23]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:04:59.23]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:04:59.23]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:04:59.23]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs(39,0): at AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson()
+[xUnit.net 00:04:59.23]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs(42,0): at AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson()
+[xUnit.net 00:04:59.23]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson [7 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+But was: 'Mark Complete (+50 XP)' 
+Call log:
+  - Expect "ToHaveTextAsync" with timeout 5000ms
+  - waiting for GetByTestId("mark-complete-btn")
+    9 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+      - unexpected value "Mark Complete (+50 XP)"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs:line 39
+   at AspireAcademy.Api.Tests.E2E.LessonStateTests.MarkCompleteResets_WhenNavigatingToNextLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonStateTests.cs:line 42
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for lsskip_84926083_1644
+  Passed AspireAcademy.Api.Tests.E2E.LessonStateTests.SkipLesson_ShowsSkipIconAndUnlocksNext [2 s]
+[E2E] API seed SUCCESS for back_84928330_9f1e
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.BackButtonNavigatesAwayFromLessonPage [1 s]
+[E2E] API seed SUCCESS for backtext_84929974_a1da
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.BackButtonTextContainsBackTo [1 s]
+[E2E] API seed SUCCESS for prevnext_84931555_9af0
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.LessonPageShowsPreviousAndNextButtons [2 s]
+[E2E] API seed SUCCESS for next_84933718_0c8b
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.NextButtonNavigatesToDifferentPage [2 s]
+[E2E] API seed SUCCESS for prev_84935846_7d84
+  Passed AspireAcademy.Api.Tests.E2E.LessonNavigationTests.PreviousButtonNavigatesBack [1 s]
+[E2E] API seed SUCCESS for flowback_84937598_08bb
+[xUnit.net 00:05:22.35]     AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage [FAIL]
+[xUnit.net 00:05:22.35]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/worlds/'
+[xUnit.net 00:05:22.35]       But was: 'http://localhost:5173/dashboard' 
+[xUnit.net 00:05:22.35]       Call log:
+[xUnit.net 00:05:22.35]         - Expect "ToHaveURLAsync" with timeout 10000ms
+[xUnit.net 00:05:22.35]           14 × unexpected value "http://localhost:5173/dashboard"
+[xUnit.net 00:05:22.35]       Stack Trace:
+[xUnit.net 00:05:22.35]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:05:22.35]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:05:22.35]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:05:22.35]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(193,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage()
+[xUnit.net 00:05:22.35]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(195,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage()
+[xUnit.net 00:05:22.35]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage [11 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/worlds/'
+But was: 'http://localhost:5173/dashboard' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 10000ms
+    14 × unexpected value "http://localhost:5173/dashboard"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 193
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.BackButtonNavigatesToModulePage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 195
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for flownext_84949228_dd93
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.NextButtonNavigates_UrlChanges [2 s]
+[E2E] API seed SUCCESS for flowxp_84951382_983c
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_XpBarValueIncreases [4 s]
+[E2E] API seed SUCCESS for flowprev_84955843_50db
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.PreviousButtonHiddenOnFirstLesson [2 s]
+[E2E] API seed SUCCESS for flowcomplete_84957888_e17d
+[xUnit.net 00:05:38.06]     AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled [FAIL]
+[xUnit.net 00:05:38.06]       Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+[xUnit.net 00:05:38.06]       But was: 'Mark Complete (+50 XP)' 
+[xUnit.net 00:05:38.06]       Call log:
+[xUnit.net 00:05:38.06]         - Expect "ToHaveTextAsync" with timeout 5000ms
+[xUnit.net 00:05:38.06]         - waiting for GetByTestId("mark-complete-btn")
+[xUnit.net 00:05:38.06]           9 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+[xUnit.net 00:05:38.06]             - unexpected value "Mark Complete (+50 XP)"
+[xUnit.net 00:05:38.06]       Stack Trace:
+[xUnit.net 00:05:38.06]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:05:38.06]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:05:38.06]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:05:38.06]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(51,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled()
+[xUnit.net 00:05:38.06]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(57,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled()
+[xUnit.net 00:05:38.06]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled [7 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+But was: 'Mark Complete (+50 XP)' 
+Call log:
+  - Expect "ToHaveTextAsync" with timeout 5000ms
+  - waiting for GetByTestId("mark-complete-btn")
+    9 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+      - unexpected value "Mark Complete (+50 XP)"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 51
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.MarkComplete_ButtonChangesToCompletedAndDisabled() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 57
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for flowdbl_84964929_9f86
+[xUnit.net 00:05:45.27]     AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted [FAIL]
+[xUnit.net 00:05:45.27]       Microsoft.Playwright.PlaywrightException : Locator expected not to be visible 
+[xUnit.net 00:05:45.27]       Call log:
+[xUnit.net 00:05:45.27]         - Expect "ToBeVisibleAsync" with timeout 5000ms
+[xUnit.net 00:05:45.27]         - waiting for GetByText(new Regex("failed to mark complete|error", RegexOptions.IgnoreCase))
+[xUnit.net 00:05:45.27]           9 × locator resolved to <p>…</p>
+[xUnit.net 00:05:45.27]             - unexpected value "visible"
+[xUnit.net 00:05:45.27]       Stack Trace:
+[xUnit.net 00:05:45.27]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:05:45.27]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:05:45.27]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(115,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted()
+[xUnit.net 00:05:45.27]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs(118,0): at AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted()
+[xUnit.net 00:05:45.27]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted [7 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected not to be visible 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 5000ms
+  - waiting for GetByText(new Regex("failed to mark complete|error", RegexOptions.IgnoreCase))
+    9 × locator resolved to <p>…</p>
+      - unexpected value "visible"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 115
+   at AspireAcademy.Api.Tests.E2E.LessonFlowTests.DoubleClickMarkComplete_NoErrorStillCompleted() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonFlowTests.cs:line 118
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for lessonmd_84972142_14f9
+  Passed AspireAcademy.Api.Tests.E2E.LessonFlowTests.NavigateToLearnLesson_ShowsMarkdownContent [1 s]
+[E2E] API seed SUCCESS for markdone_84973766_a00f
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.ClickingMarkComplete_ShowsCompletedState [2 s]
+[E2E] API seed SUCCESS for revisit_84975901_0e00
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.RevisitingCompletedLesson_ShowsMarkCompleteButton [2 s]
+[E2E] API seed SUCCESS for dblclick_84977918_8262
+  Passed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.RapidDoubleClick_HandledGracefully [2 s]
+[E2E] API seed SUCCESS for complete_84980110_a166
+[xUnit.net 00:06:00.27]     AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson [FAIL]
+[xUnit.net 00:06:00.27]       Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+[xUnit.net 00:06:00.27]       But was: 'Mark Complete (+50 XP)' 
+[xUnit.net 00:06:00.27]       Call log:
+[xUnit.net 00:06:00.27]         - Expect "ToHaveTextAsync" with timeout 5000ms
+[xUnit.net 00:06:00.27]         - waiting for GetByTestId("mark-complete-btn")
+[xUnit.net 00:06:00.27]           9 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+[xUnit.net 00:06:00.27]             - unexpected value "Mark Complete (+50 XP)"
+[xUnit.net 00:06:00.27]       Stack Trace:
+[xUnit.net 00:06:00.27]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:06:00.27]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:06:00.27]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:06:00.27]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonCompleteTests.cs(25,0): at AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson()
+[xUnit.net 00:06:00.27]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonCompleteTests.cs(27,0): at AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson()
+[xUnit.net 00:06:00.27]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson [7 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to have text matching regex 'mark complete'
+But was: 'Mark Complete (+50 XP)' 
+Call log:
+  - Expect "ToHaveTextAsync" with timeout 5000ms
+  - waiting for GetByTestId("mark-complete-btn")
+    9 × locator resolved to <button type="button" data-testid="mark-complete-btn" class="chakra-button css-1gblto9">Mark Complete (+50 XP)</button>
+      - unexpected value "Mark Complete (+50 XP)"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonCompleteTests.cs:line 25
+   at AspireAcademy.Api.Tests.E2E.LessonCompleteTests.MarkCompleteButtonStartsEnabledForIncompleteLesson() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/LessonCompleteTests.cs:line 27
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for lballtime_84987138_9aee
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.SwitchingToAllTimeTabLoadsData [2 s]
+[E2E] API seed SUCCESS for lbweekly_84989310_fc8b
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.WeeklyTabShowsResetsMondayNote [1 s]
+[E2E] API seed SUCCESS for lbfriends_84990433_6f04
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.SwitchingToFriendsTabShowsRelevantContent [3 s]
+[E2E] API seed SUCCESS for leader_84993625_1901
+  Passed AspireAcademy.Api.Tests.E2E.LeaderboardTests.LeaderboardPageLoadsWithWeeklyTabActive [1 s]
+[xUnit.net 00:06:25.99]     AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney [FAIL]
+[xUnit.net 00:06:25.99]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:06:25.99]       Error: element(s) not found 
+[xUnit.net 00:06:25.99]       Call log:
+[xUnit.net 00:06:25.99]         - Expect "ToBeVisibleAsync" with timeout 15000ms
+[xUnit.net 00:06:25.99]         - waiting for GetByTestId("quiz-submit")
+[xUnit.net 00:06:25.99]       Stack Trace:
+[xUnit.net 00:06:25.99]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:06:25.99]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:06:25.99]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs(149,0): at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney()
+[xUnit.net 00:06:25.99]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs(253,0): at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney()
+[xUnit.net 00:06:25.99]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney [18 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 15000ms
+  - waiting for GetByTestId("quiz-submit")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs:line 149
+   at AspireAcademy.Api.Tests.E2E.FullUserJourneyTests.CompleteFirstSessionUserJourney() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/FullUserJourneyTests.cs:line 253
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for shortsearch_85012868_ebde
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.SearchInputWithShortQueryDoesNotSearch [1 s]
+[E2E] API seed SUCCESS for adder_85014470_9674
+[E2E] API seed SUCCESS for addee_85014470_10e9
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.AddFriendButtonSendsFriendRequest [3 s]
+[E2E] API seed SUCCESS for friend_85018437_1fc3
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.FriendsPageLoadsWithTabs [1 s]
+[E2E] API seed SUCCESS for searcher_85019459_7b9f
+[E2E] API seed SUCCESS for searchee_85019459_225b
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.SearchFindsUsers [1 s]
+[E2E] API seed SUCCESS for nofriend_85021398_2b29
+  Passed AspireAcademy.Api.Tests.E2E.FriendsTests.EmptyFriendsListShowsEmptyState [1 s]
+[E2E] API seed SUCCESS for error404btn_85022431_e717
+[E2E] API seed SUCCESS for errworld_85023493_73c0
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.NotFoundPage_GoToDashboardButtonWorks [680 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedDashboardRedirectsToLogin [387 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidWorldIdShowsNotFound [2 s]
+[E2E] API seed SUCCESS for erruser_85026043_5fde
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidUserProfileShowsErrorOrEmptyState [3 s]
+[E2E] API seed SUCCESS for errlesson_85030478_6307
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedLeaderboardRedirectsToLogin [404 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedFriendsRedirectsToLogin [390 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidLessonIdShowsNotFound [2 s]
+[E2E] API seed SUCCESS for errquiz_85033084_5daf
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidQuizIdShowsError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedAchievementsRedirectsToLogin [398 ms]
+[E2E] API seed SUCCESS for error404_85034942_e3b2
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedLessonsRedirectsToLogin [377 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidUrlShows404Page [658 ms]
+[E2E] API seed SUCCESS for errchallenge_85035601_fe39
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.InvalidChallengeIdShowsError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorStateTests.UnauthenticatedProfileRedirectsToLogin [396 ms]
+  Passed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.ProtectedPageWithoutAuth_RedirectsToLogin [446 ms]
+[E2E] API seed SUCCESS for errlesson2_85037512_19a9
+  Passed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidLessonId_ShowsErrorState [2 s]
+[E2E] API seed SUCCESS for errworld2_85040109_63df
+  Passed AspireAcademy.Api.Tests.E2E.ErrorHandlingTests.InvalidWorldId_ShowsErrorState [2 s]
+[E2E] API seed SUCCESS for icons_85042656_219c
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.LessonListShowsCorrectTypeIcons [1 s]
+[E2E] API seed SUCCESS for worldback_85044215_7d58
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.WorldPageBackToDashboardWorks [1 s]
+[E2E] API seed SUCCESS for dashxp_85045789_2c3d
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.DashboardShowsXpStats [980 ms]
+[E2E] API seed SUCCESS for quizclick_85046767_2116
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingQuizLessonNavigatesToQuizzesPage [1 s]
+[E2E] API seed SUCCESS for lessonclick_85048685_d2c3
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingLearnLessonNavigatesToLessonsPage [1 s]
+[E2E] API seed SUCCESS for module_85050262_aa75
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.WorldPageShowsModulesWithLessons [1 s]
+[E2E] API seed SUCCESS for dashclick_85051855_e048
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingWorldCardNavigatesToWorldPage [1 s]
+[E2E] API seed SUCCESS for dash_85052849_0ca6
+[E2E] API seed SUCCESS for chalclick_85053813_51d8
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.DashboardShowsWelcomeMessageAndWorldCards [963 ms]
+[E2E] API seed SUCCESS for chalhint_85055657_b3e1
+  Passed AspireAcademy.Api.Tests.E2E.DashboardWorldTests.ClickingChallengeLessonNavigatesToChallengesPage [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.HintButtonRevealsFirstHint [3 s]
+[E2E] API seed SUCCESS for chalinstr_85059026_98c6
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.InstructionsPanelShowsChallengeDescription [3 s]
+[E2E] API seed SUCCESS for chaltests_85062328_d298
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.TestCaseDescriptionsListedWithUncheckedIcons [3 s]
+[E2E] API seed SUCCESS for chalmonaco_85065583_e221
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.NavigateToChallenge_MonacoEditorLoads [3 s]
+[E2E] API seed SUCCESS for chalstarter_85068859_ba4d
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeTests.EditorHasStarterCodePreFilled [3 s]
+[E2E] API seed SUCCESS for chalinst_85072128_54fc
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.InstructionsPanelShowsChallengeDescription [3 s]
+[E2E] API seed SUCCESS for chalrun_85075373_1a03
+[xUnit.net 00:07:41.76]     AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible [FAIL]
+[xUnit.net 00:07:41.76]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:07:41.76]       Error: element(s) not found 
+[xUnit.net 00:07:41.76]       Call log:
+[xUnit.net 00:07:41.76]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:07:41.76]         - waiting for GetByTestId("challenge-run")
+[xUnit.net 00:07:41.76]       Stack Trace:
+[xUnit.net 00:07:41.76]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:07:41.76]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:07:41.76]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(138,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible()
+[xUnit.net 00:07:41.76]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(145,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible()
+[xUnit.net 00:07:41.76]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible [13 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByTestId("challenge-run")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 138
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickRun_OutputPanelBecomesVisible() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 145
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for chalhint2_85088635_b2e3
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickFirstHintButton_HintTextAppears [3 s]
+[E2E] API seed SUCCESS for chalsubmit_85092005_8fff
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ClickSubmit_TestResultsSectionAppears [8 s]
+[E2E] API seed SUCCESS for chaltests_85100334_ab13
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TestCaseDescriptionsListed [3 s]
+[E2E] API seed SUCCESS for chaltype_85103568_a74b
+[xUnit.net 00:08:12.60]     AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges [FAIL]
+[xUnit.net 00:08:12.60]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:08:12.60]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:08:12.60]       Call log:
+[xUnit.net 00:08:12.60]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:08:12.60]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:08:12.60]       Stack Trace:
+[xUnit.net 00:08:12.60]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:08:12.60]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:08:12.60]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:08:12.60]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(178,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password)
+[xUnit.net 00:08:12.60]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(14,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.GoToChallenge(IPage page, String username)
+[xUnit.net 00:08:12.60]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(98,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges()
+[xUnit.net 00:08:12.60]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs(120,0): at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges()
+[xUnit.net 00:08:12.60]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 178
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.GoToChallenge(IPage page, String username) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 14
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 98
+   at AspireAcademy.Api.Tests.E2E.ChallengeRealTests.TypeCodeInEditor_ContentChanges() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeRealTests.cs:line 120
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for chalload_85119469_5e77
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeRealTests.ChallengePageLoads_MonacoEditorVisible [3 s]
+[E2E] API seed SUCCESS for cflhints_85122843_116e
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.HintsRevealProgressively [5 s]
+[E2E] API seed SUCCESS for cflautoc_85128327_ec10
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.AutocompletePopup_AppearsWhenTypingBuilderAdd [7 s]
+[E2E] API seed SUCCESS for cflnav_85135394_6b74
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.NavigateToChallenge_AfterCompletingPrerequisitesViaApi [3 s]
+[E2E] API seed SUCCESS for cflsubmit_85138725_9993
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickSubmit_TestCaseResultsShownWithIcons [8 s]
+[E2E] API seed SUCCESS for cflrun_85147131_ac7b
+[xUnit.net 00:08:53.70]     AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults [FAIL]
+[xUnit.net 00:08:53.70]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:08:53.70]       Error: element(s) not found 
+[xUnit.net 00:08:53.70]       Call log:
+[xUnit.net 00:08:53.70]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:08:53.70]         - waiting for GetByTestId("challenge-run")
+[xUnit.net 00:08:53.70]       Stack Trace:
+[xUnit.net 00:08:53.70]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:08:53.71]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:08:53.71]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeFlowTests.cs(131,0): at AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults()
+[xUnit.net 00:08:53.71]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeFlowTests.cs(142,0): at AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults()
+[xUnit.net 00:08:53.71]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults [13 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByTestId("challenge-run")
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeFlowTests.cs:line 131
+   at AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.ClickRun_OutputPanelShowsValidationResults() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/ChallengeFlowTests.cs:line 142
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for cflmonaco_85160575_d815
+  Passed AspireAcademy.Api.Tests.E2E.ChallengeFlowTests.MonacoEditorLoads_WithStarterCodeVisible [3 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithMismatchedPasswords_ShowsValidationError [490 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithEmptyEmail_ShowsValidationError [466 ms]
+[E2E] API seed SUCCESS for auth_85165052_f76d
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithValidData_RedirectsToDashboard [937 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterShowsDashboardWelcomeWithDisplayName [839 ms]
+[E2E] API seed SUCCESS for regvisit_85167300_62fd
+[E2E] API seed SUCCESS for wrongpw_85167937_6d2b
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.VisitProtectedPageWhileLoggedOut_RedirectsToLogin [471 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.VisitRegisterWhileLoggedIn_ShowsRegisterPage [636 ms]
+[E2E] API seed SUCCESS for dup_85168994_e8f7
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithWrongPassword_ShowsErrorMessage [1 s]
+[E2E] API seed SUCCESS for logoutblock_85170564_004c
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithDuplicateUsername_ShowsServerError [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithEmptyFields_StaysOnLoginPage [410 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LogoutPreventsAccessToDashboard [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithShortPassword_ShowsValidationError [477 ms]
+[E2E] API seed SUCCESS for logout_85173942_a6ab
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginShowsDashboardWithCorrectDisplayName [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RegisterWithEmptyUsername_ShowsValidationError [477 ms]
+[E2E] API seed SUCCESS for login_85174938_a630
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.Logout_RedirectsToLogin [994 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithValidCredentials_RedirectsToDashboard [1 s]
+[E2E] API seed SUCCESS for refresh_85176036_fdf0
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.RefreshWhileLoggedIn_StaysOnDashboard [1 s]
+[E2E] API seed SUCCESS for advquiz_85178005_f95f
+  Passed AspireAcademy.Api.Tests.E2E.AuthTests.LoginWithNonExistentUser_ShowsErrorMessage [556 ms]
+[xUnit.net 00:09:22.34]     AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer [FAIL]
+[xUnit.net 00:09:22.34]       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[xUnit.net 00:09:22.34]       Error: element(s) not found 
+[xUnit.net 00:09:22.34]       Call log:
+[xUnit.net 00:09:22.34]         - Expect "ToBeVisibleAsync" with timeout 10000ms
+[xUnit.net 00:09:22.34]         - waiting for GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) })
+[xUnit.net 00:09:22.34]       Stack Trace:
+[xUnit.net 00:09:22.34]         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:09:22.34]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:09:22.34]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(56,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer()
+[xUnit.net 00:09:22.34]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(59,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer()
+[xUnit.net 00:09:22.34]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer [11 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+Error: element(s) not found 
+Call log:
+  - Expect "ToBeVisibleAsync" with timeout 10000ms
+  - waiting for GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) })
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 90
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 56
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.QuizSubmitButtonDisabledWithNoAnswer() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 59
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for advlesson_85189303_f8e0
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.MarkCompleteButtonDisabledAfterSuccess [2 s]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.RegisterValidationErrorsShowForEmptyFields [449 ms]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.ValidationErrorsClearWhenUserStartsTyping [453 ms]
+[E2E] API seed SUCCESS for advsidebar_85192649_3b4a
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.SidebarWorldExpandShowsModules [1 s]
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.PasswordMismatchShowsError [476 ms]
+[E2E] API seed SUCCESS for advpersist_85194193_a41c
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.RefreshDashboardAfterLoginStaysLoggedIn [1 s]
+[E2E] API seed SUCCESS for advclear_85195690_6102
+[E2E] API seed SUCCESS for advback_85196798_5eb1
+  Passed AspireAcademy.Api.Tests.E2E.AdversarialTests.ClearingAuthRedirectsToLogin [1 s]
+[xUnit.net 00:09:41.43]     AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage [FAIL]
+[xUnit.net 00:09:41.43]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/worlds/'
+[xUnit.net 00:09:41.43]       But was: 'http://localhost:5173/dashboard' 
+[xUnit.net 00:09:41.44]       Call log:
+[xUnit.net 00:09:41.44]         - Expect "ToHaveURLAsync" with timeout 10000ms
+[xUnit.net 00:09:41.44]           14 × unexpected value "http://localhost:5173/dashboard"
+[xUnit.net 00:09:41.44]       Stack Trace:
+[xUnit.net 00:09:41.44]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:09:41.44]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:09:41.44]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:09:41.44]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(187,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage()
+[xUnit.net 00:09:41.44]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(189,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage()
+[xUnit.net 00:09:41.44]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage [11 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/worlds/'
+But was: 'http://localhost:5173/dashboard' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 10000ms
+    14 × unexpected value "http://localhost:5173/dashboard"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 187
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.BackButtonFromLessonNavigatesToWorldPage() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 189
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for advprofile_85208391_2be7
+[xUnit.net 00:09:45.10]     AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState [FAIL]
+[xUnit.net 00:09:45.10]       Microsoft.Playwright.PlaywrightException : Error: strict mode violation: GetByText(new Regex("failed to load profile|user not found|not found|error", RegexOptions.IgnoreCase)) resolved to 2 elements:
+[xUnit.net 00:09:45.10]           1) <p class="css-uawlma">Failed to load profile</p> aka GetByText("Failed to load profile")
+[xUnit.net 00:09:45.10]           2) <p class="css-1q1nkrr">User not found.</p> aka GetByText("User not found.")
+[xUnit.net 00:09:45.10]       
+[xUnit.net 00:09:45.10]       Call log:
+[xUnit.net 00:09:45.10]           - checking visibility of GetByText(new Regex("failed to load profile|user not found|not found|error", RegexOptions.IgnoreCase))
+[xUnit.net 00:09:45.10]       Stack Trace:
+[xUnit.net 00:09:45.10]         /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+[xUnit.net 00:09:45.10]         /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+[xUnit.net 00:09:45.10]         /_/src/Playwright/Core/Frame.cs(869,0): at Microsoft.Playwright.Core.Frame.IsVisibleAsync(String selector, FrameIsVisibleOptions options)
+[xUnit.net 00:09:45.10]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(157,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState()
+[xUnit.net 00:09:45.10]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs(162,0): at AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState()
+[xUnit.net 00:09:45.10]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState [3 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Error: strict mode violation: GetByText(new Regex("failed to load profile|user not found|not found|error", RegexOptions.IgnoreCase)) resolved to 2 elements:
+    1) <p class="css-uawlma">Failed to load profile</p> aka GetByText("Failed to load profile")
+    2) <p class="css-1q1nkrr">User not found.</p> aka GetByText("User not found.")
+
+Call log:
+    - checking visibility of GetByText(new Regex("failed to load profile|user not found|not found|error", RegexOptions.IgnoreCase))
+  Stack Trace:
+     at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls) in /_/src/Playwright/Transport/Connection.cs:line 201
+   at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:line 499
+   at Microsoft.Playwright.Core.Frame.IsVisibleAsync(String selector, FrameIsVisibleOptions options) in /_/src/Playwright/Core/Frame.cs:line 869
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 157
+   at AspireAcademy.Api.Tests.E2E.AdversarialTests.InvalidUserProfileShowsErrorOrGracefulState() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdversarialTests.cs:line 162
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for nonadmin_85212058_608e
+  Passed AspireAcademy.Api.Tests.E2E.AdminTests.NonAdminUserDoesNotSeeAdminLink [974 ms]
+[E2E] API seed SUCCESS for noadmin2_85213027_048c
+  Passed AspireAcademy.Api.Tests.E2E.AdminTests.NonAdminNavigatingToAdmin_NoAdminContent [3 s]
+[xUnit.net 00:10:05.20]     AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards [FAIL]
+[xUnit.net 00:10:05.20]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:10:05.20]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:10:05.20]       Call log:
+[xUnit.net 00:10:05.20]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:10:05.20]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:10:05.20]       Stack Trace:
+[xUnit.net 00:10:05.20]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:10:05.20]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:10:05.20]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:10:05.20]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(36,0): at AspireAcademy.Api.Tests.E2E.AdminTests.EnsureAdminLoggedIn(IPage page)
+[xUnit.net 00:10:05.20]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(77,0): at AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards()
+[xUnit.net 00:10:05.20]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(89,0): at AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards()
+[xUnit.net 00:10:05.20]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.AdminTests.EnsureAdminLoggedIn(IPage page) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 36
+   at AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 77
+   at AspireAcademy.Api.Tests.E2E.AdminTests.AdminPageShowsStatsCards() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 89
+--- End of stack trace from previous location ---
+[xUnit.net 00:10:20.70]     AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar [FAIL]
+[xUnit.net 00:10:20.70]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:10:20.70]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:10:20.70]       Call log:
+[xUnit.net 00:10:20.70]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:10:20.70]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:10:20.70]       Stack Trace:
+[xUnit.net 00:10:20.70]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:10:20.70]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:10:20.70]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:10:20.70]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(36,0): at AspireAcademy.Api.Tests.E2E.AdminTests.EnsureAdminLoggedIn(IPage page)
+[xUnit.net 00:10:20.70]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(45,0): at AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar()
+[xUnit.net 00:10:20.70]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs(49,0): at AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar()
+[xUnit.net 00:10:20.70]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.AdminTests.EnsureAdminLoggedIn(IPage page) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 36
+   at AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 45
+   at AspireAcademy.Api.Tests.E2E.AdminTests.AdminUserSeesAdminLinkInSidebar() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminTests.cs:line 49
+--- End of stack trace from previous location ---
+[xUnit.net 00:10:36.18]     AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot [FAIL]
+[xUnit.net 00:10:36.18]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:10:36.18]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:10:36.18]       Call log:
+[xUnit.net 00:10:36.18]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:10:36.18]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:10:36.18]       Stack Trace:
+[xUnit.net 00:10:36.18]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:10:36.18]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:10:36.18]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:10:36.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(178,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password)
+[xUnit.net 00:10:36.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs(121,0): at AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot()
+[xUnit.net 00:10:36.18]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs(126,0): at AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot()
+[xUnit.net 00:10:36.18]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 178
+   at AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs:line 121
+   at AspireAcademy.Api.Tests.E2E.AdminFlowTests.AdminSeesAdminLinkInSidebar_NonAdminDoesNot() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs:line 126
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for admnonadm_85263137_fd1c
+  Passed AspireAcademy.Api.Tests.E2E.AdminFlowTests.NonAdminNavigatingToAdmin_RedirectedToDashboard [3 s]
+[xUnit.net 00:10:55.16]     AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works [FAIL]
+[xUnit.net 00:10:55.16]       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+[xUnit.net 00:10:55.16]       But was: 'http://localhost:5173/login' 
+[xUnit.net 00:10:55.16]       Call log:
+[xUnit.net 00:10:55.16]         - Expect "ToHaveURLAsync" with timeout 15000ms
+[xUnit.net 00:10:55.16]           19 × unexpected value "http://localhost:5173/login"
+[xUnit.net 00:10:55.16]       Stack Trace:
+[xUnit.net 00:10:55.16]         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[xUnit.net 00:10:55.16]         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:10:55.16]         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[xUnit.net 00:10:55.16]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs(178,0): at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password)
+[xUnit.net 00:10:55.16]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs(38,0): at AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works()
+[xUnit.net 00:10:55.16]         /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs(82,0): at AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works()
+[xUnit.net 00:10:55.16]         --- End of stack trace from previous location ---
+  Failed AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works [15 s]
+  Error Message:
+   Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/dashboard'
+But was: 'http://localhost:5173/login' 
+Call log:
+  - Expect "ToHaveURLAsync" with timeout 15000ms
+    19 × unexpected value "http://localhost:5173/login"
+  Stack Trace:
+     at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title) in /_/src/Playwright/Core/AssertionsBase.cs:line 92
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 66
+   at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options) in /_/src/Playwright/Core/AssertionsBase.cs:line 58
+   at AspireAcademy.Api.Tests.E2E.E2EHelpers.LoginUser(IPage page, String username, String password) in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/E2EHelpers.cs:line 178
+   at AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs:line 38
+   at AspireAcademy.Api.Tests.E2E.AdminFlowTests.SeedTestData_LoginWithSeededCredentials_Works() in /Users/adamratzman/source/repos/AspireAcademy/AspireAcademy.Api.Tests/E2E/AdminFlowTests.cs:line 82
+--- End of stack trace from previous location ---
+[E2E] API seed SUCCESS for achlocked_85282121_ca54
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.LockedAchievementsAreVisuallyDistinct [3 s]
+[E2E] API seed SUCCESS for achieve_85286002_9335
+[E2E] API seed SUCCESS for achfilter_85286893_39cb
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.AchievementsPageLoadsWithAllTab [904 ms]
+[xUnit.net 00:11:01.90]   Finished:    AspireAcademy.Api.Tests
+  Passed AspireAcademy.Api.Tests.E2E.AchievementsTests.SwitchingCategoryTabsFiltersAchievements [1 s]
+
+Test Run Failed.
+Total tests: 187
+     Passed: 167
+     Failed: 20
+ Total time: 11.0351 Minutes

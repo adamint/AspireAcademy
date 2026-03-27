@@ -14,7 +14,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture)
         await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/1.1.3");
         try
         {
-            await page.WaitForURLAsync("**/quizzes/**", new() { Timeout = 5_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 5_000 });
             var submitBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) });
             await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
             return true;
@@ -33,7 +33,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("quizload");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             if (!await NavigateToQuiz(page, username))
             {
@@ -55,7 +55,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("quizsel");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             if (!await NavigateToQuiz(page, username))
             {
@@ -91,7 +91,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("quizsub");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             if (!await NavigateToQuiz(page, username))
             {

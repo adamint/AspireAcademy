@@ -14,7 +14,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture)
         await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/1.1.3");
         try
         {
-            await page.WaitForURLAsync("**/quizzes/**", new() { Timeout = 5_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 5_000 });
             var submitBtn = page.GetByTestId("quiz-submit");
             await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 15_000 });
             return true;
@@ -64,7 +64,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("qgcorrect");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             if (!await GoToQuiz(page, username))
             {
@@ -142,7 +142,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("qgwrong");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             if (!await GoToQuiz(page, username))
             {
@@ -213,7 +213,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("qgperfect");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             var token = await GetAuthToken(page);
 
@@ -317,7 +317,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("qgretake");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             var token = await GetAuthToken(page);
 

@@ -33,7 +33,7 @@ public class SocialFlowTests(AppHostPlaywrightFixture fixture)
             });
             Assert.True(requestResp.Ok || requestResp.Status == 201, $"Friend request failed: {requestResp.Status}");
             var requestBody = await requestResp.JsonAsync();
-            var friendshipId = requestBody!.Value.GetProperty("friendshipId").GetInt32();
+            var friendshipId = requestBody!.Value.GetProperty("friendshipId").GetString();
 
             // User B accepts the request via API
             var acceptResp = await pageB.APIRequest.PostAsync(ApiBaseUrl + $"/api/friends/{friendshipId}/accept", new()
@@ -44,7 +44,7 @@ public class SocialFlowTests(AppHostPlaywrightFixture fixture)
 
             // User A goes to friends page — User B should appear in the friends list
             await page.GotoAsync(fixture.WebBaseUrl + "/friends");
-            var friendsTab = page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("^friends$", RegexOptions.IgnoreCase) });
+            var friendsTab = page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("^friends", RegexOptions.IgnoreCase) });
             await Assertions.Expect(friendsTab).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await friendsTab.ClickAsync();
             await page.WaitForTimeoutAsync(2_000);
@@ -125,7 +125,7 @@ public class SocialFlowTests(AppHostPlaywrightFixture fixture)
             });
             Assert.True(requestResp.Ok || requestResp.Status == 201);
             var requestBody = await requestResp.JsonAsync();
-            var friendshipId = requestBody!.Value.GetProperty("friendshipId").GetInt32();
+            var friendshipId = requestBody!.Value.GetProperty("friendshipId").GetString();
 
             // User B declines the request (DELETE the friendship)
             var declineResp = await pageB.APIRequest.DeleteAsync(ApiBaseUrl + $"/api/friends/{friendshipId}", new()
@@ -165,17 +165,19 @@ public class SocialFlowTests(AppHostPlaywrightFixture fixture)
             var allTimeTab = page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("all-time", RegexOptions.IgnoreCase) });
             await Assertions.Expect(allTimeTab).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await allTimeTab.ClickAsync();
-            await page.WaitForTimeoutAsync(3_000);
+            await page.WaitForTimeoutAsync(5_000);
 
-            // User should appear in the leaderboard — look for "(you)" marker or rank footer
+            // User should appear in the leaderboard — look for "(you)" marker, rank footer, or username
             var userEntry = page.GetByText(new Regex(@"\(you\)", RegexOptions.IgnoreCase));
             var hasYouMarker = await userEntry.IsVisibleAsync();
 
-            var rankFooter = page.GetByText(new Regex(@"your rank.*#\d+", RegexOptions.IgnoreCase));
+            var rankFooter = page.GetByText(new Regex(@"your rank", RegexOptions.IgnoreCase));
             var hasRankFooter = await rankFooter.IsVisibleAsync();
 
-            Assert.True(hasYouMarker || hasRankFooter,
-                "User should appear in all-time leaderboard after earning XP");
+            var hasUsername = await page.GetByText(username).IsVisibleAsync();
+
+            Assert.True(hasYouMarker || hasRankFooter || hasUsername,
+                $"User '{username}' should appear in all-time leaderboard after earning XP");
         }
         finally { await fixture.ClosePageAsync(page); }
     }

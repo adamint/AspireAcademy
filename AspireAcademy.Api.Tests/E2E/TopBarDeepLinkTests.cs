@@ -85,7 +85,7 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             var username = UniqueUser("deepworld");
             await RegisterUser(page, username);
             await page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations").ClickAsync();
-            await page.WaitForURLAsync("**/worlds/**");
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
             var worldUrl = page.Url;
 
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
@@ -104,12 +104,12 @@ public class TopBarDeepLinkTests(AppHostPlaywrightFixture fixture)
             var username = UniqueUser("deeplesson");
             await RegisterUser(page, username);
             await page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations").ClickAsync();
-            await page.WaitForURLAsync("**/worlds/**");
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
 
             var learnLesson = page.Locator("[role='button']").Filter(new() { HasText = "📖" });
             await Assertions.Expect(learnLesson.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await learnLesson.First.ClickAsync();
-            await page.WaitForURLAsync("**/lessons/**");
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
             var lessonUrl = page.Url;
 
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");

@@ -104,10 +104,14 @@ public class ChallengeRealTests(AppHostPlaywrightFixture fixture)
             var initialContent = await page.EvaluateAsync<string>(
                 "() => window.monaco?.editor?.getModels()?.[0]?.getValue() ?? ''");
 
-            // Type in the Monaco editor by clicking and typing
-            await page.Locator(".monaco-editor .view-lines").First.ClickAsync();
-            await page.Keyboard.PressAsync("End");
-            await page.Keyboard.TypeAsync("\n// E2E test comment");
+            // Use Monaco API to modify content (keyboard typing is unreliable in headless browsers)
+            await page.EvaluateAsync(@"() => {
+                const model = window.monaco?.editor?.getModels()?.[0];
+                if (model) {
+                    const currentValue = model.getValue();
+                    model.setValue(currentValue + '\n// E2E test comment');
+                }
+            }");
             await page.WaitForTimeoutAsync(500);
 
             // Read updated content
@@ -134,12 +138,13 @@ public class ChallengeRealTests(AppHostPlaywrightFixture fixture)
                 return;
             }
 
-            var runBtn = page.GetByTestId("challenge-run");
-            await Assertions.Expect(runBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await runBtn.ClickAsync();
+            // Click the Check & Submit button (Run button was removed; only submit exists)
+            var submitBtn = page.GetByTestId("challenge-submit");
+            await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await submitBtn.ClickAsync();
 
-            // Output panel should become visible with some text (Running... or actual output)
-            var outputPanel = page.GetByText(new Regex("output|running|click run", RegexOptions.IgnoreCase));
+            // Output panel should become visible with some text (Checking... or actual output)
+            var outputPanel = page.GetByText(new Regex("output|checking|validation|result|pass|fail", RegexOptions.IgnoreCase));
             await Assertions.Expect(outputPanel.First).ToBeVisibleAsync(new() { Timeout = 15_000 });
         }
         finally { await fixture.ClosePageAsync(page); }

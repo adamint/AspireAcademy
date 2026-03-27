@@ -14,7 +14,7 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture)
         await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/1.1.3");
         try
         {
-            await page.WaitForURLAsync("**/quizzes/**", new() { Timeout = 5_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 5_000 });
             var submitBtn = page.GetByTestId("quiz-submit");
             await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 15_000 });
             return true;
@@ -54,7 +54,7 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("quizcorrect");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             if (!await GoToQuiz(page, username))
             {
@@ -68,6 +68,12 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture)
                 // Try each radio option on the current question
                 var radios = page.Locator("input[type='radio']");
                 var radioCount = await radios.CountAsync();
+                Console.WriteLine($"[DIAG] Attempt {attempt}: radioCount={radioCount}, url={page.Url}");
+                if (radioCount == 0)
+                {
+                    var body = await page.Locator("main, [role='main'], body").First.TextContentAsync();
+                    Console.WriteLine($"[DIAG] Page content (first 300): {body?[..Math.Min(300, body?.Length ?? 0)]}");
+                }
 
                 for (var i = 0; i < radioCount; i++)
                 {
@@ -140,7 +146,7 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("quizwrong");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             if (!await GoToQuiz(page, username))
             {
@@ -208,7 +214,7 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("quizresults");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             if (!await GoToQuiz(page, username))
             {
@@ -294,7 +300,7 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture)
         {
             var username = UniqueUser("quizxp");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
 
             // Read XP before quiz
             var xpCounter = page.GetByText(new Regex(@"\d+/500"));

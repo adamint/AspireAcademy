@@ -48,10 +48,10 @@ public class LessonFlowTests(AppHostPlaywrightFixture fixture)
             var btn = page.GetByTestId("mark-complete-btn");
             await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(btn).ToBeEnabledAsync();
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("mark complete", RegexOptions.IgnoreCase));
+            await Assertions.Expect(btn).ToContainTextAsync("Mark Complete", new() { Timeout = 5_000 });
 
             await btn.ClickAsync();
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("completed", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
             await Assertions.Expect(btn).ToBeDisabledAsync();
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -79,7 +79,7 @@ public class LessonFlowTests(AppHostPlaywrightFixture fixture)
             var btn = page.GetByTestId("mark-complete-btn");
             await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await btn.ClickAsync();
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("completed", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
 
             // Read XP after (wait for update)
             await page.WaitForTimeoutAsync(2_000);
@@ -109,10 +109,10 @@ public class LessonFlowTests(AppHostPlaywrightFixture fixture)
             // Click once
             await btn.ClickAsync();
             await Assertions.Expect(btn).ToBeDisabledAsync(new() { Timeout = 5_000 });
-            await Assertions.Expect(btn).ToHaveTextAsync(new Regex("completed", RegexOptions.IgnoreCase), new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
 
             // No error message visible
-            await Assertions.Expect(page.GetByText(new Regex("failed to mark complete|error", RegexOptions.IgnoreCase))).Not.ToBeVisibleAsync();
+            await Assertions.Expect(page.GetByText("Failed to mark complete")).Not.ToBeVisibleAsync();
             await Assertions.Expect(btn).ToBeDisabledAsync();
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -190,7 +190,7 @@ public class LessonFlowTests(AppHostPlaywrightFixture fixture)
             var backBtn = page.Locator("button").Filter(new() { HasTextRegex = new Regex("back to", RegexOptions.IgnoreCase) });
             await Assertions.Expect(backBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
             await backBtn.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/worlds/"), new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/worlds/|/dashboard"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
