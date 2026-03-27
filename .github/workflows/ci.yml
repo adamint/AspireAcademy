@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  backend:
-    name: Backend Tests
+  backend-unit:
+    name: Backend Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,28 @@ jobs:
         run: dotnet build AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj --no-restore
 
       - name: Test
-        run: dotnet test AspireAcademy.Api.Tests/ --no-build --filter 'FullyQualifiedName!~E2E' --verbosity normal
+        run: dotnet test AspireAcademy.Api.Tests/ --no-build --filter 'FullyQualifiedName!~E2E&Category!=Integration' --verbosity normal
+
+  backend-integration:
+    name: Backend Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '11.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Restore
+        run: dotnet restore AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj
+
+      - name: Build
+        run: dotnet build AspireAcademy.Api.Tests/AspireAcademy.Api.Tests.csproj --no-restore
+
+      - name: Test
+        run: dotnet test AspireAcademy.Api.Tests/ --no-build --filter 'Category=Integration&FullyQualifiedName!~E2E' --verbosity normal
         timeout-minutes: 10
 
   frontend:
