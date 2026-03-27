@@ -158,7 +158,7 @@ public class RealIntegrationTests : IClassFixture<AspireIntegrationFixture>
         foreach (var lesson in lessons)
         {
             var type = lesson.GetProperty("type").GetString();
-            var isLocked = lesson.GetProperty("isLocked").GetBoolean();
+            var isLocked = lesson.TryGetProperty("isLocked", out var lockedProp) && lockedProp.GetBoolean();
             if (type == "learn" && !isLocked)
             {
                 learnLessonId = lesson.GetProperty("id").GetString();
@@ -220,7 +220,7 @@ public class RealIntegrationTests : IClassFixture<AspireIntegrationFixture>
             foreach (var lesson in lessons)
             {
                 var type = lesson.GetProperty("type").GetString();
-                var isLocked = lesson.GetProperty("isLocked").GetBoolean();
+                var isLocked = lesson.TryGetProperty("isLocked", out var lockedProp) && lockedProp.GetBoolean();
 
                 if (type is "quiz" or "boss-battle" && !isLocked)
                 {
