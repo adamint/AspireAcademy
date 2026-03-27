@@ -164,13 +164,9 @@ export function registerAspireCompletions(monacoInstance: Monaco): void {
 
   monacoInstance.editor.onDidCreateModel((model) => {
     validateModel(model, monacoInstance, knownMethodNames, methodCallPattern);
-  });
-
-  monacoInstance.editor.onDidChangeModelContent((e) => {
-    const model = monacoInstance.editor.getModel(e.model);
-    if (model) {
+    model.onDidChangeContent(() => {
       validateModel(model, monacoInstance, knownMethodNames, methodCallPattern);
-    }
+    });
   });
 
   // Validate any already-open models
