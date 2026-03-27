@@ -16,7 +16,8 @@ import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import api from '../services/apiClient';
-import ArchitectureDiagram, { serviceTypeColors } from '../components/common/ArchitectureDiagram';
+import ArchitectureDiagram from '../components/common/ArchitectureDiagram';
+import { serviceTypeColors } from '../components/common/architectureDiagramTypes';
 import type { ServiceNode, DiagramConnection } from '../components/common/ArchitectureDiagram';
 
 // ─── Gallery Types ─────────────────────────────────────────────────────────────
