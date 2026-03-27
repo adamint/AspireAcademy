@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AspireAcademy.Api.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspireAcademy.Api.Endpoints;
@@ -23,7 +24,7 @@ public static class SettingsEndpoints
     }
 
     private static async Task<IResult> ChangePassword(
-        ChangePasswordRequest request,
+        [FromBody] ChangePasswordRequest request,
         ClaimsPrincipal principal,
         AcademyDbContext db)
     {
@@ -140,7 +141,7 @@ public static class SettingsEndpoints
     }
 
     private static async Task<IResult> DeleteAccount(
-        DeleteAccountRequest request,
+        [FromBody] DeleteAccountRequest request,
         ClaimsPrincipal principal,
         AcademyDbContext db)
     {

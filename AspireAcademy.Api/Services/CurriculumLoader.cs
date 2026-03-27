@@ -95,8 +95,7 @@ public class CurriculumLoader
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to upsert world {WorldId} ({WorldName})", worldDef.Id, worldDef.Name);
-                throw;
+                _logger.LogError(ex, "Failed to upsert world {WorldId} ({WorldName}), continuing with other worlds", worldDef.Id, worldDef.Name);
             }
         }
 

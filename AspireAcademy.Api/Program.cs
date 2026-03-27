@@ -224,7 +224,6 @@ app.MapAdminEndpoints();
 app.MapCertificateEndpoints();
 app.MapSettingsEndpoints();
 app.MapWeeklyChallengeEndpoints();
-app.MapSearchEndpoints();
 
 app.Run();
 

@@ -3,6 +3,7 @@ using System.Text.Json;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
 using AspireAcademy.Api.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspireAcademy.Api.Endpoints;
@@ -22,7 +23,7 @@ public static class AiTutorEndpoints
 
         var group = app.MapGroup("/api/ai").RequireAuthorization();
 
-        group.MapPost("/chat", async (AiChatRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user, HttpContext httpContext) =>
+        group.MapPost("/chat", async ([FromBody] AiChatRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user, HttpContext httpContext) =>
         {
             var userId = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("AI chat for UserId={UserId}, lessonId={LessonId}",
@@ -65,7 +66,7 @@ public static class AiTutorEndpoints
             await httpContext.Response.Body.FlushAsync(httpContext.RequestAborted);
         });
 
-        group.MapPost("/hint", async (AiHintRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user) =>
+        group.MapPost("/hint", async ([FromBody] AiHintRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user) =>
         {
             _ = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("AI hint level={HintLevel} for ChallengeId={ChallengeId}", request.HintLevel, request.ChallengeId);
@@ -88,7 +89,7 @@ public static class AiTutorEndpoints
             return Results.Ok(new AiHintResponse(hint));
         });
 
-        group.MapPost("/review", async (AiReviewRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user) =>
+        group.MapPost("/review", async ([FromBody] AiReviewRequest request, AcademyDbContext db, AiTutorService aiService, ClaimsPrincipal user) =>
         {
             _ = EndpointHelpers.GetUserId(user);
 

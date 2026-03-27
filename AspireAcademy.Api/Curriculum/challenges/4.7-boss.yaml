@@ -137,7 +137,7 @@ testCases:
 hints:
   - Start with infrastructure first — add PostgreSQL, Redis, and RabbitMQ before the projects
   - Use .WithDataVolume() on both PostgreSQL and Redis for persistence
-  - AddParameter("stripe-key", secret: true) keeps API keys out of source code
+  - 'AddParameter("stripe-key", secret: true) keeps API keys out of source code'
   - The API project needs WithReference for shopdb, cache, and messaging
   - The worker only needs messaging — don't over-reference
   - Only the web frontend needs WithExternalHttpEndpoints

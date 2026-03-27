@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -88,7 +89,7 @@ public static class SocialEndpoints
             return Results.Ok(new FriendsResponse(friends, pendingReceived, pendingSent));
         });
 
-        group.MapPost("/friends/request", async (FriendRequestDto request, AcademyDbContext db, ClaimsPrincipal user) =>
+        group.MapPost("/friends/request", async ([FromBody] FriendRequestDto request, AcademyDbContext db, ClaimsPrincipal user) =>
         {
             var userId = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("Friend request from UserId={UserId} to Username={Username}", userId, request.Username);
@@ -183,7 +184,7 @@ public static class SocialEndpoints
             return Results.NoContent();
         });
 
-        group.MapPut("/users/me", async (UpdateProfileRequest request, AcademyDbContext db, ClaimsPrincipal user) =>
+        group.MapPut("/users/me", async ([FromBody] UpdateProfileRequest request, AcademyDbContext db, ClaimsPrincipal user) =>
         {
             var userId = EndpointHelpers.GetUserId(user);
             s_logger.LogInformation("PUT /users/me for UserId={UserId}", userId);
