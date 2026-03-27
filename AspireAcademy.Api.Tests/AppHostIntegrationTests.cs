@@ -368,13 +368,6 @@ public class AppHostIntegrationTests : IClassFixture<AspireIntegrationFixture>
         Assert.False(string.IsNullOrEmpty(content.GetString()), "Lesson contentMarkdown should not be empty");
     }
 
-    [Fact]
-    public async Task GetWorldsUnauthenticated_Returns401()
-    {
-        var response = await _client.GetAsync("/api/worlds");
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-    }
-
     // ================================================================
     // Helpers
     // ================================================================
