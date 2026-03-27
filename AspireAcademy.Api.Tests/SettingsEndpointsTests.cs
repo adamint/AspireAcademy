@@ -4,6 +4,7 @@ using System.Text.Json;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Endpoints;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AspireAcademy.Api.Tests;
@@ -99,8 +100,8 @@ public class SettingsEndpointsTests : TestFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // Verify soft-delete — use IgnoreQueryFilters since the user is now filtered out
-        var deletedUser = await db.Users.IgnoreQueryFilters().FirstAsync(u => u.Id == userId);
+        // Verify soft-delete — use IgnoreQueryFilters + AsNoTracking to bypass cache and filter
+        var deletedUser = await db.Users.AsQueryable().IgnoreQueryFilters().AsNoTracking().FirstAsync(u => u.Id == userId);
         deletedUser.IsDeleted.Should().BeTrue();
     }
 
