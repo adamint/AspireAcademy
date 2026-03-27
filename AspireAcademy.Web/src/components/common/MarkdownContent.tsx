@@ -101,7 +101,7 @@ const markdownComponents: Partial<Components> = {
       </Box>
     );
   },
-  a({ href, children, node: _node, ...rest }) {
+  a({ href, children, ...rest }) {
     if (href && href.startsWith('/')) {
       return (
         <RouterLink to={href}>

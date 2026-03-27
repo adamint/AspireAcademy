@@ -31,7 +31,11 @@ public record QuizSubmitResponse(
     List<QuizQuestionResult> Results,
     LevelUpInfo? LevelUp,
     List<AchievementUnlocked> AchievementsUnlocked,
-    int AttemptNumber);
+    int AttemptNumber,
+    int TotalXp,
+    int CurrentLevel,
+    string CurrentRank,
+    int WeeklyXp);
 
 public record QuizAttemptDto(
     Guid Id,
@@ -216,6 +220,7 @@ public static class QuizEndpoints
         var xpEarned = 0;
         var bonusXpEarned = 0;
         LevelUpInfo? levelUp = null;
+        XpAwardResult? lastXpResult = null;
 
         if (existingProgress is null)
         {
@@ -240,15 +245,15 @@ public static class QuizEndpoints
 
             // Award base XP on first pass
             xpEarned = lesson.XpReward;
-            var result = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", lessonId);
-            levelUp = result.LevelUp;
+            lastXpResult = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", lessonId);
+            levelUp = lastXpResult.LevelUp;
 
             // Perfect score bonus
             if (isPerfect && lesson.BonusXp > 0)
             {
                 bonusXpEarned = lesson.BonusXp;
-                var bonusResult = await gamification.AwardXpAsync(userId, bonusXpEarned, "quiz-perfect", lessonId);
-                levelUp ??= bonusResult.LevelUp;
+                lastXpResult = await gamification.AwardXpAsync(userId, bonusXpEarned, "quiz-perfect", lessonId);
+                levelUp ??= lastXpResult.LevelUp;
             }
 
             existingProgress.XpEarned = xpEarned + bonusXpEarned;
@@ -261,8 +266,8 @@ public static class QuizEndpoints
             if (lesson.BonusXp > 0)
             {
                 bonusXpEarned = lesson.BonusXp;
-                var bonusResult = await gamification.AwardXpAsync(userId, bonusXpEarned, "quiz-perfect", lessonId);
-                levelUp = bonusResult.LevelUp;
+                lastXpResult = await gamification.AwardXpAsync(userId, bonusXpEarned, "quiz-perfect", lessonId);
+                levelUp = lastXpResult.LevelUp;
                 existingProgress.XpEarned += bonusXpEarned;
             }
         }
@@ -299,6 +304,25 @@ public static class QuizEndpoints
             ? await gamification.CheckAchievementsAsync(userId)
             : [];
 
+        // Fetch current XP stats if no award happened (retake)
+        int totalXp, currentLevel, weeklyXp;
+        string currentRank;
+        if (lastXpResult is not null)
+        {
+            totalXp = lastXpResult.TotalXp;
+            currentLevel = lastXpResult.CurrentLevel;
+            currentRank = lastXpResult.CurrentRank;
+            weeklyXp = lastXpResult.WeeklyXp;
+        }
+        else
+        {
+            var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
+            totalXp = userXp?.TotalXp ?? 0;
+            currentLevel = userXp?.CurrentLevel ?? 1;
+            currentRank = userXp?.CurrentRank ?? Ranks.AspireIntern;
+            weeklyXp = userXp?.WeeklyXp ?? 0;
+        }
+
         return Results.Ok(new QuizSubmitResponse(
             Score: percentage,
             MaxScore: 100,
@@ -311,7 +335,11 @@ public static class QuizEndpoints
             LevelUp: levelUp,
             AchievementsUnlocked: achievements.Select(a =>
                 new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList(),
-            AttemptNumber: attemptNumber));
+            AttemptNumber: attemptNumber,
+            TotalXp: totalXp,
+            CurrentLevel: currentLevel,
+            CurrentRank: currentRank,
+            WeeklyXp: weeklyXp));
     }
 
     /// <summary>

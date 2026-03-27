@@ -119,9 +119,12 @@ public class ScenarioTests : TestFixture
         passBody!.Passed.Should().BeTrue();
         passBody.XpEarned.Should().Be(100); // lesson XpReward
 
-        // Third submission with perfect score — already completed with perfect
+        // Third submission with perfect score — retake allowed but no additional base XP
         var resubmitResponse = await authClient.PostAsJsonAsync("/api/quizzes/lesson-quiz-1/submit", passRequest);
-        resubmitResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        resubmitResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var resubmitBody = await ReadJsonAsync<QuizSubmitResponse>(resubmitResponse);
+        resubmitBody!.XpEarned.Should().Be(0); // No duplicate XP
+        resubmitBody.AttemptNumber.Should().Be(3);
     }
 
     // ── Challenge rate limiting (mock Redis counter) ──

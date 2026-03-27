@@ -31,6 +31,8 @@ public record ProgressCompleteResponse(
     int BonusXpEarned,
     int TotalXp,
     int CurrentLevel,
+    string CurrentRank,
+    int WeeklyXp,
     LevelUpInfo? LevelUp,
     List<AchievementUnlocked> AchievementsUnlocked);
 
@@ -290,6 +292,8 @@ public static class GamificationEndpoints
             BonusXpEarned: 0,
             TotalXp: result.TotalXp,
             CurrentLevel: result.CurrentLevel,
+            CurrentRank: result.CurrentRank,
+            WeeklyXp: result.WeeklyXp,
             LevelUp: result.LevelUp,
             AchievementsUnlocked: achievements.Select(a =>
                 new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));

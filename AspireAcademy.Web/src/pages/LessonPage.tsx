@@ -65,8 +65,8 @@ export default function LessonPage() {
         totalXp: data.totalXp,
         currentLevel: data.currentLevel,
         currentRank: data.currentRank,
-        weeklyXp: 0,
-        loginStreakDays: 0,
+        weeklyXp: data.weeklyXp ?? useGamificationStore.getState().weeklyXp,
+        loginStreakDays: useGamificationStore.getState().loginStreakDays,
       });
 
       if (data.levelUp) {

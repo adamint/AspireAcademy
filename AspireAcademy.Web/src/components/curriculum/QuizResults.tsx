@@ -16,6 +16,7 @@ interface QuizResultsProps {
   lessonId: string;
   attemptNumber?: number;
   onReview?: () => void;
+  onRetake?: () => void;
 }
 
 export default function QuizResults({
@@ -29,6 +30,7 @@ export default function QuizResults({
   lessonId,
   attemptNumber,
   onReview,
+  onRetake,
 }: QuizResultsProps) {
   const navigate = useNavigate();
   const percentage = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
@@ -166,9 +168,12 @@ export default function QuizResults({
             color="dark.text"
             _hover={{ bg: 'content.hover' }}
             onClick={() => {
-              // Force remount by navigating with state change
-              navigate(`/quizzes/${lessonId}`, { state: { retake: Date.now() } });
-              navigate(0); // Reload the route
+              if (onRetake) {
+                onRetake();
+              } else {
+                navigate(`/quizzes/${lessonId}`);
+                navigate(0);
+              }
             }}
           >
             <FiRotateCcw />

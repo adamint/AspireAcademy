@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Flex,
@@ -66,6 +67,16 @@ interface QuizSubmitResponse {
   xpEarned: number;
   results: QuestionResult[];
   attemptNumber?: number;
+  totalXp: number;
+  currentLevel: number;
+  currentRank: string;
+  weeklyXp: number;
+  levelUp?: {
+    newLevel: number;
+    newRank: string;
+    previousLevel: number;
+    previousRank: string;
+  };
 }
 
 // ── Component ────────────────────────────────────────
@@ -73,7 +84,9 @@ interface QuizSubmitResponse {
 export default function QuizPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const syncFromServer = useGamificationStore((s) => s.syncFromServer);
+  const setPendingLevelUp = useGamificationStore((s) => s.setPendingLevelUp);
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = !!token && !!user;
@@ -92,6 +105,18 @@ export default function QuizPage() {
   const [quizResult, setQuizResult] = useState<QuizSubmitResponse | null>(null);
   const [finalizingQuiz, setFinalizingQuiz] = useState(false);
   const [submittedAnswers, setSubmittedAnswers] = useState<{ questionId: string; selectedOptionIds?: string[]; freeTextAnswer?: string }[]>([]);
+
+  const handleRetake = useCallback(() => {
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setSubmitting(false);
+    setFeedback(null);
+    setRunningScore(0);
+    setQuestionResults([]);
+    setQuizResult(null);
+    setFinalizingQuiz(false);
+    setSubmittedAnswers([]);
+  }, []);
 
   // Fetch quiz data on mount
   const fetched = useState(false);
@@ -201,15 +226,20 @@ export default function QuizPage() {
         );
         setQuizResult(res.data);
         if (res.data.xpEarned > 0) {
-          const store = useGamificationStore.getState();
           syncFromServer({
-            totalXp: store.totalXp + res.data.xpEarned,
-            currentLevel: store.currentLevel,
-            currentRank: store.currentRank,
-            weeklyXp: store.weeklyXp + res.data.xpEarned,
-            loginStreakDays: store.loginStreakDays,
+            totalXp: res.data.totalXp,
+            currentLevel: res.data.currentLevel,
+            currentRank: res.data.currentRank,
+            weeklyXp: res.data.weeklyXp,
+            loginStreakDays: useGamificationStore.getState().loginStreakDays,
           });
         }
+        if (res.data.levelUp) {
+          setPendingLevelUp(res.data.levelUp);
+        }
+        queryClient.invalidateQueries({ queryKey: ['xp'] });
+        queryClient.invalidateQueries({ queryKey: ['worlds'] });
+        queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       } catch {
         console.error('[QuizPage] Failed to submit quiz for lesson:', lessonId);
         const fallbackPercentage = maxScore > 0 ? Math.round((runningScore / maxScore) * 100) : 0;
@@ -219,6 +249,10 @@ export default function QuizPage() {
           passed: fallbackPercentage >= (quiz.passingScore ?? 70),
           xpEarned: 0,
           results: questionResults,
+          totalXp: useGamificationStore.getState().totalXp,
+          currentLevel: useGamificationStore.getState().currentLevel,
+          currentRank: useGamificationStore.getState().currentRank,
+          weeklyXp: useGamificationStore.getState().weeklyXp,
         });
       }
     } else {
@@ -226,7 +260,7 @@ export default function QuizPage() {
       setSelectedAnswer(null);
       setFeedback(null);
     }
-  }, [quiz, lessonId, isLastQuestion, questionResults, submittedAnswers, runningScore, maxScore, syncFromServer, finalizingQuiz]);
+  }, [quiz, lessonId, isLastQuestion, questionResults, submittedAnswers, runningScore, maxScore, syncFromServer, setPendingLevelUp, queryClient, finalizingQuiz]);
 
   // ── Loading ──────────────────────────────────────
 
@@ -290,6 +324,7 @@ export default function QuizPage() {
           nextLessonId={quiz.nextLessonId}
           lessonId={lessonId!}
           attemptNumber={quizResult.attemptNumber}
+          onRetake={handleRetake}
         />
       </Flex>
     );

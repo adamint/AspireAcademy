@@ -9,7 +9,7 @@ namespace AspireAcademy.Api.Services;
 
 public record LevelUpInfo(int PreviousLevel, string PreviousRank, int NewLevel, string NewRank);
 
-public record XpAwardResult(int XpAwarded, int TotalXp, int CurrentLevel, string CurrentRank, LevelUpInfo? LevelUp);
+public record XpAwardResult(int XpAwarded, int TotalXp, int CurrentLevel, string CurrentRank, int WeeklyXp, LevelUpInfo? LevelUp);
 
 public class GamificationService(AcademyDbContext db, IConnectionMultiplexer redis, ILogger<GamificationService> logger)
 {
@@ -92,7 +92,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
                 previousLevel, previousRank, newLevel, newRank, userId);
         }
 
-        return new XpAwardResult(amount, userXp.TotalXp, newLevel, newRank, levelUp);
+        return new XpAwardResult(amount, userXp.TotalXp, newLevel, newRank, userXp.WeeklyXp, levelUp);
     }
 
     public static (int Level, string Rank) CalculateLevel(int totalXp)

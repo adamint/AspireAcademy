@@ -112,10 +112,63 @@ public class QuizEndpointsTests : TestFixture
         var body1 = await ReadJsonAsync<QuizSubmitResponse>(response1);
         body1!.Passed.Should().BeTrue();
         body1.XpEarned.Should().BeGreaterThan(0);
+        body1.AttemptNumber.Should().Be(1);
 
-        // Second submission: already completed with perfect, should be rejected
+        // Second submission: retake allowed but no additional XP
         var response2 = await authClient.PostAsJsonAsync("/api/quizzes/lesson-quiz-1/submit", request);
-        response2.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response2.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body2 = await ReadJsonAsync<QuizSubmitResponse>(response2);
+        body2!.XpEarned.Should().Be(0);
+        body2.BonusXpEarned.Should().Be(0);
+        body2.AttemptNumber.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task SubmitQuiz_Retake_TracksAttemptHistory()
+    {
+        using var authClient = CreateAuthenticatedClient(TestUserId);
+
+        // First attempt: all wrong
+        var wrongRequest = new QuizSubmitRequest(
+        [
+            new QuizAnswer(QuizQuestion1Id, ["b"], null),
+            new QuizAnswer(QuizQuestion2Id, ["a"], null),
+        ]);
+        var response1 = await authClient.PostAsJsonAsync("/api/quizzes/lesson-quiz-1/submit", wrongRequest);
+        var body1 = await ReadJsonAsync<QuizSubmitResponse>(response1);
+        body1!.AttemptNumber.Should().Be(1);
+        body1.Passed.Should().BeFalse();
+
+        // Second attempt: all correct
+        var correctRequest = new QuizSubmitRequest(
+        [
+            new QuizAnswer(QuizQuestion1Id, ["a"], null),
+            new QuizAnswer(QuizQuestion2Id, ["b"], null),
+        ]);
+        var response2 = await authClient.PostAsJsonAsync("/api/quizzes/lesson-quiz-1/submit", correctRequest);
+        var body2 = await ReadJsonAsync<QuizSubmitResponse>(response2);
+        body2!.AttemptNumber.Should().Be(2);
+        body2.Passed.Should().BeTrue();
+        body2.XpEarned.Should().BeGreaterThan(0);
+
+        // Check history
+        var historyResponse = await authClient.GetAsync("/api/quizzes/lesson-quiz-1/history");
+        historyResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var history = await ReadJsonAsync<List<QuizAttemptDto>>(historyResponse);
+        history.Should().HaveCount(2);
+        history![0].AttemptNumber.Should().Be(2); // Most recent first
+        history[1].AttemptNumber.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task GetQuizHistory_ReturnsEmptyForNewUser()
+    {
+        using var authClient = CreateAuthenticatedClient(TestUserId);
+
+        var response = await authClient.GetAsync("/api/quizzes/lesson-quiz-1/history");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var history = await ReadJsonAsync<List<QuizAttemptDto>>(response);
+        history.Should().BeEmpty();
     }
 
     [Fact]

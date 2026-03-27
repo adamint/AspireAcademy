@@ -71,6 +71,7 @@ export interface CompleteResponse {
   totalXp: number;
   currentLevel: number;
   currentRank: string;
+  weeklyXp?: number;
   levelUp?: {
     newLevel: number;
     newRank: string;
