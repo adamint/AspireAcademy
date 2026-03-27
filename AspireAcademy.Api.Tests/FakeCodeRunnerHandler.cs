@@ -5,8 +5,11 @@ using System.Text.Json;
 namespace AspireAcademy.Api.Tests;
 
 /// <summary>
-/// Fake HTTP handler that simulates the CodeRunner service.
+/// Fake HTTP handler that previously simulated the CodeRunner service.
+/// DEPRECATED: The CodeRunner has been replaced by CodeCheckerService (in-process static checker).
+/// This file is retained for reference only and is no longer used.
 /// </summary>
+[Obsolete("CodeRunner replaced by CodeCheckerService. This handler is no longer used.")]
 public sealed class FakeCodeRunnerHandler : HttpMessageHandler
 {
     public bool CompilationSuccess { get; set; } = true;

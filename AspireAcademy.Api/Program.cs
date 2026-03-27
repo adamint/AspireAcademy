@@ -19,11 +19,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<GamificationService>();
 builder.Services.AddScoped<CurriculumLoader>();
 builder.Services.AddSingleton<AiTutorService>();
-builder.Services.AddHttpClient("coderunner", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["services:coderunner:http:0"] ?? "http://localhost:8080");
-    client.Timeout = TimeSpan.FromSeconds(60);
-});
+builder.Services.AddSingleton<CodeCheckerService>();
 
 // JWT authentication
 var jwtSecret = builder.Configuration["Jwt:Key"] ?? "dev-secret-key-change-in-production-min-32-chars!!";

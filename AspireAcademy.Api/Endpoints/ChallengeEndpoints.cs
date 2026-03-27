@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
 using AspireAcademy.Api.Services;
@@ -15,17 +13,13 @@ namespace AspireAcademy.Api.Endpoints;
 
 public record ChallengeRunRequest(string Code, int StepIndex = 0);
 
-public record CodeRunnerResponse(
-    [property: JsonPropertyName("success")] bool Success,
-    [property: JsonPropertyName("output")] string Output,
-    [property: JsonPropertyName("error")] string Error);
-
 public record ChallengeRunResponse(
     bool CompilationSuccess,
     string CompilationOutput,
     string ExecutionOutput,
     int? ExecutionTimeMs,
-    string? Error);
+    string? Error,
+    List<string> ApiWarnings);
 
 public record TestCaseResult(string TestId, string Name, bool Passed, string Description);
 
@@ -62,7 +56,7 @@ public static class ChallengeEndpoints
         string lessonId,
         ChallengeRunRequest request,
         AcademyDbContext db,
-        IHttpClientFactory httpClientFactory,
+        CodeCheckerService codeChecker,
         IConnectionMultiplexer redis,
         ClaimsPrincipal user)
     {
@@ -96,24 +90,23 @@ public static class ChallengeEndpoints
             return Results.BadRequest(new ErrorResponse("Invalid step index"));
         }
 
-        // Forward to CodeRunner
-        var runnerResult = await ExecuteOnCodeRunnerAsync(httpClientFactory, request.Code, challenge.RequiredPackages);
-
-        var compilationSuccess = runnerResult is not null && string.IsNullOrEmpty(runnerResult.Error);
+        // Static code check (no Docker container needed)
+        var checkResult = codeChecker.Validate(request.Code, challenge.TestCases, challenge.RequiredPackages);
 
         return Results.Ok(new ChallengeRunResponse(
-            CompilationSuccess: compilationSuccess,
-            CompilationOutput: compilationSuccess ? "" : (runnerResult?.Error ?? "CodeRunner unavailable"),
-            ExecutionOutput: runnerResult?.Output ?? "",
+            CompilationSuccess: checkResult.StructureValid,
+            CompilationOutput: checkResult.StructureErrors ?? "",
+            ExecutionOutput: "",
             ExecutionTimeMs: null,
-            Error: runnerResult is null ? "CodeRunner service unavailable" : null));
+            Error: null,
+            ApiWarnings: checkResult.ApiWarnings));
     }
 
     private static async Task<IResult> SubmitChallengeAsync(
         string lessonId,
         ChallengeRunRequest request,
         AcademyDbContext db,
-        IHttpClientFactory httpClientFactory,
+        CodeCheckerService codeChecker,
         IConnectionMultiplexer redis,
         GamificationService gamification,
         ClaimsPrincipal user)
@@ -143,16 +136,22 @@ public static class ChallengeEndpoints
             return Results.BadRequest(new ErrorResponse("Invalid step index"));
         }
 
-        // Execute code
-        var runnerResult = await ExecuteOnCodeRunnerAsync(httpClientFactory, request.Code, challenge.RequiredPackages);
+        // Static code check
+        var checkResult = codeChecker.Validate(request.Code, challenge.TestCases, challenge.RequiredPackages);
 
-        var compilationSuccess = runnerResult is not null && string.IsNullOrEmpty(runnerResult.Error);
-        var executionOutput = runnerResult?.Output ?? "";
-        var compilationOutput = compilationSuccess ? "" : (runnerResult?.Error ?? "CodeRunner unavailable");
+        var compilationSuccess = checkResult.StructureValid;
+        var compilationOutput = checkResult.StructureErrors ?? "";
 
-        // Validate against test cases
-        var testResults = ValidateTestCases(challenge.TestCases, request.Code, compilationSuccess, executionOutput);
-        var allPassed = testResults.Count > 0 && testResults.All(t => t.Passed);
+        // Convert test results (skip runtime-only tests when determining pass/fail)
+        var testResults = checkResult.TestResults
+            .Select(t => new TestCaseResult(t.TestId, t.Name, t.Passed, t.Description))
+            .ToList();
+
+        // Only consider non-skipped tests for allPassed determination
+        var applicableTests = checkResult.TestResults
+            .Where(t => t.Detail is not "Skipped — requires runtime execution")
+            .ToList();
+        var allPassed = applicableTests.Count > 0 && applicableTests.All(t => t.Passed);
 
         s_logger.LogInformation("Code submit result for LessonId={LessonId}: compilation={CompilationSuccess}, allPassed={AllPassed}, tests={PassedCount}/{TotalCount}",
             lessonId, compilationSuccess, allPassed,
@@ -167,7 +166,7 @@ public static class ChallengeEndpoints
             SubmittedCode = request.Code,
             CompilationSuccess = compilationSuccess,
             CompilationOutput = compilationOutput,
-            ExecutionOutput = executionOutput,
+            ExecutionOutput = "",
             TestResults = JsonDocument.Parse(JsonSerializer.Serialize(testResults)),
             AllPassed = allPassed,
             SubmittedAt = DateTime.UtcNow
@@ -229,7 +228,7 @@ public static class ChallengeEndpoints
         return Results.Ok(new ChallengeSubmitResponse(
             CompilationSuccess: compilationSuccess,
             CompilationOutput: compilationOutput,
-            ExecutionOutput: executionOutput,
+            ExecutionOutput: "",
             ExecutionTimeMs: null,
             TestResults: testResults,
             AllPassed: allPassed,
@@ -238,86 +237,6 @@ public static class ChallengeEndpoints
             LevelUp: levelUp,
             AchievementsUnlocked: achievements.Select(a =>
                 new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));
-    }
-
-    private static async Task<CodeRunnerResponse?> ExecuteOnCodeRunnerAsync(
-        IHttpClientFactory httpClientFactory,
-        string code,
-        JsonDocument requiredPackages)
-    {
-        AcademyMetrics.CodeRunnerExecutions.Add(1);
-        using var activity = AcademyTracing.Source.StartActivity("CodeRunner.Execute");
-        var sw = Stopwatch.StartNew();
-
-        try
-        {
-            var client = httpClientFactory.CreateClient("coderunner");
-
-            var packages = requiredPackages.RootElement
-                .EnumerateArray()
-                .Select(e => e.GetString()!)
-                .ToArray();
-
-            var url = $"{client.BaseAddress}execute";
-            s_logger.LogInformation("CodeRunner HTTP call to {Url}", url);
-
-            var payload = new { Code = code, Packages = packages, TimeoutSeconds = 30 };
-            var response = await client.PostAsJsonAsync("/execute", payload);
-
-            s_logger.LogInformation("CodeRunner response: {StatusCode}", response.StatusCode);
-            activity?.SetTag("http.status_code", (int)response.StatusCode);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                s_logger.LogWarning("CodeRunner returned non-success status: {StatusCode}", response.StatusCode);
-                activity?.SetStatus(ActivityStatusCode.Error, "Non-success status code");
-                return null;
-            }
-
-            return await response.Content.ReadFromJsonAsync<CodeRunnerResponse>();
-        }
-        catch (Exception ex)
-        {
-            s_logger.LogError(ex, "CodeRunner call failed: {Message}", ex.Message);
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            return null;
-        }
-        finally
-        {
-            sw.Stop();
-            AcademyMetrics.CodeRunnerDurationMs.Record(sw.Elapsed.TotalMilliseconds);
-        }
-    }
-
-    private static List<TestCaseResult> ValidateTestCases(JsonDocument testCases, string code, bool compilationSuccess, string executionOutput)
-    {
-        var results = new List<TestCaseResult>();
-
-        foreach (var tc in testCases.RootElement.EnumerateArray())
-        {
-            var testId = tc.GetProperty("id").GetString()!;
-            var name = tc.GetProperty("name").GetString()!;
-            var type = tc.GetProperty("type").GetString()!;
-            var description = tc.GetProperty("description").GetString()!;
-
-            var expected = tc.TryGetProperty("expected", out var exp) && exp.ValueKind != JsonValueKind.Null
-                ? exp.GetString()
-                : null;
-
-            var passed = type switch
-            {
-                "compiles" => compilationSuccess,
-                "output-equals" => compilationSuccess && executionOutput.Trim() == expected?.Trim(),
-                "output-contains" => compilationSuccess && expected is not null && executionOutput.Contains(expected, StringComparison.Ordinal),
-                "code-contains" => expected is not null && code.Contains(expected, StringComparison.Ordinal),
-                "code-pattern" => expected is not null && System.Text.RegularExpressions.Regex.IsMatch(code, expected, System.Text.RegularExpressions.RegexOptions.None, TimeSpan.FromSeconds(1)),
-                _ => false
-            };
-
-            results.Add(new TestCaseResult(testId, name, passed, description));
-        }
-
-        return results;
     }
 
     private static async Task<bool> CheckRateLimitAsync(IConnectionMultiplexer redis, Guid userId)

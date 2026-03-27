@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
+using AspireAcademy.Api.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
@@ -29,7 +30,6 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
     private readonly SqliteConnection _sqliteConnection;
 
     public FakeRedis FakeRedis { get; } = new();
-    public FakeCodeRunnerHandler CodeRunnerHandler { get; } = new();
 
     public AcademyApiFactory()
     {
@@ -58,7 +58,6 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
         });
 
         var fakeRedis = FakeRedis;
-        var codeRunnerHandler = CodeRunnerHandler;
         var connection = _sqliteConnection;
 
         builder.ConfigureServices(services =>
@@ -94,10 +93,6 @@ public class AcademyApiFactory : WebApplicationFactory<Program>
             // Replace Redis with fake
             services.RemoveAll<IConnectionMultiplexer>();
             services.AddSingleton(fakeRedis.Multiplexer);
-
-            // Replace coderunner HttpClient handler
-            services.AddHttpClient("coderunner")
-                .ConfigurePrimaryHttpMessageHandler(() => codeRunnerHandler);
         });
     }
 }

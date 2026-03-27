@@ -13,7 +13,6 @@ public static class AcademyMetrics
     public static readonly Counter<long> ChallengesSubmitted = Meter.CreateCounter<long>("academy.challenges.submitted");
     public static readonly Counter<long> XpAwarded = Meter.CreateCounter<long>("academy.xp.awarded");
     public static readonly Counter<long> AchievementsUnlocked = Meter.CreateCounter<long>("academy.achievements.unlocked");
-    public static readonly Counter<long> CodeRunnerExecutions = Meter.CreateCounter<long>("academy.coderunner.executions");
-    public static readonly Histogram<double> CodeRunnerDurationMs = Meter.CreateHistogram<double>("academy.coderunner.duration_ms");
+    public static readonly Counter<long> CodeChecks = Meter.CreateCounter<long>("academy.codechecker.checks");
     public static readonly Histogram<double> QuizScorePercent = Meter.CreateHistogram<double>("academy.quiz.score_percent");
 }
