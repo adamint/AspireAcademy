@@ -35,7 +35,7 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture) : IClassFixt
             // Step 1: Navigate to app → see login page
             await page.GotoAsync(fixture.WebBaseUrl + "/");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
-            await Assertions.Expect(page.GetByText("Aspire Academy")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByText("Aspire Learn")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText("Welcome back, adventurer!")).ToBeVisibleAsync();
             await AssertNoFatalError(page);
 

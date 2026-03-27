@@ -36,7 +36,7 @@ export default function ShareProgressButton({
       : 0;
 
     const text = [
-      `🎮 I'm Level ${level} (${formatRank(rank)}) on Aspire Academy!`,
+      `🎮 I'm Level ${level} (${formatRank(rank)}) on Aspire Learn!`,
       `📚 ${completedLessons}/${totalLessons} lessons completed (${percentage}%)`,
       `🏆 ${achievementCount} achievements unlocked`,
       streakDays > 0 ? `🔥 ${streakDays}-day learning streak` : null,
@@ -65,6 +65,8 @@ export default function ShareProgressButton({
       _hover={{ bg: 'content.hover' }}
       onClick={handleShare}
       data-testid="share-progress-btn"
+      title="Share progress to clipboard"
+      aria-label="Share progress to clipboard"
     >
       <FiShare2 />
       {copied ? '✓ Copied!' : 'Share My Progress'}

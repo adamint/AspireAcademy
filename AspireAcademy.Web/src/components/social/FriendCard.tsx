@@ -33,6 +33,16 @@ export default function FriendCard({ user, actions }: FriendCardProps) {
       transition="transform 0.15s ease"
       _hover={{ transform: 'translateY(-2px)' }}
       onClick={() => navigate(`/users/${user.id}`)}
+      title={`View ${user.displayName || user.username}'s profile`}
+      aria-label={`View ${user.displayName || user.username}'s profile`}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(`/users/${user.id}`);
+        }
+      }}
     >
       <AvatarDisplay
         url={user.avatarUrl}

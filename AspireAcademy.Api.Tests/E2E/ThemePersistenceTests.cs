@@ -77,7 +77,7 @@ public class ThemePersistenceTests(AppHostPlaywrightFixture fixture) : IClassFix
             Assert.NotEqual(initialBg, afterToggleBg);
 
             // Also verify localStorage was updated
-            var storedMode = await page.EvaluateAsync<string>("() => localStorage.getItem('aspire-color-mode')");
+            var storedMode = await page.EvaluateAsync<string>("() => localStorage.getItem('aspire-learn-color-mode')");
             Assert.NotNull(storedMode);
 
             // Refresh the page
@@ -89,7 +89,7 @@ public class ThemePersistenceTests(AppHostPlaywrightFixture fixture) : IClassFix
             Assert.Equal(afterToggleBg, afterRefreshBg);
 
             // localStorage should still have the same value
-            var storedModeAfterRefresh = await page.EvaluateAsync<string>("() => localStorage.getItem('aspire-color-mode')");
+            var storedModeAfterRefresh = await page.EvaluateAsync<string>("() => localStorage.getItem('aspire-learn-color-mode')");
             Assert.Equal(storedMode, storedModeAfterRefresh);
         }
         finally { await fixture.ClosePageAsync(page); }

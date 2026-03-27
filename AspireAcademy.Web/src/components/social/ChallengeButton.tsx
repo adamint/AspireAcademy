@@ -47,6 +47,8 @@ export default function ChallengeButton({ friendId, friendName }: ChallengeButto
         _hover={{ bg: 'content.hover' }}
         onClick={() => setOpen(true)}
         data-testid="challenge-friend-btn"
+        title="Challenge friend to compete"
+        aria-label={`Challenge ${friendName} to compete`}
       >
         <FiTarget /> Challenge
       </Button>
@@ -99,6 +101,8 @@ export default function ChallengeButton({ friendId, friendName }: ChallengeButto
                   onClick={() => setOpen(false)}
                   borderColor="game.pixelBorder"
                   color="dark.text"
+                  title="Cancel challenge"
+                  aria-label="Cancel challenge"
                 >
                   Cancel
                 </Button>
@@ -106,6 +110,8 @@ export default function ChallengeButton({ friendId, friendName }: ChallengeButto
                   colorPalette="purple"
                   onClick={() => challengeMutation.mutate()}
                   disabled={challengeMutation.isPending}
+                  title="Send challenge"
+                  aria-label={`Send challenge to ${friendName}`}
                 >
                   {challengeMutation.isPending ? <Spinner size="sm" /> : '⚔️ Send Challenge'}
                 </Button>

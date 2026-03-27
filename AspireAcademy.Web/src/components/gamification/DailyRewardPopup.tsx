@@ -138,6 +138,8 @@ export default function DailyRewardPopup() {
               size="md"
               onClick={() => setVisible(false)}
               data-testid="daily-reward-claim-btn"
+              title="Close daily reward popup"
+              aria-label="Close daily reward popup"
             >
               Awesome! 🎉
             </Button>

@@ -45,7 +45,7 @@ public class AdminTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHos
                         state: { token, user, isAuthenticated: true },
                         version: 0
                     };
-                    localStorage.setItem('aspire-academy-auth', JSON.stringify(authState));
+                    localStorage.setItem('aspire-learn-auth', JSON.stringify(authState));
                 }", new object[] { token!, userJson });
                 await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
                 await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 15_000 });

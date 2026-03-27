@@ -124,7 +124,7 @@ export default function SettingsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `aspire-academy-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `aspire-learn-export-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -304,6 +304,8 @@ export default function SettingsPage() {
             color="dark.text"
             _hover={{ bg: 'content.hover' }}
             onClick={() => setChangePasswordOpen(true)}
+            title="Change your password"
+            aria-label="Change your password"
           >
             <FiLock /> Change Password
           </Button>
@@ -316,6 +318,8 @@ export default function SettingsPage() {
             _hover={{ bg: 'content.hover' }}
             onClick={() => exportMutation.mutate()}
             disabled={exportMutation.isPending}
+            title="Export your account data"
+            aria-label="Export your account data"
           >
             {exportMutation.isPending
               ? <><Spinner size="sm" /> Exporting…</>
@@ -342,6 +346,8 @@ export default function SettingsPage() {
           color="game.error"
           _hover={{ bg: 'rgba(209, 52, 56, 0.1)' }}
           onClick={() => setDeleteOpen(true)}
+          title="Delete your account"
+          aria-label="Delete your account"
         >
           <FiTrash2 /> Delete Account
         </Button>
@@ -412,6 +418,8 @@ export default function SettingsPage() {
                 onClick={() => setChangePasswordOpen(false)}
                 borderColor="game.pixelBorder"
                 color="dark.text"
+                title="Cancel password change"
+                aria-label="Cancel password change"
               >
                 Cancel
               </Button>
@@ -419,6 +427,8 @@ export default function SettingsPage() {
                 colorPalette="purple"
                 onClick={handleSubmitPassword}
                 disabled={changePasswordMutation.isPending}
+                title="Save new password"
+                aria-label="Save new password"
               >
                 {changePasswordMutation.isPending
                   ? <><Spinner size="sm" /> Saving…</>
@@ -469,6 +479,8 @@ export default function SettingsPage() {
                 onClick={() => setDeleteOpen(false)}
                 borderColor="game.pixelBorder"
                 color="dark.text"
+                title="Cancel account deletion"
+                aria-label="Cancel account deletion"
               >
                 Cancel
               </Button>
@@ -476,6 +488,8 @@ export default function SettingsPage() {
                 colorPalette="red"
                 onClick={() => deleteMutation.mutate()}
                 disabled={deleteConfirmation !== 'DELETE' || deleteMutation.isPending}
+                title="Confirm account deletion"
+                aria-label="Confirm account deletion"
               >
                 {deleteMutation.isPending
                   ? <><Spinner size="sm" /> Deleting…</>

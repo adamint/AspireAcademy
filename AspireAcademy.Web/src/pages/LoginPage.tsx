@@ -75,7 +75,7 @@ export default function LoginPage() {
           textAlign="center"
           mb="1"
         >
-          Aspire Academy
+          Aspire Learn
         </Text>
         <Text textAlign="center" color="dark.muted" mb="6" fontSize="sm">
           Welcome back, adventurer!
@@ -112,6 +112,7 @@ export default function LoginPage() {
                 placeholder="hero@aspire.dev"
                 autoComplete="username"
                 required
+                aria-required="true"
                 size="md"
                 bg="dark.surface"
                 borderColor="game.pixelBorder"
@@ -134,6 +135,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 autoComplete="current-password"
                 required
+                aria-required="true"
                 size="md"
                 bg="dark.surface"
                 borderColor="game.pixelBorder"
@@ -159,6 +161,8 @@ export default function LoginPage() {
               size="md"
               w="100%"
               mt="2"
+              title="Login to your account"
+              aria-label="Login to your account"
             >
               {loading ? <Spinner size="sm" /> : 'Log In'}
             </Button>

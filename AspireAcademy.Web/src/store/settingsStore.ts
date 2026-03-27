@@ -47,7 +47,7 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
       setShowLineNumbers: (enabled) => set({ showLineNumbers: enabled }),
     }),
     {
-      name: 'aspire-academy-settings',
+      name: 'aspire-learn-settings',
     }
   )
 );

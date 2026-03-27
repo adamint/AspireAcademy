@@ -135,6 +135,7 @@ export default function AiTutorSidebar() {
           transition="transform 0.15s ease"
           onClick={() => setOpen(true)}
           aria-label="Open AI Tutor"
+          title="Open AI Tutor for help"
         >
           🤖
         </Box>
@@ -157,6 +158,7 @@ export default function AiTutorSidebar() {
                 </Text>
                 <IconButton
                   aria-label="Close"
+                  title="Close AI Tutor"
                   variant="ghost"
                   size="sm"
                   color="whiteAlpha.900"
@@ -229,12 +231,15 @@ export default function AiTutorSidebar() {
                   color="dark.text"
                   borderColor="dark.border"
                   _placeholder={{ color: 'dark.muted' }}
+                  aria-label="Ask a question to AI Tutor"
                 />
                 <Button
                   colorPalette="purple"
                   size="sm"
                   onClick={handleSend}
                   disabled={streaming || !input.trim()}
+                  title="Send message to AI Tutor"
+                  aria-label="Send message to AI Tutor"
                 >
                   <FiSend />
                 </Button>

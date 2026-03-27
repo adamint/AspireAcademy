@@ -56,10 +56,10 @@ describe('authStore', () => {
     expect(useAuthStore.getState().user).toBeNull()
   })
 
-  it('persists to localStorage under aspire-academy-auth', () => {
+  it('persists to localStorage under aspire-learn-auth', () => {
     useAuthStore.getState().setAuth('tok-persist', testUser)
 
-    const raw = localStorage.getItem('aspire-academy-auth')
+    const raw = localStorage.getItem('aspire-learn-auth')
     expect(raw).not.toBeNull()
     const parsed = JSON.parse(raw!)
     expect(parsed.state.token).toBe('tok-persist')

@@ -53,7 +53,7 @@ describe('LoginPage', () => {
   it('renders login form with username and password fields', () => {
     renderLogin()
 
-    expect(screen.getByText('Aspire Academy')).toBeInTheDocument()
+    expect(screen.getByText('Aspire Learn')).toBeInTheDocument()
     expect(screen.getByLabelText(/Username or Email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Password/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument()

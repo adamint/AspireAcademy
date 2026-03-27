@@ -143,7 +143,7 @@ export default function RegisterPage() {
           textAlign="center"
           mb="1"
         >
-          Aspire Academy
+          Aspire Learn
         </Text>
         <Text textAlign="center" color="dark.muted" mb="6" fontSize="sm">
           Create your hero account
@@ -180,6 +180,7 @@ export default function RegisterPage() {
                 placeholder="hero_dev"
                 autoComplete="username"
                 size="md"
+                aria-required="true"
                 {...inputStyles}
               />
               <FieldError message={fieldErrors.username} />
@@ -198,6 +199,7 @@ export default function RegisterPage() {
                 placeholder="hero@aspire.dev"
                 autoComplete="email"
                 size="md"
+                aria-required="true"
                 {...inputStyles}
               />
               <FieldError message={fieldErrors.email} />
@@ -231,6 +233,7 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 autoComplete="new-password"
                 size="md"
+                aria-required="true"
                 {...inputStyles}
               />
               <FieldError message={fieldErrors.password} />
@@ -249,6 +252,7 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 autoComplete="new-password"
                 size="md"
+                aria-required="true"
                 {...inputStyles}
               />
               <FieldError message={fieldErrors.confirmPassword} />
@@ -270,6 +274,8 @@ export default function RegisterPage() {
               size="md"
               w="100%"
               mt="2"
+              title="Create your account"
+              aria-label="Create your account"
             >
               {loading ? <Spinner size="sm" /> : 'Create Account'}
             </Button>

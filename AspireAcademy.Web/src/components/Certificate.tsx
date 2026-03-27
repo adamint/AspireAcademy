@@ -107,7 +107,7 @@ function CertificateSVG({ data }: { data: CertificateData }) {
         </g>
       ))}
 
-      {/* Header: ASPIRE ACADEMY */}
+      {/* Header: ASPIRE LEARN */}
       <text
         x={CERT_WIDTH / 2} y="70"
         textAnchor="middle"
@@ -115,7 +115,7 @@ function CertificateSVG({ data }: { data: CertificateData }) {
         fontSize="18"
         letterSpacing="4"
       >
-        ASPIRE ACADEMY
+        ASPIRE LEARN
       </text>
 
       {/* Decorative line */}
@@ -256,7 +256,7 @@ function CertificateSVG({ data }: { data: CertificateData }) {
         fill="#0D0B1A"
         fontSize="5"
       >
-        ACADEMY
+        LEARN
       </text>
 
       {/* Certificate ID */}
@@ -335,7 +335,7 @@ export function downloadCertificateSVG(data: CertificateData): void {
   <rect x="4" y="4" width="${CERT_WIDTH - 8}" height="${CERT_HEIGHT - 8}" fill="none" stroke="url(#bg)" stroke-width="6" rx="2"/>
   <rect x="16" y="16" width="${CERT_WIDTH - 32}" height="${CERT_HEIGHT - 32}" fill="none" stroke="#2B1260" stroke-width="2" rx="2" stroke-dasharray="8 4"/>
   ${cornersSvg}
-  <text x="${CERT_WIDTH / 2}" y="70" text-anchor="middle" fill="url(#gd)" font-size="18" letter-spacing="4">ASPIRE ACADEMY</text>
+  <text x="${CERT_WIDTH / 2}" y="70" text-anchor="middle" fill="url(#gd)" font-size="18" letter-spacing="4">ASPIRE LEARN</text>
   <line x1="150" y1="88" x2="${CERT_WIDTH - 150}" y2="88" stroke="#6B4FBB" stroke-width="2"/>
   <text x="${CERT_WIDTH / 2}" y="120" text-anchor="middle" fill="#C7CFF1" font-size="12" letter-spacing="2">${isMaster ? 'MASTER CERTIFICATE' : 'CERTIFICATE OF COMPLETION'}</text>
   <text x="${CERT_WIDTH / 2}" y="${iconY}" text-anchor="middle" font-size="${iconFontSize}" fill="white">${iconContent}</text>
@@ -349,7 +349,7 @@ export function downloadCertificateSVG(data: CertificateData): void {
   <circle cx="${CERT_WIDTH / 2}" cy="445" r="28" fill="none" stroke="#0D0B1A" stroke-width="2"/>
   <circle cx="${CERT_WIDTH / 2}" cy="445" r="24" fill="none" stroke="#B8860B" stroke-width="1"/>
   <text x="${CERT_WIDTH / 2}" y="442" text-anchor="middle" fill="#0D0B1A" font-size="7" font-weight="bold">ASPIRE</text>
-  <text x="${CERT_WIDTH / 2}" y="454" text-anchor="middle" fill="#0D0B1A" font-size="5">ACADEMY</text>
+  <text x="${CERT_WIDTH / 2}" y="454" text-anchor="middle" fill="#0D0B1A" font-size="5">LEARN</text>
   <text x="${CERT_WIDTH / 2}" y="${CERT_HEIGHT - 28}" text-anchor="middle" fill="#4A4560" font-size="6">Certificate ID: ${certId}</text>
 </svg>`;
 
@@ -357,7 +357,7 @@ export function downloadCertificateSVG(data: CertificateData): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  const filename = isMaster ? 'aspire-academy-master-certificate.svg' : `aspire-academy-${data.worldId}-certificate.svg`;
+  const filename = isMaster ? 'aspire-learn-master-certificate.svg' : `aspire-learn-${data.worldId}-certificate.svg`;
   link.download = filename;
   document.body.appendChild(link);
   link.click();
@@ -369,7 +369,7 @@ export function downloadCertificateSVG(data: CertificateData): void {
 export function copyCertificateSummary(data: CertificateData): void {
   const isMaster = data.isMaster ?? false;
   const lines = [
-    `🏆 Aspire Academy — ${isMaster ? 'Master Certificate' : 'Certificate of Completion'}`,
+    `🏆 Aspire Learn — ${isMaster ? 'Master Certificate' : 'Certificate of Completion'}`,
     '',
     isMaster ? '🎓 Full Curriculum Mastery' : `${data.worldIcon} World ${data.worldSortOrder}: ${data.worldName}`,
     `Awarded to: ${data.displayName}`,
@@ -379,7 +379,7 @@ export function copyCertificateSummary(data: CertificateData): void {
     '',
     `Certificate ID: ${data.certificateId}`,
     '',
-    'aspireacademy.dev',
+    'aspirelearn.dev',
   ];
   navigator.clipboard.writeText(lines.join('\n'));
 }

@@ -1,4 +1,4 @@
-# Aspire Academy — Setup Guide
+# Aspire Learn — Setup Guide
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ export Jwt__Key="your-secret-key-at-least-32-characters-long"
 ### 3. PostgreSQL & Redis (Auto-configured)
 
 These are managed by Aspire — no manual configuration needed. The AppHost starts containers automatically:
-- **PostgreSQL** — data persisted in Docker volume `aspire-academy-pgdata`
+- **PostgreSQL** — data persisted in Docker volume `aspire-learn-pgdata`
 - **Redis** — ephemeral (leaderboard data resets on container restart)
 
 ### 4. CodeRunner (Auto-configured)

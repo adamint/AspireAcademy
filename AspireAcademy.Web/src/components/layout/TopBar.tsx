@@ -50,6 +50,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
       <IconButton
         display={{ base: 'flex', md: 'none' }}
         aria-label="Toggle navigation"
+        title="Toggle navigation"
         variant="ghost"
         size="sm"
         color="whiteAlpha.800"
@@ -67,8 +68,12 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
         userSelect="none"
         whiteSpace="nowrap"
         onClick={() => navigate('/')}
+        title="Go to homepage"
+        role="button"
+        tabIndex={0}
+        aria-label="Aspire Learn homepage"
       >
-        Aspire Academy
+        Aspire Learn
       </Text>
 
       <Box flexGrow={1} />
@@ -89,6 +94,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
         transition="all 0.15s"
         onClick={() => openSearch(true)}
         display={{ base: 'none', md: 'flex' }}
+        title="Open search palette"
+        aria-label="Open search palette"
       >
         <FiSearch size={14} color="#9185D1" />
         <Text fontSize="xs" color="whiteAlpha.500" whiteSpace="nowrap">
@@ -103,6 +110,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
       <IconButton
         display={{ base: 'flex', md: 'none' }}
         aria-label="Search"
+        title="Open search palette"
         variant="ghost"
         size="sm"
         color="whiteAlpha.800"
@@ -128,6 +136,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
             <IconButton
               data-testid="sound-toggle"
               aria-label="Toggle sound effects"
+              title={soundEnabled ? "Disable sound effects" : "Enable sound effects"}
               variant="ghost"
               size="sm"
               color="whiteAlpha.800"
@@ -141,6 +150,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
             <IconButton
               data-testid="theme-toggle"
               aria-label="Toggle color mode"
+              title={colorMode === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
               variant="ghost"
               size="sm"
               color="whiteAlpha.800"
@@ -153,6 +163,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
             {/* Avatar with dropdown menu */}
             <Box position="relative" ref={menuRef}>
               <Flex
+                as="button"
                 align="center"
                 justify="center"
                 w="32px"
@@ -166,6 +177,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                 _hover={{ bg: 'aspire.700' }}
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-label="User menu"
+                title="Open user menu"
               >
                 {(user?.displayName ?? user?.username ?? '?').charAt(0).toUpperCase()}
               </Flex>
@@ -221,6 +233,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                         setMenuOpen(false);
                         navigate('/profile');
                       }}
+                      title="Go to profile"
+                      aria-label="Go to profile"
                     >
                       <FiUser /> Profile
                     </Flex>
@@ -241,6 +255,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                         setMenuOpen(false);
                         navigate('/settings');
                       }}
+                      title="Go to settings"
+                      aria-label="Go to settings"
                     >
                       <FiSettings /> Settings
                     </Flex>
@@ -258,6 +274,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                       color="game.error"
                       _hover={{ bg: 'whiteAlpha.100' }}
                       onClick={handleLogout}
+                      title="Log out"
+                      aria-label="Log out"
                     >
                       <FiLogOut /> Log Out
                     </Flex>
@@ -271,6 +289,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
             {/* Theme toggle for anonymous users */}
             <IconButton
               aria-label="Toggle color mode"
+              title={colorMode === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
               variant="ghost"
               size="sm"
               color="whiteAlpha.800"
@@ -287,6 +306,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
               size="sm"
               color="whiteAlpha.800"
               _hover={{ bg: 'whiteAlpha.200' }}
+              title="Go to login page"
             >
               Log In
             </Button>
@@ -297,6 +317,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
               bg="aspire.600"
               color="white"
               _hover={{ bg: 'aspire.500' }}
+              title="Go to registration page"
             >
               Sign Up
             </Button>

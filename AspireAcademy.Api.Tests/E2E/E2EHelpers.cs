@@ -120,7 +120,7 @@ internal static class E2EHelpers
                     state: { token, user, isAuthenticated: true },
                     version: 0
                 };
-                localStorage.setItem('aspire-academy-auth', JSON.stringify(authState));
+                localStorage.setItem('aspire-learn-auth', JSON.stringify(authState));
             }", new object[] { token!, userJson });
 
             // Navigate to dashboard
@@ -158,7 +158,7 @@ internal static class E2EHelpers
                         state: { token, user, isAuthenticated: true },
                         version: 0
                     };
-                    localStorage.setItem('aspire-academy-auth', JSON.stringify(authState));
+                    localStorage.setItem('aspire-learn-auth', JSON.stringify(authState));
                 }", new object[] { token!, userJson });
 
                 await page.GotoAsync(WebBaseUrl + "/dashboard");
@@ -195,7 +195,7 @@ internal static class E2EHelpers
 
     public static async Task ClearAuth(IPage page)
     {
-        await page.EvaluateAsync("() => localStorage.removeItem('aspire-academy-auth')");
+        await page.EvaluateAsync("() => localStorage.removeItem('aspire-learn-auth')");
     }
 
     public static async Task NavigateToWorld(IPage page, string worldName = "Aspire Foundations")
@@ -235,7 +235,7 @@ internal static class E2EHelpers
 
     public static async Task<string> GetAuthToken(IPage page)
     {
-        var authJson = await page.EvaluateAsync<string>("() => localStorage.getItem('aspire-academy-auth')");
+        var authJson = await page.EvaluateAsync<string>("() => localStorage.getItem('aspire-learn-auth')");
         using var doc = System.Text.Json.JsonDocument.Parse(authJson);
         return doc.RootElement.GetProperty("state").GetProperty("token").GetString()!;
     }

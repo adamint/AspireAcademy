@@ -63,7 +63,7 @@ public class LoadingStateTests(AppHostPlaywrightFixture fixture) : IClassFixture
 
             await page.AddInitScriptAsync(@"
                 (function() {
-                    localStorage.setItem('aspire-academy-auth',
+                    localStorage.setItem('aspire-learn-auth',
                         JSON.stringify({ state: { token: 'fake-token', user: " +
                         System.Text.Json.JsonSerializer.Serialize(FakeUser) + @" }, version: 0 }));
                 })();

@@ -212,6 +212,7 @@ export function SearchPalette() {
             color="white"
             _placeholder={{ color: 'whiteAlpha.400' }}
             autoComplete="off"
+            aria-label="Search lessons, worlds, pages"
           />
           <Flex
             align="center"
@@ -266,6 +267,10 @@ export function SearchPalette() {
                   cursor="pointer"
                   _hover={{ bg: 'whiteAlpha.100' }}
                   onClick={() => handleRecentClick(recent)}
+                  title={`Search for "${recent}"`}
+                  aria-label={`Search for "${recent}"`}
+                  role="button"
+                  tabIndex={0}
                 >
                   <Text fontSize="sm" color="whiteAlpha.400">🕐</Text>
                   <Text fontSize="sm" color="whiteAlpha.700">{recent}</Text>
@@ -290,6 +295,10 @@ export function SearchPalette() {
                   onClick={() => handleSelect(result)}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   transition="background 0.1s"
+                  title={`Open ${result.title} - ${result.description}`}
+                  aria-label={`Open ${result.title} - ${result.description}`}
+                  role="button"
+                  tabIndex={0}
                 >
                   <Text fontSize="lg" flexShrink={0}>{result.icon}</Text>
                   <Box flex="1" minW="0">

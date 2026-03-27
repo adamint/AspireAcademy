@@ -37,6 +37,16 @@ export default function WorldCard({ world }: WorldCardProps) {
       transition="transform 0.15s ease, box-shadow 0.15s ease"
       _hover={world.isLocked ? {} : { transform: 'translateY(-2px)' }}
       onClick={handleClick}
+      title={world.isLocked ? `${world.name} - Locked` : `Open ${world.name} world`}
+      aria-label={world.isLocked ? `${world.name} world - Locked` : `Open ${world.name} world`}
+      role="button"
+      tabIndex={world.isLocked ? -1 : 0}
+      onKeyDown={(e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && !world.isLocked) {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
     >
       <Card.Body p="5">
         <Flex align="center" gap="3" mb="3">

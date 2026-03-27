@@ -89,6 +89,8 @@ export default function LevelUpModal() {
           size="lg"
           mt={4}
           onClick={() => setPendingLevelUp(null)}
+          title="Continue from level up"
+          aria-label="Continue from level up"
         >
           Continue
         </Button>

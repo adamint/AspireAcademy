@@ -48,7 +48,7 @@ export const useAuthStore = create<AuthStore>()(
         })),
     }),
     {
-      name: 'aspire-academy-auth',
+      name: 'aspire-learn-auth',
     }
   )
 );

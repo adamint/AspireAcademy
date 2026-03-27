@@ -58,7 +58,7 @@ public sealed class AiTutorService
         int userLevel,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var systemPrompt = $"You are an Aspire Academy tutor helping a Level {userLevel} student learn .NET Aspire.";
+        var systemPrompt = $"You are an Aspire Learn tutor helping a Level {userLevel} student learn Aspire.";
         if (lessonContext is not null)
         {
             systemPrompt += $" Current lesson: {lessonContext}.";
@@ -118,7 +118,7 @@ public sealed class AiTutorService
         var messages = new List<ChatMessage>
         {
             ChatMessage.CreateSystemMessage(
-                $"You are a .NET Aspire coding tutor providing a hint. {levelDescription}"),
+                $"You are an Aspire coding tutor providing a hint. {levelDescription}"),
             ChatMessage.CreateUserMessage(
                 $"Challenge instructions:\n{challenge.Instructions}\n\nStudent's current code:\n```csharp\n{currentCode}\n```\n\nProvide a helpful hint.")
         };
@@ -137,7 +137,7 @@ public sealed class AiTutorService
         var messages = new List<ChatMessage>
         {
             ChatMessage.CreateSystemMessage("""
-                You are a .NET Aspire code reviewer. Review the student's code against the challenge requirements.
+                You are an Aspire code reviewer. Review the student's code against the challenge requirements.
                 Return your review as JSON with this exact format (no markdown fences):
                 {
                     "overallFeedback": "string",

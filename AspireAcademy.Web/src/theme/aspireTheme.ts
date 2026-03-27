@@ -103,7 +103,7 @@ export const gameColors = {
 
 // ── Color mode helpers ──
 
-const COLOR_MODE_KEY = 'aspire-color-mode';
+const COLOR_MODE_KEY = 'aspire-learn-color-mode';
 
 export type ColorMode = 'dark' | 'light';
 

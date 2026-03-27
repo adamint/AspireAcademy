@@ -220,6 +220,8 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 textAlign="left"
                 _hover={world.isUnlocked ? { bg: 'whiteAlpha.100' } : undefined}
                 onClick={() => world.isUnlocked && toggleWorld(world.id)}
+                title={world.isUnlocked ? `Toggle ${world.name} world` : `${world.name} - Locked`}
+                aria-label={world.isUnlocked ? `Toggle ${world.name} world` : `${world.name} world - Locked`}
               >
                 <FiGlobe size={14} />
                 <Text as="span" flex="1" truncate>

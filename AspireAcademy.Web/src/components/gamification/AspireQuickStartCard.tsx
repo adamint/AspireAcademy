@@ -55,6 +55,8 @@ export default function AspireQuickStartCard() {
             color="aspire.400"
             onClick={() => handleCopy('curl -sSL https://aspire.dev/install.sh | bash', 'install')}
             flexShrink={0}
+            title="Copy install command"
+            aria-label="Copy install command to clipboard"
           >
             {copied === 'install' ? '✓' : '📋'}
           </Button>
@@ -83,6 +85,8 @@ export default function AspireQuickStartCard() {
             color="aspire.400"
             onClick={() => handleCopy('aspire new', 'new')}
             flexShrink={0}
+            title="Copy new project command"
+            aria-label="Copy new project command to clipboard"
           >
             {copied === 'new' ? '✓' : '📋'}
           </Button>

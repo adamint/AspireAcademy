@@ -334,7 +334,7 @@ export default function HomePage() {
             cursor="pointer"
             onClick={() => scrollTo('hero')}
           >
-            Aspire Academy
+            Aspire Learn
           </Text>
 
           <Box flexGrow={1} />
@@ -870,7 +870,7 @@ export default function HomePage() {
           borderTop="2px solid #2B1260"
         >
           <Text {...pixelFontProps} fontSize="10px" color="aspire.600">
-            Aspire Academy
+            Aspire Learn
           </Text>
           <Text fontSize="xs" color="whiteAlpha.400">
             Learn Aspire · Build distributed apps · Have fun doing it

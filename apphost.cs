@@ -12,7 +12,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 // Infrastructure
 var postgresServer = builder.AddPostgres("postgres")
-    .WithDataVolume("aspire-academy-pgdata")
+    .WithDataVolume("aspire-learn-pgdata")
     .WithPgAdmin();
 var postgres = postgresServer.AddDatabase("academydb");
 var redis = builder.AddRedis("cache")

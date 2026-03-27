@@ -81,6 +81,8 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       onClick={handleClick}
       role="button"
       tabIndex={isClickable ? 0 : -1}
+      title={`${lesson.title} - ${lesson.type} lesson (${lesson.xpReward} XP)`}
+      aria-label={`${lesson.title} - ${lesson.type} lesson (${lesson.xpReward} XP)`}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') handleClick();
       }}

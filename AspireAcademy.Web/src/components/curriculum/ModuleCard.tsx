@@ -38,6 +38,16 @@ export default function ModuleCard({ module }: ModuleCardProps) {
           opacity={module.isLocked ? 0.55 : 1}
           userSelect="none"
           onClick={toggle}
+          title={module.isLocked ? `${module.name} - Locked` : `Toggle ${module.name} module`}
+          aria-label={module.isLocked ? `${module.name} module - Locked` : `Toggle ${module.name} module`}
+          role="button"
+          tabIndex={module.isLocked ? -1 : 0}
+          onKeyDown={(e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && !module.isLocked) {
+              e.preventDefault();
+              toggle();
+            }
+          }}
         >
           <Box color={module.isLocked ? 'game.locked' : 'aspire.600'} fontSize="md">
             {module.isLocked ? (

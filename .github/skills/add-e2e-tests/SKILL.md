@@ -8,7 +8,7 @@ When adding, fixing, or verifying test coverage for any part of the application.
 ### 1. Start the real app
 The app MUST be running via `aspire run` with real Postgres, Redis, and CodeRunner. NEVER test against mocks or in-memory databases.
 
-**NEVER delete the postgres data volume** (`aspire-academy-pgdata`) — it contains user data. Only delete if schema changed and migrations fail.
+**NEVER delete the postgres data volume** (`aspire-learn-pgdata`) — it contains user data. Only delete if schema changed and migrations fail.
 
 ### 2. Write C# Playwright tests
 All E2E tests go in `AspireAcademy.Api.Tests/E2E/` using `Microsoft.Playwright` NuGet package. NOT TypeScript specs.
