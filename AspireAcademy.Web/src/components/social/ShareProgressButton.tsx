@@ -41,7 +41,7 @@ export default function ShareProgressButton({
       `🏆 ${achievementCount} achievements unlocked`,
       streakDays > 0 ? `🔥 ${streakDays}-day learning streak` : null,
       '',
-      'Master distributed app development with .NET Aspire!',
+      'Master distributed app development with Aspire!',
       'https://aspire.dev',
     ]
       .filter(Boolean)

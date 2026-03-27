@@ -172,7 +172,7 @@ export default function AiTutorSidebar() {
             <Drawer.Body p={4} display="flex" flexDirection="column" gap={3} overflowY="auto">
               {messages.length === 0 && (
                 <Text textAlign="center" color="dark.muted" mt={8} fontSize="sm">
-                  Ask me anything about .NET Aspire! I&apos;m here to help you learn.
+                  Ask me anything about Aspire! I&apos;m here to help you learn.
                 </Text>
               )}
               {messages.map((msg, i) => (

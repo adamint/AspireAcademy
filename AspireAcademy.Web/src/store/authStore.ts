@@ -16,6 +16,7 @@ export interface User {
   totalXp: number;
   loginStreakDays: number;
   createdAt: string;
+  gitHubUsername: string | null;
 }
 
 interface AuthStore {

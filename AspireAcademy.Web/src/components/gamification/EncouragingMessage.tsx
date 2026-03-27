@@ -47,7 +47,7 @@ export default function EncouragingMessage({ xpEarned }: EncouragingMessageProps
         </Text>
         {xpEarned !== undefined && xpEarned > 0 && (
           <Text fontSize="xs" color="aspire.400">
-            Keep learning to master .NET Aspire!
+            Keep learning to master Aspire!
           </Text>
         )}
       </Box>

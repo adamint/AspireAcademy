@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   Box,
@@ -20,6 +20,7 @@ import WorldCard from '../components/curriculum/WorldCard';
 import AspireQuickStartCard from '../components/gamification/AspireQuickStartCard';
 import WorldCompletionBadges from '../components/gamification/WorldCompletionBadges';
 import ProgressMilestonePopup from '../components/gamification/ProgressMilestonePopup';
+import ActivityHeatmap from '../components/ActivityHeatmap';
 import type { World, XpResponse, XpEvent } from '../types/curriculum';
 
 const rankEmojis: Record<string, string> = {
@@ -62,6 +63,8 @@ function formatTimeAgo(dateStr: string): string {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const isAuthenticated = !!token && !!user;
 
   const { data: worlds, isLoading: worldsLoading } = useQuery<World[]>({
     queryKey: ['worlds'],
@@ -77,9 +80,10 @@ export default function DashboardPage() {
       console.error('[DashboardPage] Failed to fetch XP data:', err);
       throw err;
     }),
+    enabled: isAuthenticated,
   });
 
-  const isLoading = worldsLoading || xpLoading;
+  const isLoading = worldsLoading || (isAuthenticated && xpLoading);
 
   const stats = useMemo(() => {
     if (!xpData) return null;
@@ -109,11 +113,39 @@ export default function DashboardPage() {
     <Box maxW="1100px" mx="auto" p="6" display="flex" flexDirection="column" gap="6">
       {/* Welcome */}
       <Heading as="h1" size="2xl" color="dark.text">
-        Welcome back, {user?.displayName ?? user?.username ?? 'Learner'}!
+        {isAuthenticated
+          ? `Welcome back, ${user?.displayName ?? user?.username ?? 'Learner'}!`
+          : 'Explore the Curriculum'}
       </Heading>
 
+      {/* Sign-up CTA for anonymous users */}
+      {!isAuthenticated && (
+        <Card.Root variant="outline" {...retroCardProps} borderColor="aspire.600" borderWidth="3px">
+          <Card.Body p="6">
+            <Flex justify="space-between" align="center" flexWrap="wrap" gap="4">
+              <Box flex={1}>
+                <Text fontSize="md" color="dark.text" fontWeight="semibold" mb="1">
+                  🔐 Sign up to track your progress
+                </Text>
+                <Text fontSize="sm" color="aspire.400">
+                  Create a free account to earn XP, complete lessons, and unlock achievements.
+                </Text>
+              </Box>
+              <Button
+                as={RouterLink}
+                to="/register"
+                colorPalette="purple"
+                size="lg"
+              >
+                Sign Up Free
+              </Button>
+            </Flex>
+          </Card.Body>
+        </Card.Root>
+      )}
+
       {/* Stat Cards */}
-      {stats && (
+      {isAuthenticated && stats && (
         <SimpleGrid columns={{ base: 1, md: 3 }} gap="4">
           {/* Level & Rank */}
           <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg">
@@ -165,8 +197,11 @@ export default function DashboardPage() {
         </SimpleGrid>
       )}
 
+      {/* Activity Heatmap (compact) */}
+      <ActivityHeatmap compact />
+
       {/* Continue Learning — prominent hero section */}
-      {xpData?.nextLesson && (
+      {isAuthenticated && xpData?.nextLesson && (
         <Card.Root variant="outline" {...retroCardProps} borderColor="aspire.600" borderWidth="3px">
           <Card.Body p="6">
             <Flex justify="space-between" align="center" flexWrap="wrap" gap="4">
@@ -215,7 +250,7 @@ export default function DashboardPage() {
 
       {/* Worlds */}
       <Heading as="h2" size="lg" color="dark.text">
-        🌍 Your Worlds
+        🌍 {isAuthenticated ? 'Your Worlds' : 'Worlds'}
       </Heading>
 
       {/* World Completion Badges */}
@@ -244,7 +279,7 @@ export default function DashboardPage() {
       )}
 
       {/* Recent Activity */}
-      {xpData?.recentEvents && xpData.recentEvents.length > 0 && (
+      {isAuthenticated && xpData?.recentEvents && xpData.recentEvents.length > 0 && (
         <>
           <Heading as="h2" size="lg" color="dark.text">
             📋 Recent Activity

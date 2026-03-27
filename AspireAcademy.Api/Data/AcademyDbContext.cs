@@ -36,6 +36,7 @@ public class AcademyDbContext(DbContextOptions<AcademyDbContext> options) : DbCo
             e.Property(u => u.DisplayName).HasMaxLength(50).IsRequired();
             e.Property(u => u.AvatarSeed).HasMaxLength(50);
             e.Property(u => u.Bio).HasMaxLength(200);
+            e.Property(u => u.GitHubUsername).HasMaxLength(39);
             e.Property(u => u.CreatedAt).HasDefaultValueSql("now()").IsRequired();
             e.Property(u => u.LoginStreakDays).HasDefaultValue(0).IsRequired();
 

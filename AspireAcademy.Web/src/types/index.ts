@@ -10,6 +10,7 @@ export interface User {
   totalXp: number;
   loginStreakDays: number;
   createdAt: string;
+  gitHubUsername: string | null;
 }
 
 export interface World {
@@ -164,7 +165,7 @@ export interface LeaderboardEntry {
   currentLevel: number;
   currentRank: string;
   xp: number;
-  isCurrentUser: boolean;
+  gitHubUsername: string | null;
 }
 
 export interface FriendRequest {

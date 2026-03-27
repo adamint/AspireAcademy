@@ -17,7 +17,7 @@ public static class CurriculumEndpoints
     {
         s_logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("CurriculumEndpoints");
 
-        var group = app.MapGroup("/api").WithTags("Curriculum").RequireAuthorization();
+        var group = app.MapGroup("/api").WithTags("Curriculum");
 
         group.MapGet("/worlds", GetWorlds);
         group.MapGet("/worlds/{worldId}/modules", GetWorldModules);
@@ -31,16 +31,19 @@ public static class CurriculumEndpoints
         ClaimsPrincipal principal,
         AcademyDbContext db)
     {
-        var userId = EndpointHelpers.GetUserId(principal);
+        var userId = principal.Identity?.IsAuthenticated == true
+            ? EndpointHelpers.GetUserId(principal)
+            : (Guid?)null;
 
         var worlds = await db.Worlds.OrderBy(w => w.SortOrder).ToListAsync();
 
         s_logger.LogInformation("GET /worlds for UserId={UserId}, returning {Count} worlds", userId, worlds.Count);
         var modules = await db.Modules.ToListAsync();
         var lessons = await db.Lessons.ToListAsync();
-        var userProgress = await db.UserProgress
-            .Where(p => p.UserId == userId)
-            .ToListAsync();
+
+        var userProgress = userId is not null
+            ? await db.UserProgress.Where(p => p.UserId == userId).ToListAsync()
+            : [];
 
         var completedLessonIds = userProgress
             .Where(p => CompletedStatuses.Contains(p.Status))
@@ -83,6 +86,9 @@ public static class CurriculumEndpoints
                        moduleLessons.All(l => doneLessonIds.Contains(l.Id));
             });
 
+            // Anonymous users see all worlds as unlocked
+            var isUnlocked = userId is null || IsWorldUnlocked(world, modulesByWorld, lessonsByModule, doneLessonIds);
+
             return new WorldDto(
                 world.Id,
                 world.Name,
@@ -91,7 +97,7 @@ public static class CurriculumEndpoints
                 world.SortOrder,
                 world.LevelRangeStart,
                 world.LevelRangeEnd,
-                IsUnlocked: IsWorldUnlocked(world, modulesByWorld, lessonsByModule, doneLessonIds),
+                IsUnlocked: isUnlocked,
                 ModuleCount: worldModules.Count,
                 CompletedModuleCount: completedModuleCount,
                 TotalLessons: totalLessons,
@@ -117,7 +123,9 @@ public static class CurriculumEndpoints
             return Results.NotFound(new ErrorResponse("World not found."));
         }
 
-        var userId = EndpointHelpers.GetUserId(principal);
+        var userId = principal.Identity?.IsAuthenticated == true
+            ? EndpointHelpers.GetUserId(principal)
+            : (Guid?)null;
 
         var modules = await db.Modules
             .Where(m => m.WorldId == worldId)
@@ -133,9 +141,11 @@ public static class CurriculumEndpoints
             .Where(l => moduleIds.Contains(l.ModuleId))
             .ToListAsync();
 
-        var userProgress = await db.UserProgress
-            .Where(p => p.UserId == userId && lessons.Select(l => l.Id).Contains(p.LessonId))
-            .ToListAsync();
+        var userProgress = userId is not null
+            ? await db.UserProgress
+                .Where(p => p.UserId == userId.Value && lessons.Select(l => l.Id).Contains(p.LessonId))
+                .ToListAsync()
+            : [];
 
         var completedLessonIds = userProgress
             .Where(p => CompletedStatuses.Contains(p.Status))
@@ -163,13 +173,16 @@ public static class CurriculumEndpoints
             var completedCount = moduleLessons.Count(l => completedLessonIds.Contains(l.Id));
             var skippedCount = moduleLessons.Count(l => skippedLessonIds.Contains(l.Id));
 
+            // Anonymous users see all modules as unlocked
+            var isUnlocked = userId is null || IsModuleUnlocked(module, lessonsByModule, doneLessonIds);
+
             return new ModuleDto(
                 module.Id,
                 module.WorldId,
                 module.Name,
                 module.Description,
                 module.SortOrder,
-                IsUnlocked: IsModuleUnlocked(module, lessonsByModule, doneLessonIds),
+                IsUnlocked: isUnlocked,
                 LessonCount: lessonCount,
                 CompletedLessonCount: completedCount,
                 SkippedLessonCount: skippedCount,
@@ -192,7 +205,9 @@ public static class CurriculumEndpoints
             return Results.NotFound(new ErrorResponse("Module not found."));
         }
 
-        var userId = EndpointHelpers.GetUserId(principal);
+        var userId = principal.Identity?.IsAuthenticated == true
+            ? EndpointHelpers.GetUserId(principal)
+            : (Guid?)null;
 
         var lessons = await db.Lessons
             .Where(l => l.ModuleId == moduleId)
@@ -201,9 +216,11 @@ public static class CurriculumEndpoints
 
         var lessonIds = lessons.Select(l => l.Id).ToList();
 
-        var userProgress = await db.UserProgress
-            .Where(p => p.UserId == userId && lessonIds.Contains(p.LessonId))
-            .ToDictionaryAsync(p => p.LessonId);
+        var userProgress = userId is not null
+            ? await db.UserProgress
+                .Where(p => p.UserId == userId.Value && lessonIds.Contains(p.LessonId))
+                .ToDictionaryAsync(p => p.LessonId)
+            : new Dictionary<string, UserProgress>();
 
         var completedLessonIds = userProgress.Values
             .Where(p => CompletedStatuses.Contains(p.Status))
@@ -219,6 +236,9 @@ public static class CurriculumEndpoints
         {
             var progress = userProgress.GetValueOrDefault(lesson.Id);
 
+            // Anonymous users see all lessons as unlocked
+            var isUnlocked = userId is null || IsLessonUnlocked(lesson, doneLessonIds);
+
             return new LessonListDto(
                 lesson.Id,
                 lesson.ModuleId,
@@ -232,7 +252,7 @@ public static class CurriculumEndpoints
                 lesson.IsBoss,
                 Status: progress?.Status ?? ProgressStatuses.NotStarted,
                 Score: progress?.Score,
-                IsUnlocked: IsLessonUnlocked(lesson, doneLessonIds));
+                IsUnlocked: isUnlocked);
         }).ToList();
 
         return Results.Ok(result);
@@ -250,25 +270,37 @@ public static class CurriculumEndpoints
             return Results.NotFound(new ErrorResponse("Lesson not found."));
         }
 
-        var userId = EndpointHelpers.GetUserId(principal);
+        var userId = principal.Identity?.IsAuthenticated == true
+            ? EndpointHelpers.GetUserId(principal)
+            : (Guid?)null;
 
-        // Check if lesson is unlocked before returning content
-        UserProgress? prereqProgress = null;
-        if (lesson.UnlockAfterLessonId is not null)
+        // Anonymous users see all lessons as unlocked; authenticated users check prerequisites
+        bool isUnlocked;
+        if (userId is null)
         {
-            prereqProgress = await db.UserProgress
-                .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
+            isUnlocked = true;
+        }
+        else
+        {
+            UserProgress? prereqProgress = null;
+            if (lesson.UnlockAfterLessonId is not null)
+            {
+                prereqProgress = await db.UserProgress
+                    .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lesson.UnlockAfterLessonId);
+            }
+
+            isUnlocked = lesson.UnlockAfterLessonId is null || prereqProgress?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect or ProgressStatuses.Skipped;
         }
 
-        var isUnlocked = lesson.UnlockAfterLessonId is null || prereqProgress?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect or ProgressStatuses.Skipped;
         s_logger.LogInformation("GET /lessons/{LessonId} — type={LessonType}, unlocked={IsUnlocked}, userId={UserId}",
             lessonId, lesson.Type, isUnlocked, userId);
 
         // For locked lessons, we still return content for preview, but mark as locked
         var isLocked = !isUnlocked;
 
-        var progress = await db.UserProgress
-            .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lessonId);
+        var progress = userId is not null
+            ? await db.UserProgress.FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lessonId)
+            : null;
 
         // Fetch module and world for navigation context
         var module = await db.Modules.FirstOrDefaultAsync(m => m.Id == lesson.ModuleId);

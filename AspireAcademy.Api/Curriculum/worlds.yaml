@@ -1,7 +1,7 @@
 worlds:
   - id: world-1
     name: Aspire Foundations
-    description: "Learn the core concepts of .NET Aspire: the app model, AppHost styles, ServiceDefaults, and the Dashboard."
+    description: "Learn the core concepts of Aspire: the app model, AppHost styles, ServiceDefaults, and the Dashboard."
     icon: "🌍"
     sortOrder: 1
     levelRangeStart: 1

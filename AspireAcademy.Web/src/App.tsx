@@ -18,7 +18,15 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const FriendsPage = lazy(() => import('./pages/FriendsPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
+const CertificatesPage = lazy(() => import('./pages/CertificatesPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const PlaygroundPage = lazy(() => import('./pages/PlaygroundPage'));
+const CheatSheetPage = lazy(() => import('./pages/CheatSheetPage'));
+const ConceptMapPage = lazy(() => import('./pages/ConceptMapPage'));
+const GalleryPage = lazy(() => import('./pages/GalleryPage'));
+const WeeklyChallengePage = lazy(() => import('./pages/WeeklyChallengePage'));
+const WhatsNewPage = lazy(() => import('./pages/WhatsNewPage'));
 
 function LazyFallback() {
   return (
@@ -37,21 +45,33 @@ export default function App() {
   return (
     <Suspense fallback={<LazyFallback />}>
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        {/* Public curriculum routes — browsable without auth */}
+        <Route element={<AppShell />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/worlds/:worldId" element={<ModulePage />} />
+          <Route path="/lessons/:lessonId" element={<LessonPage />} />
+          <Route path="/challenges/:lessonId" element={<ChallengePage />} />
+          <Route path="/quizzes/:lessonId" element={<QuizPage />} />
+          <Route path="/playground" element={<PlaygroundPage />} />
+          <Route path="/cheatsheet" element={<CheatSheetPage />} />
+          <Route path="/concept-map" element={<ConceptMapPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/whats-new" element={<WhatsNewPage />} />
+        </Route>
+        {/* Authenticated routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/worlds/:worldId" element={<ModulePage />} />
-            <Route path="/lessons/:lessonId" element={<LessonPage />} />
-            <Route path="/challenges/:lessonId" element={<ChallengePage />} />
-            <Route path="/quizzes/:lessonId" element={<QuizPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/users/:userId" element={<ProfilePage />} />
             <Route path="/friends" element={<FriendsPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/certificates" element={<CertificatesPage />} />
+            <Route path="/weekly-challenge" element={<WeeklyChallengePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
           </Route>
         </Route>

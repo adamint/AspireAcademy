@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
@@ -16,6 +16,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { pixelFontProps } from '../theme/aspireTheme';
 import { LessonType, ProgressStatus } from '../constants';
 import api from '../services/apiClient';
+import { useAuthStore } from '../store/authStore';
 import { useGamificationStore } from '../store/gamificationStore';
 import type { LessonDetail, CompleteResponse } from '../types/curriculum';
 import MarkdownContent from '../components/common/MarkdownContent';
@@ -36,6 +37,9 @@ export default function LessonPage() {
   const syncFromServer = useGamificationStore((s) => s.syncFromServer);
   const setPendingLevelUp = useGamificationStore((s) => s.setPendingLevelUp);
   const addPendingAchievement = useGamificationStore((s) => s.addPendingAchievement);
+  const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
+  const isAuthenticated = !!token && !!user;
 
   const [xpAnim, setXpAnim] = useState<number | null>(null);
 
@@ -295,33 +299,46 @@ export default function LessonPage() {
         </Card.Body>
       </Card.Root>
 
-      {/* Mark Complete / Skip */}
+      {/* Mark Complete / Skip / Sign-up CTA */}
       {!isLocked && !isSkipped && (
         <Flex justify="center" gap="3" py="2" flexWrap="wrap">
-          <Button
-            colorPalette={lesson.isCompleted ? 'green' : 'purple'}
-            size="lg"
-            disabled={lesson.isCompleted || completeMutation.isPending || completeMutation.isSuccess}
-            onClick={handleComplete}
-            data-testid="mark-complete-btn"
-          >
-            {lesson.isCompleted || completeMutation.isSuccess
-              ? '✅ Completed'
-              : completeMutation.isPending
-                ? 'Completing…'
-                : `Mark Complete (+${lesson.xpReward} XP)`}
-          </Button>
-          {!lesson.isCompleted && !completeMutation.isSuccess && (
+          {isAuthenticated ? (
+            <>
+              <Button
+                colorPalette={lesson.isCompleted ? 'green' : 'purple'}
+                size="lg"
+                disabled={lesson.isCompleted || completeMutation.isPending || completeMutation.isSuccess}
+                onClick={handleComplete}
+                data-testid="mark-complete-btn"
+              >
+                {lesson.isCompleted || completeMutation.isSuccess
+                  ? '✅ Completed'
+                  : completeMutation.isPending
+                    ? 'Completing…'
+                    : `Mark Complete (+${lesson.xpReward} XP)`}
+              </Button>
+              {!lesson.isCompleted && !completeMutation.isSuccess && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  colorPalette="gray"
+                  onClick={() => skipMutation.mutate()}
+                  disabled={skipMutation.isPending}
+                  data-testid="skip-lesson-btn"
+                >
+                  <FiSkipForward />
+                  {skipMutation.isPending ? 'Skipping…' : 'Skip Lesson'}
+                </Button>
+              )}
+            </>
+          ) : (
             <Button
-              variant="outline"
+              as={RouterLink}
+              to="/register"
+              colorPalette="purple"
               size="lg"
-              colorPalette="gray"
-              onClick={() => skipMutation.mutate()}
-              disabled={skipMutation.isPending}
-              data-testid="skip-lesson-btn"
             >
-              <FiSkipForward />
-              {skipMutation.isPending ? 'Skipping…' : 'Skip Lesson'}
+              🔐 Sign up to track your progress
             </Button>
           )}
         </Flex>

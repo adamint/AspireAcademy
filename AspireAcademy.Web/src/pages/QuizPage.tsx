@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Flex,
@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { FiSend, FiArrowRight, FiArrowLeft } from 'react-icons/fi';
 import api from '../services/apiClient';
+import { useAuthStore } from '../store/authStore';
 import { useGamificationStore } from '../store/gamificationStore';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import QuestionCard from '../components/curriculum/QuestionCard';
@@ -67,6 +68,9 @@ export default function QuizPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const syncFromServer = useGamificationStore((s) => s.syncFromServer);
+  const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
+  const isAuthenticated = !!token && !!user;
 
   const [quiz, setQuiz] = useState<QuizData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -330,7 +334,7 @@ export default function QuizPage() {
           question={currentQuestion}
           selectedAnswer={selectedAnswer}
           onAnswerChange={setSelectedAnswer}
-          disabled={!!feedback || quiz.isLocked}
+          disabled={!!feedback || quiz.isLocked || !isAuthenticated}
         />
       )}
 
@@ -346,10 +350,20 @@ export default function QuizPage() {
         </Flex>
       )}
 
-      {/* Submit / Next */}
+      {/* Submit / Next / Sign-up CTA */}
       {!quiz.isLocked && (
         <Flex mt={5} w="100%" maxW="720px" justify="flex-end">
-          {!feedback ? (
+          {!isAuthenticated ? (
+            <Button
+              as={RouterLink}
+              to="/register"
+              bg="aspire.600"
+              color="white"
+              _hover={{ bg: 'aspire.500' }}
+            >
+              🔐 Sign up to take this quiz
+            </Button>
+          ) : !feedback ? (
             <Button
               data-testid="quiz-submit"
               bg="aspire.600"

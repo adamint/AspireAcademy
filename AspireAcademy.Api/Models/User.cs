@@ -9,10 +9,13 @@ public class User
     public string DisplayName { get; set; } = null!;
     public string? AvatarSeed { get; set; }
     public string? Bio { get; set; }
+    public string? GitHubUsername { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }
     public int LoginStreakDays { get; set; }
     public DateOnly? LastStreakDate { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     // Navigation properties
     public UserXp? Xp { get; set; }

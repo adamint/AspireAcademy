@@ -35,7 +35,7 @@ export default function AspireQuickStartCard() {
 
       {/* Install command */}
       <Box mb={2}>
-        <Text fontSize="2xs" color="aspire.400" mb={1}>Install the CLI:</Text>
+        <Text fontSize="2xs" color="aspire.400" mb={1}>Install the Aspire CLI:</Text>
         <Flex
           bg="dark.surface"
           p={2}
@@ -47,13 +47,13 @@ export default function AspireQuickStartCard() {
           gap={2}
         >
           <Text fontSize="xs" fontFamily="mono" color="game.xpGold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-            dotnet workload install aspire
+            curl -sSL https://aspire.dev/install.sh | bash
           </Text>
           <Button
             size="xs"
             variant="ghost"
             color="aspire.400"
-            onClick={() => handleCopy('dotnet workload install aspire', 'install')}
+            onClick={() => handleCopy('curl -sSL https://aspire.dev/install.sh | bash', 'install')}
             flexShrink={0}
           >
             {copied === 'install' ? '✓' : '📋'}
@@ -75,13 +75,13 @@ export default function AspireQuickStartCard() {
           gap={2}
         >
           <Text fontSize="xs" fontFamily="mono" color="game.xpGold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-            dotnet new aspire
+            aspire new
           </Text>
           <Button
             size="xs"
             variant="ghost"
             color="aspire.400"
-            onClick={() => handleCopy('dotnet new aspire', 'new')}
+            onClick={() => handleCopy('aspire new', 'new')}
             flexShrink={0}
           >
             {copied === 'new' ? '✓' : '📋'}

@@ -6,6 +6,7 @@ import {
   FiUsers,
   FiAward,
   FiBarChart2,
+  FiFileText,
   FiGlobe,
   FiChevronDown,
   FiChevronRight,
@@ -267,6 +268,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </SideNavLink>
           <SideNavLink to="/achievements" icon={<FiAward size={16} />} onClose={onClose}>
             Achievements
+          </SideNavLink>
+          <SideNavLink to="/certificates" icon={<FiFileText size={16} />} onClose={onClose}>
+            Certificates
           </SideNavLink>
         </Box>
 

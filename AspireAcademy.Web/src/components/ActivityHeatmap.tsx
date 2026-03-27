@@ -1,0 +1,267 @@
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Box, Flex, Text, Skeleton } from '@chakra-ui/react';
+import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
+import api from '../services/apiClient';
+
+interface ActivityDay {
+  date: string;
+  count: number;
+}
+
+interface ActivityHeatmapResponse {
+  days: ActivityDay[];
+}
+
+interface DayCell {
+  date: string;
+  count: number;
+  dayOfWeek: number;
+}
+
+const CELL_SIZE = 12;
+const GAP = 2;
+
+const COLORS = {
+  empty: '#1a1a2e',
+  level1: '#3d2f6b',
+  level2: '#6B5CE7',
+  level3: '#9185D1',
+  level4: '#FFD700',
+} as const;
+
+function getColor(count: number): string {
+  if (count === 0) return COLORS.empty;
+  if (count === 1) return COLORS.level1;
+  if (count <= 3) return COLORS.level2;
+  return COLORS.level3;
+}
+
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
+
+function generateGrid(activityData: Map<string, number>): DayCell[] {
+  const today = new Date();
+  const days: DayCell[] = [];
+  for (let i = 364; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const key = date.toISOString().split('T')[0];
+    days.push({ date: key, count: activityData.get(key) || 0, dayOfWeek: date.getDay() });
+  }
+  return days;
+}
+
+function computeStreak(days: DayCell[]): number {
+  let streak = 0;
+  for (let i = days.length - 1; i >= 0; i--) {
+    if (days[i].count > 0) {
+      streak++;
+    } else {
+      // Allow today to have 0 if yesterday had activity
+      if (i === days.length - 1) continue;
+      break;
+    }
+  }
+  return streak;
+}
+
+function getMonthPositions(days: DayCell[], weekCount: number): { label: string; col: number }[] {
+  const positions: { label: string; col: number }[] = [];
+  let lastMonth = -1;
+  // Offset for day labels column
+  const startIndex = days.findIndex((d) => d.dayOfWeek === 0);
+  const offset = startIndex === -1 ? 0 : startIndex;
+
+  for (let i = 0; i < days.length; i++) {
+    const d = new Date(days[i].date);
+    const month = d.getMonth();
+    if (month !== lastMonth && d.getDay() === 0) {
+      const weekIndex = Math.floor((i + (7 - (days[0].dayOfWeek || 7)) % 7) / 7);
+      if (weekIndex < weekCount) {
+        positions.push({ label: MONTH_LABELS[month], col: weekIndex });
+      }
+      lastMonth = month;
+    }
+  }
+  return positions;
+}
+
+function formatDateLabel(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+interface ActivityHeatmapProps {
+  userId?: string;
+  compact?: boolean;
+}
+
+export default function ActivityHeatmap({ userId, compact = false }: ActivityHeatmapProps) {
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
+
+  const { data, isLoading } = useQuery<ActivityHeatmapResponse>({
+    queryKey: ['activity-heatmap', userId],
+    queryFn: () => api.get('/profile/activity-heatmap').then((r) => r.data),
+  });
+
+  const { days, totalCount, streak, monthPositions, weekCount } = useMemo(() => {
+    const activityMap = new Map<string, number>();
+    if (data?.days) {
+      for (const d of data.days) {
+        activityMap.set(d.date, d.count);
+      }
+    }
+    const allDays = generateGrid(activityMap);
+    const total = allDays.reduce((sum, d) => sum + d.count, 0);
+    const currentStreak = computeStreak(allDays);
+    const wc = compact ? 26 : 53;
+    const visibleDays = compact ? allDays.slice(-26 * 7) : allDays;
+    const positions = getMonthPositions(visibleDays, wc);
+    return { days: visibleDays, totalCount: total, streak: currentStreak, monthPositions: positions, weekCount: wc };
+  }, [data, compact]);
+
+  // Pad start so first day aligns to its correct day-of-week row
+  const paddedDays = useMemo(() => {
+    if (days.length === 0) return [];
+    const firstDayOfWeek = days[0].dayOfWeek;
+    // Sunday = 0 in JS, we want Mon=0 row layout, so convert
+    const adjustedFirst = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+    const padding: DayCell[] = Array.from({ length: adjustedFirst }, (_, i) => ({
+      date: '',
+      count: -1,
+      dayOfWeek: i,
+    }));
+    return [...padding, ...days];
+  }, [days]);
+
+  if (isLoading) {
+    return (
+      <Box {...retroCardProps} p={4} bg="dark.card">
+        <Skeleton h="120px" borderRadius="sm" />
+      </Box>
+    );
+  }
+
+  const handleMouseEnter = (e: React.MouseEvent, day: DayCell) => {
+    if (day.count < 0) return;
+    const rect = (e.target as HTMLElement).getBoundingClientRect();
+    const container = (e.target as HTMLElement).closest('[data-heatmap]')?.getBoundingClientRect();
+    if (!container) return;
+    setTooltip({
+      x: rect.left - container.left + CELL_SIZE / 2,
+      y: rect.top - container.top - 8,
+      text: day.count === 0
+        ? `No activity on ${formatDateLabel(day.date)}`
+        : `${day.count} ${day.count === 1 ? 'activity' : 'activities'} on ${formatDateLabel(day.date)}`,
+    });
+  };
+
+  return (
+    <Box {...retroCardProps} p={4} bg="dark.card">
+      <Flex justify="space-between" align="center" mb={3} flexWrap="wrap" gap={2}>
+        <Text {...pixelFontProps} fontSize="xs" color="dark.text">
+          📅 Activity
+        </Text>
+        <Flex gap={3} align="center">
+          {streak > 0 && (
+            <Text {...pixelFontProps} fontSize="8px" color="game.streak">
+              🔥 {streak} day streak
+            </Text>
+          )}
+          <Text fontSize="xs" color="dark.muted">
+            {totalCount} {totalCount === 1 ? 'activity' : 'activities'} in the last year
+          </Text>
+        </Flex>
+      </Flex>
+
+      <Box position="relative" data-heatmap overflowX="auto">
+        {/* Month labels */}
+        <Flex ml={`${30 + GAP}px`} mb="2px" h="14px">
+          {monthPositions.map((mp, i) => (
+            <Text
+              key={i}
+              fontSize="9px"
+              color="dark.muted"
+              position="absolute"
+              left={`${30 + mp.col * (CELL_SIZE + GAP)}px`}
+              top="0"
+              userSelect="none"
+            >
+              {mp.label}
+            </Text>
+          ))}
+        </Flex>
+
+        <Flex>
+          {/* Day labels */}
+          <Flex direction="column" gap={`${GAP}px`} mr={`${GAP}px`} flexShrink={0} w="28px" mt="0px">
+            {DAY_LABELS.map((label, i) => (
+              <Flex key={i} h={`${CELL_SIZE}px`} align="center">
+                <Text fontSize="9px" color="dark.muted" userSelect="none">
+                  {label}
+                </Text>
+              </Flex>
+            ))}
+          </Flex>
+
+          {/* Grid */}
+          <Box
+            display="grid"
+            gridTemplateRows={`repeat(7, ${CELL_SIZE}px)`}
+            gridAutoFlow="column"
+            gridAutoColumns={`${CELL_SIZE}px`}
+            gap={`${GAP}px`}
+          >
+            {paddedDays.map((day, i) => (
+              <Box
+                key={i}
+                w={`${CELL_SIZE}px`}
+                h={`${CELL_SIZE}px`}
+                borderRadius="2px"
+                bg={day.count < 0 ? 'transparent' : getColor(day.count)}
+                cursor={day.count >= 0 ? 'pointer' : 'default'}
+                transition="transform 0.1s"
+                _hover={day.count >= 0 ? { transform: 'scale(1.3)', outline: '1px solid rgba(255,255,255,0.3)' } : {}}
+                onMouseEnter={(e) => handleMouseEnter(e, day)}
+                onMouseLeave={() => setTooltip(null)}
+              />
+            ))}
+          </Box>
+        </Flex>
+
+        {/* Tooltip */}
+        {tooltip && (
+          <Box
+            position="absolute"
+            left={`${tooltip.x}px`}
+            top={`${tooltip.y}px`}
+            transform="translate(-50%, -100%)"
+            bg="#1a1630"
+            color="white"
+            px={2}
+            py={1}
+            borderRadius="4px"
+            fontSize="11px"
+            whiteSpace="nowrap"
+            pointerEvents="none"
+            border="1px solid #2B1260"
+            zIndex={10}
+            boxShadow="0 2px 8px rgba(0,0,0,0.5)"
+          >
+            {tooltip.text}
+          </Box>
+        )}
+
+        {/* Legend */}
+        <Flex mt={2} justify="flex-end" align="center" gap={1}>
+          <Text fontSize="9px" color="dark.muted" mr={1}>Less</Text>
+          {[COLORS.empty, COLORS.level1, COLORS.level2, COLORS.level3, COLORS.level4].map((color, i) => (
+            <Box key={i} w="10px" h="10px" borderRadius="2px" bg={color} />
+          ))}
+          <Text fontSize="9px" color="dark.muted" ml={1}>More</Text>
+        </Flex>
+      </Box>
+    </Box>
+  );
+}

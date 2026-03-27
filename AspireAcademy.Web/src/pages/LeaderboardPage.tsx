@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Flex, Text, Badge, Skeleton, VStack, Tabs } from '@chakra-ui/react';
+import { FiGithub } from 'react-icons/fi';
 import api from '../services/apiClient';
 import { useAuthStore } from '../store/authStore';
 import AvatarDisplay from '../components/gamification/AvatarDisplay';
@@ -15,18 +16,27 @@ interface LeaderboardEntry {
   currentLevel: number;
   currentRank: string;
   xp: number;
-  isCurrentUser: boolean;
+  gitHubUsername: string | null;
 }
 
 interface LeaderboardData {
   entries: LeaderboardEntry[];
-  currentUserRank: number;
-  totalUsers: number;
+  userRank: number;
+  userEntry: LeaderboardEntry | null;
+  scope: string;
+  totalEntries: number;
 }
 
-type LeaderboardTab = 'weekly' | 'all-time' | 'friends';
+type LeaderboardTab = 'weekly' | 'alltime' | 'friends';
 
 const medals: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+
+function formatRank(rank: string): string {
+  return rank
+    .split(/[-_]/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
 
 export default function LeaderboardPage() {
   const [tab, setTab] = useState<LeaderboardTab>('weekly');
@@ -36,7 +46,8 @@ export default function LeaderboardPage() {
     queryKey: ['leaderboard', tab],
     queryFn: async () => {
       try {
-        const { data } = await api.get(`/leaderboard?type=${tab}`);
+        const scope = tab === 'alltime' ? 'all-time' : tab;
+        const { data } = await api.get(`/leaderboard?scope=${scope}`);
         return data;
       } catch (err) {
         console.error('[LeaderboardPage] Failed to fetch leaderboard:', err);
@@ -45,7 +56,10 @@ export default function LeaderboardPage() {
     },
   });
 
-  const entries = data?.entries ?? [];
+  const entries = (data?.entries ?? []).map((entry, index) => ({
+    ...entry,
+    rank: entry.rank || index + 1,
+  }));
 
   return (
     <VStack maxW="800px" mx="auto" p={6} gap={5} align="stretch">
@@ -56,7 +70,7 @@ export default function LeaderboardPage() {
       <Tabs.Root value={tab} onValueChange={(d) => setTab(d.value as LeaderboardTab)}>
         <Tabs.List>
           <Tabs.Trigger value="weekly">Weekly</Tabs.Trigger>
-          <Tabs.Trigger value="all-time">All-Time</Tabs.Trigger>
+          <Tabs.Trigger value="alltime">All-Time</Tabs.Trigger>
           <Tabs.Trigger value="friends">Friends</Tabs.Trigger>
         </Tabs.List>
       </Tabs.Root>
@@ -89,6 +103,7 @@ export default function LeaderboardPage() {
           <VStack gap={1} align="stretch">
             {entries.map((entry) => {
               const isCurrentUser = entry.userId === currentUser?.id;
+              const isTop3 = entry.rank <= 3;
               return (
                 <Flex
                   key={entry.userId}
@@ -96,8 +111,8 @@ export default function LeaderboardPage() {
                   p={3}
                   alignItems="center"
                   gap={4}
-                  bg={isCurrentUser ? 'aspire.50' : undefined}
-                  borderColor={isCurrentUser ? 'aspire.600' : 'game.pixelBorder'}
+                  bg={isCurrentUser ? 'aspire.50' : isTop3 ? 'rgba(255, 215, 0, 0.05)' : undefined}
+                  borderColor={isCurrentUser ? 'aspire.600' : isTop3 ? 'rgba(255, 215, 0, 0.3)' : 'game.pixelBorder'}
                 >
                   {/* Rank */}
                   <Box w="48px" textAlign="center" flexShrink={0}>
@@ -118,7 +133,7 @@ export default function LeaderboardPage() {
                     name={entry.displayName}
                   />
 
-                  {/* Name + Level */}
+                  {/* Name + Level + Rank */}
                   <Box flex={1} minW={0}>
                     <Flex align="center" gap={2}>
                       <Text fontWeight="bold" truncate>
@@ -127,10 +142,29 @@ export default function LeaderboardPage() {
                       {isCurrentUser && (
                         <Text fontSize="xs" color="aspire.600">(you)</Text>
                       )}
+                      {entry.gitHubUsername && (
+                        <Text
+                          as="a"
+                          href={`https://github.com/${entry.gitHubUsername}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          color="dark.muted"
+                          _hover={{ color: 'aspire.400' }}
+                          display="inline-flex"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <FiGithub size={14} />
+                        </Text>
+                      )}
                     </Flex>
-                    <Badge {...pixelFontProps} fontSize="7px" colorPalette="purple" variant="solid" mt={0.5}>
-                      Lvl {entry.currentLevel}
-                    </Badge>
+                    <Flex gap={2} align="center" mt={0.5}>
+                      <Badge {...pixelFontProps} fontSize="7px" colorPalette="purple" variant="solid">
+                        Lvl {entry.currentLevel}
+                      </Badge>
+                      <Text {...pixelFontProps} fontSize="7px" color="dark.muted">
+                        {formatRank(entry.currentRank)}
+                      </Text>
+                    </Flex>
                   </Box>
 
                   {/* XP */}
@@ -148,7 +182,7 @@ export default function LeaderboardPage() {
           {data && (
             <Box {...retroCardProps} p={3} textAlign="center">
               <Text {...pixelFontProps} fontSize="10px">
-                Your rank: #{data.currentUserRank} of {data.totalUsers}
+                Your rank: #{data.userRank} of {data.totalEntries}
               </Text>
             </Box>
           )}

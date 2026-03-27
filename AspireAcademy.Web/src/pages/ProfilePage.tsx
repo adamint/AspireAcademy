@@ -4,14 +4,17 @@ import {
   Box, Flex, Text, Button, Badge, Skeleton, SimpleGrid, VStack,
   Dialog, Input, Textarea, Tooltip, Field, Spinner,
 } from '@chakra-ui/react';
-import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX, FiGithub } from 'react-icons/fi';
+import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX, FiGithub, FiAward } from 'react-icons/fi';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery as useWorldsQuery } from '@tanstack/react-query';
 import api from '../services/apiClient';
 import { useAuthStore, type User } from '../store/authStore';
 import AvatarDisplay from '../components/gamification/AvatarDisplay';
 import ShareProgressButton from '../components/social/ShareProgressButton';
 import WorldCompletionBadges from '../components/gamification/WorldCompletionBadges';
+import ActivityHeatmap from '../components/ActivityHeatmap';
+import SkillRadar from '../components/SkillRadar';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import type { World } from '../types/curriculum';
 
@@ -23,6 +26,13 @@ interface UserProfile extends User {
   isFriend: boolean;
   friendshipId: string | null;
   gitHubUsername: string | null;
+}
+
+interface SkillData {
+  name: string;
+  score: number;
+  lessonsCompleted: number;
+  totalLessons: number;
 }
 
 const rarityColors: Record<string, string> = {
@@ -50,6 +60,12 @@ export default function ProfilePage() {
     queryKey: ['worlds'],
     queryFn: () => api.get('/worlds').then((r) => r.data),
     enabled: !!profileId,
+  });
+
+  const { data: skillsData } = useQuery<{ skills: SkillData[] }>({
+    queryKey: ['profile-skills'],
+    queryFn: () => api.get('/profile/skills').then((r) => r.data),
+    enabled: isOwnProfile && !!profileId,
   });
 
   const { data: profile, isLoading, error: queryError } = useQuery<UserProfile>({    queryKey: ['profile', profileId],
@@ -334,6 +350,9 @@ export default function ProfilePage() {
         </Box>
       </SimpleGrid>
 
+      {/* Activity Heatmap */}
+      <ActivityHeatmap userId={profileId} />
+
       {/* Achievement Showcase */}
       {profile.showcaseAchievements.length > 0 && (
         <Box {...retroCardProps} p={4} bg="dark.card">
@@ -376,6 +395,34 @@ export default function ProfilePage() {
               completionPercentage: w.completionPercentage,
             }))}
           />
+        </Box>
+      )}
+
+      {/* Skill Radar */}
+      {isOwnProfile && skillsData?.skills && skillsData.skills.length >= 3 && (
+        <SkillRadar skills={skillsData.skills} />
+      )}
+
+      {/* Certificates */}
+      {isOwnProfile && (
+        <Box {...retroCardProps} p={4} bg="dark.card">
+          <Flex align="center" justify="space-between">
+            <Flex align="center" gap={2}>
+              <Text fontSize="20px">🏆</Text>
+              <Text {...pixelFontProps} fontSize="md" fontWeight="bold" color="dark.text">Certificates</Text>
+            </Flex>
+            <Link to="/certificates" style={{ textDecoration: 'none' }}>
+              <Button
+                size="sm" variant="outline" borderColor="game.pixelBorder" color="dark.text"
+                _hover={{ bg: 'content.hover' }}
+              >
+                <FiAward /> View All
+              </Button>
+            </Link>
+          </Flex>
+          <Text fontSize="sm" color="dark.muted" mt={2}>
+            Complete all lessons in a world to earn completion certificates.
+          </Text>
         </Box>
       )}
 

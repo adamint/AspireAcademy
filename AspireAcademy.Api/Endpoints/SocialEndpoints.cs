@@ -27,12 +27,12 @@ public static class SocialEndpoints
                 .Join(db.Users, f => f.AddresseeId, u => u.Id, (f, u) => new { f, u })
                 .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
                 {
-                    fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email,
+                    fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email, fu.u.GitHubUsername,
                     x.CurrentLevel, x.CurrentRank, x.TotalXp, fu.u.LoginStreakDays, FriendshipId = fu.f.Id
                 })
                 .ToListAsync())
                 .Select(r => new FriendDto(
-                    r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email),
+                    r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email, r.GitHubUsername),
                     r.CurrentLevel, r.CurrentRank, r.TotalXp, r.LoginStreakDays, r.FriendshipId))
                 .ToList();
 
@@ -42,12 +42,12 @@ public static class SocialEndpoints
                 .Join(db.Users, f => f.RequesterId, u => u.Id, (f, u) => new { f, u })
                 .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
                 {
-                    fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email,
+                    fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email, fu.u.GitHubUsername,
                     x.CurrentLevel, x.CurrentRank, x.TotalXp, fu.u.LoginStreakDays, FriendshipId = fu.f.Id
                 })
                 .ToListAsync())
                 .Select(r => new FriendDto(
-                    r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email),
+                    r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email, r.GitHubUsername),
                     r.CurrentLevel, r.CurrentRank, r.TotalXp, r.LoginStreakDays, r.FriendshipId))
                 .ToList();
 
@@ -59,13 +59,13 @@ public static class SocialEndpoints
                 .Join(db.Users, f => f.RequesterId, u => u.Id, (f, u) => new { f, u })
                 .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
                 {
-                    FriendshipId = fu.f.Id, fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email,
+                    FriendshipId = fu.f.Id, fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email, fu.u.GitHubUsername,
                     x.CurrentLevel, fu.f.CreatedAt
                 })
                 .ToListAsync())
                 .Select(r => new PendingFriendDto(
                     r.FriendshipId,
-                    new FriendUserDto(r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email), r.CurrentLevel),
+                    new FriendUserDto(r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email, r.GitHubUsername), r.CurrentLevel),
                     r.CreatedAt))
                 .ToList();
 
@@ -75,13 +75,13 @@ public static class SocialEndpoints
                 .Join(db.Users, f => f.AddresseeId, u => u.Id, (f, u) => new { f, u })
                 .Join(db.UserXp, fu => fu.u.Id, x => x.UserId, (fu, x) => new
                 {
-                    FriendshipId = fu.f.Id, fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email,
+                    FriendshipId = fu.f.Id, fu.u.Id, fu.u.Username, fu.u.DisplayName, fu.u.AvatarSeed, fu.u.Email, fu.u.GitHubUsername,
                     x.CurrentLevel, fu.f.CreatedAt
                 })
                 .ToListAsync())
                 .Select(r => new PendingFriendDto(
                     r.FriendshipId,
-                    new FriendUserDto(r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email), r.CurrentLevel),
+                    new FriendUserDto(r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email, r.GitHubUsername), r.CurrentLevel),
                     r.CreatedAt))
                 .ToList();
 
@@ -210,16 +210,17 @@ public static class SocialEndpoints
             }
 
             dbUser.Bio = request.Bio?.Trim();
+            dbUser.GitHubUsername = request.GitHubUsername?.Trim();
 
             await db.SaveChangesAsync();
 
             var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
-            var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email);
+            var avatarUrl = AvatarHelper.GetAvatarUrl(dbUser.AvatarSeed, dbUser.Email, dbUser.GitHubUsername);
 
             return Results.Ok(new MeResponse(
                 dbUser.Id, dbUser.Username, dbUser.DisplayName, dbUser.Email,
                 avatarUrl, userXp?.CurrentLevel ?? 1, userXp?.CurrentRank ?? Ranks.AspireIntern, userXp?.TotalXp ?? 0,
-                dbUser.Bio, dbUser.LoginStreakDays, dbUser.CreatedAt));
+                dbUser.Bio, dbUser.LoginStreakDays, dbUser.CreatedAt, dbUser.GitHubUsername));
         });
 
         group.MapGet("/users/search", async (string? q, AcademyDbContext db, ClaimsPrincipal user) =>
@@ -258,7 +259,7 @@ public static class SocialEndpoints
 
                 var xp = xpByUser.GetValueOrDefault(u.Id);
                 return new UserSearchResult(
-                    u.Id, u.Username, u.DisplayName, AvatarHelper.GetAvatarUrl(u.AvatarSeed, u.Email), xp?.CurrentLevel ?? 1,
+                    u.Id, u.Username, u.DisplayName, AvatarHelper.GetAvatarUrl(u.AvatarSeed, u.Email, u.GitHubUsername), xp?.CurrentLevel ?? 1,
                     friendship?.Status == FriendshipStatuses.Accepted,
                     friendship?.Status == FriendshipStatuses.Pending);
             }).ToList();
@@ -296,16 +297,46 @@ public static class SocialEndpoints
                  (f.RequesterId == userId && f.AddresseeId == currentUserId)) &&
                 f.Status == FriendshipStatuses.Accepted);
 
-            var avatarUrl = AvatarHelper.GetAvatarUrl(profileUser.AvatarSeed, profileUser.Email);
+            var avatarUrl = AvatarHelper.GetAvatarUrl(profileUser.AvatarSeed, profileUser.Email, profileUser.GitHubUsername);
 
             return Results.Ok(new UserProfileResponse(
                 profileUser.Id, profileUser.Username, profileUser.DisplayName, profileUser.Bio,
-                avatarUrl,
+                avatarUrl, profileUser.GitHubUsername,
                 profileXp?.CurrentLevel ?? 1, profileXp?.CurrentRank ?? Ranks.AspireIntern, profileXp?.TotalXp ?? 0, profileUser.LoginStreakDays,
                 profileUser.CreatedAt, achievementCount, completedLessons, totalLessons,
                 showcaseAchievements,
                 friendship is not null,
                 friendship?.Id));
+        });
+
+        group.MapGet("/profile/activity-heatmap", async (AcademyDbContext db, ClaimsPrincipal user) =>
+        {
+            var userId = EndpointHelpers.GetUserId(user);
+            var since = DateTime.UtcNow.Date.AddDays(-364);
+
+            var lessonDays = await db.UserProgress
+                .Where(up => up.UserId == userId
+                    && (up.Status == ProgressStatuses.Completed || up.Status == ProgressStatuses.Perfect)
+                    && up.CompletedAt != null
+                    && up.CompletedAt >= since)
+                .GroupBy(up => up.CompletedAt!.Value.Date)
+                .Select(g => new { Date = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var submissionDays = await db.CodeSubmissions
+                .Where(cs => cs.UserId == userId && cs.SubmittedAt >= since)
+                .GroupBy(cs => cs.SubmittedAt.Date)
+                .Select(g => new { Date = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var merged = lessonDays
+                .Concat(submissionDays)
+                .GroupBy(d => d.Date)
+                .Select(g => new ActivityDay(g.Key.ToString("yyyy-MM-dd"), g.Sum(x => x.Count)))
+                .OrderBy(d => d.Date)
+                .ToList();
+
+            return Results.Ok(new ActivityHeatmapResponse(merged));
         });
 
         group.MapGet("/leaderboard", async (string? scope, int? limit, AcademyDbContext db, IConnectionMultiplexer redis, ClaimsPrincipal user) =>
@@ -320,6 +351,53 @@ public static class SocialEndpoints
             }
 
             return await GetRedisLeaderboard(userId, scope, maxLimit, db, redis);
+        });
+
+        group.MapGet("/profile/skills", async (AcademyDbContext db, ClaimsPrincipal user) =>
+        {
+            var userId = EndpointHelpers.GetUserId(user);
+
+            var worlds = await db.Worlds.OrderBy(w => w.SortOrder).ToListAsync();
+            var modules = await db.Modules.ToListAsync();
+            var lessons = await db.Lessons.ToListAsync();
+
+            var completedLessonIds = (await db.UserProgress
+                .Where(p => p.UserId == userId && (p.Status == ProgressStatuses.Completed || p.Status == ProgressStatuses.Perfect))
+                .Select(p => p.LessonId)
+                .ToListAsync())
+                .ToHashSet();
+
+            var modulesByWorld = modules.GroupBy(m => m.WorldId).ToDictionary(g => g.Key, g => g.ToList());
+            var lessonsByModule = lessons.GroupBy(l => l.ModuleId).ToDictionary(g => g.Key, g => g.ToList());
+
+            var skillNames = new Dictionary<string, string>
+            {
+                ["world-1"] = "Fundamentals",
+                ["world-2"] = "Hosting",
+                ["world-3"] = "Networking",
+                ["world-4"] = "Integrations",
+                ["world-5"] = "Observability",
+                ["world-6"] = "Advanced",
+                ["world-7"] = "Deployment",
+                ["world-8"] = "Tooling",
+            };
+
+            var skills = worlds.Select(world =>
+            {
+                var worldModules = modulesByWorld.GetValueOrDefault(world.Id, []);
+                var worldLessons = worldModules
+                    .SelectMany(m => lessonsByModule.GetValueOrDefault(m.Id, []))
+                    .ToList();
+
+                var totalLessons = worldLessons.Count;
+                var lessonsCompleted = worldLessons.Count(l => completedLessonIds.Contains(l.Id));
+                var score = totalLessons > 0 ? (int)Math.Round(lessonsCompleted * 100.0 / totalLessons) : 0;
+                var name = skillNames.GetValueOrDefault(world.Id, world.Name);
+
+                return new SkillDto(name, score, lessonsCompleted, totalLessons);
+            }).ToList();
+
+            return Results.Ok(new SkillsResponse(skills));
         });
 
         return app;
@@ -338,9 +416,9 @@ public static class SocialEndpoints
             .Join(db.Users, x => x.UserId, u => u.Id, (x, u) => new { u, x })
             .OrderByDescending(ux => ux.x.TotalXp)
             .Take(maxLimit)
-            .Select(ux => new { ux.u.Id, ux.u.Username, ux.u.DisplayName, ux.u.AvatarSeed, ux.u.Email, ux.x.TotalXp, ux.x.CurrentLevel })
+            .Select(ux => new { ux.u.Id, ux.u.Username, ux.u.DisplayName, ux.u.AvatarSeed, ux.u.Email, ux.u.GitHubUsername, ux.x.TotalXp, ux.x.CurrentLevel, ux.x.CurrentRank })
             .ToListAsync())
-            .Select(r => new LeaderboardEntry(0, r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email), r.TotalXp, r.CurrentLevel))
+            .Select(r => new LeaderboardEntry(0, r.Id, r.Username, r.DisplayName, AvatarHelper.GetAvatarUrl(r.AvatarSeed, r.Email, r.GitHubUsername), r.TotalXp, r.CurrentLevel, r.CurrentRank, r.GitHubUsername))
             .ToList();
 
         // Assign ranks after materializing
@@ -388,11 +466,11 @@ public static class SocialEndpoints
             }
             var u = users.GetValueOrDefault(uid);
             var xp = xpByUser.GetValueOrDefault(uid);
-            var avatarUrl = AvatarHelper.GetAvatarUrl(u?.AvatarSeed, u?.Email ?? "");
+            var avatarUrl = AvatarHelper.GetAvatarUrl(u?.AvatarSeed, u?.Email ?? "", u?.GitHubUsername);
             return new LeaderboardEntry(
                 i + 1, uid,
                 u?.Username ?? "", u?.DisplayName ?? "", avatarUrl,
-                (int)e.Score, xp?.CurrentLevel ?? 1);
+                (int)e.Score, xp?.CurrentLevel ?? 1, xp?.CurrentRank ?? Ranks.AspireIntern, u?.GitHubUsername);
         }).Where(e => e is not null).Cast<LeaderboardEntry>().ToList();
 
         var userRank = await redisDb.SortedSetRankAsync(key, userId.ToString(), Order.Descending);
@@ -406,11 +484,11 @@ public static class SocialEndpoints
 
             if (currentUser is not null)
             {
-                var currentUserAvatarUrl = AvatarHelper.GetAvatarUrl(currentUser.AvatarSeed, currentUser.Email);
+                var currentUserAvatarUrl = AvatarHelper.GetAvatarUrl(currentUser.AvatarSeed, currentUser.Email, currentUser.GitHubUsername);
                 currentUserEntry = new LeaderboardEntry(
                     (int)userRank.Value + 1, userId,
                     currentUser.Username, currentUser.DisplayName, currentUserAvatarUrl,
-                    (int)(userScore ?? 0), currentUserXp?.CurrentLevel ?? 1);
+                    (int)(userScore ?? 0), currentUserXp?.CurrentLevel ?? 1, currentUserXp?.CurrentRank ?? Ranks.AspireIntern, currentUser.GitHubUsername);
             }
         }
 
@@ -444,7 +522,7 @@ file record FriendUserDto(Guid Id, string Username, string DisplayName, string A
 
 file record FriendRequestDto(string Username);
 
-file record UpdateProfileRequest(string? DisplayName, string? Bio);
+file record UpdateProfileRequest(string? DisplayName, string? Bio, string? GitHubUsername);
 
 file record UserSearchResult(
     Guid Id, string Username, string DisplayName, string AvatarUrl,
@@ -452,7 +530,7 @@ file record UserSearchResult(
 
 file record UserProfileResponse(
     Guid Id, string Username, string DisplayName, string? Bio,
-    string AvatarUrl,
+    string AvatarUrl, string? GitHubUsername,
     int CurrentLevel, string CurrentRank, int TotalXp, int LoginStreakDays,
     DateTime CreatedAt, int AchievementCount, int CompletedLessons, int TotalLessons,
     List<ShowcaseAchievementDto> ShowcaseAchievements,
@@ -460,7 +538,7 @@ file record UserProfileResponse(
 
 file record ShowcaseAchievementDto(string Id, string Name, string Icon, string Rarity);
 
-file record LeaderboardEntry(int Rank, Guid UserId, string Username, string DisplayName, string AvatarUrl, int Xp, int Level);
+file record LeaderboardEntry(int Rank, Guid UserId, string Username, string DisplayName, string AvatarUrl, int Xp, int CurrentLevel, string CurrentRank, string? GitHubUsername);
 
 file record LeaderboardResponse(
     List<LeaderboardEntry> Entries,
@@ -468,3 +546,11 @@ file record LeaderboardResponse(
     LeaderboardEntry? UserEntry,
     string Scope,
     int TotalEntries);
+
+file record ActivityDay(string Date, int Count);
+
+file record ActivityHeatmapResponse(List<ActivityDay> Days);
+
+file record SkillDto(string Name, int Score, int LessonsCompleted, int TotalLessons);
+
+file record SkillsResponse(List<SkillDto> Skills);

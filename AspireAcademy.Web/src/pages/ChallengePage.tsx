@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Flex,
@@ -24,6 +24,7 @@ import {
 } from 'react-icons/fi';
 import Confetti from 'react-confetti';
 import api from '../services/apiClient';
+import { useAuthStore } from '../store/authStore';
 import { useGamificationStore } from '../store/gamificationStore';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import CodeEditor from '../components/curriculum/CodeEditor';
@@ -104,6 +105,9 @@ export default function ChallengePage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const syncFromServer = useGamificationStore((s) => s.syncFromServer);
+  const token = useAuthStore((s) => s.token);
+  const authUser = useAuthStore((s) => s.user);
+  const isAuthenticated = !!token && !!authUser;
 
   // Data state
   const [challenge, setChallenge] = useState<ChallengeData | null>(null);
@@ -559,18 +563,31 @@ export default function ChallengePage() {
             borderTop="2px solid"
             borderColor="game.pixelBorder"
           >
-            <Button
-              data-testid="challenge-submit"
-              size="sm"
-              bg="aspire.600"
-              color="white"
-              _hover={{ bg: 'aspire.500' }}
-              onClick={handleSubmit}
-              disabled={submitting || showSuccess || !code.trim() || isLocked}
-            >
-              <FiUpload />
-              {submitting ? 'Checking...' : 'Check & Submit'}
-            </Button>
+            {isAuthenticated ? (
+              <Button
+                data-testid="challenge-submit"
+                size="sm"
+                bg="aspire.600"
+                color="white"
+                _hover={{ bg: 'aspire.500' }}
+                onClick={handleSubmit}
+                disabled={submitting || showSuccess || !code.trim() || isLocked}
+              >
+                <FiUpload />
+                {submitting ? 'Checking...' : 'Check & Submit'}
+              </Button>
+            ) : (
+              <Button
+                as={RouterLink}
+                to="/register"
+                size="sm"
+                bg="aspire.600"
+                color="white"
+                _hover={{ bg: 'aspire.500' }}
+              >
+                🔐 Sign up to submit your code
+              </Button>
+            )}
           </HStack>
         </Flex>
       </Flex>

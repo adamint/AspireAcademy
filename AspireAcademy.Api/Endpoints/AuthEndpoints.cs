@@ -100,13 +100,13 @@ public static partial class AuthEndpoints
 
         var token = GenerateJwtToken(user, config);
 
-        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email);
+        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email, user.GitHubUsername);
 
         return Results.Created("/api/auth/me", new AuthResponse(
             token,
             new AuthUserDto(
                 user.Id, user.Username, user.DisplayName, user.Email,
-                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp)));
+                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp, user.GitHubUsername)));
     }
 
     private static async Task<IResult> Login(
@@ -161,13 +161,13 @@ public static partial class AuthEndpoints
 
         s_logger.LogInformation("Login succeeded for UserId={UserId}, Username={Username}", user.Id, user.Username);
 
-        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email);
+        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email, user.GitHubUsername);
 
         return Results.Ok(new AuthResponse(
             token,
             new AuthUserDto(
                 user.Id, user.Username, user.DisplayName, user.Email,
-                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp)));
+                avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp, user.GitHubUsername)));
     }
 
     private static async Task<IResult> GetMe(
@@ -186,12 +186,12 @@ public static partial class AuthEndpoints
 
         var userXp = await db.UserXp.FirstAsync(x => x.UserId == userId);
 
-        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email);
+        var avatarUrl = AvatarHelper.GetAvatarUrl(user.AvatarSeed, user.Email, user.GitHubUsername);
 
         return Results.Ok(new MeResponse(
             user.Id, user.Username, user.DisplayName, user.Email,
             avatarUrl, userXp.CurrentLevel, userXp.CurrentRank, userXp.TotalXp,
-            user.Bio, user.LoginStreakDays, user.CreatedAt));
+            user.Bio, user.LoginStreakDays, user.CreatedAt, user.GitHubUsername));
     }
 
     private static async Task<IResult> RefreshToken(
@@ -313,7 +313,8 @@ public record AuthUserDto(
     string AvatarUrl,
     int CurrentLevel,
     string CurrentRank,
-    int TotalXp);
+    int TotalXp,
+    string? GitHubUsername = null);
 
 public record MeResponse(
     Guid Id,
@@ -326,6 +327,7 @@ public record MeResponse(
     int TotalXp,
     string? Bio,
     int LoginStreakDays,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    string? GitHubUsername = null);
 
 public record ErrorResponse(string Error, string? Details = null);

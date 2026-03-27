@@ -11,7 +11,7 @@ export default function TryItPrompt({ lessonTitle }: TryItPromptProps) {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText('dotnet new aspire');
+      await navigator.clipboard.writeText('aspire new');
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -52,7 +52,7 @@ export default function TryItPrompt({ lessonTitle }: TryItPromptProps) {
           borderColor="dark.border"
         >
           <Text fontSize="xs" fontFamily="mono" color="game.xpGold">
-            dotnet new aspire
+            aspire new
           </Text>
         </Box>
         <Button
