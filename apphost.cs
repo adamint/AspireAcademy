@@ -1,15 +1,12 @@
 #:sdk Aspire.AppHost.Sdk@13.2.0
 #:package Aspire.Hosting.Azure.PostgreSQL@13.*
-#:package Aspire.Hosting.Azure.Redis@13.*
 #:package Aspire.Hosting.Azure.AppContainers@13.*
 #:package Aspire.Hosting.JavaScript@13.*
-#:package StackExchange.Redis@2.*
 #:property NoWarn=ASPIRECSHARPAPPS001
 
 #pragma warning disable ASPIREPUBLISHERS001  // Azure publishers are in preview
 
 using Aspire.Hosting.ApplicationModel;
-using StackExchange.Redis;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -20,17 +17,13 @@ builder.AddAzureContainerAppEnvironment("aca-env");
 var postgresServer = builder.AddAzurePostgresFlexibleServer("postgres")
     .RunAsContainer(c => c.WithDataVolume("aspire-learn-pgdata").WithPgAdmin());
 var postgres = postgresServer.AddDatabase("academydb");
-var redis = builder.AddAzureManagedRedis("cache")
-    .RunAsContainer(c => c.WithRedisCommander());
 var openai = builder.AddConnectionString("openai");
 
 // API backend
 var api = builder.AddCSharpApp("api", "./AspireAcademy.Api/")
     .WithReference(postgres)
-    .WithReference(redis)
     .WithReference(openai)
     .WaitFor(postgres)
-    .WaitFor(redis)
     .WithHttpHealthCheck("/health")
     .WithExternalHttpEndpoints();
 
@@ -98,46 +91,6 @@ postgresServer.WithHttpCommand("/api/admin/flush-db-internal", "Reset Data",
         IconName = "DatabaseLightning",
         PrepareRequest = AddAdminHeader
     });
-
-// Redis resource command — sends FLUSHALL directly to Redis (dev-time only)
-if (builder.ExecutionContext.IsRunMode)
-{
-    redis.WithCommand("flush-all", "Flush All", async context =>
-    {
-        try
-        {
-            // In run-as-container mode, the resource wraps a local Redis container.
-            // Access its endpoint via IResourceWithEndpoints on the resource itself.
-            if (redis.Resource is not IResourceWithEndpoints withEndpoints)
-            {
-                return CommandResults.Failure("Redis resource does not expose endpoints.");
-            }
-
-            var endpoint = withEndpoints.GetEndpoint("tcp");
-            if (!endpoint.IsAllocated)
-            {
-                return CommandResults.Failure("Redis endpoint is not yet allocated.");
-            }
-
-            await using var connection = await ConnectionMultiplexer.ConnectAsync(
-                $"{endpoint.Host}:{endpoint.Port}");
-
-            var server = connection.GetServers()[0];
-            await server.FlushAllDatabasesAsync();
-
-            return CommandResults.Success();
-        }
-        catch (Exception ex)
-        {
-            return CommandResults.Failure($"Failed to flush Redis: {ex.Message}");
-        }
-    }, commandOptions: new CommandOptions
-    {
-        Description = "Clears all Redis keys (leaderboards, rate limits, cache)",
-        ConfirmationMessage = "Flush all Redis data? This clears leaderboards, rate limits, and cache.",
-        IconName = "Delete"
-    });
-}
 
 // React frontend (Vite)
 // Dev: runs as separate Vite dev server with proxy to API

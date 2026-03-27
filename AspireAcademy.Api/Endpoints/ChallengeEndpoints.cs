@@ -33,7 +33,11 @@ public record ChallengeSubmitResponse(
     int XpEarned,
     int BonusXpEarned,
     LevelUpInfo? LevelUp,
-    List<AchievementUnlocked> AchievementsUnlocked);
+    List<AchievementUnlocked> AchievementsUnlocked,
+    int TotalXp,
+    int CurrentLevel,
+    string CurrentRank,
+    int WeeklyXp);
 
 public static class ChallengeEndpoints
 {
@@ -177,6 +181,7 @@ public static class ChallengeEndpoints
         var xpEarned = 0;
         var bonusXpEarned = 0;
         LevelUpInfo? levelUp = null;
+        XpAwardResult? lastXpResult = null;
         var achievements = new List<Achievement>();
 
         var existingProgress = await db.UserProgress
@@ -204,15 +209,15 @@ public static class ChallengeEndpoints
 
             // Award base XP
             xpEarned = lesson.XpReward;
-            var result = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", lessonId);
-            levelUp = result.LevelUp;
+            lastXpResult = await gamification.AwardXpAsync(userId, xpEarned, "lesson-complete", lessonId);
+            levelUp = lastXpResult.LevelUp;
 
             // First attempt bonus
             if (existingProgress.Attempts == 1 && lesson.BonusXp > 0)
             {
                 bonusXpEarned = lesson.BonusXp;
-                var bonusResult = await gamification.AwardXpAsync(userId, bonusXpEarned, "challenge-first-try", lessonId);
-                levelUp ??= bonusResult.LevelUp;
+                lastXpResult = await gamification.AwardXpAsync(userId, bonusXpEarned, "challenge-first-try", lessonId);
+                levelUp ??= lastXpResult.LevelUp;
             }
 
             existingProgress.XpEarned = xpEarned + bonusXpEarned;
@@ -223,6 +228,25 @@ public static class ChallengeEndpoints
         else
         {
             await db.SaveChangesAsync();
+        }
+
+        // Fetch current XP stats if no award happened
+        int totalXp, currentLevel, weeklyXp;
+        string currentRank;
+        if (lastXpResult is not null)
+        {
+            totalXp = lastXpResult.TotalXp;
+            currentLevel = lastXpResult.CurrentLevel;
+            currentRank = lastXpResult.CurrentRank;
+            weeklyXp = lastXpResult.WeeklyXp;
+        }
+        else
+        {
+            var userXp = await db.UserXp.FirstOrDefaultAsync(x => x.UserId == userId);
+            totalXp = userXp?.TotalXp ?? 0;
+            currentLevel = userXp?.CurrentLevel ?? 1;
+            currentRank = userXp?.CurrentRank ?? Ranks.AspireIntern;
+            weeklyXp = userXp?.WeeklyXp ?? 0;
         }
 
         return Results.Ok(new ChallengeSubmitResponse(
@@ -236,7 +260,11 @@ public static class ChallengeEndpoints
             BonusXpEarned: bonusXpEarned,
             LevelUp: levelUp,
             AchievementsUnlocked: achievements.Select(a =>
-                new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList()));
+                new AchievementUnlocked(a.Id, a.Name, a.Icon, a.Rarity, a.XpReward)).ToList(),
+            TotalXp: totalXp,
+            CurrentLevel: currentLevel,
+            CurrentRank: currentRank,
+            WeeklyXp: weeklyXp));
     }
 
     private static async Task<bool> CheckRateLimitAsync(IConnectionMultiplexer redis, Guid userId)

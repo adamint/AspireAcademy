@@ -12,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<AcademyDbContext>("academydb");
-builder.AddRedisClient("cache");
 builder.Services.AddOpenApi();
 
 // Services
@@ -21,6 +20,7 @@ builder.Services.AddScoped<CurriculumLoader>();
 builder.Services.AddSingleton<PersonaService>();
 builder.Services.AddSingleton<AiTutorService>();
 builder.Services.AddSingleton<CodeCheckerService>();
+builder.Services.AddSingleton<InMemoryRateLimiter>();
 
 // JWT authentication — key is always injected by the AppHost (or test harness)
 var jwtSecret = builder.Configuration["Jwt:Key"]

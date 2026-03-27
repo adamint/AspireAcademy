@@ -3,7 +3,6 @@ using AspireAcademy.Api.Data;
 using AspireAcademy.Api.Models;
 using AspireAcademy.Api.Telemetry;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 
 namespace AspireAcademy.Api.Services;
 
@@ -11,7 +10,7 @@ public record LevelUpInfo(int PreviousLevel, string PreviousRank, int NewLevel, 
 
 public record XpAwardResult(int XpAwarded, int TotalXp, int CurrentLevel, string CurrentRank, int WeeklyXp, LevelUpInfo? LevelUp);
 
-public class GamificationService(AcademyDbContext db, IConnectionMultiplexer redis, ILogger<GamificationService> logger)
+public class GamificationService(AcademyDbContext db, ILogger<GamificationService> logger)
 {
     /// <summary>
     /// Safely reads an int from a JsonElement that may be stored as a number or a string.
@@ -77,14 +76,7 @@ public class GamificationService(AcademyDbContext db, IConnectionMultiplexer red
             CreatedAt = DateTime.UtcNow
         });
 
-        await db.SaveChangesAsync();
-
-        // Update Redis leaderboards
-        var redisDb = redis.GetDatabase();
-        await redisDb.SortedSetIncrementAsync("leaderboard:weekly", userId.ToString(), amount);
-        await redisDb.SortedSetAddAsync("leaderboard:alltime", userId.ToString(), userXp.TotalXp);
-
-        LevelUpInfo? levelUp = null;
+        await db.SaveChangesAsync();\n\n        LevelUpInfo? levelUp = null;
         if (newLevel > previousLevel)
         {
             levelUp = new LevelUpInfo(previousLevel, previousRank, newLevel, newRank);

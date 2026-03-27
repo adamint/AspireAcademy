@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Flex,
@@ -82,6 +83,16 @@ interface SubmitApiResponse {
   allPassed: boolean;
   xpEarned: number;
   bonusXpEarned: number;
+  totalXp: number;
+  currentLevel: number;
+  currentRank: string;
+  weeklyXp: number;
+  levelUp?: {
+    newLevel: number;
+    newRank: string;
+    previousLevel: number;
+    previousRank: string;
+  };
 }
 
 interface AiMessage {
@@ -104,7 +115,9 @@ function testIcon(status: string) {
 export default function ChallengePage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const syncFromServer = useGamificationStore((s) => s.syncFromServer);
+  const setPendingLevelUp = useGamificationStore((s) => s.setPendingLevelUp);
   const token = useAuthStore((s) => s.token);
   const authUser = useAuthStore((s) => s.user);
   const isAuthenticated = !!token && !!authUser;
@@ -205,15 +218,20 @@ export default function ChallengePage() {
         setXpEarned(res.data.xpEarned);
         setShowSuccess(true);
         if (res.data.xpEarned > 0) {
-          const store = useGamificationStore.getState();
           syncFromServer({
-            totalXp: store.totalXp + res.data.xpEarned,
-            currentLevel: store.currentLevel,
-            currentRank: store.currentRank,
-            weeklyXp: store.weeklyXp + res.data.xpEarned,
-            loginStreakDays: store.loginStreakDays,
+            totalXp: res.data.totalXp,
+            currentLevel: res.data.currentLevel,
+            currentRank: res.data.currentRank,
+            weeklyXp: res.data.weeklyXp,
+            loginStreakDays: useGamificationStore.getState().loginStreakDays,
           });
         }
+        if (res.data.levelUp) {
+          setPendingLevelUp(res.data.levelUp);
+        }
+        queryClient.invalidateQueries({ queryKey: ['xp'] });
+        queryClient.invalidateQueries({ queryKey: ['worlds'] });
+        queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       } else {
         const passed = res.data.testResults.filter((t) => t.passed).length;
         const total = res.data.testResults.length;
@@ -225,7 +243,7 @@ export default function ChallengePage() {
     } finally {
       setSubmitting(false);
     }
-  }, [challenge, code, syncFromServer, submitting, showSuccess, lessonId]);
+  }, [challenge, code, syncFromServer, setPendingLevelUp, queryClient, submitting, showSuccess, lessonId]);
 
   const handleRevealHint = useCallback(() => {
     setRevealedHints((n) => n + 1);

@@ -6,6 +6,7 @@ namespace AspireAcademy.Api.Tests.Fixtures;
 /// Per-class fixture that provides Playwright pages backed by a shared browser singleton.
 /// Each test class gets its own fixture instance (with its own HttpClient), but all
 /// classes share a single Chromium browser process for efficiency.
+/// When the API/Web servers are not running, tests using this fixture are skipped.
 /// </summary>
 public class AppHostPlaywrightFixture : IAsyncLifetime
 {
@@ -14,6 +15,7 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
     private static IPlaywright? s_playwright;
     private static bool s_initialized;
     private static int s_refCount;
+    private static bool s_serverAvailable;
 
     public HttpClient ApiClient { get; private set; } = null!;
     public string WebBaseUrl { get; private set; } = null!;
@@ -21,6 +23,11 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
 
     public async Task<IPage> NewPageAsync()
     {
+        if (!s_serverAvailable)
+        {
+            throw new InvalidOperationException("$XunitDynamicSkip$E2E server not running. Start the app with 'aspire run' to run E2E tests.");
+        }
+
         // browser.NewPageAsync() creates a context + page pair;
         // closing the page automatically disposes the context.
         return await s_browser!.NewPageAsync();
@@ -68,16 +75,22 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
             E2E.E2EHelpers.WebBaseUrl = webUrl;
             E2E.E2EHelpers.ApiBaseUrl = apiUrl;
 
-            // Wait for API to be healthy (up to 30 seconds)
+            // Wait for API to be healthy (up to 30 seconds, or 5 seconds if no E2E env vars set)
             using var healthClient = new HttpClient();
             healthClient.DefaultRequestHeaders.Add("X-Test-Client", "true");
-            for (var i = 0; i < 30; i++)
+            healthClient.Timeout = TimeSpan.FromSeconds(3);
+            var serverReady = false;
+            var hasEnvVars = Environment.GetEnvironmentVariable("E2E_API_URL") is not null
+                          || Environment.GetEnvironmentVariable("E2E_WEB_URL") is not null;
+            var maxAttempts = hasEnvVars ? 30 : 5;
+            for (var i = 0; i < maxAttempts; i++)
             {
                 try
                 {
                     var resp = await healthClient.GetAsync(apiUrl + "/health");
                     if (resp.IsSuccessStatusCode)
                     {
+                        serverReady = true;
                         break;
                     }
                 }
@@ -87,6 +100,14 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
                 }
 
                 await Task.Delay(1000);
+            }
+
+            s_serverAvailable = serverReady;
+
+            if (!serverReady)
+            {
+                s_initialized = true;
+                return;
             }
 
             // Install and launch Playwright Chromium (once for the entire test run)

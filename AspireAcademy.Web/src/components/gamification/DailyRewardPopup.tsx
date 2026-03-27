@@ -41,6 +41,7 @@ export default function DailyRewardPopup() {
           weeklyXp: store.weeklyXp + data.xpAwarded,
           loginStreakDays: data.streakDays,
         });
+        // Refetch authoritative XP from server to correct any drift
         queryClient.invalidateQueries({ queryKey: ['xp'] });
       } else {
         localStorage.setItem(DAILY_REWARD_KEY, new Date().toDateString());
