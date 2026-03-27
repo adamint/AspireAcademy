@@ -1,5 +1,5 @@
 instructions: |
-  Build the complete Atlas communication graph from scratch with all services wired together.
+  Build the complete Bazaar communication graph from scratch with all services wired together.
 
   **Infrastructure:** PostgreSQL (persistent), Redis, RabbitMQ
 
@@ -13,7 +13,7 @@ instructions: |
 starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
 
 
-  // Build the complete Atlas communication graph:
+  // Build the complete Bazaar communication graph:
 
   // Infrastructure: PostgreSQL, Redis, RabbitMQ
 
@@ -25,36 +25,52 @@ starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
 
 
   builder.Build().Run();'
-solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\")\n    .WithLifetime(ContainerLifetime.Persistent)\n    .AddDatabase(\"atlas-db\");\n\
-  var redis = builder.AddRedis(\"cache\");\nvar rabbitmq = builder.AddRabbitMQ(\"messaging\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"api\")\n    .WithReference(postgres).WithReference(redis).WithReference(rabbitmq)\n\
-  \    .WaitFor(postgres).WaitFor(redis).WaitFor(rabbitmq);\n\nbuilder.AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\")\n    .WithHttpEndpoint(port: 8000, env: \"PORT\")\n    .WithReference(rabbitmq).WithReference(api)\n\
-  \    .WaitFor(rabbitmq);\n\nbuilder.AddExecutable(\"worker\", \"go\", \"../atlas-worker\", \"run\", \".\")\n    .WithReference(rabbitmq).WithReference(api)\n    .WaitFor(rabbitmq);\n\nbuilder.AddViteApp(\"\
-  frontend\", \"../atlas-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\nbuilder.Build().Run();"
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\")\n    .WithLifetime(ContainerLifetime.Persistent)\n    .AddDatabase(\"bazaar-db\");\n\
+  var redis = builder.AddRedis(\"cache\");\nvar rabbitmq = builder.AddRabbitMQ(\"messaging\");\n\nvar api = builder.AddProject<Projects.BazaarApi>(\"api\")\n    .WithReference(postgres).WithReference(redis).WithReference(rabbitmq)\n\
+  \    .WaitFor(postgres).WaitFor(redis).WaitFor(rabbitmq);\n\nbuilder.AddPythonApp(\"ml\", \"../bazaar-recs\", \"app:app\")\n    .WithHttpEndpoint(port: 8000, env: \"PORT\")\n    .WithReference(rabbitmq).WithReference(api)\n\
+  \    .WaitFor(rabbitmq);\n\nbuilder.AddExecutable(\"worker\", \"go\", \"../bazaar-worker\", \"run\", \".\")\n    .WithReference(rabbitmq).WithReference(api)\n    .WaitFor(rabbitmq);\n\nbuilder.AddViteApp(\"\
+  frontend\", \"../bazaar-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\nbuilder.Build().Run();"
 testCases:
 - type: code-contains
-  description: Must use AddPostgres
-  value: AddPostgres
+  id: "t1"
+  name: "Must add PostgreSQL named 'pg'"
+  description: "Must call AddPostgres with the name 'pg'"
+  value: "AddPostgres(\"pg\")"
 - type: code-contains
-  description: Must use AddRedis
-  value: AddRedis
+  id: "t2"
+  name: "Must add Redis named 'cache'"
+  description: "Must call AddRedis with the name 'cache'"
+  value: "AddRedis(\"cache\")"
 - type: code-contains
-  description: Must use AddRabbitMQ
-  value: AddRabbitMQ
+  id: "t3"
+  name: "Must add RabbitMQ named 'messaging'"
+  description: "Must call AddRabbitMQ with the name 'messaging'"
+  value: "AddRabbitMQ(\"messaging\")"
 - type: code-contains
-  description: Must use WaitFor for dependencies
-  value: WaitFor
+  id: "t4"
+  name: "Must use .WaitFor() for dependencies"
+  description: "Must chain .WaitFor() for startup ordering"
+  value: ".WaitFor("
 - type: code-contains
-  description: Must add Python ML
-  value: AddPythonApp
+  id: "t5"
+  name: "Must add Python ML service named 'ml'"
+  description: "Must call AddPythonApp with the name 'ml'"
+  value: "AddPythonApp(\"ml\""
 - type: code-contains
-  description: Must add Go worker
-  value: AddExecutable
+  id: "t6"
+  name: "Must add Go worker as executable"
+  description: "Must use AddExecutable for the Go worker"
+  value: "AddExecutable("
 - type: code-contains
-  description: Must add frontend
-  value: AddViteApp
+  id: "t7"
+  name: "Must add Vite frontend named 'frontend'"
+  description: "Must call AddViteApp with the name 'frontend'"
+  value: "AddViteApp(\"frontend\""
 - type: code-contains
-  description: Must wire with WithReference
-  value: WithReference
+  id: "t8"
+  name: "Must use .WithReference() to wire services"
+  description: "Must chain .WithReference() to wire dependencies"
+  value: ".WithReference("
 hints:
 - Start with the three infrastructure resources
 - Wire the API to all three with WithReference and WaitFor

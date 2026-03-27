@@ -36,12 +36,12 @@ starterCode: '// Describe the sequence of CLI commands to:
   // Command 5: TODO
 
   // Command 6: TODO'
-solutionCode: '// Command 1: aspire new aspire-starter --name Atlas
+solutionCode: '// Command 1: aspire new aspire-starter --name Bazaar
 
   // Creates a new Aspire project from the starter template with AppHost + ServiceDefaults + API
 
 
-  // Command 2: aspire add Atlas.AppHost --package Aspire.Hosting.Redis
+  // Command 2: aspire add Bazaar.AppHost --package Aspire.Hosting.Redis
 
   // Adds the Redis hosting integration NuGet package to the AppHost project
 
@@ -66,18 +66,28 @@ solutionCode: '// Command 1: aspire new aspire-starter --name Atlas
   // Generates docker-compose.yml + .env files in ./deploy/ without starting anything'
 testCases:
 - type: code-contains
+  id: "t1"
+  name: "Must use aspire new"
   description: Must use aspire new
   value: aspire new
 - type: code-contains
+  id: "t2"
+  name: "Must use aspire run"
   description: Must use aspire run
   value: aspire run
 - type: code-contains
+  id: "t3"
+  name: "Must use aspire ps"
   description: Must use aspire ps
   value: aspire ps
 - type: code-contains
+  id: "t4"
+  name: "Must use aspire logs"
   description: Must use aspire logs
   value: aspire logs
 - type: code-contains
+  id: "t5"
+  name: "Must use aspire publish"
   description: Must use aspire publish
   value: aspire publish
 hints:

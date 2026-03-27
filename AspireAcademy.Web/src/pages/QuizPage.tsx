@@ -239,6 +239,7 @@ export default function QuizPage() {
         }
         queryClient.invalidateQueries({ queryKey: ['xp'] });
         queryClient.invalidateQueries({ queryKey: ['worlds'] });
+        queryClient.invalidateQueries({ queryKey: ['worldModules'] });
         queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       } catch {
         console.error('[QuizPage] Failed to submit quiz for lesson:', lessonId);

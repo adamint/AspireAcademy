@@ -38,7 +38,7 @@ questions:
     text: It uses the Aspire Python SDK's built-in PostgreSQL client
     isCorrect: false
   - id: b
-    text: It reads the connection string from os.environ["ConnectionStrings__atlas-db"] and passes it to psycopg2 or asyncpg
+    text: It reads the connection string from os.environ["ConnectionStrings__bazaar-db"] and passes it to psycopg2 or asyncpg
     isCorrect: true
   - id: c
     text: It connects via a Unix socket provided by DCP

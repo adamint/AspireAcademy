@@ -55,18 +55,28 @@ solutionCode: '// Step 1: TypeScript calls addRedis("cache") on the builder prox
   //         TypeScript wraps it in a RedisResourceBuilderHandle class with typed methods (withLifetime, etc.).'
 testCases:
 - type: code-contains
+  id: "t1"
+  name: "Must mention JSON-RPC"
   description: Must mention JSON-RPC
   value: JSON-RPC
 - type: code-contains
+  id: "t2"
+  name: "Must mention CapabilityDispatcher"
   description: Must mention CapabilityDispatcher
   value: CapabilityDispatcher
 - type: code-contains
+  id: "t3"
+  name: "Must mention HandleRegistry"
   description: Must mention HandleRegistry
   value: HandleRegistry
 - type: code-contains
+  id: "t4"
+  name: "Must mention Unix socket"
   description: Must mention Unix socket
   value: socket
 - type: code-contains
+  id: "t5"
+  name: "Must mention RedisResource or AddRedis"
   description: Must mention RedisResource or AddRedis
   value: Redis
 hints:

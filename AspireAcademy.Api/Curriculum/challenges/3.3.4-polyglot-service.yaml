@@ -1,37 +1,47 @@
 instructions: |
-  Add polyglot services to Atlas — a Python ML service and a Vite TypeScript frontend.
+  Add polyglot services to Bazaar — a Python ML service and a Vite TypeScript frontend.
 
   **Your tasks:**
-  1. Add a Python ML service named `"ml"` at `"../atlas-ml"` with entry point `"app:app"` using `AddPythonApp()`
+  1. Add a Python ML service named `"ml"` at `"../bazaar-recs"` with entry point `"app:app"` using `AddPythonApp()`
   2. Give the ML service an HTTP endpoint on port 8000 and a reference to the API
-  3. Add a Vite frontend named `"frontend"` at `"../atlas-web"` using `AddViteApp()`
+  3. Add a Vite frontend named `"frontend"` at `"../bazaar-web"` using `AddViteApp()`
   4. Wire the frontend to reference the API and wait for it to be ready
-starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
-  api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\n// TODO: Add a Python ML service at \"../atlas-ml\" with entry point \"app:app\"\n//       It should have an HTTP endpoint on port 8000\
-  \ and reference the API\n\n// TODO: Add a Vite frontend at \"../atlas-web\"\n//       It should reference the API and wait for the API to be ready\n\nbuilder.Build().Run();"
-solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
-  api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\nbuilder.AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\")\n    .WithHttpEndpoint(port: 8000, env: \"PORT\")\n    .WithReference(api);\n\
-  \nbuilder.AddViteApp(\"frontend\", \"../atlas-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\nbuilder.Build().Run();"
+starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"bazaar-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.BazaarApi>(\"\
+  api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\n// TODO: Add a Python ML service at \"../bazaar-recs\" with entry point \"app:app\"\n//       It should have an HTTP endpoint on port 8000\
+  \ and reference the API\n\n// TODO: Add a Vite frontend at \"../bazaar-web\"\n//       It should reference the API and wait for the API to be ready\n\nbuilder.Build().Run();"
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"bazaar-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.BazaarApi>(\"\
+  api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\nbuilder.AddPythonApp(\"ml\", \"../bazaar-recs\", \"app:app\")\n    .WithHttpEndpoint(port: 8000, env: \"PORT\")\n    .WithReference(api);\n\
+  \nbuilder.AddViteApp(\"frontend\", \"../bazaar-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\nbuilder.Build().Run();"
 testCases:
 - type: code-contains
-  description: Must add a Python app
-  value: AddPythonApp
+  id: "t1"
+  name: "Must add Python app named 'ml'"
+  description: "Must call AddPythonApp with the name 'ml'"
+  value: "AddPythonApp(\"ml\""
 - type: code-contains
-  description: Python app entry point must be app:app
-  value: app:app
+  id: "t2"
+  name: "Python app entry point must be app:app"
+  description: "Must specify 'app:app' as the entry point"
+  value: "app:app"
 - type: code-contains
-  description: Must add a Vite frontend
-  value: AddViteApp
+  id: "t3"
+  name: "Must add Vite frontend named 'frontend'"
+  description: "Must call AddViteApp with the name 'frontend'"
+  value: "AddViteApp(\"frontend\""
 - type: code-contains
-  description: Frontend must reference the API
-  value: WithReference(api)
+  id: "t4"
+  name: "Frontend must reference the API"
+  description: "Must chain .WithReference(api) on the frontend"
+  value: ".WithReference(api)"
 - type: code-contains
-  description: Frontend must wait for API
-  value: WaitFor(api)
+  id: "t5"
+  name: "Frontend must wait for API"
+  description: "Must chain .WaitFor(api) on the frontend"
+  value: ".WaitFor(api)"
 hints:
-- Use builder.AddPythonApp("ml", "../atlas-ml", "app:app") for the ML service
+- Use builder.AddPythonApp("ml", "../bazaar-recs", "app:app") for the ML service
 - 'Add .WithHttpEndpoint(port: 8000, env: "PORT") to the Python app'
-- Use builder.AddViteApp("frontend", "../atlas-web") for the frontend
+- Use builder.AddViteApp("frontend", "../bazaar-web") for the frontend
 - Chain .WithReference(api).WaitFor(api) on the frontend
 requiredPackages:
 - Aspire.Hosting.Python

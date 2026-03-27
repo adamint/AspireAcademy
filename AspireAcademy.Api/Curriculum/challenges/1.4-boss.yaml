@@ -1,15 +1,15 @@
 instructions: |
-  Wire up the complete Atlas AppHost with all six resources across four languages.
+  Wire up the complete Bazaar AppHost with all six resources across four languages.
 
   **Infrastructure:**
-  - PostgreSQL server `"pg"` with a database `"atlas-db"`
+  - PostgreSQL server `"pg"` with a database `"bazaar-db"`
   - Redis cache `"cache"`
   - RabbitMQ message broker `"messaging"`
 
   **Services:**
   - C# API project `"api"` referencing postgres, redis, and rabbitmq
-  - Vite frontend `"frontend"` at `"../atlas-web"` referencing the API
-  - Python ML service `"ml"` at `"../atlas-ml"` with entry point `"app:app"` referencing rabbitmq
+  - Vite frontend `"frontend"` at `"../bazaar-web"` referencing the API
+  - Python ML service `"ml"` at `"../bazaar-recs"` with entry point `"app:app"` referencing rabbitmq
 
   **Dependencies:**
   - API waits for postgres, redis, and rabbitmq
@@ -18,16 +18,16 @@ instructions: |
 starterCode: |
   var builder = DistributedApplication.CreateBuilder(args);
 
-  // Atlas AppHost — wire up all six resources
+  // Bazaar AppHost — wire up all six resources
   // Infrastructure:
-  //   - PostgreSQL server "pg" with a database "atlas-db"
+  //   - PostgreSQL server "pg" with a database "bazaar-db"
   //   - Redis cache "cache"
   //   - RabbitMQ message broker "messaging"
   //
   // Services:
   //   - C# API project "api" that references postgres, redis, and rabbitmq
-  //   - Vite frontend "frontend" at "../atlas-web" that references the api
-  //   - Python ML service "ml" at "../atlas-ml" with entry point "app:app"
+  //   - Vite frontend "frontend" at "../bazaar-web" that references the api
+  //   - Python ML service "ml" at "../bazaar-recs" with entry point "app:app"
   //     that references rabbitmq
   //
   // Dependencies:
@@ -41,11 +41,11 @@ starterCode: |
 solutionCode: |
   var builder = DistributedApplication.CreateBuilder(args);
 
-  var postgres = builder.AddPostgres("pg").AddDatabase("atlas-db");
+  var postgres = builder.AddPostgres("pg").AddDatabase("bazaar-db");
   var redis = builder.AddRedis("cache");
   var rabbitmq = builder.AddRabbitMQ("messaging");
 
-  var api = builder.AddProject<Projects.AtlasApi>("api")
+  var api = builder.AddProject<Projects.BazaarApi>("api")
       .WithReference(postgres)
       .WithReference(redis)
       .WithReference(rabbitmq)
@@ -53,46 +53,62 @@ solutionCode: |
       .WaitFor(redis)
       .WaitFor(rabbitmq);
 
-  builder.AddViteApp("frontend", "../atlas-web")
+  builder.AddViteApp("frontend", "../bazaar-web")
       .WithReference(api)
       .WaitFor(api);
 
-  builder.AddPythonApp("ml", "../atlas-ml", "app:app")
+  builder.AddPythonApp("ml", "../bazaar-recs", "app:app")
       .WithReference(rabbitmq)
       .WaitFor(rabbitmq);
 
   builder.Build().Run();
 testCases:
   - type: code-contains
-    description: "Must add PostgreSQL with AddPostgres"
-    value: "AddPostgres"
+    id: "t1"
+    name: "Must add PostgreSQL named 'pg'"
+    description: "Must call AddPostgres with the name 'pg'"
+    value: "AddPostgres(\"pg\")"
   - type: code-contains
-    description: "Must add a database with AddDatabase"
-    value: "AddDatabase"
+    id: "t2"
+    name: "Must add database named 'bazaar-db'"
+    description: "Must call AddDatabase with the name 'bazaar-db'"
+    value: "AddDatabase(\"bazaar-db\")"
   - type: code-contains
-    description: "Must add Redis with AddRedis"
-    value: "AddRedis"
+    id: "t3"
+    name: "Must add Redis named 'cache'"
+    description: "Must call AddRedis with the name 'cache'"
+    value: "AddRedis(\"cache\")"
   - type: code-contains
-    description: "Must add RabbitMQ with AddRabbitMQ"
-    value: "AddRabbitMQ"
+    id: "t4"
+    name: "Must add RabbitMQ named 'messaging'"
+    description: "Must call AddRabbitMQ with the name 'messaging'"
+    value: "AddRabbitMQ(\"messaging\")"
   - type: code-contains
-    description: "Must use WithReference to wire services"
-    value: "WithReference"
+    id: "t5"
+    name: "Must use .WithReference() to wire services"
+    description: "Must chain .WithReference() to wire service dependencies"
+    value: ".WithReference("
   - type: code-contains
-    description: "Must use WaitFor for startup ordering"
-    value: "WaitFor"
+    id: "t6"
+    name: "Must use .WaitFor() for startup ordering"
+    description: "Must chain .WaitFor() for startup ordering"
+    value: ".WaitFor("
   - type: code-contains
-    description: "Must add a Vite frontend"
-    value: "AddViteApp"
+    id: "t7"
+    name: "Must add Vite frontend named 'frontend'"
+    description: "Must call AddViteApp with the name 'frontend'"
+    value: "AddViteApp(\"frontend\""
   - type: code-contains
-    description: "Must add a Python ML service"
-    value: "AddPythonApp"
+    id: "t8"
+    name: "Must add Python ML service named 'ml'"
+    description: "Must call AddPythonApp with the name 'ml'"
+    value: "AddPythonApp(\"ml\""
 hints:
   - "Start with infrastructure: AddPostgres, AddRedis, AddRabbitMQ"
-  - "AddPostgres(\"pg\").AddDatabase(\"atlas-db\") creates a server and a database"
+  - "AddPostgres(\"pg\").AddDatabase(\"bazaar-db\") creates a server and a database"
   - "Use .WithReference() to inject connection strings and .WaitFor() for startup ordering"
-  - "AddViteApp(\"frontend\", \"../atlas-web\") adds a TypeScript/Vite frontend"
-  - "AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\") adds a Python FastAPI service"
+  - "AddViteApp(\"frontend\", \"../bazaar-web\") adds a TypeScript/Vite frontend"
+  - "AddPythonApp(\"ml\", \"../bazaar-recs\", \"app:app\") adds a Python FastAPI service"
 requiredPackages:
   - Aspire.Hosting.PostgreSQL
   - Aspire.Hosting.Redis

@@ -3,7 +3,7 @@ instructions: |
 
   **Scenario:** You write:
   ```csharp
-  var db = builder.AddPostgres("pg").AddDatabase("atlas-db");
+  var db = builder.AddPostgres("pg").AddDatabase("bazaar-db");
   builder.AddProject<Projects.Api>("api").WithReference(db);
   ```
 
@@ -16,7 +16,7 @@ instructions: |
   6. **Dashboard** — How do the resources appear in the UI?
 starterCode: '// FINAL BOSS: Trace what happens when you write:
 
-  //   var db = builder.AddPostgres("pg").AddDatabase("atlas-db");
+  //   var db = builder.AddPostgres("pg").AddDatabase("bazaar-db");
 
   //   builder.AddProject<Projects.Api>("api").WithReference(db);
 
@@ -58,7 +58,7 @@ solutionCode: '// Layer 1 - Builder:
 
   // AddPostgres("pg") creates a PostgresServerResource (ContainerResource) and adds it to builder.Resources.
 
-  // .AddDatabase("atlas-db") creates a PostgresDatabaseResource linked to the server.
+  // .AddDatabase("bazaar-db") creates a PostgresDatabaseResource linked to the server.
 
   // AddProject<Projects.Api>("api") creates a ProjectResource.
 
@@ -75,7 +75,7 @@ solutionCode: '// Layer 1 - Builder:
 
   // PostgresDatabaseResource gets: connection string format referencing the server''s endpoint.
 
-  // API ProjectResource gets: ConnectionStringRedirectAnnotation pointing to atlas-db,
+  // API ProjectResource gets: ConnectionStringRedirectAnnotation pointing to bazaar-db,
 
   // WaitAnnotation (if WaitFor was called), EndpointAnnotation for its HTTP endpoint.
 
@@ -97,18 +97,18 @@ solutionCode: '// Layer 1 - Builder:
 
   // ConnectionStringRedirectAnnotation -> resolves the database''s ConnectionStringExpression:
 
-  //   "Host={pg.bindings.tcp.host};Port={pg.bindings.tcp.port};Username=postgres;Password={pw};Database=atlas-db"
+  //   "Host={pg.bindings.tcp.host};Port={pg.bindings.tcp.port};Username=postgres;Password={pw};Database=bazaar-db"
 
   // Placeholders are replaced with actual values from DCP: Host=localhost, Port=63211
 
-  // Final env var injected: ConnectionStrings__atlas-db=Host=localhost;Port=63211;Username=postgres;Password=abc123;Database=atlas-db
+  // Final env var injected: ConnectionStrings__bazaar-db=Host=localhost;Port=63211;Username=postgres;Password=abc123;Database=bazaar-db
 
 
   // Layer 5 - Service Discovery:
 
-  // The API''s Program.cs calls builder.AddNpgsqlDataSource("atlas-db") (client integration).
+  // The API''s Program.cs calls builder.AddNpgsqlDataSource("bazaar-db") (client integration).
 
-  // This reads Configuration.GetConnectionString("atlas-db") which resolves to the env var.
+  // This reads Configuration.GetConnectionString("bazaar-db") which resolves to the env var.
 
   // NpgsqlDataSource is registered in DI with the full connection string.
 
@@ -125,28 +125,40 @@ solutionCode: '// Layer 1 - Builder:
 
   //   pg: Running (green), endpoints: tcp://localhost:63211
 
-  //   atlas-db: Running (linked to pg)
+  //   bazaar-db: Running (linked to pg)
 
   //   api: Running (green), endpoints: http://localhost:5001
 
   // The connection string appears in the resource properties panel (masked for secrets).'
 testCases:
 - type: code-contains
+  id: "t1"
+  name: "Must describe builder layer"
   description: Must describe builder layer
   value: PostgresServerResource
 - type: code-contains
+  id: "t2"
+  name: "Must describe annotations"
   description: Must describe annotations
   value: ConnectionStringRedirectAnnotation
 - type: code-contains
+  id: "t3"
+  name: "Must describe DCP submission"
   description: Must describe DCP submission
   value: CreateAsync
 - type: code-contains
+  id: "t4"
+  name: "Must describe env var resolution"
   description: Must describe env var resolution
   value: ConnectionStrings__
 - type: code-contains
+  id: "t5"
+  name: "Must describe service discovery"
   description: Must describe service discovery
   value: GetConnectionString
 - type: code-contains
+  id: "t6"
+  name: "Must describe Dashboard"
   description: Must describe Dashboard
   value: ResourceNotificationService
 hints:
@@ -154,6 +166,6 @@ hints:
 - WithReference adds ConnectionStringRedirectAnnotation pointing to the database
 - DcpExecutor submits Container and Executable CRDs via IKubernetesService
 - DCP resolves ReferenceExpression placeholders into actual host:port values
-- The API reads ConnectionStrings__atlas-db from environment variables via IConfiguration
+- The API reads ConnectionStrings__bazaar-db from environment variables via IConfiguration
 - ResourceNotificationService pushes CustomResourceSnapshot updates to the Dashboard via gRPC
 requiredPackages: []

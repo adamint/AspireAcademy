@@ -46,21 +46,36 @@ solutionCode: |
       public int Count { get; set; }
   }
 testCases:
+  - type: code-pattern
+    id: "t1"
+    name: "Must define a FeatureFlagResource class"
+    description: "Must define a class named FeatureFlagResource"
+    value: "class\\s+FeatureFlagResource"
   - type: code-contains
-    description: "Must define a FeatureFlagResource class"
-    value: "FeatureFlagResource"
-  - type: code-contains
-    description: "Must implement IResourceWithConnectionString"
+    id: "t2"
+    name: "Must implement IResourceWithConnectionString"
+    description: "FeatureFlagResource must implement IResourceWithConnectionString"
     value: "IResourceWithConnectionString"
+  - type: code-pattern
+    id: "t3"
+    name: "Must define a custom annotation class"
+    description: "Must define an annotation class implementing IResourceAnnotation"
+    value: "class\\s+\\w+.*IResourceAnnotation"
   - type: code-contains
-    description: "Must define a custom annotation"
-    value: "IResourceAnnotation"
+    id: "t4"
+    name: "Must attach annotation with .WithAnnotation()"
+    description: "Must chain .WithAnnotation() to attach the annotation"
+    value: ".WithAnnotation("
   - type: code-contains
-    description: "Must use WithAnnotation"
-    value: "WithAnnotation"
+    id: "t5"
+    name: "Must wire project with .WithReference()"
+    description: "Must chain .WithReference() to wire the project"
+    value: ".WithReference("
   - type: code-contains
-    description: "Must add a project with WithReference"
-    value: "WithReference"
+    id: "t6"
+    name: "Must implement ConnectionStringExpression"
+    description: "Must define ConnectionStringExpression property"
+    value: "ConnectionStringExpression"
 hints:
   - "Create a class that inherits from Resource and implements IResourceWithConnectionString"
   - "IResourceWithConnectionString requires a ConnectionStringExpression property"

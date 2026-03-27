@@ -1,0 +1,56 @@
+instructions: |
+  Add `WaitFor` dependencies to every Bazaar service so they start in the correct order.
+
+  **Your tasks:**
+  1. API should wait for postgres, redis, and rabbitmq before starting
+  2. ML service should wait for rabbitmq
+  3. Go worker should wait for rabbitmq
+  4. Frontend should wait for the API
+
+  `WaitFor` holds a service in a "Waiting" state until its dependency reports as healthy.
+  Chain `.WaitFor(resource)` after `.WithReference(resource)` on each service.
+starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"bazaar-db\");\nvar redis = builder.AddRedis(\"cache\");\nvar rabbitmq =\
+  \ builder.AddRabbitMQ(\"messaging\");\n\nvar api = builder.AddProject<Projects.BazaarApi>(\"api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq);\n    // TODO:\
+  \ API should wait for postgres, redis, and rabbitmq\n\nvar ml = builder.AddPythonApp(\"ml\", \"../bazaar-recs\", \"app:app\")\n    .WithReference(rabbitmq);\n    // TODO: ML should wait for rabbitmq\n\n\
+  var worker = builder.AddExecutable(\"worker\", \"go\", \"../bazaar-worker\", \"run\", \".\")\n    .WithReference(rabbitmq);\n    // TODO: Worker should wait for rabbitmq\n\nvar frontend = builder.AddViteApp(\"\
+  frontend\", \"../bazaar-web\")\n    .WithReference(api);\n    // TODO: Frontend should wait for api\n\nbuilder.Build().Run();"
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"bazaar-db\");\nvar redis = builder.AddRedis(\"cache\");\nvar rabbitmq\
+  \ = builder.AddRabbitMQ(\"messaging\");\n\nvar api = builder.AddProject<Projects.BazaarApi>(\"api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq)\n    .WaitFor(postgres)\n\
+  \    .WaitFor(redis)\n    .WaitFor(rabbitmq);\n\nvar ml = builder.AddPythonApp(\"ml\", \"../bazaar-recs\", \"app:app\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nvar worker = builder.AddExecutable(\"\
+  worker\", \"go\", \"../bazaar-worker\", \"run\", \".\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nvar frontend = builder.AddViteApp(\"frontend\", \"../bazaar-web\")\n    .WithReference(api)\n\
+  \    .WaitFor(api);\n\nbuilder.Build().Run();"
+testCases:
+- type: code-contains
+  id: "t1"
+  name: "API must wait for postgres"
+  description: API must wait for postgres
+  value: WaitFor(postgres)
+- type: code-contains
+  id: "t2"
+  name: "API must wait for redis"
+  description: API must wait for redis
+  value: WaitFor(redis)
+- type: code-contains
+  id: "t3"
+  name: "API must wait for rabbitmq"
+  description: API must wait for rabbitmq
+  value: WaitFor(rabbitmq)
+- type: code-contains
+  id: "t4"
+  name: "ML must wait for rabbitmq"
+  description: ML must wait for rabbitmq
+  value: .WaitFor(rabbitmq)
+- type: code-contains
+  id: "t5"
+  name: "Frontend must wait for api"
+  description: Frontend must wait for api
+  value: WaitFor(api)
+hints:
+- WaitFor holds a service in Waiting state until its dependency is healthy
+- Chain .WaitFor(resource) after .WithReference(resource)
+- The API depends on three infrastructure resources
+- The frontend only depends on the API — not directly on databases
+requiredPackages:
+- Aspire.Hosting.PostgreSQL
+- Aspire.Hosting.Redis
+- Aspire.Hosting.RabbitMQ

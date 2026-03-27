@@ -87,7 +87,7 @@ personas:
       "5.5.3": high
       # Dashboard diagnostics are key for DevOps
       "7.2-boss": high
-      # Publish Atlas is critical
+      # Publish Bazaar is critical
       "10.4.3": high
       "10.4-boss": high
 

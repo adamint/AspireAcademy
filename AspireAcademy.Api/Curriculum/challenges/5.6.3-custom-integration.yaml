@@ -26,24 +26,41 @@ solutionCode: "public class MeilisearchResource(string name) :\n    ContainerRes
   )\n            .WithImageTag(\"v1.7\")\n            .WithHttpEndpoint(targetPort: 7700, name: MeilisearchResource.PrimaryEndpointName)\n            .WithHealthCheck(MeilisearchResource.PrimaryEndpointName);\n\
   \    }\n}"
 testCases:
+- type: code-pattern
+  id: "t1"
+  name: "Must define MeilisearchResource class"
+  description: "Must define a class named MeilisearchResource"
+  value: "class\\s+MeilisearchResource"
 - type: code-contains
-  description: Must define MeilisearchResource
-  value: MeilisearchResource
+  id: "t2"
+  name: "Must inherit ContainerResource"
+  description: "MeilisearchResource must inherit from ContainerResource"
+  value: "ContainerResource(name)"
 - type: code-contains
-  description: Must inherit ContainerResource
-  value: ContainerResource
+  id: "t3"
+  name: "Must implement IResourceWithConnectionString"
+  description: "Must implement the IResourceWithConnectionString interface"
+  value: "IResourceWithConnectionString"
 - type: code-contains
-  description: Must implement IResourceWithConnectionString
-  value: IResourceWithConnectionString
+  id: "t4"
+  name: "Must configure meilisearch container image"
+  description: "Must use the getmeili/meilisearch container image"
+  value: "getmeili/meilisearch"
 - type: code-contains
-  description: Must use WithImage for meilisearch
-  value: getmeili/meilisearch
+  id: "t5"
+  name: "Must set port 7700"
+  description: "Must configure target port 7700 for Meilisearch"
+  value: "7700"
 - type: code-contains
-  description: Must set port 7700
-  value: '7700'
+  id: "t6"
+  name: "Must add HTTP health check"
+  description: "Must call .WithHealthCheck() for health monitoring"
+  value: ".WithHealthCheck("
 - type: code-contains
-  description: Must add health check
-  value: WithHealthCheck
+  id: "t7"
+  name: "Must implement ConnectionStringExpression"
+  description: "Must define ConnectionStringExpression property"
+  value: "ConnectionStringExpression"
 hints:
 - MeilisearchResource should inherit from ContainerResource and implement IResourceWithConnectionString
 - IResourceWithConnectionString requires a ConnectionStringExpression property returning ReferenceExpression

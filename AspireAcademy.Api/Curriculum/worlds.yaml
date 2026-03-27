@@ -1,6 +1,6 @@
 # Aspire Academy — Curriculum Structure
 # 13 Worlds · ~85 Modules · ~350 Lessons
-# Story app: Atlas — a polyglot platform (C# API + TypeScript frontend + Python ML + Go worker)
+# Story app: Bazaar — a polyglot platform (C# API + TypeScript frontend + Python ML + Go worker)
 # Grounded in the dotnet/aspire repo (March 2026)
 # Polyglot throughout — C#, TypeScript, Python, Go examples from World 1
 
@@ -126,31 +126,31 @@ worlds:
             unlockAfterLesson: "1.3.3"
             challengeFile: 1.3.4-first-app.yaml
       - id: "1.4"
-        name: "Meet Atlas"
+        name: "Meet Bazaar"
         description: "The story app — C# API, TypeScript frontend, Python ML, Go worker, PostgreSQL, Redis."
         sortOrder: 4
         unlockAfterModule: "1.3"
         lessons:
           - id: "1.4.1"
-            title: "Atlas: The Story App"
-            description: "Meet Atlas — four services in four languages, wired together by Aspire."
+            title: "Bazaar: The Story App"
+            description: "Meet Bazaar — four services in four languages, wired together by Aspire."
             type: learn
             sortOrder: 1
             xpReward: 50
             estimatedMinutes: 8
-            contentFile: world-1/1.4.1-atlas-story-app.md
+            contentFile: world-1/1.4.1-bazaar-story-app.md
           - id: "1.4.2"
-            title: "The Atlas AppHost"
-            description: "Walk through the AppHost that wires Atlas's polyglot services and infrastructure together."
+            title: "The Bazaar AppHost"
+            description: "Walk through the AppHost that wires Bazaar's polyglot services and infrastructure together."
             type: learn
             sortOrder: 2
             xpReward: 50
             estimatedMinutes: 10
             unlockAfterLesson: "1.4.1"
-            contentFile: world-1/1.4.2-atlas-apphost.md
+            contentFile: world-1/1.4.2-bazaar-apphost.md
           - id: "1.4-boss"
-            title: "Boss: Wire Up Atlas"
-            description: "Write an AppHost for Atlas — C# API, TypeScript frontend, Python ML, Go worker, PostgreSQL, Redis."
+            title: "Boss: Wire Up Bazaar"
+            description: "Write an AppHost for Bazaar — C# API, TypeScript frontend, Python ML, Go worker, PostgreSQL, Redis."
             type: boss-battle
             sortOrder: 3
             xpReward: 500
@@ -379,7 +379,7 @@ worlds:
         lessons:
           - id: "3.3.1"
             title: "JavaScript & Node Resources"
-            description: "AddNodeApp, AddViteApp — npm, yarn, pnpm. Atlas's TypeScript frontend."
+            description: "AddNodeApp, AddViteApp — npm, yarn, pnpm. Bazaar's TypeScript frontend."
             type: learn
             sortOrder: 1
             xpReward: 50
@@ -387,7 +387,7 @@ worlds:
             contentFile: world-3/3.3.1-javascript-node.md
           - id: "3.3.2"
             title: "Python Resources"
-            description: "AddPythonApp, AddUvicornApp — pip, uv. Atlas's ML service."
+            description: "AddPythonApp, AddUvicornApp — pip, uv. Bazaar's ML service."
             type: learn
             sortOrder: 2
             xpReward: 50
@@ -405,7 +405,7 @@ worlds:
             contentFile: world-3/3.3.3-go-java-rust.md
           - id: "3.3.4"
             title: "Challenge: Add a Polyglot Service"
-            description: "Add a Python ML service and Vite frontend to Atlas."
+            description: "Add a Python ML service and Vite frontend to Bazaar."
             type: challenge
             sortOrder: 4
             xpReward: 150
@@ -470,8 +470,8 @@ worlds:
             contentFile: world-3/3.5.3-resources-quiz.md
             quizFile: 3.5.3-resources-networking.yaml
           - id: "3.5-boss"
-            title: "Boss: Full Atlas Resource Configuration"
-            description: "Configure all Atlas resources with endpoints, env vars, and parameters."
+            title: "Boss: Full Bazaar Resource Configuration"
+            description: "Configure all Bazaar resources with endpoints, env vars, and parameters."
             type: boss-battle
             sortOrder: 4
             xpReward: 750
@@ -547,15 +547,15 @@ worlds:
             unlockAfterLesson: "4.2.1"
             contentFile: world-4/4.2.2-waitfor-completion.md
           - id: "4.2.3"
-            title: "Challenge: Wire Atlas with Dependencies"
-            description: "Wire Atlas with WaitFor across all four services."
+            title: "Challenge: Wire Bazaar with Dependencies"
+            description: "Wire Bazaar with WaitFor across all four services."
             type: challenge
             sortOrder: 3
             xpReward: 150
             bonusXp: 75
             estimatedMinutes: 12
             unlockAfterLesson: "4.2.2"
-            challengeFile: 4.2.3-wire-atlas.yaml
+            challengeFile: 4.2.3-wire-bazaar.yaml
       - id: "4.3"
         name: "Inter-Service Communication"
         description: "HTTP, gRPC, messaging, custom resource commands."
@@ -589,8 +589,8 @@ worlds:
             unlockAfterLesson: "4.3.2"
             contentFile: world-4/4.3.3-resource-commands.md
           - id: "4.3-boss"
-            title: "Boss: Full Atlas Communication"
-            description: "Wire Atlas end-to-end across four languages with WaitFor and health checks."
+            title: "Boss: Full Bazaar Communication"
+            description: "Wire Bazaar end-to-end across four languages with WaitFor and health checks."
             type: boss-battle
             sortOrder: 4
             xpReward: 750
@@ -786,7 +786,7 @@ worlds:
             unlockAfterLesson: "5.6.2"
             challengeFile: 5.6.3-custom-integration.yaml
           - id: "5.6-boss"
-            title: "Boss: Atlas Integration Ecosystem"
+            title: "Boss: Bazaar Integration Ecosystem"
             description: "PostgreSQL + Redis + RabbitMQ with health checks, persistent volumes, custom integration."
             type: boss-battle
             sortOrder: 4
@@ -913,15 +913,15 @@ worlds:
             unlockAfterLesson: "6.3.2"
             contentFile: world-6/6.3.3-resilience.md
           - id: "6.3.4"
-            title: "Challenge: Instrument Atlas End-to-End"
-            description: "Traces, metrics, health checks across all four Atlas services."
+            title: "Challenge: Instrument Bazaar End-to-End"
+            description: "Traces, metrics, health checks across all four Bazaar services."
             type: challenge
             sortOrder: 4
             xpReward: 200
             bonusXp: 100
             estimatedMinutes: 20
             unlockAfterLesson: "6.3.3"
-            challengeFile: 6.3.4-instrument-atlas.yaml
+            challengeFile: 6.3.4-instrument-bazaar.yaml
           - id: "6.3-boss"
             title: "Boss: Full Observability Stack"
             description: "End-to-end instrumentation across C#, TypeScript, Python, Go."
@@ -1009,7 +1009,7 @@ worlds:
             contentFile: world-7/7.2.4-dashboard-quiz.md
             quizFile: 7.2.4-dashboard-architecture.yaml
           - id: "7.2-boss"
-            title: "Boss: Diagnose Atlas in the Dashboard"
+            title: "Boss: Diagnose Bazaar in the Dashboard"
             description: "Trace a slow request, identify bottleneck, explain fix."
             type: boss-battle
             sortOrder: 5
@@ -1053,15 +1053,15 @@ worlds:
             unlockAfterLesson: "8.1.1"
             contentFile: world-8/8.1.2-first-integration-test.md
           - id: "8.1.3"
-            title: "Challenge: Test an Atlas Endpoint"
-            description: "Integration test for Atlas API health endpoint."
+            title: "Challenge: Test an Bazaar Endpoint"
+            description: "Integration test for Bazaar API health endpoint."
             type: challenge
             sortOrder: 3
             xpReward: 150
             bonusXp: 75
             estimatedMinutes: 15
             unlockAfterLesson: "8.1.2"
-            challengeFile: 8.1.3-test-atlas.yaml
+            challengeFile: 8.1.3-test-bazaar.yaml
       - id: "8.2"
         name: "Advanced Test Patterns"
         description: "Resource substitution, config overlays, testing without Docker."
@@ -1105,7 +1105,7 @@ worlds:
             contentFile: world-8/8.2.4-testing-quiz.md
             quizFile: 8.2.4-testing-patterns.yaml
           - id: "8.2-boss"
-            title: "Boss: Full Atlas Test Suite"
+            title: "Boss: Full Bazaar Test Suite"
             description: "API tests, health checks, resource substitution, interaction tests."
             type: boss-battle
             sortOrder: 5
@@ -1341,15 +1341,15 @@ worlds:
             unlockAfterLesson: "10.4.1"
             contentFile: world-10/10.4.2-publish-events.md
           - id: "10.4.3"
-            title: "Challenge: Publish Atlas"
-            description: "Publish Atlas to Docker Compose and Kubernetes Helm."
+            title: "Challenge: Publish Bazaar"
+            description: "Publish Bazaar to Docker Compose and Kubernetes Helm."
             type: challenge
             sortOrder: 3
             xpReward: 200
             bonusXp: 100
             estimatedMinutes: 15
             unlockAfterLesson: "10.4.2"
-            challengeFile: 10.4.3-publish-atlas.yaml
+            challengeFile: 10.4.3-publish-bazaar.yaml
           - id: "10.4-boss"
             title: "Boss: Multi-Target Deployment"
             description: "Docker Compose + K8s Helm + Azure Bicep from one AppHost."
@@ -1493,7 +1493,7 @@ worlds:
             quizFile: 11.4.3-cli-tools.yaml
           - id: "11.4-boss"
             title: "Boss: CLI Mastery"
-            description: "Publish Atlas, use MCP tools to diagnose it."
+            description: "Publish Bazaar, use MCP tools to diagnose it."
             type: boss-battle
             sortOrder: 4
             xpReward: 750

@@ -392,6 +392,8 @@ public static class CurriculumEndpoints
             }
         }
 
+        var isSkipped = progress?.Status is ProgressStatuses.Skipped;
+
         if (lesson.Type is LessonTypes.Challenge or LessonTypes.BuildProject or LessonTypes.BossBattle)
         {
             var challenges = await db.CodeChallenges
@@ -408,7 +410,8 @@ public static class CurriculumEndpoints
                     challenge.Hints.Deserialize<List<string>>() ?? [],
                     challenge.TestCases.RootElement.Clone(),
                     challenge.RequiredPackages.Deserialize<List<string>>() ?? [],
-                    challenge.StepTitle)).ToList();
+                    challenge.StepTitle,
+                    SolutionCode: isSkipped ? challenge.SolutionCode : null)).ToList();
             }
         }
 
@@ -444,27 +447,15 @@ public static class CurriculumEndpoints
 
     // --- Unlock Logic ---
 
+    // Worlds are always unlocked — users can access the first lesson in every world
+    // since lesson-level unlock only checks UnlockAfterLessonId, not world/module state.
     private static bool IsWorldUnlocked(
         World world,
         Dictionary<string, List<Module>> modulesByWorld,
         Dictionary<string, List<Lesson>> lessonsByModule,
         HashSet<string> completedLessonIds)
     {
-        if (world.UnlockAfterWorldId is null)
-        {
-            return true;
-        }
-
-        if (!modulesByWorld.TryGetValue(world.UnlockAfterWorldId, out var prereqModules))
-        {
-            return false;
-        }
-
-        return prereqModules.All(m =>
-        {
-            var lessons = lessonsByModule.GetValueOrDefault(m.Id, []);
-            return lessons.Count > 0 && lessons.All(l => completedLessonIds.Contains(l.Id));
-        });
+        return true;
     }
 
     private static bool IsModuleUnlocked(
@@ -622,4 +613,5 @@ public record ChallengeDto(
     List<string> Hints,
     JsonElement TestCases,
     List<string> RequiredPackages,
-    string? StepTitle);
+    string? StepTitle,
+    string? SolutionCode = null);

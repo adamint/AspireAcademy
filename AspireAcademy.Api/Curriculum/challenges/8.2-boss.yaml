@@ -1,46 +1,58 @@
 instructions: |
-  Build a complete test suite for Atlas with a shared fixture and multiple tests.
+  Build a complete test suite for Bazaar with a shared fixture and multiple tests.
 
   **Your tasks:**
-  1. Define an `AtlasCollection` with `ICollectionFixture<AtlasFixture>` to share one AppHost across all tests
-  2. Implement `AtlasFixture` with `IAsyncLifetime` — start the AppHost once and wait for the API
+  1. Define an `BazaarCollection` with `ICollectionFixture<BazaarFixture>` to share one AppHost across all tests
+  2. Implement `BazaarFixture` with `IAsyncLifetime` — start the AppHost once and wait for the API
   3. Write a health endpoint test (`GET /health` → 200)
   4. Write a search endpoint test (`GET /api/search?q=hello` → 200)
   5. Use `WaitForResourceAsync` to ensure the API is ready before any tests run
   6. Properly dispose the application
-starterCode: "// Write a complete test suite for Atlas:\n// 1. Shared fixture that starts Atlas once for all tests\n// 2. Health endpoint test (GET /health -> 200)\n// 3. Search endpoint test (GET /api/search?q=hello\
-  \ -> 200 with results)\n// 4. WaitForResourceAsync to ensure resources are ready\n\n[CollectionDefinition(\"Atlas\")]\npublic class AtlasCollection : ICollectionFixture<AtlasFixture> { }\n\npublic class\
-  \ AtlasFixture : IAsyncLifetime\n{\n    public DistributedApplication App { get; private set; } = null!;\n\n    // TODO: Initialize and dispose\n}\n\n[Collection(\"Atlas\")]\npublic class AtlasSearchTests\n\
+starterCode: "// Write a complete test suite for Bazaar:\n// 1. Shared fixture that starts Bazaar once for all tests\n// 2. Health endpoint test (GET /health -> 200)\n// 3. Search endpoint test (GET /api/search?q=hello\
+  \ -> 200 with results)\n// 4. WaitForResourceAsync to ensure resources are ready\n\n[CollectionDefinition(\"Bazaar\")]\npublic class BazaarCollection : ICollectionFixture<BazaarFixture> { }\n\npublic class\
+  \ BazaarFixture : IAsyncLifetime\n{\n    public DistributedApplication App { get; private set; } = null!;\n\n    // TODO: Initialize and dispose\n}\n\n[Collection(\"Bazaar\")]\npublic class BazaarSearchTests\n\
   {\n    // TODO: Test search functionality\n}"
-solutionCode: "[CollectionDefinition(\"Atlas\")]\npublic class AtlasCollection : ICollectionFixture<AtlasFixture> { }\n\npublic class AtlasFixture : IAsyncLifetime\n{\n    public DistributedApplication\
-  \ App { get; private set; } = null!;\n\n    public async Task InitializeAsync()\n    {\n        var builder = await DistributedApplicationTestingBuilder\n            .CreateAsync<Projects.AtlasAppHost>();\n\
+solutionCode: "[CollectionDefinition(\"Bazaar\")]\npublic class BazaarCollection : ICollectionFixture<BazaarFixture> { }\n\npublic class BazaarFixture : IAsyncLifetime\n{\n    public DistributedApplication\
+  \ App { get; private set; } = null!;\n\n    public async Task InitializeAsync()\n    {\n        var builder = await DistributedApplicationTestingBuilder\n            .CreateAsync<Projects.BazaarAppHost>();\n\
   \        App = await builder.BuildAsync();\n        await App.StartAsync();\n\n        var rns = App.Services.GetRequiredService<ResourceNotificationService>();\n        await rns.WaitForResourceAsync(\"\
-  api\", KnownResourceStates.Running);\n    }\n\n    public async Task DisposeAsync() => await App.DisposeAsync();\n}\n\n[Collection(\"Atlas\")]\npublic class AtlasSearchTests(AtlasFixture fixture)\n{\n\
+  api\", KnownResourceStates.Running);\n    }\n\n    public async Task DisposeAsync() => await App.DisposeAsync();\n}\n\n[Collection(\"Bazaar\")]\npublic class BazaarSearchTests(BazaarFixture fixture)\n{\n\
   \    [Fact]\n    public async Task HealthCheck()\n    {\n        var client = fixture.App.CreateHttpClient(\"api\");\n        var response = await client.GetAsync(\"/health\");\n        response.StatusCode.Should().Be(HttpStatusCode.OK);\n\
   \    }\n\n    [Fact]\n    public async Task SearchReturnsResults()\n    {\n        var client = fixture.App.CreateHttpClient(\"api\");\n        var response = await client.GetAsync(\"/api/search?q=hello\"\
   );\n        response.StatusCode.Should().Be(HttpStatusCode.OK);\n    }\n}"
 testCases:
+- type: code-pattern
+  id: "t1"
+  name: "Must define BazaarFixture class"
+  description: "Must define a class named BazaarFixture"
+  value: "class\\s+BazaarFixture"
 - type: code-contains
-  description: Must define fixture
-  value: AtlasFixture
+  id: "t2"
+  name: "Must use ICollectionFixture<BazaarFixture>"
+  description: "Must use ICollectionFixture<BazaarFixture> to share fixture across tests"
+  value: "ICollectionFixture<BazaarFixture>"
 - type: code-contains
-  description: Must use ICollectionFixture
-  value: ICollectionFixture
+  id: "t3"
+  name: "Must use DistributedApplicationTestingBuilder"
+  description: "Must use DistributedApplicationTestingBuilder for test host"
+  value: "DistributedApplicationTestingBuilder"
 - type: code-contains
-  description: Must use DistributedApplicationTestingBuilder
-  value: DistributedApplicationTestingBuilder
+  id: "t4"
+  name: "Must call WaitForResourceAsync()"
+  description: "Must call WaitForResourceAsync() to ensure resources are ready"
+  value: "WaitForResourceAsync("
 - type: code-contains
-  description: Must wait for resource readiness
-  value: WaitForResourceAsync
+  id: "t5"
+  name: "Must test /health endpoint"
+  description: "Must test the /health endpoint"
+  value: "/health"
 - type: code-contains
-  description: Must test health endpoint
-  value: /health
-- type: code-contains
-  description: Must dispose properly
-  value: DisposeAsync
+  id: "t6"
+  name: "Must implement DisposeAsync"
+  description: "Must properly dispose the application"
+  value: "DisposeAsync"
 hints:
 - ICollectionFixture<T> shares one fixture across all test classes in the collection
-- Primary constructor parameter (AtlasFixture fixture) injects the shared fixture
+- Primary constructor parameter (BazaarFixture fixture) injects the shared fixture
 - WaitForResourceAsync ensures the API is ready before tests run
 - Use fixture.App.CreateHttpClient("api") in each test method
 requiredPackages: []

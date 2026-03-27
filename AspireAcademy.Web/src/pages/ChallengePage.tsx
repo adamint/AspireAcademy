@@ -17,6 +17,8 @@ import {
   FiSun,
   FiArrowLeft,
   FiArrowRight,
+  FiSkipForward,
+  FiRotateCcw,
 } from 'react-icons/fi';
 import Confetti from 'react-confetti';
 import api from '../services/apiClient';
@@ -42,6 +44,7 @@ interface ChallengeData {
   lessonId: string;
   instructions: string;
   starterCode: string;
+  solutionCode?: string | null;
   language: string;
   testCases: TestCase[];
   hints: string[];
@@ -55,6 +58,7 @@ interface ChallengeStepDto {
   id: string;
   instructionsMarkdown: string;
   starterCode: string;
+  solutionCode?: string | null;
   hints: string[];
   testCases: { id: string; name: string; type: string; expected?: string | null; description: string }[];
   requiredPackages: string[];
@@ -65,9 +69,16 @@ interface LessonDetailResponse {
   id: string;
   title: string;
   type: string;
+  status?: string;
   nextLessonId?: string | null;
   isLocked?: boolean;
   challengeSteps?: ChallengeStepDto[];
+}
+
+interface ChallengeSkipResponse {
+  skipped: boolean;
+  lessonId: string;
+  solutionCodes: string[];
 }
 
 interface SubmitApiResponse {
@@ -142,6 +153,11 @@ export default function ChallengePage() {
   const [xpEarned, setXpEarned] = useState(0);
   const [failureMessage, setFailureMessage] = useState<string>('');
 
+  // Skip state
+  const [isSkipped, setIsSkipped] = useState(false);
+  const [skipping, setSkipping] = useState(false);
+  const [unskipping, setUnskipping] = useState(false);
+
   // Fetch challenge data on mount
   const fetched = useState(false);
   if (!fetched[0]) {
@@ -162,6 +178,7 @@ export default function ChallengePage() {
           lessonId: data.id,
           instructions: step.instructionsMarkdown,
           starterCode: step.starterCode,
+          solutionCode: step.solutionCode,
           language: 'csharp',
           testCases: step.testCases.map((tc) => ({
             id: tc.id,
@@ -173,7 +190,9 @@ export default function ChallengePage() {
           isLocked: data.isLocked ?? false,
         };
         setChallenge(mapped);
-        setCode(mapped.starterCode);
+        const alreadySkipped = data.status === 'skipped';
+        setIsSkipped(alreadySkipped);
+        setCode(alreadySkipped && step.solutionCode ? step.solutionCode : mapped.starterCode);
         setTestCases(mapped.testCases);
         setLoading(false);
       })
@@ -227,6 +246,7 @@ export default function ChallengePage() {
         }
         queryClient.invalidateQueries({ queryKey: ['xp'] });
         queryClient.invalidateQueries({ queryKey: ['worlds'] });
+        queryClient.invalidateQueries({ queryKey: ['worldModules'] });
         queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       } else {
         const passed = res.data.testResults.filter((t) => t.passed).length;
@@ -244,6 +264,51 @@ export default function ChallengePage() {
   const handleRevealHint = useCallback(() => {
     setRevealedHints((n) => n + 1);
   }, []);
+
+  const handleSkip = useCallback(async () => {
+    if (!challenge || skipping) return;
+    setSkipping(true);
+    try {
+      const res = await api.post<ChallengeSkipResponse>(
+        `/challenges/${challenge.lessonId}/skip`
+      );
+      if (res.data.skipped) {
+        setIsSkipped(true);
+        setFailureMessage('');
+        if (res.data.solutionCodes?.[0]) {
+          setCode(res.data.solutionCodes[0]);
+        }
+        queryClient.invalidateQueries({ queryKey: ['worlds'] });
+        queryClient.invalidateQueries({ queryKey: ['worldModules'] });
+        queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
+      }
+    } catch {
+      console.error('[ChallengePage] Failed to skip challenge:', lessonId);
+      setFailureMessage('Failed to skip. Please try again.');
+    } finally {
+      setSkipping(false);
+    }
+  }, [challenge, skipping, queryClient, lessonId]);
+
+  const handleUnskip = useCallback(async () => {
+    if (!challenge || unskipping) return;
+    setUnskipping(true);
+    try {
+      await api.post('/progress/unskip', { lessonId: challenge.lessonId });
+      setIsSkipped(false);
+      setCode(challenge.starterCode);
+      setTestCases(challenge.testCases.map((tc) => ({ ...tc, status: 'pending' as const })));
+      setFailureMessage('');
+      queryClient.invalidateQueries({ queryKey: ['worlds'] });
+      queryClient.invalidateQueries({ queryKey: ['worldModules'] });
+      queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
+    } catch {
+      console.error('[ChallengePage] Failed to unskip challenge:', lessonId);
+      setFailureMessage('Failed to undo skip. Please try again.');
+    } finally {
+      setUnskipping(false);
+    }
+  }, [challenge, unskipping, queryClient, lessonId]);
 
   // handleAiSend hidden while AI tutor not working
 
@@ -322,6 +387,59 @@ export default function ChallengePage() {
           </Text>
         </Box>
       )}
+      {/* Skipped banner */}
+      {isSkipped && (
+        <Box
+          bg="rgba(100, 100, 200, 0.15)"
+          border="1px solid"
+          borderColor="aspire.400"
+          px="5"
+          py="3"
+          textAlign="center"
+        >
+          <Flex align="center" justify="center" gap="3" flexWrap="wrap">
+            <Text fontSize="sm" color="aspire.300">
+              ⏭️ Skipped — solution shown below (no XP earned)
+            </Text>
+            <Button
+              size="sm"
+              variant="outline"
+              colorPalette="purple"
+              onClick={handleUnskip}
+              disabled={unskipping}
+              data-testid="undo-skip-challenge-btn"
+            >
+              <FiRotateCcw />
+              {unskipping ? 'Reverting…' : 'Undo Skip & Try Again'}
+            </Button>
+            {challenge.nextLessonId ? (
+              <Button
+                size="sm"
+                bg="aspire.600"
+                color="white"
+                _hover={{ bg: 'aspire.500' }}
+                onClick={() => navigate(`/lessons/${challenge.nextLessonId}`)}
+                data-testid="skip-next-lesson-btn"
+              >
+                Next Lesson
+                <FiArrowRight />
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                bg="aspire.600"
+                color="white"
+                _hover={{ bg: 'aspire.500' }}
+                onClick={() => navigate(-1)}
+                data-testid="skip-done-btn"
+              >
+                Done!
+                <FiArrowRight />
+              </Button>
+            )}
+          </Flex>
+        </Box>
+      )}
       {/* Celebration overlay */}
       {showSuccess && (
         <Flex
@@ -377,6 +495,8 @@ export default function ChallengePage() {
                 setShowSuccess(false);
                 if (challenge.nextLessonId) {
                   navigate(`/lessons/${challenge.nextLessonId}`);
+                } else {
+                  navigate(-1);
                 }
               }}
             >
@@ -541,6 +661,19 @@ export default function ChallengePage() {
             borderTop="2px solid"
             borderColor="game.pixelBorder"
           >
+            {isAuthenticated && !isSkipped && !showSuccess && (
+              <Button
+                data-testid="skip-challenge-btn"
+                size="sm"
+                variant="outline"
+                colorPalette="gray"
+                onClick={handleSkip}
+                disabled={skipping || isLocked}
+              >
+                <FiSkipForward />
+                {skipping ? 'Skipping…' : 'Skip & See Solution'}
+              </Button>
+            )}
             {isAuthenticated ? (
               <Button
                 data-testid="challenge-submit"
@@ -549,7 +682,7 @@ export default function ChallengePage() {
                 color="white"
                 _hover={{ bg: 'aspire.500' }}
                 onClick={handleSubmit}
-                disabled={submitting || showSuccess || !code.trim() || isLocked}
+                disabled={submitting || showSuccess || !code.trim() || isLocked || isSkipped}
               >
                 <FiUpload />
                 {submitting ? 'Checking...' : 'Check & Submit'}

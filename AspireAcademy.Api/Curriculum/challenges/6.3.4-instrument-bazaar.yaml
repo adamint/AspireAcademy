@@ -1,5 +1,5 @@
 instructions: |
-  Add full observability instrumentation to the Atlas API.
+  Add full observability instrumentation to the Bazaar API.
 
   **Your tasks:**
   1. Call `AddServiceDefaults()` to register OpenTelemetry, health checks, service discovery, and resilience
@@ -7,7 +7,7 @@ instructions: |
   3. Map default health endpoints with `MapDefaultEndpoints()`
   4. Create a custom `ActivitySource` and use `StartActivity()` to create spans for search requests
   5. Create a custom `Counter` metric to track search request counts
-starterCode: '// In your Atlas API Program.cs, add:
+starterCode: '// In your Bazaar API Program.cs, add:
 
   // 1. ServiceDefaults with AddServiceDefaults()
 
@@ -38,25 +38,35 @@ starterCode: '// In your Atlas API Program.cs, add:
 
   app.Run();'
 solutionCode: "var builder = WebApplication.CreateBuilder(args);\n\nbuilder.AddServiceDefaults();\n\nbuilder.Services.AddHealthChecks()\n    .AddUrlGroup(new Uri(\"http://ml/health\"), \"ml-service\");\n\
-  \nvar app = builder.Build();\n\napp.MapDefaultEndpoints();\n\nvar searchSource = new ActivitySource(\"Atlas.Api.Search\");\nvar searchCounter = app.Services.GetRequiredService<IMeterFactory>()\n    .Create(\"\
-  Atlas.Api\").CreateCounter<long>(\"atlas.search.requests\");\n\napp.MapGet(\"/search\", async (string query) =>\n{\n    using var activity = searchSource.StartActivity(\"SearchArticles\");\n    activity?.SetTag(\"\
+  \nvar app = builder.Build();\n\napp.MapDefaultEndpoints();\n\nvar searchSource = new ActivitySource(\"Bazaar.Api.Search\");\nvar searchCounter = app.Services.GetRequiredService<IMeterFactory>()\n    .Create(\"\
+  Bazaar.Api\").CreateCounter<long>(\"bazaar.search.requests\");\n\napp.MapGet(\"/search\", async (string query) =>\n{\n    using var activity = searchSource.StartActivity(\"SearchArticles\");\n    activity?.SetTag(\"\
   search.query\", query);\n    searchCounter.Add(1);\n    // ... perform search\n    return Results.Ok(new { query, results = Array.Empty<string>() });\n});\n\napp.Run();"
 testCases:
 - type: code-contains
-  description: Must call AddServiceDefaults
-  value: AddServiceDefaults
+  id: "t1"
+  name: "Must call AddServiceDefaults()"
+  description: "Must call AddServiceDefaults() to register OpenTelemetry"
+  value: "AddServiceDefaults()"
 - type: code-contains
-  description: Must add health checks
-  value: AddHealthChecks
+  id: "t2"
+  name: "Must call .AddHealthChecks()"
+  description: "Must chain .AddHealthChecks() to register health checks"
+  value: ".AddHealthChecks()"
 - type: code-contains
-  description: Must map default endpoints
-  value: MapDefaultEndpoints
+  id: "t3"
+  name: "Must call MapDefaultEndpoints()"
+  description: "Must call MapDefaultEndpoints() to map /health and /alive"
+  value: "MapDefaultEndpoints()"
+- type: code-pattern
+  id: "t4"
+  name: "Must instantiate ActivitySource"
+  description: "Must create a new ActivitySource for custom tracing"
+  value: "new\\s+ActivitySource\\("
 - type: code-contains
-  description: Must create ActivitySource
-  value: ActivitySource
-- type: code-contains
-  description: Must create a counter metric
-  value: CreateCounter
+  id: "t5"
+  name: "Must create a counter metric"
+  description: "Must call .CreateCounter<>() for request counting"
+  value: ".CreateCounter<"
 hints:
 - AddServiceDefaults() registers OpenTelemetry, health checks, service discovery, and resilience
 - Use .AddUrlGroup() to add an HTTP health check for an external service

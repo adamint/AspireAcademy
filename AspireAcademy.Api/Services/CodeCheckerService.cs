@@ -59,9 +59,12 @@ public sealed class CodeCheckerService
             var type = tc.GetProperty("type").GetString()!;
             var description = tc.GetProperty("description").GetString()!;
 
-            var expected = tc.TryGetProperty("expected", out var exp) && exp.ValueKind != JsonValueKind.Null
-                ? exp.GetString()
-                : null;
+            // Support both "expected" (test seed format) and "value" (YAML curriculum format)
+            string? expected = null;
+            if (tc.TryGetProperty("expected", out var exp) && exp.ValueKind != JsonValueKind.Null)
+                expected = exp.GetString();
+            else if (tc.TryGetProperty("value", out var val) && val.ValueKind != JsonValueKind.Null)
+                expected = val.GetString();
 
             var (passed, detail) = EvaluateTestCase(type, code, expected, structureValid);
             testResults.Add(new TestCaseCheckResult(testId, name, passed, description, detail));

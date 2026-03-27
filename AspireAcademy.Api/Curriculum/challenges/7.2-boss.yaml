@@ -1,7 +1,7 @@
 instructions: |
-  Analyze a trace waterfall from the Aspire Dashboard to diagnose a slow Atlas search request.
+  Analyze a trace waterfall from the Aspire Dashboard to diagnose a slow Bazaar search request.
 
-  **Scenario:** Atlas search requests are taking 3 seconds. The Dashboard shows a trace waterfall with timing for each service.
+  **Scenario:** Bazaar search requests are taking 3 seconds. The Dashboard shows a trace waterfall with timing for each service.
 
   **Your tasks:**
   1. Identify which service is the bottleneck by examining the span durations
@@ -9,7 +9,7 @@ instructions: |
   3. Propose a fix (caching, indexing, or another optimization)
 
   Write your answers as code comments.
-starterCode: '// Given this scenario: Atlas search requests are taking 3 seconds.
+starterCode: '// Given this scenario: Bazaar search requests are taking 3 seconds.
 
   // The Dashboard shows the following trace waterfall:
 
@@ -55,7 +55,7 @@ solutionCode: '// Answer:
 
   //
 
-  // builder.AddPythonApp("ml", "../atlas-ml", "app:app")
+  // builder.AddPythonApp("ml", "../bazaar-recs", "app:app")
 
   //     .WithReference(redis)
 
@@ -70,12 +70,18 @@ solutionCode: '// Answer:
   // query optimization is not sufficient.'
 testCases:
 - type: code-contains
+  id: "t1"
+  name: "Must identify ML as bottleneck"
   description: Must identify ML as bottleneck
   value: ML
 - type: code-contains
+  id: "t2"
+  name: "Must identify database query as slow"
   description: Must identify database query as slow
   value: database
 - type: code-contains
+  id: "t3"
+  name: "Must suggest caching or indexing as fix"
   description: Must suggest caching or indexing as fix
   value: cache
 hints:

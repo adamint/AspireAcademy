@@ -5,6 +5,8 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import type { Components } from 'react-markdown';
+import ArchitectureDiagram from './ArchitectureDiagram';
+import type { ServiceNode, DiagramConnection } from './ArchitectureDiagram';
 
 function extractText(node: React.ReactNode): string {
   if (typeof node === 'string') return node;
@@ -45,6 +47,27 @@ const markdownComponents: Partial<Components> = {
   code({ className, children, ...props }) {
     const match = /language-(\w+)/.exec(className || '');
     const codeStr = String(children).replace(/\n$/, '');
+
+    if (match?.[1] === 'architecture') {
+      try {
+        const data = JSON.parse(codeStr) as {
+          services: ServiceNode[];
+          connections: DiagramConnection[];
+          title?: string;
+          compact?: boolean;
+        };
+        return (
+          <ArchitectureDiagram
+            services={data.services}
+            connections={data.connections}
+            title={data.title}
+            compact={data.compact}
+          />
+        );
+      } catch {
+        // Fall through to regular code rendering on parse error
+      }
+    }
 
     if (match) {
       return (

@@ -1,5 +1,5 @@
 instructions: |
-  Instrument the Atlas API with a complete observability stack.
+  Instrument the Bazaar API with a complete observability stack.
 
   **Your tasks:**
   1. Add `ServiceDefaults` and map default health endpoints
@@ -9,7 +9,7 @@ instructions: |
   5. Add structured logging with query context using `ILogger`
 
   All three signals (traces, metrics, logs) will be visible in the Aspire Dashboard.
-starterCode: '// Instrument the Atlas API with complete observability:
+starterCode: '// Instrument the Bazaar API with complete observability:
 
   // 1. ServiceDefaults
 
@@ -30,30 +30,42 @@ starterCode: '// Instrument the Atlas API with complete observability:
 
   app.Run();'
 solutionCode: "var builder = WebApplication.CreateBuilder(args);\n\nbuilder.AddServiceDefaults();\nbuilder.Services.AddHealthChecks()\n    .AddUrlGroup(new Uri(\"http://ml/health\"), \"ml-service\")\n \
-  \   .AddUrlGroup(new Uri(\"http://worker/health\"), \"worker\");\n\nvar app = builder.Build();\napp.MapDefaultEndpoints();\n\nvar source = new ActivitySource(\"Atlas.Api\");\nvar meter = app.Services.GetRequiredService<IMeterFactory>().Create(\"\
-  Atlas.Api\");\nvar searchCount = meter.CreateCounter<long>(\"atlas.search.count\");\nvar recoCount = meter.CreateCounter<long>(\"atlas.recommendations.count\");\nvar latency = meter.CreateHistogram<double>(\"\
-  atlas.search.latency_ms\");\n\napp.MapGet(\"/search\", async (string query, ILogger<Program> logger) =>\n{\n    using var activity = source.StartActivity(\"Search\");\n    activity?.SetTag(\"search.query\"\
+  \   .AddUrlGroup(new Uri(\"http://worker/health\"), \"worker\");\n\nvar app = builder.Build();\napp.MapDefaultEndpoints();\n\nvar source = new ActivitySource(\"Bazaar.Api\");\nvar meter = app.Services.GetRequiredService<IMeterFactory>().Create(\"\
+  Bazaar.Api\");\nvar searchCount = meter.CreateCounter<long>(\"bazaar.search.count\");\nvar recoCount = meter.CreateCounter<long>(\"bazaar.recommendations.count\");\nvar latency = meter.CreateHistogram<double>(\"\
+  bazaar.search.latency_ms\");\n\napp.MapGet(\"/search\", async (string query, ILogger<Program> logger) =>\n{\n    using var activity = source.StartActivity(\"Search\");\n    activity?.SetTag(\"search.query\"\
   , query);\n    searchCount.Add(1, new KeyValuePair<string, object?>(\"endpoint\", \"search\"));\n    var sw = Stopwatch.StartNew();\n    logger.LogInformation(\"Search requested for {Query}\", query);\n\
   \    // ...search logic...\n    latency.Record(sw.ElapsedMilliseconds);\n    return Results.Ok();\n});\n\napp.Run();"
 testCases:
 - type: code-contains
-  description: Must use AddServiceDefaults
-  value: AddServiceDefaults
+  id: "t1"
+  name: "Must call AddServiceDefaults()"
+  description: "Must call AddServiceDefaults() to register OpenTelemetry"
+  value: "AddServiceDefaults()"
 - type: code-contains
-  description: Must add multiple health checks
-  value: AddHealthChecks
+  id: "t2"
+  name: "Must call .AddHealthChecks()"
+  description: "Must chain .AddHealthChecks() to register health checks"
+  value: ".AddHealthChecks()"
+- type: code-pattern
+  id: "t3"
+  name: "Must instantiate ActivitySource"
+  description: "Must create a new ActivitySource for custom tracing"
+  value: "new\\s+ActivitySource\\("
 - type: code-contains
-  description: Must create ActivitySource
-  value: ActivitySource
+  id: "t4"
+  name: "Must create a histogram metric"
+  description: "Must call .CreateHistogram<>() for latency tracking"
+  value: ".CreateHistogram<"
 - type: code-contains
-  description: Must create histogram for latency
-  value: CreateHistogram
+  id: "t5"
+  name: "Must create a counter metric"
+  description: "Must call .CreateCounter<>() for request counting"
+  value: ".CreateCounter<"
 - type: code-contains
-  description: Must create counter
-  value: CreateCounter
-- type: code-contains
-  description: Must use structured logging
-  value: LogInformation
+  id: "t6"
+  name: "Must use structured logging"
+  description: "Must call .LogInformation() with structured log message"
+  value: ".LogInformation("
 hints:
 - Start with AddServiceDefaults() and MapDefaultEndpoints()
 - Add health checks for each external service the API calls

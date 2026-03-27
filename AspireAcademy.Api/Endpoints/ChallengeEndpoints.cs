@@ -22,6 +22,11 @@ public record ChallengeRunResponse(
 
 public record TestCaseResult(string TestId, string Name, bool Passed, string Description);
 
+public record ChallengeSkipResponse(
+    bool Skipped,
+    string LessonId,
+    List<string> SolutionCodes);
+
 public record ChallengeSubmitResponse(
     bool CompilationSuccess,
     string CompilationOutput,
@@ -51,6 +56,7 @@ public static class ChallengeEndpoints
 
         group.MapPost("/{lessonId}/run", RunCodeAsync);
         group.MapPost("/{lessonId}/submit", SubmitChallengeAsync).RequireRateLimiting("social-write");
+        group.MapPost("/{lessonId}/skip", SkipChallengeAsync);
 
         return app;
     }
@@ -273,6 +279,65 @@ public static class ChallengeEndpoints
             CurrentLevel: currentLevel,
             CurrentRank: currentRank,
             WeeklyXp: weeklyXp));
+    }
+
+    private static async Task<IResult> SkipChallengeAsync(
+        string lessonId,
+        AcademyDbContext db,
+        ClaimsPrincipal user)
+    {
+        var userId = EndpointHelpers.GetUserId(user);
+        s_logger.LogInformation("Skip challenge for LessonId={LessonId}, UserId={UserId}", lessonId, userId);
+
+        var lesson = await db.Lessons
+            .Include(l => l.CodeChallenges.OrderBy(c => c.SortOrder))
+            .FirstOrDefaultAsync(l => l.Id == lessonId);
+
+        if (lesson is null)
+        {
+            return Results.NotFound(new ErrorResponse("Lesson not found"));
+        }
+
+        if (lesson.CodeChallenges.Count == 0)
+        {
+            return Results.BadRequest(new ErrorResponse("Lesson has no challenge steps"));
+        }
+
+        var existing = await db.UserProgress
+            .FirstOrDefaultAsync(p => p.UserId == userId && p.LessonId == lessonId);
+
+        if (existing?.Status is ProgressStatuses.Completed or ProgressStatuses.Perfect)
+        {
+            return Results.BadRequest(new ErrorResponse("Cannot skip an already completed challenge"));
+        }
+
+        if (existing?.Status is ProgressStatuses.Skipped)
+        {
+            // Already skipped — return solution codes
+            var solutions = lesson.CodeChallenges.Select(c => c.SolutionCode).ToList();
+            return Results.Ok(new ChallengeSkipResponse(Skipped: true, LessonId: lessonId, SolutionCodes: solutions));
+        }
+
+        if (existing is null)
+        {
+            existing = new UserProgress
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                LessonId = lessonId,
+                StartedAt = DateTime.UtcNow
+            };
+            db.UserProgress.Add(existing);
+        }
+
+        existing.Status = ProgressStatuses.Skipped;
+        existing.XpEarned = 0;
+        existing.CompletedAt = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+
+        var solutionCodes = lesson.CodeChallenges.Select(c => c.SolutionCode).ToList();
+        return Results.Ok(new ChallengeSkipResponse(Skipped: true, LessonId: lessonId, SolutionCodes: solutionCodes));
     }
 
 }

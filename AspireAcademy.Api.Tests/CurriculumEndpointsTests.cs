@@ -31,7 +31,7 @@ public class CurriculumEndpointsTests : TestFixture
         world1.CompletedLessons.Should().Be(0);
 
         var world2 = worlds.First(w => w.Id == "world-2");
-        world2.IsUnlocked.Should().BeFalse();
+        world2.IsUnlocked.Should().BeTrue();
     }
 
     [Fact]

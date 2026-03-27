@@ -332,6 +332,33 @@ public class CurriculumValidationTests
         }
     }
 
+    [Fact]
+    public void ChallengeYaml_TestCasesHaveIdAndName()
+    {
+        var challengeDir = Path.Combine(CurriculumPath, "challenges");
+        var challengeFiles = Directory.GetFiles(challengeDir, "*.yaml");
+
+        foreach (var file in challengeFiles)
+        {
+            var fileName = Path.GetFileName(file);
+            var yaml = File.ReadAllText(file);
+            var challenge = YamlDeserializer.Deserialize<ChallengeYamlRoot>(yaml);
+
+            for (var i = 0; i < challenge!.TestCases.Count; i++)
+            {
+                var tc = challenge.TestCases[i];
+                tc.Id.Should().NotBeNullOrEmpty(
+                    $"testCases[{i}] in {fileName} must have an 'id' field");
+                tc.Name.Should().NotBeNullOrEmpty(
+                    $"testCases[{i}] in {fileName} must have a 'name' field");
+                tc.Type.Should().NotBeNullOrEmpty(
+                    $"testCases[{i}] in {fileName} must have a 'type' field");
+                tc.Description.Should().NotBeNullOrEmpty(
+                    $"testCases[{i}] in {fileName} must have a 'description' field");
+            }
+        }
+    }
+
     // ── Achievement YAML validation ──
 
     [Fact]
@@ -661,9 +688,19 @@ class ChallengeYamlRoot
 {
     public string StarterCode { get; set; } = "";
     public string SolutionCode { get; set; } = "";
-    public List<object> TestCases { get; set; } = [];
+    public List<ChallengeTestCaseYaml> TestCases { get; set; } = [];
     public List<string> Hints { get; set; } = [];
     public List<string> RequiredPackages { get; set; } = [];
+}
+
+class ChallengeTestCaseYaml
+{
+    public string Id { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Type { get; set; } = "";
+    public string Description { get; set; } = "";
+    public string? Value { get; set; }
+    public string? Expected { get; set; }
 }
 
 class AchievementsYamlRoot

@@ -1,22 +1,22 @@
 instructions: |
-  Configure every Atlas resource with proper endpoints, environment variables, parameters, and lifetimes.
+  Configure every Bazaar resource with proper endpoints, environment variables, parameters, and lifetimes.
 
   **Your tasks:**
-  1. PostgreSQL `"pg"` with persistent lifetime and database `"atlas-db"`
+  1. PostgreSQL `"pg"` with persistent lifetime and database `"bazaar-db"`
   2. Redis `"cache"` with persistent lifetime
   3. RabbitMQ `"messaging"`
   4. A secret parameter `"api-key"`
   5. C# API `"api"` referencing all infrastructure, with the API key injected as env var `"API_KEY"`
-  6. Python ML `"ml"` at `"../atlas-ml"` with HTTP endpoint on port 8000, referencing rabbitmq
+  6. Python ML `"ml"` at `"../bazaar-recs"` with HTTP endpoint on port 8000, referencing rabbitmq
   7. Go worker `"worker"` as executable referencing rabbitmq
-  8. Vite frontend `"frontend"` at `"../atlas-web"` referencing the API
+  8. Vite frontend `"frontend"` at `"../bazaar-web"` referencing the API
   9. Proper `WaitFor` dependencies on all services
 starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
 
 
-  // Configure all Atlas resources with correct endpoints, environment variables, and parameters
+  // Configure all Bazaar resources with correct endpoints, environment variables, and parameters
 
-  // 1. PostgreSQL "pg" with database "atlas-db" and persistent lifetime
+  // 1. PostgreSQL "pg" with database "bazaar-db" and persistent lifetime
 
   // 2. Redis "cache" with persistent lifetime
 
@@ -26,45 +26,61 @@ starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
 
   // 5. C# API "api" referencing pg, redis, rabbitmq, with the API key as env var
 
-  // 6. Python ML "ml" at "../atlas-ml" with HTTP endpoint on 8000 referencing rabbitmq
+  // 6. Python ML "ml" at "../bazaar-recs" with HTTP endpoint on 8000 referencing rabbitmq
 
   // 7. Go worker "worker" as executable referencing rabbitmq
 
-  // 8. Vite frontend "frontend" at "../atlas-web" referencing api
+  // 8. Vite frontend "frontend" at "../bazaar-web" referencing api
 
 
   builder.Build().Run();'
-solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\")\n    .WithLifetime(ContainerLifetime.Persistent)\n    .AddDatabase(\"atlas-db\");\n\
+solutionCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\")\n    .WithLifetime(ContainerLifetime.Persistent)\n    .AddDatabase(\"bazaar-db\");\n\
   var redis = builder.AddRedis(\"cache\")\n    .WithLifetime(ContainerLifetime.Persistent);\nvar rabbitmq = builder.AddRabbitMQ(\"messaging\");\nvar apiKey = builder.AddParameter(\"api-key\", secret: true);\n\
-  \nvar api = builder.AddProject<Projects.AtlasApi>(\"api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq)\n    .WithEnvironment(\"API_KEY\", apiKey)\n    .WaitFor(postgres)\n\
-  \    .WaitFor(redis);\n\nbuilder.AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\")\n    .WithHttpEndpoint(port: 8000, env: \"PORT\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nbuilder.AddExecutable(\"\
-  worker\", \"go\", \"../atlas-worker\", \"run\", \".\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nbuilder.AddViteApp(\"frontend\", \"../atlas-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\
+  \nvar api = builder.AddProject<Projects.BazaarApi>(\"api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq)\n    .WithEnvironment(\"API_KEY\", apiKey)\n    .WaitFor(postgres)\n\
+  \    .WaitFor(redis);\n\nbuilder.AddPythonApp(\"ml\", \"../bazaar-recs\", \"app:app\")\n    .WithHttpEndpoint(port: 8000, env: \"PORT\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nbuilder.AddExecutable(\"\
+  worker\", \"go\", \"../bazaar-worker\", \"run\", \".\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nbuilder.AddViteApp(\"frontend\", \"../bazaar-web\")\n    .WithReference(api)\n    .WaitFor(api);\n\
   \nbuilder.Build().Run();"
 testCases:
 - type: code-contains
-  description: Must use AddPostgres
-  value: AddPostgres
+  id: "t1"
+  name: "Must add PostgreSQL named 'pg'"
+  description: "Must call AddPostgres with the name 'pg'"
+  value: "AddPostgres(\"pg\")"
 - type: code-contains
-  description: Must use AddRedis
-  value: AddRedis
+  id: "t2"
+  name: "Must add Redis named 'cache'"
+  description: "Must call AddRedis with the name 'cache'"
+  value: "AddRedis(\"cache\")"
 - type: code-contains
-  description: Must use AddRabbitMQ
-  value: AddRabbitMQ
+  id: "t3"
+  name: "Must add RabbitMQ named 'messaging'"
+  description: "Must call AddRabbitMQ with the name 'messaging'"
+  value: "AddRabbitMQ(\"messaging\")"
 - type: code-contains
-  description: Must use AddParameter with secret
-  value: 'secret: true'
+  id: "t4"
+  name: "Must use AddParameter with secret"
+  description: "Must use AddParameter with secret: true"
+  value: "secret: true"
 - type: code-contains
-  description: Must use WithLifetime for persistence
-  value: WithLifetime
+  id: "t5"
+  name: "Must use ContainerLifetime.Persistent"
+  description: "Must use WithLifetime with ContainerLifetime.Persistent"
+  value: "ContainerLifetime.Persistent"
 - type: code-contains
-  description: Must use WaitFor
-  value: WaitFor
+  id: "t6"
+  name: "Must use .WaitFor() for dependencies"
+  description: "Must chain .WaitFor() for startup ordering"
+  value: ".WaitFor("
 - type: code-contains
-  description: Must add Python ML service
-  value: AddPythonApp
+  id: "t7"
+  name: "Must add Python ML service named 'ml'"
+  description: "Must call AddPythonApp with the name 'ml'"
+  value: "AddPythonApp(\"ml\""
 - type: code-contains
-  description: Must add Vite frontend
-  value: AddViteApp
+  id: "t8"
+  name: "Must add Vite frontend named 'frontend'"
+  description: "Must call AddViteApp with the name 'frontend'"
+  value: "AddViteApp(\"frontend\""
 hints:
 - 'Start with infrastructure: AddPostgres, AddRedis, AddRabbitMQ'
 - Use .WithLifetime(ContainerLifetime.Persistent) on databases/caches

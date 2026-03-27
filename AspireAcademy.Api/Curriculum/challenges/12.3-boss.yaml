@@ -30,27 +30,41 @@ solutionCode: "public class MetricsDbResource(string name) :\n    ContainerResou
   }\n\n// Usage:\nvar builder = DistributedApplication.CreateBuilder(args);\n\nvar metrics = builder.AddMetricsDb(\"metrics\");\n\nbuilder.Eventing.Subscribe<ResourceReadyEvent>(\n    metrics.Resource,\n\
   \    async (evt, ct) => Console.WriteLine(\"MetricsDB ready!\"));\n\nbuilder.AddProject<Projects.Api>(\"api\")\n    .WithReference(metrics)\n    .WaitFor(metrics);\n\nbuilder.Build().Run();"
 testCases:
+- type: code-pattern
+  id: "t1"
+  name: "Must define MetricsDbResource class"
+  description: "Must define a class named MetricsDbResource"
+  value: "class\\s+MetricsDbResource"
 - type: code-contains
-  description: Must define MetricsDbResource
-  value: MetricsDbResource
+  id: "t2"
+  name: "Must inherit ContainerResource"
+  description: "MetricsDbResource must inherit from ContainerResource"
+  value: "ContainerResource(name)"
 - type: code-contains
-  description: Must inherit ContainerResource
-  value: ContainerResource
+  id: "t3"
+  name: "Must implement IResourceWithConnectionString"
+  description: "Must implement the IResourceWithConnectionString interface"
+  value: "IResourceWithConnectionString"
 - type: code-contains
-  description: Must implement IResourceWithConnectionString
-  value: IResourceWithConnectionString
+  id: "t4"
+  name: "Must implement ConnectionStringExpression"
+  description: "Must define ConnectionStringExpression property"
+  value: "ConnectionStringExpression"
 - type: code-contains
-  description: Must use ConnectionStringExpression
-  value: ConnectionStringExpression
+  id: "t5"
+  name: "Must add HTTP health check"
+  description: "Must call .WithHealthCheck() for health monitoring"
+  value: ".WithHealthCheck("
 - type: code-contains
-  description: Must add health check
-  value: WithHealthCheck
+  id: "t6"
+  name: "Must subscribe to ResourceReadyEvent"
+  description: "Must call Subscribe<ResourceReadyEvent> for lifecycle events"
+  value: "Subscribe<ResourceReadyEvent>"
 - type: code-contains
-  description: Must subscribe to ResourceReadyEvent
-  value: ResourceReadyEvent
-- type: code-contains
-  description: Must use WithReference
-  value: WithReference
+  id: "t7"
+  name: "Must use .WithReference() to wire services"
+  description: "Must chain .WithReference() to wire dependencies"
+  value: ".WithReference("
 hints:
 - 'Follow the same pattern as MeilisearchResource: inherit ContainerResource, implement IResourceWithConnectionString'
 - ConnectionStringExpression uses ReferenceExpression.Create with endpoint properties

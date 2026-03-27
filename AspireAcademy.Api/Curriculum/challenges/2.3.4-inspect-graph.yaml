@@ -46,17 +46,25 @@ solutionCode: |
   builder.Build().Run();
 testCases:
   - type: code-contains
-    description: "Must subscribe to BeforeStartEvent"
-    value: "BeforeStartEvent"
+    id: "t1"
+    name: "Must subscribe to BeforeStartEvent"
+    description: "Must call Subscribe<BeforeStartEvent> on the eventing system"
+    value: "Subscribe<BeforeStartEvent>"
   - type: code-contains
-    description: "Must iterate over resources"
-    value: "Resources"
+    id: "t2"
+    name: "Must access Model.Resources"
+    description: "Must access the resource collection via .Model.Resources"
+    value: ".Model.Resources"
   - type: code-contains
-    description: "Must access resource name"
+    id: "t3"
+    name: "Must access resource Name property"
+    description: "Must access each resource's .Name property"
     value: ".Name"
   - type: code-contains
-    description: "Must access annotations"
-    value: "Annotations"
+    id: "t4"
+    name: "Must access Annotations property"
+    description: "Must access .Annotations on each resource"
+    value: ".Annotations"
 hints:
   - "Use builder.Eventing.Subscribe<BeforeStartEvent>(...) to hook into app startup"
   - "The event gives you access to evt.Model.Resources"

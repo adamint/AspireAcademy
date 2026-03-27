@@ -26,12 +26,18 @@ solutionCode: |
   builder.Build().Run();
 testCases:
   - type: code-contains
+    id: "t1"
+    name: "Must call AddRedis with the name 'cache'"
     description: "Must call AddRedis with the name 'cache'"
     value: "AddRedis(\"cache\")"
   - type: code-contains
+    id: "t2"
+    name: "Must call AddContainer with the name 'proxy' and image 'nginx'"
     description: "Must call AddContainer with the name 'proxy' and image 'nginx'"
     value: "AddContainer(\"proxy\", \"nginx\")"
   - type: code-contains
+    id: "t3"
+    name: "Must call Build().Run()"
     description: "Must call Build().Run()"
     value: "Build().Run()"
 hints:

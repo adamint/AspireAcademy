@@ -43,7 +43,7 @@ solutionCode: '// Docker Compose:
 
   //       healthcheck: { test: ["CMD", "pg_isready"] }
 
-  // Other services get: ConnectionStrings__atlas-db=Host=pg;Port=5432;...
+  // Other services get: ConnectionStrings__bazaar-db=Host=pg;Port=5432;...
 
 
   // Kubernetes:
@@ -76,15 +76,23 @@ solutionCode: '// Docker Compose:
   //   - Role assignments grant the API''s managed identity access'
 testCases:
 - type: code-contains
+  id: "t1"
+  name: "Must describe Docker Compose mapping"
   description: Must describe Docker Compose mapping
   value: docker-compose
 - type: code-contains
+  id: "t2"
+  name: "Must describe Kubernetes mapping"
   description: Must describe Kubernetes mapping
   value: StatefulSet
 - type: code-contains
+  id: "t3"
+  name: "Must describe Azure mapping"
   description: Must describe Azure mapping
   value: flexibleServers
 - type: code-contains
+  id: "t4"
+  name: "Must mention connection string handling"
   description: Must mention connection string handling
   value: ConnectionString
 hints:
