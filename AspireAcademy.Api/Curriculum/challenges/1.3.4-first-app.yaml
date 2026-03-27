@@ -1,3 +1,12 @@
+instructions: |
+  Scaffold your first Aspire app and add two resources to the AppHost.
+
+  **Your tasks:**
+  1. Add a Redis cache resource named `"cache"` using `builder.AddRedis()`
+  2. Add an Nginx container resource named `"proxy"` using `builder.AddContainer()` with the `"nginx"` image
+  3. Optionally, expose Nginx on port 8080 with `.WithHttpEndpoint(port: 8080, targetPort: 80)`
+
+  When you run this AppHost, both resources will appear in the Aspire Dashboard.
 starterCode: |
   var builder = DistributedApplication.CreateBuilder(args);
 

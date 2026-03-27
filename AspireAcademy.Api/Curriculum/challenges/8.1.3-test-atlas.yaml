@@ -1,3 +1,13 @@
+instructions: |
+  Write an integration test for the Atlas API using `DistributedApplicationTestingBuilder`.
+
+  **Your tasks:**
+  1. Create an AppHost using `DistributedApplicationTestingBuilder.CreateAsync<Projects.AtlasAppHost>()`
+  2. Build and start the application in `InitializeAsync()`
+  3. Wait for the `"api"` resource to be running
+  4. Get an `HttpClient` for the API using `_app.CreateHttpClient("api")`
+  5. Test that `GET /health` returns 200 OK
+  6. Properly dispose the app in `DisposeAsync()`
 starterCode: "// Write an integration test that:\n// 1. Creates an AppHost using DistributedApplicationTestingBuilder\n// 2. Starts the application\n// 3. Gets an HttpClient for the \"api\" resource\n//\
   \ 4. Calls GET /health and asserts 200 OK\n// 5. Calls GET /api/search?q=test and asserts a valid response\n\npublic class AtlasApiTests : IAsyncLifetime\n{\n    private DistributedApplication _app =\
   \ null!;\n\n    public async Task InitializeAsync()\n    {\n        // TODO: Create and start the app\n    }\n\n    public async Task DisposeAsync()\n    {\n        // TODO: Clean up\n    }\n\n    [Fact]\n\

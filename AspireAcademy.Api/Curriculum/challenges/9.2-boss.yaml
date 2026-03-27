@@ -1,3 +1,15 @@
+instructions: |
+  Trace the complete pipeline when a TypeScript AppHost calls `addRedis("cache")`.
+
+  **Your tasks:** Describe each step from TypeScript to DCP:
+  1. What happens in the TypeScript SDK when `addRedis()` is called?
+  2. What JSON-RPC message is sent over the Unix socket?
+  3. How does `RemoteHostServer` route the message?
+  4. How does `CapabilityDispatcher` resolve and call the .NET method?
+  5. How does the .NET side create the `RedisResource` with annotations?
+  6. How is the handle returned to TypeScript?
+
+  Write your answers as numbered code comments.
 starterCode: '// Trace what happens when a TypeScript AppHost calls:
 
   //   const redis = await builder.addRedis("cache");

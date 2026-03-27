@@ -1,3 +1,19 @@
+instructions: |
+  Trace `WithReference` through the entire Aspire stack — from the builder API call all the way to the Dashboard UI.
+
+  **Scenario:** You write:
+  ```csharp
+  var db = builder.AddPostgres("pg").AddDatabase("atlas-db");
+  builder.AddProject<Projects.Api>("api").WithReference(db);
+  ```
+
+  **Your tasks:** Describe what happens at each layer:
+  1. **Builder** — What do `AddPostgres`, `AddDatabase`, and `WithReference` create?
+  2. **Annotations** — What annotations are attached to each resource?
+  3. **DCP** — How are the resources submitted to DCP?
+  4. **Environment Variables** — How does the connection string become an env var?
+  5. **Service Discovery** — How does the API read and use the connection string?
+  6. **Dashboard** — How do the resources appear in the UI?
 starterCode: '// FINAL BOSS: Trace what happens when you write:
 
   //   var db = builder.AddPostgres("pg").AddDatabase("atlas-db");

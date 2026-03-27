@@ -1,3 +1,11 @@
+instructions: |
+  Use Aspire's eventing system to hook into resource lifecycle events.
+
+  **Your tasks:**
+  1. Subscribe to `ResourceReadyEvent` scoped to the database resource — log `"Database is ready!"` when the database becomes healthy
+  2. Subscribe to `BeforeStartEvent` — log the total number of resources in the app model
+
+  Use `builder.Eventing.Subscribe<T>()` for both. For resource-scoped events, pass `db.Resource` as the filter.
 starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar db = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar api = builder.AddProject<Projects.Api>(\"api\")\n    .WithReference(db).WaitFor(db);\n\
   \n// TODO: Subscribe to ResourceReadyEvent for the database\n// and log \"Database is ready!\" to the console\n\n// TODO: Subscribe to BeforeStartEvent\n// and log the total number of resources in the\
   \ app model\n\nbuilder.Build().Run();"

@@ -1,3 +1,12 @@
+instructions: |
+  Use Aspire's eventing system to inspect the complete resource graph at startup.
+
+  **Your tasks:**
+  1. Subscribe to `BeforeStartEvent` using `builder.Eventing.Subscribe<BeforeStartEvent>()`
+  2. In the event handler, iterate over `evt.Model.Resources`
+  3. Log each resource's `Name` and `Annotations.Count` to the console
+
+  This lets you see every resource and its annotations before the app starts running.
 starterCode: |
   var builder = DistributedApplication.CreateBuilder(args);
 

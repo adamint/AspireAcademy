@@ -1,3 +1,16 @@
+instructions: |
+  Configure every Atlas resource with proper endpoints, environment variables, parameters, and lifetimes.
+
+  **Your tasks:**
+  1. PostgreSQL `"pg"` with persistent lifetime and database `"atlas-db"`
+  2. Redis `"cache"` with persistent lifetime
+  3. RabbitMQ `"messaging"`
+  4. A secret parameter `"api-key"`
+  5. C# API `"api"` referencing all infrastructure, with the API key injected as env var `"API_KEY"`
+  6. Python ML `"ml"` at `"../atlas-ml"` with HTTP endpoint on port 8000, referencing rabbitmq
+  7. Go worker `"worker"` as executable referencing rabbitmq
+  8. Vite frontend `"frontend"` at `"../atlas-web"` referencing the API
+  9. Proper `WaitFor` dependencies on all services
 starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
 
 

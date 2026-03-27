@@ -94,7 +94,7 @@ interface SubmitApiResponse {
 // interface AiMessage {
 //   role: 'user' | 'assistant';
 //   content: string;
-}
+// }
 
 // ── Test case icon helper ────────────────────────────
 

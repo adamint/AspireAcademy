@@ -1,3 +1,13 @@
+instructions: |
+  Build a complete custom hosting integration for a hypothetical "MetricsDB" service.
+
+  **Your tasks:**
+  1. Define `MetricsDbResource` inheriting `ContainerResource` and implementing `IResourceWithConnectionString`
+  2. Implement `ConnectionStringExpression` with endpoint properties
+  3. Write an `AddMetricsDb()` extension method (image: `"metricsdb/server"`, port 9090)
+  4. Add an HTTP health check
+  5. Subscribe to `ResourceReadyEvent` filtered to the MetricsDB resource to log when it's ready
+  6. Register it in an AppHost and wire a project to reference it with `WaitFor`
 starterCode: '// Build a complete hosting integration for a hypothetical "MetricsDB" service:
 
   // 1. MetricsDbResource inheriting ContainerResource + IResourceWithConnectionString

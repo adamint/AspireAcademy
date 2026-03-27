@@ -1,3 +1,13 @@
+instructions: |
+  Build a custom resource with annotations from scratch and wire it into the app model.
+
+  **Your tasks:**
+  1. Define a `FeatureFlagResource` class inheriting from `Resource` that implements `IResourceWithConnectionString`
+  2. Implement the required `ConnectionStringExpression` property
+  3. Register it with `builder.AddResource()` and add an endpoint on port 9090
+  4. Create a custom `FeatureFlagCountAnnotation` implementing `IResourceAnnotation`
+  5. Attach the annotation with `.WithAnnotation()`
+  6. Add a project that references the feature flag service with `.WithReference()`
 starterCode: |
   var builder = DistributedApplication.CreateBuilder(args);
 

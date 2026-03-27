@@ -1,3 +1,12 @@
+instructions: |
+  Explain how one AppHost produces three different deployment targets from the same `AddPostgres("pg")` call.
+
+  **Your tasks:** For each deployment target, describe what `AddPostgres("pg")` becomes:
+  1. **Docker Compose** — What appears in `docker-compose.yml`? (image, env, volumes, healthcheck)
+  2. **Kubernetes Helm** — What K8s resources are generated? (StatefulSet, Service, PVC)
+  3. **Azure Bicep** — What Azure resource is provisioned? (managed service, identity)
+
+  Also explain how connection strings are handled differently in each target.
 starterCode: '// Explain how one AppHost produces three deployment targets:
 
   // 1. Docker Compose (docker-compose.yml)

@@ -1,3 +1,13 @@
+instructions: |
+  Demonstrate CLI mastery by writing the complete sequence of Aspire CLI commands to go from zero to deployed.
+
+  **Your tasks:** Write each command and explain what it does:
+  1. Create a new Aspire project from a starter template
+  2. Add a Redis hosting integration to the AppHost
+  3. Run the app (starts DCP + Dashboard)
+  4. Check the status of all running resources
+  5. Stream logs from the API service
+  6. Publish the app to Docker Compose
 starterCode: '// Describe the sequence of CLI commands to:
 
   // 1. Create a new Aspire project

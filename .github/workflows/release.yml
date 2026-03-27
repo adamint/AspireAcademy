@@ -263,8 +263,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CURRENT_BODY=$(gh release view "${{ github.ref_name }}" --json body -q .body)
+          DEPLOY_NOTE="**Deployed** to ${{ steps.url.outputs.url }} at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           gh release edit "${{ github.ref_name }}" \
             --notes "${CURRENT_BODY}
-
----
-**Deployed** to ${{ steps.url.outputs.url }} at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          ${DEPLOY_NOTE}"

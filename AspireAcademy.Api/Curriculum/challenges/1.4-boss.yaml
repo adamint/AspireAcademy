@@ -1,3 +1,20 @@
+instructions: |
+  Wire up the complete Atlas AppHost with all six resources across four languages.
+
+  **Infrastructure:**
+  - PostgreSQL server `"pg"` with a database `"atlas-db"`
+  - Redis cache `"cache"`
+  - RabbitMQ message broker `"messaging"`
+
+  **Services:**
+  - C# API project `"api"` referencing postgres, redis, and rabbitmq
+  - Vite frontend `"frontend"` at `"../atlas-web"` referencing the API
+  - Python ML service `"ml"` at `"../atlas-ml"` with entry point `"app:app"` referencing rabbitmq
+
+  **Dependencies:**
+  - API waits for postgres, redis, and rabbitmq
+  - Frontend waits for the API
+  - ML waits for rabbitmq
 starterCode: |
   var builder = DistributedApplication.CreateBuilder(args);
 

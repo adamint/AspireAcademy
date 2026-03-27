@@ -1,3 +1,13 @@
+instructions: |
+  Build Atlas with a full integration ecosystem including persistent storage, management plugins, and a custom container.
+
+  **Your tasks:**
+  1. PostgreSQL `"pg"` with persistent lifetime, data volume `"pg-data"`, and database `"atlas-db"`
+  2. Redis `"cache"` with persistent lifetime and data volume `"redis-data"`
+  3. RabbitMQ `"messaging"` with the management plugin enabled
+  4. Meilisearch `"search"` as a container (`"getmeili/meilisearch"`, tag `"v1.7"`, port 7700)
+  5. C# API `"api"` referencing all four infrastructure resources with `WaitFor`
+  6. Vite frontend `"frontend"` referencing and waiting for the API
 starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
 
 

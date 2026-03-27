@@ -1,3 +1,12 @@
+instructions: |
+  Write a complete hosting integration for Meilisearch, a search engine.
+
+  **Your tasks:**
+  1. Define `MeilisearchResource` inheriting `ContainerResource` and implementing `IResourceWithConnectionString`
+  2. Implement `ConnectionStringExpression` using `ReferenceExpression.Create` with endpoint properties
+  3. Write an `AddMeilisearch()` extension method on `IDistributedApplicationBuilder`
+  4. Configure the container image `"getmeili/meilisearch"`, tag `"v1.7"`, and target port 7700
+  5. Add an HTTP health check on the primary endpoint
 starterCode: '// Write a hosting integration for Meilisearch (search engine)
 
   // 1. Define MeilisearchResource inheriting ContainerResource + IResourceWithConnectionString

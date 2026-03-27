@@ -1,3 +1,11 @@
+instructions: |
+  Add polyglot services to Atlas — a Python ML service and a Vite TypeScript frontend.
+
+  **Your tasks:**
+  1. Add a Python ML service named `"ml"` at `"../atlas-ml"` with entry point `"app:app"` using `AddPythonApp()`
+  2. Give the ML service an HTTP endpoint on port 8000 and a reference to the API
+  3. Add a Vite frontend named `"frontend"` at `"../atlas-web"` using `AddViteApp()`
+  4. Wire the frontend to reference the API and wait for it to be ready
 starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
   api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\n// TODO: Add a Python ML service at \"../atlas-ml\" with entry point \"app:app\"\n//       It should have an HTTP endpoint on port 8000\
   \ and reference the API\n\n// TODO: Add a Vite frontend at \"../atlas-web\"\n//       It should reference the API and wait for the API to be ready\n\nbuilder.Build().Run();"

@@ -1,3 +1,14 @@
+instructions: |
+  Add `WaitFor` dependencies to every Atlas service so they start in the correct order.
+
+  **Your tasks:**
+  1. API should wait for postgres, redis, and rabbitmq before starting
+  2. ML service should wait for rabbitmq
+  3. Go worker should wait for rabbitmq
+  4. Frontend should wait for the API
+
+  `WaitFor` holds a service in a "Waiting" state until its dependency reports as healthy.
+  Chain `.WaitFor(resource)` after `.WithReference(resource)` on each service.
 starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\nvar rabbitmq =\
   \ builder.AddRabbitMQ(\"messaging\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"api\")\n    .WithReference(postgres)\n    .WithReference(redis)\n    .WithReference(rabbitmq);\n    // TODO:\
   \ API should wait for postgres, redis, and rabbitmq\n\nvar ml = builder.AddPythonApp(\"ml\", \"../atlas-ml\", \"app:app\")\n    .WithReference(rabbitmq);\n    // TODO: ML should wait for rabbitmq\n\n\

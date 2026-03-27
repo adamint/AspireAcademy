@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  Box, Flex, Text, Button, Badge,
+  Box, Text, Button, Badge,
 } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { retroCardProps, pixelFontProps } from '../../theme/aspireTheme';

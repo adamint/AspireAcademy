@@ -1,3 +1,13 @@
+instructions: |
+  Build a complete test suite for Atlas with a shared fixture and multiple tests.
+
+  **Your tasks:**
+  1. Define an `AtlasCollection` with `ICollectionFixture<AtlasFixture>` to share one AppHost across all tests
+  2. Implement `AtlasFixture` with `IAsyncLifetime` — start the AppHost once and wait for the API
+  3. Write a health endpoint test (`GET /health` → 200)
+  4. Write a search endpoint test (`GET /api/search?q=hello` → 200)
+  5. Use `WaitForResourceAsync` to ensure the API is ready before any tests run
+  6. Properly dispose the application
 starterCode: "// Write a complete test suite for Atlas:\n// 1. Shared fixture that starts Atlas once for all tests\n// 2. Health endpoint test (GET /health -> 200)\n// 3. Search endpoint test (GET /api/search?q=hello\
   \ -> 200 with results)\n// 4. WaitForResourceAsync to ensure resources are ready\n\n[CollectionDefinition(\"Atlas\")]\npublic class AtlasCollection : ICollectionFixture<AtlasFixture> { }\n\npublic class\
   \ AtlasFixture : IAsyncLifetime\n{\n    public DistributedApplication App { get; private set; } = null!;\n\n    // TODO: Initialize and dispose\n}\n\n[Collection(\"Atlas\")]\npublic class AtlasSearchTests\n\

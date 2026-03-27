@@ -1,3 +1,14 @@
+instructions: |
+  Instrument the Atlas API with a complete observability stack.
+
+  **Your tasks:**
+  1. Add `ServiceDefaults` and map default health endpoints
+  2. Add custom health checks for both the ML service and the Go worker
+  3. Create a custom `ActivitySource` with spans for search and recommendation operations
+  4. Create custom metrics: search count, recommendation count, and a latency histogram
+  5. Add structured logging with query context using `ILogger`
+
+  All three signals (traces, metrics, logs) will be visible in the Aspire Dashboard.
 starterCode: '// Instrument the Atlas API with complete observability:
 
   // 1. ServiceDefaults

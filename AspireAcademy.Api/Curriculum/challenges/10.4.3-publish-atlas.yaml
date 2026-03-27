@@ -1,3 +1,12 @@
+instructions: |
+  Add a custom pipeline step to the Atlas AppHost that runs after publishing.
+
+  **Your tasks:**
+  1. Subscribe to `BeforeStartEvent` and check if the app is in publish mode with `IsPublishMode`
+  2. Get the `IDistributedApplicationPipeline` from the event's services
+  3. Create a `PipelineStep` named `"deployment-notes"` with `DependsOnSteps = { "publish" }`
+  4. In the step's action, write a `deployment-notes.txt` file to the output directory listing the resource count
+  5. Add an entry to the pipeline summary
 starterCode: "var builder = DistributedApplication.CreateBuilder(args);\n\nvar postgres = builder.AddPostgres(\"pg\").AddDatabase(\"atlas-db\");\nvar redis = builder.AddRedis(\"cache\");\n\nvar api = builder.AddProject<Projects.AtlasApi>(\"\
   api\")\n    .WithReference(postgres)\n    .WithReference(redis);\n\nbuilder.AddViteApp(\"frontend\", \"../atlas-web\")\n    .WithReference(api);\n\n// TODO: Add a custom pipeline step that runs after\
   \ \"publish\"\n// and writes a deployment-notes.txt file to the output directory\n\nbuilder.Build().Run();"

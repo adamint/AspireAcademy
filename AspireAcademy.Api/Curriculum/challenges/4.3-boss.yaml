@@ -1,3 +1,15 @@
+instructions: |
+  Build the complete Atlas communication graph from scratch with all services wired together.
+
+  **Infrastructure:** PostgreSQL (persistent), Redis, RabbitMQ
+
+  **Services:**
+  - C# API `"api"` → references DB + cache + queue, waits for all three
+  - Python ML `"ml"` → references queue + API, waits for queue
+  - Go worker `"worker"` → references queue + API, waits for queue
+  - Vite frontend `"frontend"` → references API, waits for API
+
+  Use `WithReference` for wiring and `WaitFor` for startup ordering.
 starterCode: 'var builder = DistributedApplication.CreateBuilder(args);
 
 

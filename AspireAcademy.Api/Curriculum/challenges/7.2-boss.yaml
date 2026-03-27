@@ -1,3 +1,14 @@
+instructions: |
+  Analyze a trace waterfall from the Aspire Dashboard to diagnose a slow Atlas search request.
+
+  **Scenario:** Atlas search requests are taking 3 seconds. The Dashboard shows a trace waterfall with timing for each service.
+
+  **Your tasks:**
+  1. Identify which service is the bottleneck by examining the span durations
+  2. Identify the specific operation within that service that is slow
+  3. Propose a fix (caching, indexing, or another optimization)
+
+  Write your answers as code comments.
 starterCode: '// Given this scenario: Atlas search requests are taking 3 seconds.
 
   // The Dashboard shows the following trace waterfall:

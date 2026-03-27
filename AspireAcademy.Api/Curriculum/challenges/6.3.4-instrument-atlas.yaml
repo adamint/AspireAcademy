@@ -1,3 +1,12 @@
+instructions: |
+  Add full observability instrumentation to the Atlas API.
+
+  **Your tasks:**
+  1. Call `AddServiceDefaults()` to register OpenTelemetry, health checks, service discovery, and resilience
+  2. Add a custom health check for the ML service using `.AddUrlGroup()`
+  3. Map default health endpoints with `MapDefaultEndpoints()`
+  4. Create a custom `ActivitySource` and use `StartActivity()` to create spans for search requests
+  5. Create a custom `Counter` metric to track search request counts
 starterCode: '// In your Atlas API Program.cs, add:
 
   // 1. ServiceDefaults with AddServiceDefaults()
