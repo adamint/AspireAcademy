@@ -116,6 +116,9 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
           preview
         </Badge>
       )}
+      <Text fontSize="2xs" color="dark.muted" whiteSpace="nowrap" flexShrink={0}>
+        ~{lesson.estimatedMinutes}m
+      </Text>
       <Badge
         {...pixelFontProps}
         fontSize="2xs"

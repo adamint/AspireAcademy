@@ -1,5 +1,7 @@
+import { isValidElement } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Box, Flex, Text } from '@chakra-ui/react';
@@ -7,6 +9,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import type { Components } from 'react-markdown';
 import ArchitectureDiagram from './ArchitectureDiagram';
 import type { ServiceNode, DiagramConnection } from './architectureDiagramTypes';
+import { RevealBlock, DeepDiveCollapse, BeforeAfterComparison, ScenarioBlock, TerminalSimulation, TimelineBlock } from './InteractiveBlocks';
 
 function extractText(node: React.ReactNode): string {
   if (typeof node === 'string') return node;
@@ -34,6 +37,10 @@ const calloutStyles: Record<string, CalloutStyle> = {
   '🏗️': { borderColor: '#06b6d4', bg: 'rgba(6, 182, 212, 0.10)', label: 'Step by Step', labelColor: '#22d3ee' },
   '🔍': { borderColor: '#ec4899', bg: 'rgba(236, 72, 153, 0.10)', label: 'Deep Dive', labelColor: '#f472b6' },
   '🧠': { borderColor: '#14b8a6', bg: 'rgba(20, 184, 166, 0.10)', label: 'Concept Check', labelColor: '#2dd4bf' },
+  '🤓': { borderColor: '#f97316', bg: 'rgba(249, 115, 22, 0.08)', label: 'Did You Know?', labelColor: '#fb923c' },
+  '💥': { borderColor: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)', label: 'Common Gotcha', labelColor: '#f87171' },
+  '🏢': { borderColor: '#a855f7', bg: 'rgba(168, 85, 247, 0.08)', label: 'Real-World Story', labelColor: '#c084fc' },
+  '🎮': { borderColor: '#eab308', bg: 'rgba(234, 179, 8, 0.08)', label: 'Challenge', labelColor: '#facc15' },
 };
 
 function detectCalloutType(text: string): CalloutStyle | null {
@@ -66,6 +73,66 @@ const markdownComponents: Partial<Components> = {
         );
       } catch {
         // Fall through to regular code rendering on parse error
+      }
+    }
+
+    // Interactive comparison block: ```compare
+    if (match?.[1] === 'compare') {
+      try {
+        const data = JSON.parse(codeStr);
+        return <BeforeAfterComparison data={data} />;
+      } catch {
+        // Fall through
+      }
+    }
+
+    // Interactive scenario block: ```scenario
+    if (match?.[1] === 'scenario') {
+      try {
+        const data = JSON.parse(codeStr);
+        return <ScenarioBlock data={data} />;
+      } catch {
+        // Fall through
+      }
+    }
+
+    // Reveal block: ```reveal
+    if (match?.[1] === 'reveal') {
+      try {
+        const data = JSON.parse(codeStr) as { question: string; answer: string };
+        return <RevealBlock question={data.question} answer={data.answer} />;
+      } catch {
+        // Fall through
+      }
+    }
+
+    // Collapsible deep dive: ```deepdive
+    if (match?.[1] === 'deepdive') {
+      try {
+        const data = JSON.parse(codeStr) as { title: string; content: string };
+        return <DeepDiveCollapse title={data.title}>{data.content}</DeepDiveCollapse>;
+      } catch {
+        // Fall through
+      }
+    }
+
+    // Animated terminal simulation: ```terminal
+    if (match?.[1] === 'terminal') {
+      try {
+        const data = JSON.parse(codeStr);
+        return <TerminalSimulation data={data} />;
+      } catch {
+        // Fall through
+      }
+    }
+
+    // Timeline block: ```timeline
+    if (match?.[1] === 'timeline') {
+      try {
+        const data = JSON.parse(codeStr);
+        return <TimelineBlock data={data} />;
+      } catch {
+        // Fall through
       }
     }
 
@@ -178,6 +245,15 @@ const markdownComponents: Partial<Components> = {
       </Box>
     );
   },
+  pre({ children }) {
+    // Interactive blocks (RevealBlock, CompareBlock, etc.) are rendered by the
+    // code component inside a <pre> wrapper from react-markdown. Unwrap custom
+    // components so they don't inherit white-space: pre, which breaks text wrapping.
+    if (isValidElement(children) && typeof children.type !== 'string') {
+      return <>{children}</>;
+    }
+    return <pre>{children}</pre>;
+  },
 };
 
 interface MarkdownContentProps {
@@ -266,7 +342,7 @@ export default function MarkdownContent({ children }: MarkdownContentProps) {
         },
       }}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={markdownComponents}>
         {children}
       </ReactMarkdown>
     </Box>

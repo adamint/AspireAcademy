@@ -21,6 +21,7 @@ import { useGamificationStore } from '../store/gamificationStore';
 import type { LessonDetail, CompleteResponse } from '../types/curriculum';
 import MarkdownContent from '../components/common/MarkdownContent';
 import EncouragingMessage from '../components/gamification/EncouragingMessage';
+import NextAchievementTeaser from '../components/gamification/NextAchievementTeaser';
 
 const lessonTypeLabel: Record<string, string> = {
   learn: '📖 Learn',
@@ -369,6 +370,11 @@ export default function LessonPage() {
       {/* Encouraging message after completion */}
       {(lesson.isCompleted || completeMutation.isSuccess) && (
         <EncouragingMessage xpEarned={xpAnim ?? lesson.xpReward} />
+      )}
+
+      {/* Next achievement teaser */}
+      {(lesson.isCompleted || completeMutation.isSuccess) && (
+        <NextAchievementTeaser />
       )}
 
       {/* Previous / Next */}

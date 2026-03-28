@@ -22,6 +22,7 @@ import WorldCard from '../components/curriculum/WorldCard';
 import AspireQuickStartCard from '../components/gamification/AspireQuickStartCard';
 import WorldCompletionBadges from '../components/gamification/WorldCompletionBadges';
 import ProgressMilestonePopup from '../components/gamification/ProgressMilestonePopup';
+import NextAchievementTeaser from '../components/gamification/NextAchievementTeaser';
 import ActivityHeatmap from '../components/ActivityHeatmap';
 import type { World, XpResponse } from '../types/curriculum';
 
@@ -160,6 +161,9 @@ export default function DashboardPage() {
           </Card.Root>
         </SimpleGrid>
       )}
+
+      {/* Next Achievement */}
+      {isAuthenticated && <NextAchievementTeaser />}
 
       {/* Persona Track */}
       {isAuthenticated && (
