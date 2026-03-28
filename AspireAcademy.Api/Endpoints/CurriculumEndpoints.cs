@@ -24,8 +24,28 @@ public static class CurriculumEndpoints
         group.MapGet("/lessons/{lessonId}", GetLessonDetail).AllowAnonymous();
         group.MapGet("/gallery", GetGallery).AllowAnonymous();
         group.MapGet("/concepts", GetConcepts).AllowAnonymous();
+        group.MapGet("/lessons/{lessonId}/stats", GetLessonStats).AllowAnonymous();
 
         return app;
+    }
+
+    private static async Task<IResult> GetLessonStats(string lessonId, AcademyDbContext db)
+    {
+        var lessonExists = await db.Lessons.AnyAsync(l => l.Id == lessonId);
+        if (!lessonExists)
+        {
+            s_logger.LogWarning("GET /lessons/{LessonId}/stats — lesson not found", lessonId);
+            return Results.NotFound(new ErrorResponse("Lesson not found"));
+        }
+
+        var completionCount = await db.UserProgress
+            .Where(p => p.LessonId == lessonId && EndpointHelpers.CompletedStatuses.Contains(p.Status))
+            .Select(p => p.UserId)
+            .Distinct()
+            .CountAsync();
+
+        s_logger.LogInformation("GET /lessons/{LessonId}/stats — completionCount={Count}", lessonId, completionCount);
+        return Results.Ok(new { completionCount });
     }
 
     private static async Task<IResult> GetWorlds(

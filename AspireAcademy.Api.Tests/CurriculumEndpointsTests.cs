@@ -310,4 +310,52 @@ public class CurriculumEndpointsTests : TestFixture
             "first lesson in a module should link to the last lesson of the previous module in the same world");
         lesson.PreviousLessonTitle.Should().Be("Code Challenge");
     }
+
+    // ── Lesson stats endpoint ──
+
+    [Fact]
+    public async Task GetLessonStats_WithCompletions_ReturnsCorrectCount()
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AcademyDbContext>();
+
+        var user2Id = Guid.Parse("bbbbbbbb-0000-0000-0000-000000000001");
+        var user3Id = Guid.Parse("bbbbbbbb-0000-0000-0000-000000000002");
+
+        db.Users.AddRange(
+            new User { Id = user2Id, Username = "statsuser2", Email = "stats2@test.com", PasswordHash = TestPasswordHash, DisplayName = "Stats User 2", CreatedAt = DateTime.UtcNow },
+            new User { Id = user3Id, Username = "statsuser3", Email = "stats3@test.com", PasswordHash = TestPasswordHash, DisplayName = "Stats User 3", CreatedAt = DateTime.UtcNow });
+
+        db.UserProgress.AddRange(
+            new UserProgress { Id = Guid.NewGuid(), UserId = TestUserId, LessonId = "lesson-learn-1", Status = ProgressStatuses.Completed, Attempts = 1, CompletedAt = DateTime.UtcNow },
+            new UserProgress { Id = Guid.NewGuid(), UserId = user2Id, LessonId = "lesson-learn-1", Status = ProgressStatuses.Perfect, Attempts = 1, CompletedAt = DateTime.UtcNow },
+            new UserProgress { Id = Guid.NewGuid(), UserId = user3Id, LessonId = "lesson-learn-1", Status = ProgressStatuses.InProgress, Attempts = 1 });
+
+        await db.SaveChangesAsync();
+
+        var response = await Client.GetAsync("/api/lessons/lesson-learn-1/stats");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        json.RootElement.GetProperty("completionCount").GetInt32().Should().Be(2,
+            "only 'completed' and 'perfect' statuses count; 'in-progress' does not");
+    }
+
+    [Fact]
+    public async Task GetLessonStats_NoCompletions_ReturnsZero()
+    {
+        var response = await Client.GetAsync("/api/lessons/lesson-challenge-1/stats");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        json.RootElement.GetProperty("completionCount").GetInt32().Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetLessonStats_NonExistentLesson_Returns404()
+    {
+        var response = await Client.GetAsync("/api/lessons/does-not-exist/stats");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }
