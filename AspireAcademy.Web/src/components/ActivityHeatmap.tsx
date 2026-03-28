@@ -20,22 +20,23 @@ interface DayCell {
   dayOfWeek: number;
 }
 
-const CELL_SIZE = 12;
+const CELL_SIZE = 14;
 const GAP = 2;
 
-const COLORS = {
-  empty: '#1a1a2e',
-  level1: '#3d2f6b',
-  level2: '#6B5CE7',
-  level3: '#9185D1',
-  level4: '#FFD700',
+const HEATMAP_COLORS = {
+  empty: 'aspire.50',
+  level1: 'aspire.200',
+  level2: 'aspire.500',
+  level3: 'aspire.600',
+  level4: 'game.xpGold',
 } as const;
 
 function getColor(count: number): string {
-  if (count === 0) return COLORS.empty;
-  if (count === 1) return COLORS.level1;
-  if (count <= 3) return COLORS.level2;
-  return COLORS.level3;
+  if (count === 0) return HEATMAP_COLORS.empty;
+  if (count === 1) return HEATMAP_COLORS.level1;
+  if (count <= 3) return HEATMAP_COLORS.level2;
+  if (count <= 6) return HEATMAP_COLORS.level3;
+  return HEATMAP_COLORS.level4;
 }
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -65,6 +66,27 @@ function computeStreak(days: DayCell[]): number {
     }
   }
   return streak;
+}
+
+function computeLongestStreak(days: DayCell[]): number {
+  let longest = 0;
+  let current = 0;
+  for (const day of days) {
+    if (day.count > 0) {
+      current++;
+      if (current > longest) longest = current;
+    } else {
+      current = 0;
+    }
+  }
+  return longest;
+}
+
+function getStreakMilestone(streak: number): string | null {
+  if (streak >= 100) return '🔥 100 day streak!';
+  if (streak >= 30) return '🔥 Month streak!';
+  if (streak >= 7) return '🔥 Week streak!';
+  return null;
 }
 
 function getMonthPositions(days: DayCell[], weekCount: number): { label: string; col: number }[] {
@@ -98,7 +120,7 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
     queryFn: () => api.get('/profile/activity-heatmap').then((r) => r.data),
   });
 
-  const { days, totalCount, streak, monthPositions } = useMemo(() => {
+  const { days, totalCount, streak, longestStreak, totalActiveDays, monthPositions } = useMemo(() => {
     const activityMap = new Map<string, number>();
     if (data?.days) {
       for (const d of data.days) {
@@ -108,10 +130,12 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
     const allDays = generateGrid(activityMap);
     const total = allDays.reduce((sum, d) => sum + d.count, 0);
     const currentStreak = computeStreak(allDays);
+    const longest = computeLongestStreak(allDays);
+    const activeDays = allDays.filter((d) => d.count > 0).length;
     const wc = compact ? 26 : 53;
     const visibleDays = compact ? allDays.slice(-26 * 7) : allDays;
     const positions = getMonthPositions(visibleDays, wc);
-    return { days: visibleDays, totalCount: total, streak: currentStreak, monthPositions: positions, weekCount: wc };
+    return { days: visibleDays, totalCount: total, streak: currentStreak, longestStreak: longest, totalActiveDays: activeDays, monthPositions: positions, weekCount: wc };
   }, [data, compact]);
 
   // Pad start so first day aligns to its correct day-of-week row
@@ -127,6 +151,9 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
     }));
     return [...padding, ...days];
   }, [days]);
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const streakMilestone = getStreakMilestone(streak);
 
   if (isLoading) {
     return (
@@ -151,22 +178,40 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
   };
 
   return (
-    <Box {...retroCardProps} p={4} bg="dark.card">
+    <Box {...retroCardProps} p={4} bg="dark.card" data-testid="activity-heatmap">
       <Flex justify="space-between" align="center" mb={3} flexWrap="wrap" gap={2}>
         <Text {...pixelFontProps} fontSize="xs" color="dark.text">
           Activity
         </Text>
-        <Flex gap={3} align="center">
-          {streak > 0 && (
-            <Text {...pixelFontProps} fontSize="8px" color="game.streak">
-              {streak} day streak
+        <Text fontSize="xs" color="dark.muted">
+          {totalCount} {totalCount === 1 ? 'activity' : 'activities'} in the last year
+        </Text>
+      </Flex>
+
+      {!compact && (
+        <Flex gap={4} mb={3} flexWrap="wrap" align="center">
+          <Flex align="center" gap={1}>
+            <Text {...pixelFontProps} fontSize="10px" color="game.streak" data-testid="streak-count">
+              🔥 {streak} days
+            </Text>
+          </Flex>
+          <Flex align="center" gap={1}>
+            <Text {...pixelFontProps} fontSize="10px" color="aspire.400" data-testid="longest-streak">
+              🏆 {longestStreak} longest
+            </Text>
+          </Flex>
+          <Flex align="center" gap={1}>
+            <Text {...pixelFontProps} fontSize="10px" color="game.xpGold" data-testid="total-active-days">
+              ⭐ {totalActiveDays} active days
+            </Text>
+          </Flex>
+          {streakMilestone && (
+            <Text {...pixelFontProps} fontSize="10px" color="game.streak" data-testid="streak-milestone">
+              {streakMilestone}
             </Text>
           )}
-          <Text fontSize="xs" color="dark.muted">
-            {totalCount} {totalCount === 1 ? 'activity' : 'activities'} in the last year
-          </Text>
         </Flex>
-      </Flex>
+      )}
 
       <Box position="relative" data-heatmap overflowX="auto">
         {/* Month labels */}
@@ -214,7 +259,10 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
                 borderRadius="2px"
                 bg={day.count < 0 ? 'transparent' : getColor(day.count)}
                 cursor={day.count >= 0 ? 'pointer' : 'default'}
-                transition="transform 0.1s"
+                transition="transform 0.1s, box-shadow 0.2s"
+                outline={day.date === todayStr ? '2px solid' : undefined}
+                outlineColor={day.date === todayStr ? 'game.xpGold' : undefined}
+                boxShadow={day.date === todayStr ? '0 0 6px rgba(255, 215, 0, 0.5)' : undefined}
                 _hover={day.count >= 0 ? { transform: 'scale(1.3)', outline: '1px solid rgba(255,255,255,0.3)' } : {}}
                 onMouseEnter={(e) => handleMouseEnter(e, day)}
                 onMouseLeave={() => setTooltip(null)}
@@ -249,7 +297,7 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
         {/* Legend */}
         <Flex mt={2} justify="flex-end" align="center" gap={1}>
           <Text fontSize="9px" color="dark.muted" mr={1}>Less</Text>
-          {[COLORS.empty, COLORS.level1, COLORS.level2, COLORS.level3, COLORS.level4].map((color, i) => (
+          {[HEATMAP_COLORS.empty, HEATMAP_COLORS.level1, HEATMAP_COLORS.level2, HEATMAP_COLORS.level3, HEATMAP_COLORS.level4].map((color, i) => (
             <Box key={i} w="10px" h="10px" borderRadius="2px" bg={color} />
           ))}
           <Text fontSize="9px" color="dark.muted" ml={1}>More</Text>

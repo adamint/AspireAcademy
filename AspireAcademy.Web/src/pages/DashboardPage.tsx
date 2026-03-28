@@ -23,6 +23,7 @@ import AspireQuickStartCard from '../components/gamification/AspireQuickStartCar
 import WorldCompletionBadges from '../components/gamification/WorldCompletionBadges';
 import ProgressMilestonePopup from '../components/gamification/ProgressMilestonePopup';
 import NextAchievementTeaser from '../components/gamification/NextAchievementTeaser';
+import BazaarProgressTracker from '../components/gamification/BazaarProgressTracker';
 import ActivityHeatmap from '../components/ActivityHeatmap';
 import type { World, XpResponse } from '../types/curriculum';
 
@@ -251,6 +252,11 @@ export default function DashboardPage() {
             </Flex>
           </Card.Body>
         </Card.Root>
+      )}
+
+      {/* Bazaar Progress Tracker */}
+      {isAuthenticated && worlds && worlds.some((w) => w.completionPercentage > 0) && (
+        <BazaarProgressTracker worlds={worlds} />
       )}
 
       {/* Worlds */}
