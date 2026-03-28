@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { Box, Flex, Text, Badge } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FiChevronDown, FiChevronRight, FiEye } from 'react-icons/fi';
@@ -77,7 +77,7 @@ export function RevealBlock({ question, answer }: { question: string; answer: st
 // Collapsible section for optional deeper content. Keeps the main flow tight
 // while letting curious readers dig in.
 
-export function DeepDiveCollapse({ title, children }: { title: string; children: string }) {
+export function DeepDiveCollapse({ title, children }: { title: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -125,9 +125,9 @@ export function DeepDiveCollapse({ title, children }: { title: string; children:
               borderTop="1px solid rgba(236, 72, 153, 0.15)"
               pt="3"
             >
-              <Text fontSize="0.88rem" lineHeight="1.75" color="var(--text)" whiteSpace="pre-wrap">
+              <Box fontSize="0.88rem" lineHeight="1.75" color="var(--text)">
                 {children}
-              </Text>
+              </Box>
             </Box>
           </motion.div>
         )}

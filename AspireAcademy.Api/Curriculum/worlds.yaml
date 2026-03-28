@@ -11,7 +11,7 @@ worlds:
   # ═══════════════════════════════════════════════════════════════════════════
   - id: world-1
     name: "The Distributed Problem"
-    description: "Why distributed apps are hard and how Aspire solves the entire lifecycle — from any language."
+    description: "You split into services. Now what? Learn why distributed apps are hard, and how Aspire makes them work as one."
     icon: "🌍"
     sortOrder: 1
     levelRangeStart: 1
@@ -116,14 +116,32 @@ worlds:
             unlockAfterLesson: "1.3.2"
             contentFile: world-1/1.3.3-build-run-dashboard.md
           - id: "1.3.4"
+            title: "The Dashboard: Your Control Plane"
+            description: "Commands, resource management, environment inspection — the Dashboard isn't monitoring, it's how you control your app."
+            type: learn
+            sortOrder: 4
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "1.3.3"
+            contentFile: world-1/1.3.4-dashboard-control-plane.md
+          - id: "1.3.5"
+            title: "Debugging: F5 Across Every Service"
+            description: "Press F5 and the debugger attaches to all services. Set breakpoints across service boundaries."
+            type: learn
+            sortOrder: 5
+            xpReward: 50
+            estimatedMinutes: 10
+            unlockAfterLesson: "1.3.4"
+            contentFile: world-1/1.3.5-ide-debugging.md
+          - id: "1.3.6"
             title: "Challenge: Create and Run Your First App"
             description: "Scaffold an Aspire app, add a container resource, and verify it in the Dashboard."
             type: challenge
-            sortOrder: 4
+            sortOrder: 6
             xpReward: 150
             bonusXp: 75
             estimatedMinutes: 12
-            unlockAfterLesson: "1.3.3"
+            unlockAfterLesson: "1.3.5"
             challengeFile: 1.3.4-first-app.yaml
       - id: "1.4"
         name: "Meet Bazaar"
@@ -162,7 +180,7 @@ worlds:
 
   - id: world-2
     name: "The App Model"
-    description: "How Aspire represents your distributed app as a graph of resources, annotations, and relationships."
+    description: "Your app is code — services, databases, and relationships declared in a type-safe, composable app model."
     icon: "🧩"
     sortOrder: 2
     levelRangeStart: 5
@@ -299,7 +317,7 @@ worlds:
 
   - id: world-3
     name: "Resource Types"
-    description: "Projects, containers, executables, JavaScript, Python, Go, parameters, endpoints, environment variables."
+    description: "Add anything to your app — .NET projects, containers, Python, Go, Java, Rust, or any Docker image."
     icon: "📦"
     sortOrder: 3
     levelRangeStart: 10
@@ -483,7 +501,7 @@ worlds:
 
   - id: world-4
     name: "Wiring It Together"
-    description: "How services find each other, declare dependencies, and communicate."
+    description: "Stop wiring connection strings by hand. One line connects two services with automatic discovery."
     icon: "🔗"
     sortOrder: 4
     levelRangeStart: 17
@@ -602,7 +620,7 @@ worlds:
 
   - id: world-5
     name: "The Integration Ecosystem"
-    description: "50+ hosting integrations — databases, caches, message brokers, AI, identity, and custom integrations."
+    description: "Postgres, Redis, RabbitMQ, Kafka, OpenAI, and 50+ more — each one line in your AppHost."
     icon: "🧱"
     sortOrder: 5
     levelRangeStart: 22
@@ -799,7 +817,7 @@ worlds:
 
   - id: world-6
     name: "Client Integrations & Observability"
-    description: "Client-side packages, OpenTelemetry, ServiceDefaults, health checks, resilience."
+    description: "Traces, metrics, and health checks for every service — zero configuration, automatic from your first run."
     icon: "📊"
     sortOrder: 6
     levelRangeStart: 31
@@ -936,7 +954,7 @@ worlds:
 
   - id: world-7
     name: "The Dashboard"
-    description: "Tour, architecture (Blazor + gRPC + OTLP), resource data flow."
+    description: "Your app's real-time control plane — logs, traces, commands, resource management, all in one view."
     icon: "📡"
     sortOrder: 7
     levelRangeStart: 38
@@ -1022,7 +1040,7 @@ worlds:
 
   - id: world-8
     name: "Testing"
-    description: "Integration testing distributed apps."
+    description: "Test your entire distributed app with real containers — no mocks, no fakes, real infrastructure."
     icon: "🧪"
     sortOrder: 8
     levelRangeStart: 42
@@ -1118,7 +1136,7 @@ worlds:
 
   - id: world-9
     name: "Polyglot AppHost Internals"
-    description: "How TypeScript AppHosts work under the hood — RemoteHost bridge, ATS, code generation."
+    description: "How TypeScript and Python AppHosts work under the hood — the RemoteHost bridge and code generation."
     icon: "🌐"
     sortOrder: 9
     levelRangeStart: 46
@@ -1213,7 +1231,7 @@ worlds:
 
   - id: world-10
     name: "Publishing & Deployment"
-    description: "Publish pipeline — Docker Compose, Kubernetes Helm, Azure Bicep, custom steps."
+    description: "Same app model, any target — Docker Compose, Kubernetes Helm, Azure Bicep. No rewrites."
     icon: "🚀"
     sortOrder: 10
     levelRangeStart: 52
@@ -1364,7 +1382,7 @@ worlds:
 
   - id: world-11
     name: "The CLI & Developer Tools"
-    description: "CLI, VS Code extension, MCP server, agent integration, templates."
+    description: "The CLI, VS Code extension, MCP server, and AI agent integration that power your daily workflow."
     icon: "⚡"
     sortOrder: 11
     levelRangeStart: 59
@@ -1505,7 +1523,7 @@ worlds:
 
   - id: world-12
     name: "Eventing, Lifecycle & Extensibility"
-    description: "Eventing system, resource lifecycle, custom resources, custom integrations."
+    description: "Hook into every lifecycle event. Build custom resources and hosting integrations."
     icon: "⚙️"
     sortOrder: 12
     levelRangeStart: 65
@@ -1642,7 +1660,7 @@ worlds:
 
   - id: world-13
     name: "Aspire Internals & Contributing"
-    description: "Navigate the source code, understand every layer, open your first PR."
+    description: "Read the source code. Understand every layer. Open your first PR to dotnet/aspire."
     icon: "🔬"
     sortOrder: 13
     levelRangeStart: 71

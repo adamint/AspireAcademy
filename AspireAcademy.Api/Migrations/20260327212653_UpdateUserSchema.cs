@@ -132,7 +132,7 @@ namespace AspireAcademy.Api.Migrations
             migrationBuilder.AddCheckConstraint(
                 name: "ck_friendships_no_self",
                 table: "friendships",
-                sql: "requester_id != addressee_id");
+                sql: "\"RequesterId\" != \"AddresseeId\"");
         }
     }
 }

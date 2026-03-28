@@ -1,0 +1,81 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - paragraph [ref=e5] [cursor=pointer]: Aspire Learn
+    - generic [ref=e6]:
+      - button "Worlds" [ref=e7] [cursor=pointer]
+      - button "How It Works" [ref=e8] [cursor=pointer]
+      - link "Docs" [ref=e10] [cursor=pointer]:
+        - /url: https://aspire.dev/docs/
+        - paragraph [ref=e11]: Docs
+      - link "GitHub" [ref=e13] [cursor=pointer]:
+        - /url: https://github.com/microsoft/aspire
+        - paragraph [ref=e14]: GitHub
+      - button "Sign In" [ref=e15] [cursor=pointer]
+  - generic [ref=e17]:
+    - heading "ASPIRE LEARN" [level=1] [ref=e18]:
+      - text: ASPIRE
+      - text: LEARN
+    - paragraph [ref=e20]: "|"
+    - generic [ref=e21]:
+      - button "Start Your Journey" [ref=e22] [cursor=pointer]
+      - button "Browse Curriculum" [ref=e23] [cursor=pointer]
+    - paragraph [ref=e24] [cursor=pointer]: ▼ Scroll to explore ▼
+  - generic [ref=e26]:
+    - generic [ref=e27]:
+      - generic [ref=e28]: "13"
+      - paragraph [ref=e29]: Worlds
+    - generic [ref=e30]:
+      - generic [ref=e31]: "174"
+      - paragraph [ref=e32]: Lessons
+    - generic [ref=e33]:
+      - generic [ref=e34]: "27"
+      - paragraph [ref=e35]: Code Challenges
+    - generic [ref=e36]:
+      - generic [ref=e37]: ∞
+      - paragraph [ref=e38]: Fun
+  - generic [ref=e39]:
+    - heading "🗺️ Choose Your World" [level=2] [ref=e40]
+    - paragraph [ref=e41]: Themed worlds take you from cloud fundamentals to production-ready distributed apps
+  - generic [ref=e42]:
+    - heading "How It Works" [level=2] [ref=e43]
+    - generic [ref=e44]:
+      - generic [ref=e45]:
+        - paragraph [ref=e47]: "1"
+        - paragraph [ref=e48]: Learn
+        - paragraph [ref=e49]: Bite-sized lessons on every Aspire concept
+      - generic [ref=e50]:
+        - paragraph [ref=e52]: "2"
+        - paragraph [ref=e53]: Practice
+        - paragraph [ref=e54]: Hands-on code challenges & quizzes
+      - generic [ref=e55]:
+        - paragraph [ref=e57]: "3"
+        - paragraph [ref=e58]: Master
+        - paragraph [ref=e59]: Earn XP, rank up, and unlock achievements
+    - generic:
+      - paragraph: →
+      - paragraph: →
+  - generic [ref=e60]:
+    - heading "Level Up Your Skills" [level=2] [ref=e61]
+    - generic [ref=e62]:
+      - paragraph [ref=e64]: Achievements
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - paragraph [ref=e67]: Leaderboard
+          - paragraph [ref=e69]: No entries yet — be the first!
+        - generic [ref=e70]:
+          - paragraph [ref=e71]: Level Progress
+          - paragraph [ref=e74]: 720 / 1000 XP
+  - generic [ref=e75]:
+    - paragraph [ref=e76]: Ready to build distributed apps?
+    - paragraph [ref=e77]: Join thousands of developers learning Aspire the fun way. Earn XP, unlock achievements, and climb the leaderboard.
+    - button "Start Your Journey" [ref=e78] [cursor=pointer]
+  - contentinfo [ref=e79]:
+    - paragraph [ref=e80]: Aspire Learn
+    - paragraph [ref=e81]: Learn Aspire · Build distributed apps · Have fun doing it
+    - generic [ref=e82]:
+      - link "Aspire Docs" [ref=e83] [cursor=pointer]:
+        - /url: https://aspire.dev/docs/
+        - paragraph [ref=e84]: Aspire Docs
+      - link "GitHub" [ref=e85] [cursor=pointer]:
+        - /url: https://github.com/microsoft/aspire
+        - paragraph [ref=e86]: GitHub

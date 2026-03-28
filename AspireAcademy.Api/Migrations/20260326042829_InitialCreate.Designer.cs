@@ -229,7 +229,7 @@ namespace AspireAcademy.Api.Migrations
 
                     b.ToTable("friendships", null, t =>
                         {
-                            t.HasCheckConstraint("ck_friendships_no_self", "requester_id != addressee_id");
+                            t.HasCheckConstraint("ck_friendships_no_self", "\"RequesterId\" != \"AddresseeId\"");
                         });
                 });
 

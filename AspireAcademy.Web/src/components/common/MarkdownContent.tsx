@@ -51,9 +51,19 @@ function detectCalloutType(text: string): CalloutStyle | null {
 }
 
 const markdownComponents: Partial<Components> = {
-  code({ className, children, ...props }) {
+  code(props) {
+    const { className, children, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
     const codeStr = String(children).replace(/\n$/, '');
+    const node = (props as {
+      node?: { position?: { start?: { line?: number }; end?: { line?: number } } };
+    }).node;
+    const isBlockCode =
+      Boolean(className) ||
+      codeStr.includes('\n') ||
+      (node?.position?.start?.line !== undefined &&
+        node?.position?.end?.line !== undefined &&
+        node.position.start.line !== node.position.end.line);
 
     if (match?.[1] === 'architecture') {
       try {
@@ -110,7 +120,17 @@ const markdownComponents: Partial<Components> = {
     if (match?.[1] === 'deepdive') {
       try {
         const data = JSON.parse(codeStr) as { title: string; content: string };
-        return <DeepDiveCollapse title={data.title}>{data.content}</DeepDiveCollapse>;
+        return (
+          <DeepDiveCollapse title={data.title}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw]}
+              components={markdownComponents}
+            >
+              {data.content}
+            </ReactMarkdown>
+          </DeepDiveCollapse>
+        );
       } catch {
         // Fall through
       }
@@ -149,6 +169,26 @@ const markdownComponents: Partial<Components> = {
       );
     }
 
+    if (isBlockCode) {
+      return (
+        <Box
+          as="pre"
+          p="3"
+          mb="4"
+          borderRadius="sm"
+          bg="rgba(30, 20, 50, 0.5)"
+          overflow="auto"
+          fontSize="0.82rem"
+          lineHeight="1.6"
+          fontFamily="'JetBrains Mono', 'Fira Code', monospace"
+          color="var(--text)"
+          whiteSpace="pre"
+        >
+          <code className={className} {...rest}>{codeStr}</code>
+        </Box>
+      );
+    }
+
     return (
       <code
         className={className}
@@ -158,7 +198,7 @@ const markdownComponents: Partial<Components> = {
           borderRadius: 4,
           fontSize: '0.85em',
         }}
-        {...props}
+        {...rest}
       >
         {children}
       </code>

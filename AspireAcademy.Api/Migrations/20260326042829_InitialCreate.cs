@@ -94,7 +94,7 @@ namespace AspireAcademy.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_friendships", x => x.Id);
-                    table.CheckConstraint("ck_friendships_no_self", "requester_id != addressee_id");
+                    table.CheckConstraint("ck_friendships_no_self", "\"RequesterId\" != \"AddresseeId\"");
                     table.ForeignKey(
                         name: "FK_friendships_users_AddresseeId",
                         column: x => x.AddresseeId,
