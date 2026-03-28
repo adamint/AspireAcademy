@@ -407,6 +407,127 @@ public class CurriculumValidationTests
     // ── Content file reference validation ──
 
     [Fact]
+    public void WorldsYaml_AllUnlockAfterLessonIdsExist()
+    {
+        var root = LoadWorldsRoot();
+        var allLessonIds = new HashSet<string>();
+        var referencedIds = new List<(string lessonId, string referencedId)>();
+
+        foreach (var world in root.Worlds)
+            foreach (var module in world.Modules)
+                foreach (var lesson in module.Lessons)
+                {
+                    allLessonIds.Add(lesson.Id);
+                    if (!string.IsNullOrEmpty(lesson.UnlockAfterLesson))
+                        referencedIds.Add((lesson.Id, lesson.UnlockAfterLesson));
+                }
+
+        var missing = referencedIds
+            .Where(r => !allLessonIds.Contains(r.referencedId))
+            .Select(r => $"lesson '{r.lessonId}' references unlockAfterLesson '{r.referencedId}'")
+            .ToList();
+
+        missing.Should().BeEmpty(
+            $"all unlockAfterLesson references should point to existing lessons. Missing: {string.Join("; ", missing)}");
+    }
+
+    [Fact]
+    public void WorldsYaml_SortOrdersAreContiguousWithinModules()
+    {
+        var root = LoadWorldsRoot();
+        var issues = new List<string>();
+
+        foreach (var world in root.Worlds)
+            foreach (var module in world.Modules)
+            {
+                var sortOrders = module.Lessons.Select(l => l.SortOrder).OrderBy(s => s).ToList();
+                var duplicates = sortOrders.GroupBy(s => s).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+                if (duplicates.Any())
+                    issues.Add($"module '{module.Id}' has duplicate sortOrders: {string.Join(", ", duplicates)}");
+
+                if (sortOrders.Any() && sortOrders.First() != 1)
+                    issues.Add($"module '{module.Id}' sortOrder doesn't start at 1 (starts at {sortOrders.First()})");
+            }
+
+        issues.Should().BeEmpty(
+            $"sortOrders should be unique within modules and start at 1. Issues: {string.Join("; ", issues)}");
+    }
+
+    [Fact]
+    public void ContentFiles_AllInteractiveBlocksContainValidJson()
+    {
+        var contentDir = Path.Combine(CurriculumPath, "content");
+        var blockTypes = new[] { "reveal", "scenario", "deepdive", "compare", "terminal", "timeline" };
+        var errors = new List<string>();
+
+        foreach (var file in Directory.GetFiles(contentDir, "*.md", SearchOption.AllDirectories))
+        {
+            var content = File.ReadAllText(file);
+            var fileName = Path.GetRelativePath(CurriculumPath, file);
+
+            foreach (var blockType in blockTypes)
+            {
+                var pattern = $"```{blockType}\n";
+                var startIdx = 0;
+                var blockNum = 0;
+
+                while ((startIdx = content.IndexOf(pattern, startIdx, StringComparison.Ordinal)) >= 0)
+                {
+                    blockNum++;
+                    var jsonStart = startIdx + pattern.Length;
+                    var jsonEnd = content.IndexOf("\n```", jsonStart, StringComparison.Ordinal);
+                    if (jsonEnd < 0)
+                    {
+                        errors.Add($"{fileName}: {blockType} block {blockNum} — unclosed code fence");
+                        break;
+                    }
+
+                    var json = content[jsonStart..jsonEnd].Trim();
+                    try
+                    {
+                        JsonDocument.Parse(json);
+                    }
+                    catch (JsonException ex)
+                    {
+                        errors.Add($"{fileName}: {blockType} block {blockNum} — {ex.Message}");
+                    }
+
+                    startIdx = jsonEnd + 4;
+                }
+            }
+        }
+
+        errors.Should().BeEmpty(
+            $"all interactive blocks must contain valid JSON. Errors:\n{string.Join("\n", errors)}");
+    }
+
+    [Fact]
+    public void ContentFiles_LearnLessonsHaveContent()
+    {
+        var root = LoadWorldsRoot();
+        var contentDir = Path.Combine(CurriculumPath, "content");
+        var tooShort = new List<string>();
+
+        foreach (var world in root.Worlds)
+            foreach (var module in world.Modules)
+                foreach (var lesson in module.Lessons)
+                {
+                    if (lesson.Type != "learn" || string.IsNullOrEmpty(lesson.ContentFile))
+                        continue;
+
+                    var path = Path.Combine(contentDir, lesson.ContentFile);
+                    if (!File.Exists(path)) continue;
+
+                    var content = File.ReadAllText(path);
+                    if (content.Length < 200)
+                        tooShort.Add($"lesson '{lesson.Id}' ({lesson.ContentFile}): only {content.Length} chars");
+                }
+
+        tooShort.Should().BeEmpty(
+            $"learn lessons should have substantive content (>200 chars). Short files: {string.Join("; ", tooShort)}");
+    }
+
+    [Fact]
     public void WorldsYaml_AllContentFilesExistOnDisk()
     {
         var root = LoadWorldsRoot();
@@ -666,6 +787,7 @@ class LessonYamlDef
     public string? ContentFile { get; set; }
     public string? QuizFile { get; set; }
     public string? ChallengeFile { get; set; }
+    public string? UnlockAfterLesson { get; set; }
 }
 
 class QuizYamlRoot
