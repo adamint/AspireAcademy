@@ -255,8 +255,15 @@ export default function DashboardPage() {
       )}
 
       {/* Bazaar Progress Tracker */}
-      {isAuthenticated && worlds && worlds.some((w) => w.completionPercentage > 0) && (
-        <BazaarProgressTracker worlds={worlds} />
+      {isAuthenticated && worlds && worlds.some((w) => w.completedLessons > 0) && (
+        <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg">
+          <Card.Body p="4">
+            <Text {...pixelFontProps} fontSize="xs" color="dark.text" mb="3">
+              🏗️ Your Bazaar Journey
+            </Text>
+            <BazaarProgressTracker worlds={worlds} />
+          </Card.Body>
+        </Card.Root>
       )}
 
       {/* Worlds */}
