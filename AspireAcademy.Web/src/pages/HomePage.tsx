@@ -22,9 +22,9 @@ function buildStats(worlds: World[] | undefined) {
 }
 
 const HOW_IT_WORKS = [
-  { step: '1', title: 'Learn', desc: 'Bite-sized lessons on every Aspire concept' },
-  { step: '2', title: 'Practice', desc: 'Hands-on code challenges & quizzes' },
-  { step: '3', title: 'Master', desc: 'Earn XP, rank up, and unlock achievements' },
+  { step: '1', title: 'Understand', desc: 'Each lesson explains why a concept matters before showing you the API' },
+  { step: '2', title: 'Build', desc: 'Code challenges have you wire real Aspire apps — not toy examples' },
+  { step: '3', title: 'Go Deep', desc: 'From your first aspire run to reading the Aspire source code' },
 ];
 
 
@@ -532,6 +532,58 @@ export default function HomePage() {
             </SimpleGrid>
         </Box>
 
+        {/* ═══════════════════ WHY ASPIRE ═══════════════════ */}
+        <Box py={{ base: '16', md: '20' }} px="4">
+            <Heading
+              as="h2"
+              fontSize={{ base: 'xl', md: '2xl' }}
+              textAlign="center"
+              color="aspire.400"
+              mb="3"
+            >
+              Why Aspire?
+            </Heading>
+            <Text textAlign="center" color="whiteAlpha.700" mb="10" maxW="700px" mx="auto" lineHeight="1.7">
+              Every team that splits into services inherits the same problems: wiring connection strings,
+              coordinating startup, reading four log files to debug one request, maintaining separate configs
+              per environment.
+            </Text>
+            <SimpleGrid columns={{ base: 1, sm: 2 }} gap="5" maxW="1000px" mx="auto">
+              <Box {...retroCardProps} bg="rgba(26,11,46,0.6)" p="5">
+                <Text fontSize="2xl" mb="2">🏗️</Text>
+                <Text fontWeight="bold" color="aspire.300" mb="1">Declare your app, not your infrastructure</Text>
+                <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6">
+                  Define services, databases, and their relationships in code. One readable file replaces
+                  Docker Compose, env scripts, and tribal knowledge.
+                </Text>
+              </Box>
+              <Box {...retroCardProps} bg="rgba(26,11,46,0.6)" p="5">
+                <Text fontSize="2xl" mb="2">▶️</Text>
+                <Text fontWeight="bold" color="aspire.300" mb="1">Start everything with one command</Text>
+                <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6">
+                  <code>aspire run</code> starts containers, waits for health checks, injects connection strings,
+                  and opens a dashboard. New developer? Clone, run, done.
+                </Text>
+              </Box>
+              <Box {...retroCardProps} bg="rgba(26,11,46,0.6)" p="5">
+                <Text fontSize="2xl" mb="2">📡</Text>
+                <Text fontWeight="bold" color="aspire.300" mb="1">Manage and observe from a live dashboard</Text>
+                <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6">
+                  Real-time logs, distributed traces, health checks, and custom commands — seed data,
+                  flush caches, run migrations — all from one dashboard.
+                </Text>
+              </Box>
+              <Box {...retroCardProps} bg="rgba(26,11,46,0.6)" p="5">
+                <Text fontSize="2xl" mb="2">🚀</Text>
+                <Text fontWeight="bold" color="aspire.300" mb="1">Ship the same app to any cloud</Text>
+                <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6">
+                  Your dev topology compiles to Docker Compose, Kubernetes Helm charts, or Azure Bicep.
+                  No rewrites. Pick your target when you're ready.
+                </Text>
+              </Box>
+            </SimpleGrid>
+        </Box>
+
         {/* ═══════════════════ LEARNING TRACKS ═══════════════════ */}
         {(personas ?? []).length > 0 && (
           <Box py={{ base: '16', md: '20' }} px="4">
@@ -864,11 +916,11 @@ export default function HomePage() {
           textAlign="center"
         >
             <Text {...pixelFontProps} fontSize={{ base: '14px', md: '20px' }} color="aspire.400" mb="4">
-              Ready to build distributed apps?
+              Ready to make your services work as one?
             </Text>
             <Text color="whiteAlpha.600" mb="8" maxW="500px" mx="auto">
-              Join thousands of developers learning Aspire the fun way.
-              Earn XP, unlock achievements, and climb the leaderboard.
+              From your first aspire run to deploying to production — learn the platform that makes
+              distributed apps simple.
             </Text>
             <Button
               data-testid="footer-cta-button"
