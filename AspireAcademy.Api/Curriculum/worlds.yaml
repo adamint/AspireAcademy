@@ -30,7 +30,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 14
             contentFile: world-1/1.1.1-the-five-headaches.md
           - id: "1.1.2"
             title: "A Day in the Life (Without Aspire)"
@@ -38,7 +38,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 7
+            estimatedMinutes: 4
             unlockAfterLesson: "1.1.1"
             contentFile: world-1/1.1.2-day-without-aspire.md
           - id: "1.1.3"
@@ -80,7 +80,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 7
             unlockAfterLesson: "1.2.2"
             contentFile: world-1/1.2.3-polyglot-from-day-one.md
       - id: "1.3"
@@ -95,7 +95,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 6
             contentFile: world-1/1.3.1-installing-cli.md
           - id: "1.3.2"
             title: "aspire new — Pick Your Language"
@@ -103,7 +103,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 4
             unlockAfterLesson: "1.3.1"
             contentFile: world-1/1.3.2-aspire-new.md
           - id: "1.3.3"
@@ -112,7 +112,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 8
             unlockAfterLesson: "1.3.2"
             contentFile: world-1/1.3.3-build-run-dashboard.md
           - id: "1.3.4"
@@ -121,7 +121,7 @@ worlds:
             type: learn
             sortOrder: 4
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 8
             unlockAfterLesson: "1.3.3"
             contentFile: world-1/1.3.4-dashboard-control-plane.md
           - id: "1.3.5"
@@ -130,7 +130,7 @@ worlds:
             type: learn
             sortOrder: 5
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 9
             unlockAfterLesson: "1.3.4"
             contentFile: world-1/1.3.5-ide-debugging.md
           - id: "1.3.6"
@@ -163,7 +163,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 7
             unlockAfterLesson: "1.4.1"
             contentFile: world-1/1.4.2-bazaar-apphost.md
           - id: "1.4-boss"
@@ -199,7 +199,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-2/2.1.1-create-builder.md
           - id: "2.1.2"
             title: "ExecutionContext: Run vs Publish"
@@ -207,7 +207,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 5
             unlockAfterLesson: "2.1.1"
             contentFile: world-2/2.1.2-execution-context.md
           - id: "2.1.3"
@@ -216,7 +216,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "2.1.2"
             contentFile: world-2/2.1.3-apphost-styles.md
           - id: "2.1.4"
@@ -249,7 +249,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "2.2.1"
             contentFile: world-2/2.2.2-resource-hierarchy.md
           - id: "2.2.3"
@@ -258,7 +258,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 4
             unlockAfterLesson: "2.2.2"
             contentFile: world-2/2.2.3-resource-builder.md
       - id: "2.3"
@@ -273,7 +273,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             contentFile: world-2/2.3.1-annotations.md
           - id: "2.3.2"
             title: "Key Built-In Annotations"
@@ -281,7 +281,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "2.3.1"
             contentFile: world-2/2.3.2-builtin-annotations.md
           - id: "2.3.3"
@@ -290,7 +290,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "2.3.2"
             contentFile: world-2/2.3.3-distributed-app-model.md
           - id: "2.3.4"
@@ -336,7 +336,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-3/3.1.1-add-project.md
           - id: "3.1.2"
             title: "AddCSharpApp — Path-Based Projects"
@@ -344,7 +344,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 5
             unlockAfterLesson: "3.1.1"
             contentFile: world-3/3.1.2-csharp-app.md
       - id: "3.2"
@@ -359,7 +359,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-3/3.2.1-add-container.md
           - id: "3.2.2"
             title: "Volumes, Bind Mounts, and Dockerfiles"
@@ -367,7 +367,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "3.2.1"
             contentFile: world-3/3.2.2-volumes-dockerfiles.md
           - id: "3.2.3"
@@ -376,7 +376,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 5
             unlockAfterLesson: "3.2.2"
             contentFile: world-3/3.2.3-container-lifetimes.md
           - id: "3.2.4"
@@ -401,7 +401,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             contentFile: world-3/3.3.1-javascript-node.md
           - id: "3.3.2"
             title: "Python Resources"
@@ -409,7 +409,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 4
             unlockAfterLesson: "3.3.1"
             contentFile: world-3/3.3.2-python-resources.md
           - id: "3.3.3"
@@ -418,7 +418,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "3.3.2"
             contentFile: world-3/3.3.3-go-java-rust.md
           - id: "3.3.4"
@@ -443,7 +443,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-3/3.4.1-parameters-secrets.md
           - id: "3.4.2"
             title: "AddConnectionString — External Infrastructure"
@@ -451,7 +451,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 5
             unlockAfterLesson: "3.4.1"
             contentFile: world-3/3.4.2-connection-strings.md
       - id: "3.5"
@@ -466,7 +466,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             contentFile: world-3/3.5.1-endpoints.md
           - id: "3.5.2"
             title: "Environment Variables and ReferenceExpression"
@@ -474,7 +474,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "3.5.1"
             contentFile: world-3/3.5.2-env-vars-reference-expr.md
           - id: "3.5.3"
@@ -520,7 +520,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-4/4.1.1-with-reference.md
           - id: "4.1.2"
             title: "Service Discovery at Runtime"
@@ -528,7 +528,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             unlockAfterLesson: "4.1.1"
             contentFile: world-4/4.1.2-service-discovery.md
           - id: "4.1.3"
@@ -553,7 +553,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-4/4.2.1-waitfor.md
           - id: "4.2.2"
             title: "WaitForCompletion and Init Containers"
@@ -561,7 +561,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 5
             unlockAfterLesson: "4.2.1"
             contentFile: world-4/4.2.2-waitfor-completion.md
           - id: "4.2.3"
@@ -586,7 +586,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             contentFile: world-4/4.3.1-http-grpc.md
           - id: "4.3.2"
             title: "Message-Based Communication"
@@ -594,7 +594,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "4.3.1"
             contentFile: world-4/4.3.2-messaging.md
           - id: "4.3.3"
@@ -603,7 +603,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 5
             unlockAfterLesson: "4.3.2"
             contentFile: world-4/4.3.3-resource-commands.md
           - id: "4.3-boss"
@@ -639,7 +639,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             contentFile: world-5/5.1.1-anatomy-of-add-redis.md
           - id: "5.1.2"
             title: "The Hosting Integration Pattern"
@@ -647,7 +647,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "5.1.1"
             contentFile: world-5/5.1.2-integration-pattern.md
       - id: "5.2"
@@ -662,7 +662,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             contentFile: world-5/5.2.1-postgres-sqlserver.md
           - id: "5.2.2"
             title: "MySQL, MongoDB, Oracle, Cosmos DB"
@@ -670,7 +670,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             unlockAfterLesson: "5.2.1"
             contentFile: world-5/5.2.2-other-databases.md
           - id: "5.2.3"
@@ -695,7 +695,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 4
             contentFile: world-5/5.3.1-cache-hosting.md
           - id: "5.3.2"
             title: "RabbitMQ, Kafka, and NATS"
@@ -703,7 +703,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             unlockAfterLesson: "5.3.1"
             contentFile: world-5/5.3.2-message-brokers.md
           - id: "5.3.3"
@@ -712,7 +712,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "5.3.2"
             contentFile: world-5/5.3.3-azure-messaging.md
       - id: "5.4"
@@ -727,7 +727,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             contentFile: world-5/5.4.1-ai-integrations.md
           - id: "5.4.2"
             title: "Keycloak, Seq, and YARP"
@@ -735,7 +735,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "5.4.1"
             contentFile: world-5/5.4.2-keycloak-seq-yarp.md
       - id: "5.5"
@@ -750,7 +750,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             contentFile: world-5/5.5.1-azure-provisioning.md
           - id: "5.5.2"
             title: "Azure Storage, Key Vault, and Functions"
@@ -758,7 +758,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             unlockAfterLesson: "5.5.1"
             contentFile: world-5/5.5.2-azure-storage-functions.md
           - id: "5.5.3"
@@ -767,7 +767,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "5.5.2"
             contentFile: world-5/5.5.3-azure-compute-signalr.md
       - id: "5.6"
@@ -782,7 +782,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-5/5.6.1-community-toolkit.md
           - id: "5.6.2"
             title: "Writing Your Own Hosting Integration"
@@ -790,7 +790,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 75
-            estimatedMinutes: 15
+            estimatedMinutes: 5
             unlockAfterLesson: "5.6.1"
             contentFile: world-5/5.6.2-custom-integration.md
           - id: "5.6.3"
@@ -836,7 +836,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             contentFile: world-6/6.1.1-client-pattern.md
           - id: "6.1.2"
             title: "Database and Cache Clients"
@@ -844,7 +844,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 4
             unlockAfterLesson: "6.1.1"
             contentFile: world-6/6.1.2-database-cache-clients.md
           - id: "6.1.3"
@@ -853,7 +853,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "6.1.2"
             contentFile: world-6/6.1.3-messaging-clients.md
       - id: "6.2"
@@ -868,7 +868,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 7
             contentFile: world-6/6.2.1-distributed-tracing.md
           - id: "6.2.2"
             title: "Metrics"
@@ -876,7 +876,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "6.2.1"
             contentFile: world-6/6.2.2-metrics.md
           - id: "6.2.3"
@@ -885,7 +885,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "6.2.2"
             contentFile: world-6/6.2.3-logging-otlp.md
           - id: "6.2.4"
@@ -910,7 +910,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             contentFile: world-6/6.3.1-service-defaults.md
           - id: "6.3.2"
             title: "Health Checks: Built-In and Custom"
@@ -918,7 +918,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "6.3.1"
             contentFile: world-6/6.3.2-health-checks.md
           - id: "6.3.3"
@@ -927,7 +927,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "6.3.2"
             contentFile: world-6/6.3.3-resilience.md
           - id: "6.3.4"
@@ -973,7 +973,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 7
             contentFile: world-7/7.1.1-resources-console-logs.md
           - id: "7.1.2"
             title: "Structured Logs, Traces, and Metrics"
@@ -981,7 +981,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "7.1.1"
             contentFile: world-7/7.1.2-logs-traces-metrics.md
       - id: "7.2"
@@ -996,7 +996,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             contentFile: world-7/7.2.1-dashboard-architecture.md
           - id: "7.2.2"
             title: "How Resources Flow to the Dashboard"
@@ -1004,7 +1004,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 4
             unlockAfterLesson: "7.2.1"
             contentFile: world-7/7.2.2-resource-flow.md
           - id: "7.2.3"
@@ -1013,7 +1013,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "7.2.2"
             contentFile: world-7/7.2.3-commands-interaction.md
           - id: "7.2.4"
@@ -1059,7 +1059,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             contentFile: world-8/8.1.1-testing-builder.md
           - id: "8.1.2"
             title: "Your First Integration Test"
@@ -1067,7 +1067,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "8.1.1"
             contentFile: world-8/8.1.2-first-integration-test.md
           - id: "8.1.3"
@@ -1092,7 +1092,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-8/8.2.1-resource-substitution.md
           - id: "8.2.2"
             title: "Configuration Overlays and Test Fixtures"
@@ -1100,7 +1100,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "8.2.1"
             contentFile: world-8/8.2.2-config-fixtures.md
           - id: "8.2.3"
@@ -1109,7 +1109,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "8.2.2"
             contentFile: world-8/8.2.3-testing-pipeline-custom.md
           - id: "8.2.4"
@@ -1155,7 +1155,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-9/9.1.1-how-polyglot-connects.md
           - id: "9.1.2"
             title: "RemoteHost Architecture"
@@ -1163,7 +1163,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 4
             unlockAfterLesson: "9.1.1"
             contentFile: world-9/9.1.2-remotehost-architecture.md
           - id: "9.1.3"
@@ -1172,7 +1172,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "9.1.2"
             contentFile: world-9/9.1.3-jsonrpc-protocol.md
       - id: "9.2"
@@ -1187,7 +1187,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             contentFile: world-9/9.2.1-ats-core.md
           - id: "9.2.2"
             title: "Code Generation Pipeline"
@@ -1195,7 +1195,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             unlockAfterLesson: "9.2.1"
             contentFile: world-9/9.2.2-code-generation.md
           - id: "9.2.3"
@@ -1204,7 +1204,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "9.2.2"
             contentFile: world-9/9.2.3-language-support.md
           - id: "9.2.4"
@@ -1250,7 +1250,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-10/10.1.1-full-lifecycle.md
           - id: "10.1.2"
             title: "PipelineStep and DAG Execution"
@@ -1258,7 +1258,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             unlockAfterLesson: "10.1.1"
             contentFile: world-10/10.1.2-pipeline-step.md
           - id: "10.1.3"
@@ -1267,7 +1267,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 4
             unlockAfterLesson: "10.1.2"
             contentFile: world-10/10.1.3-well-known-steps.md
       - id: "10.2"
@@ -1282,7 +1282,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             contentFile: world-10/10.2.1-container-runtime.md
           - id: "10.2.2"
             title: "Manifest Publishing"
@@ -1290,7 +1290,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 4
             unlockAfterLesson: "10.2.1"
             contentFile: world-10/10.2.2-manifest-publishing.md
       - id: "10.3"
@@ -1305,7 +1305,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 3
             contentFile: world-10/10.3.1-docker-compose.md
           - id: "10.3.2"
             title: "Kubernetes and Helm Publishing"
@@ -1313,7 +1313,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             unlockAfterLesson: "10.3.1"
             contentFile: world-10/10.3.2-kubernetes-helm.md
           - id: "10.3.3"
@@ -1322,7 +1322,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             unlockAfterLesson: "10.3.2"
             contentFile: world-10/10.3.3-azure-bicep.md
           - id: "10.3.4"
@@ -1347,7 +1347,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             contentFile: world-10/10.4.1-custom-pipeline-steps.md
           - id: "10.4.2"
             title: "Publish Events"
@@ -1355,7 +1355,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "10.4.1"
             contentFile: world-10/10.4.2-publish-events.md
           - id: "10.4.3"
@@ -1401,7 +1401,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             contentFile: world-11/11.1.1-cli-architecture.md
           - id: "11.1.2"
             title: "Core Commands: run, start, stop, ps, exec, logs"
@@ -1409,7 +1409,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "11.1.1"
             contentFile: world-11/11.1.2-core-commands.md
           - id: "11.1.3"
@@ -1418,7 +1418,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 4
             unlockAfterLesson: "11.1.2"
             contentFile: world-11/11.1.3-publish-deploy-commands.md
       - id: "11.2"
@@ -1433,7 +1433,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             contentFile: world-11/11.2.1-extension-features.md
           - id: "11.2.2"
             title: "Polyglot AppHost Parsers"
@@ -1441,7 +1441,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 4
             unlockAfterLesson: "11.2.1"
             contentFile: world-11/11.2.2-polyglot-parsers.md
       - id: "11.3"
@@ -1456,7 +1456,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             contentFile: world-11/11.3.1-mcp-server.md
           - id: "11.3.2"
             title: "MCP Tools Reference"
@@ -1464,7 +1464,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 4
             unlockAfterLesson: "11.3.1"
             contentFile: world-11/11.3.2-mcp-tools.md
           - id: "11.3.3"
@@ -1473,7 +1473,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "11.3.2"
             contentFile: world-11/11.3.3-agent-integration.md
       - id: "11.4"
@@ -1488,7 +1488,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             contentFile: world-11/11.4.1-templates.md
           - id: "11.4.2"
             title: "Dev Tunnels and Codespaces"
@@ -1496,7 +1496,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 5
             unlockAfterLesson: "11.4.1"
             contentFile: world-11/11.4.2-dev-tunnels-codespaces.md
           - id: "11.4.3"
@@ -1542,7 +1542,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 7
             contentFile: world-12/12.1.1-eventing-hub.md
           - id: "12.1.2"
             title: "Application-Level Events"
@@ -1550,7 +1550,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             unlockAfterLesson: "12.1.1"
             contentFile: world-12/12.1.2-application-events.md
           - id: "12.1.3"
@@ -1559,7 +1559,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             unlockAfterLesson: "12.1.2"
             contentFile: world-12/12.1.3-resource-events.md
           - id: "12.1.4"
@@ -1568,7 +1568,7 @@ worlds:
             type: learn
             sortOrder: 4
             xpReward: 50
-            estimatedMinutes: 8
+            estimatedMinutes: 6
             unlockAfterLesson: "12.1.3"
             contentFile: world-12/12.1.4-dispatch-behaviors.md
       - id: "12.2"
@@ -1583,7 +1583,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 75
-            estimatedMinutes: 15
+            estimatedMinutes: 8
             contentFile: world-12/12.2.1-notification-service.md
           - id: "12.2.2"
             title: "The Resource State Machine"
@@ -1591,7 +1591,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 7
             unlockAfterLesson: "12.2.1"
             contentFile: world-12/12.2.2-state-machine.md
           - id: "12.2.3"
@@ -1600,7 +1600,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 5
             unlockAfterLesson: "12.2.2"
             contentFile: world-12/12.2.3-logger-command.md
       - id: "12.3"
@@ -1615,7 +1615,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             contentFile: world-12/12.3.1-custom-resources.md
           - id: "12.3.2"
             title: "Writing a Complete Hosting Integration"
@@ -1623,7 +1623,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 75
-            estimatedMinutes: 15
+            estimatedMinutes: 6
             unlockAfterLesson: "12.3.1"
             contentFile: world-12/12.3.2-hosting-integration.md
           - id: "12.3.3"
@@ -1679,7 +1679,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             contentFile: world-13/13.1.1-repo-structure.md
           - id: "13.1.2"
             title: "The Test Infrastructure"
@@ -1687,7 +1687,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "13.1.1"
             contentFile: world-13/13.1.2-test-infrastructure.md
       - id: "13.2"
@@ -1702,7 +1702,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 75
-            estimatedMinutes: 15
+            estimatedMinutes: 7
             contentFile: world-13/13.2.1-builder-internals.md
           - id: "13.2.2"
             title: "DCP Communication"
@@ -1710,7 +1710,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 75
-            estimatedMinutes: 15
+            estimatedMinutes: 7
             unlockAfterLesson: "13.2.1"
             contentFile: world-13/13.2.2-dcp-communication.md
           - id: "13.2.3"
@@ -1719,7 +1719,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             unlockAfterLesson: "13.2.2"
             contentFile: world-13/13.2.3-backchannel.md
           - id: "13.2.4"
@@ -1728,7 +1728,7 @@ worlds:
             type: learn
             sortOrder: 4
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 7
             unlockAfterLesson: "13.2.3"
             contentFile: world-13/13.2.4-dcp-resources.md
       - id: "13.3"
@@ -1743,7 +1743,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 75
-            estimatedMinutes: 15
+            estimatedMinutes: 7
             contentFile: world-13/13.3.1-dashboard-internals.md
           - id: "13.3.2"
             title: "CLI Internals"
@@ -1751,7 +1751,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 6
             unlockAfterLesson: "13.3.1"
             contentFile: world-13/13.3.2-cli-internals.md
           - id: "13.3.3"
@@ -1760,7 +1760,7 @@ worlds:
             type: learn
             sortOrder: 3
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 6
             unlockAfterLesson: "13.3.2"
             contentFile: world-13/13.3.3-integration-packaging.md
       - id: "13.4"
@@ -1775,7 +1775,7 @@ worlds:
             type: learn
             sortOrder: 1
             xpReward: 50
-            estimatedMinutes: 12
+            estimatedMinutes: 5
             contentFile: world-13/13.4.1-building-from-source.md
           - id: "13.4.2"
             title: "The Contribution Guide"
@@ -1783,7 +1783,7 @@ worlds:
             type: learn
             sortOrder: 2
             xpReward: 50
-            estimatedMinutes: 10
+            estimatedMinutes: 7
             unlockAfterLesson: "13.4.1"
             contentFile: world-13/13.4.2-contribution-guide.md
           - id: "13.4.3"

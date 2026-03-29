@@ -216,27 +216,11 @@ export default function HomePage() {
     staleTime: 5 * 60_000,
   });
 
-  const { data: achievements } = useQuery<{ id: string; name: string; description: string; icon: string }[]>({
-    queryKey: ['achievements-preview'],
-    queryFn: () => api.get('/achievements').then((r) => r.data),
-    staleTime: 5 * 60_000,
-  });
-
-  const { data: leaderboardData } = useQuery<{ entries: { rank: number; username: string; xp: number }[] }>({
-    queryKey: ['leaderboard-preview'],
-    queryFn: () => api.get('/leaderboard?scope=all-time&limit=3').then((r) => r.data),
-    staleTime: 5 * 60_000,
-  });
-
   const { data: personas } = useQuery<PersonaSummary[]>({
     queryKey: ['personas'],
     queryFn: () => api.get('/personas').then((r) => r.data),
     staleTime: 5 * 60_000,
   });
-
-  const topAchievements = (achievements ?? []).slice(0, 4);
-  const topLeaders = leaderboardData?.entries?.slice(0, 3) ?? [];
-  const medals: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
   const stats = buildStats(worlds);
 
@@ -785,126 +769,6 @@ export default function HomePage() {
             <Text {...pixelFontProps} fontSize="24px" color="aspire.600">→</Text>
             <Text {...pixelFontProps} fontSize="24px" color="aspire.600">→</Text>
           </Flex>
-        </Box>
-
-        {/* ═══════════════════ SOCIAL PROOF / GAMIFICATION ═══════════════════ */}
-        <Box py={{ base: '16', md: '20' }} px="4">
-            <Heading
-              data-testid="gamification-heading"
-              as="h2"
-              {...pixelFontProps}
-              fontSize={{ base: '16px', md: '22px' }}
-              textAlign="center"
-              color="aspire.400"
-              mb="12"
-            >
-              Level Up Your Skills
-            </Heading>
-
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap="8" maxW="900px" mx="auto">
-            {/* Achievements preview */}
-              <Box {...retroCardProps} bg="rgba(26,11,46,0.7)" p="5">
-                <Text {...pixelFontProps} fontSize="12px" color="game.xpGold" mb="4">
-                  Achievements
-                </Text>
-                <Flex direction="column" gap="3">
-                  {topAchievements.map((a) => (
-                    <Flex key={a.id} align="center" gap="3">
-                      <Flex
-                        align="center"
-                        justify="center"
-                        w="36px"
-                        h="36px"
-                        bg="rgba(107,79,187,0.2)"
-                        border="2px solid #2B1260"
-                        borderRadius="sm"
-                        flexShrink={0}
-                      >
-                        <Text fontSize="18px">{a.icon}</Text>
-                      </Flex>
-                      <Box>
-                        <Text {...pixelFontProps} fontSize="9px" color="aspire.300">
-                          {a.name}
-                        </Text>
-                        <Text fontSize="xs" color="whiteAlpha.600">{a.description}</Text>
-                      </Box>
-                    </Flex>
-                  ))}
-                </Flex>
-              </Box>
-
-            {/* Leaderboard preview + XP bar */}
-              <Flex direction="column" gap="5">
-                <Box {...retroCardProps} bg="rgba(26,11,46,0.7)" p="5">
-                  <Text {...pixelFontProps} fontSize="12px" color="game.xpGold" mb="4">
-                    Leaderboard
-                  </Text>
-                  <Flex direction="column" gap="2">
-                    {topLeaders.map((entry) => (
-                      <Flex
-                        key={entry.rank}
-                        align="center"
-                        justify="space-between"
-                        px="3"
-                        py="2"
-                        borderRadius="sm"
-                      >
-                        <Flex align="center" gap="2">
-                          <Text fontSize="sm">{medals[entry.rank] ?? `#${entry.rank}`}</Text>
-                          <Text
-                            {...pixelFontProps}
-                            fontSize="9px"
-                            color="whiteAlpha.800"
-                          >
-                            {entry.username}
-                          </Text>
-                        </Flex>
-                        <Text {...pixelFontProps} fontSize="9px" color="game.xpGold">
-                          {entry.xp.toLocaleString()} XP
-                        </Text>
-                      </Flex>
-                    ))}
-                    {topLeaders.length === 0 && (
-                      <Text fontSize="xs" color="whiteAlpha.500" textAlign="center" py="2">
-                        No entries yet — be the first!
-                      </Text>
-                    )}
-                  </Flex>
-                </Box>
-
-                {/* XP bar animation */}
-                <Box {...retroCardProps} bg="rgba(26,11,46,0.7)" p="5">
-                  <Text {...pixelFontProps} fontSize="10px" color="whiteAlpha.700" mb="2">
-                    Level Progress
-                  </Text>
-                  <Box
-                    h="20px"
-                    bg="rgba(232,224,240,0.1)"
-                    border="2px solid #2B1260"
-                    borderRadius="sm"
-                    overflow="hidden"
-                    position="relative"
-                  >
-                    <Box
-                      h="100%"
-                      bg="linear-gradient(90deg, #FFC107, #FFD700)"
-                      style={{ animation: 'xp-bar-fill 2s ease-out forwards' }}
-                    />
-                    <Text
-                      position="absolute"
-                      top="50%"
-                      left="50%"
-                      transform="translate(-50%, -50%)"
-                      {...pixelFontProps}
-                      fontSize="8px"
-                      color="#0D0B1A"
-                    >
-                      720 / 1000 XP
-                    </Text>
-                  </Box>
-                </Box>
-              </Flex>
-          </SimpleGrid>
         </Box>
 
         {/* ═══════════════════ FOOTER CTA ═══════════════════ */}
