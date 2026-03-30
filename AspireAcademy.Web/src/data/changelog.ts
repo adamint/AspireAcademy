@@ -11,6 +11,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.3.4',
+    date: '2026-03-30',
+    title: 'Deployment Subscription Fallback',
+    highlights: ['Azure subscription fallback', 'Deploy stage resilience'],
+    entries: [
+      { type: 'fix', text: 'Release workflow now resolves Azure subscription from secret, variable, or logged-in context' },
+      { type: 'improvement', text: 'Prevents deploy failures when AZURE_SUBSCRIPTION_ID secret is not configured' },
+    ]
+  },
+  {
     version: '1.3.3',
     date: '2026-03-30',
     title: 'Release Pipeline Export Fix',

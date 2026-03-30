@@ -24,6 +24,7 @@ permissions:
 env:
   AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
   AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'eastus' }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID || vars.AZURE_SUBSCRIPTION_ID }}
 
 jobs:
   # ─── Stage 1: Validate ────────────────────────────────────────────
@@ -244,13 +245,28 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true
+
+      - name: Resolve subscription ID
+        run: |
+          SUBSCRIPTION_ID="${{ env.AZURE_SUBSCRIPTION_ID }}"
+          if [[ -z "$SUBSCRIPTION_ID" ]]; then
+            SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          fi
+
+          if [[ -z "$SUBSCRIPTION_ID" ]]; then
+            echo "::error::Could not resolve Azure subscription ID from secrets/vars or Azure context"
+            exit 1
+          fi
+
+          echo "AZURE_SUBSCRIPTION_ID=$SUBSCRIPTION_ID" >> "$GITHUB_ENV"
 
       - name: Deploy with Aspire
         run: |
           aspire deploy \
             --non-interactive \
-            --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            --subscription "${{ env.AZURE_SUBSCRIPTION_ID }}" \
             --resource-group "${{ env.AZURE_RESOURCE_GROUP }}" \
             --location "${{ env.AZURE_LOCATION }}"
         timeout-minutes: 20
