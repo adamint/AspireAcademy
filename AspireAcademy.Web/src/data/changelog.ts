@@ -11,6 +11,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.3.5',
+    date: '2026-03-30',
+    title: 'Deployment Resource Group Default',
+    highlights: ['Default resource group in CI', 'Fewer deploy env misconfig failures'],
+    entries: [
+      { type: 'fix', text: 'Release workflow now defaults AZURE_RESOURCE_GROUP to aspire-academy when repo variable is unset' },
+      { type: 'improvement', text: 'Deploy command no longer runs with an empty resource group parameter by default' },
+    ]
+  },
+  {
     version: '1.3.4',
     date: '2026-03-30',
     title: 'Deployment Subscription Fallback',
