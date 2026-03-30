@@ -136,9 +136,12 @@ jobs:
         run: |
           VERSION="${{ needs.validate.outputs.version }}"
           python3 - <<'PYTHON'
-          import re, sys
+          import os, re, sys
 
-          version = "$VERSION"
+          version = os.environ.get("VERSION", "")
+          if not version:
+              print("VERSION environment variable is empty", file=sys.stderr)
+              sys.exit(1)
           with open("AspireAcademy.Web/src/data/changelog.ts") as f:
               content = f.read()
 

@@ -11,6 +11,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.3.2',
+    date: '2026-03-30',
+    title: 'Release Pipeline Variable Fix',
+    highlights: ['Fixed VERSION interpolation', 'Release automation stabilized'],
+    entries: [
+      { type: 'fix', text: 'Release notes job now reads VERSION from environment in GitHub Actions' },
+      { type: 'improvement', text: 'Unblocks release creation and subsequent Azure deployment stage' },
+    ]
+  },
+  {
     version: '1.3.1',
     date: '2026-03-30',
     title: 'Release Pipeline Hotfix',
