@@ -11,6 +11,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.3.3',
+    date: '2026-03-30',
+    title: 'Release Pipeline Export Fix',
+    highlights: ['VERSION exported for release job', 'Release notes generation fixed'],
+    entries: [
+      { type: 'fix', text: 'Exported VERSION before invoking Python in GitHub release workflow' },
+      { type: 'improvement', text: 'Release notes extraction can now read the target version reliably in CI' },
+    ]
+  },
+  {
     version: '1.3.2',
     date: '2026-03-30',
     title: 'Release Pipeline Variable Fix',

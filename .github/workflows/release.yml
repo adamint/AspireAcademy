@@ -134,7 +134,7 @@ jobs:
       - name: Extract release notes from changelog
         id: notes
         run: |
-          VERSION="${{ needs.validate.outputs.version }}"
+          export VERSION="${{ needs.validate.outputs.version }}"
           python3 - <<'PYTHON'
           import os, re, sys
 
