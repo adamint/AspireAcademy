@@ -11,6 +11,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.3.1',
+    date: '2026-03-30',
+    title: 'Release Pipeline Hotfix',
+    highlights: ['Reliable release-note parsing', 'Unblocked automated deploys'],
+    entries: [
+      { type: 'fix', text: 'Fixed GitHub release workflow changelog parsing for non-last versions' },
+      { type: 'improvement', text: 'Release tags now consistently generate release notes and proceed to deployment' },
+    ]
+  },
+  {
     version: '1.3.0',
     date: '2026-03-27',
     title: 'The Big Update',

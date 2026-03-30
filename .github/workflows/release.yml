@@ -142,14 +142,36 @@ jobs:
           with open("AspireAcademy.Web/src/data/changelog.ts") as f:
               content = f.read()
 
-          # Find the block for this version
-          pattern = rf"\{{\s*version:\s*'{re.escape(version)}'.*?\}}\s*\]"
-          match = re.search(pattern, content, re.DOTALL)
-          if not match:
-              print(f"Could not parse changelog for {version}", file=sys.stderr)
-              sys.exit(1)
+          marker = f"version: '{version}'"
+          marker_index = content.find(marker)
+          if marker_index == -1:
+            print(f"Could not find changelog entry for {version}", file=sys.stderr)
+            sys.exit(1)
 
-          block = match.group(0)
+          # Walk backward to the opening brace and forward with brace balancing
+          # to isolate exactly one entry object from the changelog array.
+          start = content.rfind("{", 0, marker_index)
+          if start == -1:
+            print(f"Could not locate start of changelog entry for {version}", file=sys.stderr)
+            sys.exit(1)
+
+          depth = 0
+          end = None
+          for i in range(start, len(content)):
+            ch = content[i]
+            if ch == "{":
+              depth += 1
+            elif ch == "}":
+              depth -= 1
+              if depth == 0:
+                end = i
+                break
+
+          if end is None:
+            print(f"Could not locate end of changelog entry for {version}", file=sys.stderr)
+            sys.exit(1)
+
+          block = content[start:end + 1]
 
           title_match = re.search(r"title:\s*'([^']*)'", block)
           title = title_match.group(1) if title_match else f"v{version}"
