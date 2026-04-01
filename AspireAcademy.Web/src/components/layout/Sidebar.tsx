@@ -26,6 +26,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 import api from '../../services/apiClient';
 import { useAuthStore } from '../../store/authStore';
+import { pixelFontProps } from '../../theme/aspireTheme';
 import type { World, Module } from '../../types';
 
 interface SidebarProps {
@@ -192,7 +193,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         boxShadow={{ base: 'lg', md: 'none' }}
       >
         {/* Main nav */}
-        <Box px="2" mb="1">
+        <Box px="2" mb="1" data-tour="sidebar-home">
           <SideNavLink to="/" icon={<FiHome size={16} />} onClose={onClose}>
             Home
           </SideNavLink>
@@ -202,7 +203,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </Box>
 
         {/* Worlds */}
-        <Box px="2">
+        <Box px="2" data-tour="sidebar-worlds">
           <Text
             fontSize="10px"
             fontWeight="700"
@@ -212,7 +213,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             px="3"
             pt="3"
             pb="1"
-            fontFamily="pixel"
+            {...pixelFontProps}
           >
             Worlds
           </Text>
@@ -261,7 +262,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </Box>
 
         {/* Explore */}
-        <Box px="2" mt="2">
+        <Box px="2" mt="2" data-tour="sidebar-explore">
           <Text
             fontSize="10px"
             fontWeight="700"
@@ -271,7 +272,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             px="3"
             pt="3"
             pb="1"
-            fontFamily="pixel"
+            {...pixelFontProps}
           >
             Explore
           </Text>
@@ -296,7 +297,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </Box>
 
         {/* Social */}
-        <Box px="2" mt="2">
+        <Box px="2" mt="2" data-tour="sidebar-social">
           <Text
             fontSize="10px"
             fontWeight="700"
@@ -306,7 +307,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             px="3"
             pt="3"
             pb="1"
-            fontFamily="pixel"
+            {...pixelFontProps}
           >
             Social
           </Text>
@@ -338,7 +339,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             px="3"
             pt="3"
             pb="1"
-            fontFamily="pixel"
+            {...pixelFontProps}
           >
             Aspire
           </Text>
@@ -354,13 +355,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               py="2"
               borderRadius="md"
               color="whiteAlpha.800"
-              fontSize="13px"
-              fontFamily="pixel"
+              fontSize="sm"
               transition="background 0.15s"
               _hover={{ bg: 'whiteAlpha.100', color: 'white' }}
             >
               <FiExternalLink size={16} />
-              <Text fontSize="2xs">Aspire Docs</Text>
+              <Text fontSize="sm">Aspire Docs</Text>
             </Flex>
           </a>
           <a
@@ -375,13 +375,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               py="2"
               borderRadius="md"
               color="whiteAlpha.800"
-              fontSize="13px"
-              fontFamily="pixel"
+              fontSize="sm"
               transition="background 0.15s"
               _hover={{ bg: 'whiteAlpha.100', color: 'white' }}
             >
               <FiGithub size={16} />
-              <Text fontSize="2xs">Aspire on GitHub</Text>
+              <Text fontSize="sm">Aspire on GitHub</Text>
             </Flex>
           </a>
         </Box>
@@ -398,7 +397,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               px="3"
               pt="3"
               pb="1"
-              fontFamily="pixel"
+              {...pixelFontProps}
             >
               Admin
             </Text>

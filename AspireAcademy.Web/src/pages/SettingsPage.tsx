@@ -4,13 +4,14 @@ import {
   Box, Flex, Text, VStack, Button, Input, Switch, Dialog,
   SegmentGroup, Spinner, Field, Card, Badge,
 } from '@chakra-ui/react';
-import { FiDownload, FiTrash2, FiLock, FiCheck } from 'react-icons/fi';
+import { FiDownload, FiTrash2, FiLock, FiCheck, FiCompass } from 'react-icons/fi';
 import api from '../services/apiClient';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore, type EditorFontSize } from '../store/settingsStore';
 import { extractErrorMessage } from '../utils/errorHandler';
 import { useColorMode } from '../hooks/useColorMode';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
+import { resetTour } from '../components/layout/GuidedTour';
 import type { PersonaSummary } from '../types';
 
 function SettingSwitch({ label, checked, onChange }: {
@@ -242,6 +243,29 @@ export default function SettingsPage() {
             checked={settings.animationsEnabled}
             onChange={handleToggle(settings.setAnimationsEnabled)}
           />
+
+          {/* Restart tour */}
+          <Flex justify="space-between" align="center" py="2">
+            <Flex align="center" gap="2">
+              <FiCompass size={14} />
+              <Text color="dark.text" fontSize="sm">Guided tour</Text>
+            </Flex>
+            <Button
+              size="xs"
+              variant="outline"
+              borderColor="aspire.600"
+              color="aspire.400"
+              _hover={{ bg: 'aspire.200' }}
+              fontSize="xs"
+              onClick={() => {
+                resetTour();
+                setSaved(true);
+                setTimeout(() => setSaved(false), 1500);
+              }}
+            >
+              Restart Tour
+            </Button>
+          </Flex>
         </VStack>
       </Box>
 

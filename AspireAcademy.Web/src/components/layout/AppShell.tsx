@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Flex, Box } from '@chakra-ui/react';
 import { TopBar } from './TopBar';
 import { Sidebar } from './Sidebar';
+import { GuidedTour } from './GuidedTour';
 import { ErrorBoundary } from '../common/ErrorBoundary';
 import DailyRewardPopup from '../gamification/DailyRewardPopup';
 import { useAuthStore } from '../../store/authStore';
@@ -39,6 +40,7 @@ export function AppShell() {
       <a href="#main-content" className="skip-to-main">Skip to main content</a>
       <TopBar onToggleSidebar={toggleSidebar} />
       <DailyRewardPopup />
+      <GuidedTour />
       <Flex flexGrow={1} overflow="hidden">
         <Sidebar open={sidebarOpen} onClose={closeSidebar} />
         <Box

@@ -1,7 +1,79 @@
 [
   {
+    "id": "starter",
+    "title": "\ud83d\ude80 Full-Stack Starter",
+    "category": "Web & Commerce",
+    "difficulty": "beginner",
+    "description": "The simplest Aspire application: a web frontend, an API backend, and a PostgreSQL database. Perfect for understanding the fundamentals of service references, health checks, and startup ordering before diving into more complex architectures.",
+    "services": [
+      {
+        "id": "web",
+        "name": "React\nFrontend",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "api",
+        "name": "API\nService",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "db",
+        "name": "PostgreSQL",
+        "type": "database",
+        "row": 1,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "web",
+        "to": "api",
+        "label": "HTTP"
+      },
+      {
+        "from": "api",
+        "to": "db",
+        "label": "queries"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Database\nvar db = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"appdb\");\n\n// API with health check and database dependency\nvar api = builder.AddProject<Projects.Api>(\"api\")\n    .WithReference(db)\n    .WaitFor(db)\n    .WithHttpHealthCheck(\"/health\");\n\n// Frontend references the API via service discovery\nbuilder.AddNpmApp(\"web\", \"../web\")\n    .WithReference(api)\n    .WithHttpEndpoint(env: \"PORT\")\n    .WaitFor(api);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "WithReference",
+      "WaitFor",
+      "Service Discovery",
+      "Health Checks",
+      "AddNpmApp"
+    ],
+    "tryPrompt": "The perfect starting point! Run `aspire new` and follow World 1: Welcome to Aspire",
+    "explanation": {
+      "overview": "This is the \"Hello World\" of Aspire \u2014 a three-tier web application that demonstrates every foundational concept you need. The React frontend communicates with a .NET API backend, which persists data in PostgreSQL.\n\nDespite its simplicity, this architecture showcases the core value proposition of Aspire: instead of manually configuring connection strings, environment variables, and startup scripts, you declare the relationships between services in code. Aspire handles service discovery (the frontend automatically knows the API's URL), health-based startup ordering (the API waits for the database to be ready), and unified observability (all three services report logs, traces, and metrics to the Aspire dashboard).\n\nThis pattern is the foundation that every other gallery example builds upon. Master this, and the more complex architectures become natural extensions.",
+      "whyAspire": "Without Aspire, even this simple setup requires: a docker-compose.yml for PostgreSQL, environment variables for connection strings, manual health check polling before starting dependent services, and separate OpenTelemetry configuration per service. Aspire replaces all of that with ~15 lines of C# that are type-safe and IDE-friendly. The AddPostgres method handles container orchestration, WithReference injects connection strings automatically, WaitFor ensures correct startup ordering, and AddServiceDefaults provides telemetry out of the box.",
+      "keyPatterns": [
+        {
+          "name": "Three-Tier Architecture",
+          "description": "The classic presentation \u2192 business logic \u2192 data layer separation. Each tier is independently deployable and scalable."
+        },
+        {
+          "name": "Service Discovery",
+          "description": "The frontend discovers the API endpoint at runtime through Aspire-injected environment variables, not hardcoded URLs. This means the same code works in dev, staging, and production."
+        },
+        {
+          "name": "Health-Based Startup",
+          "description": "WaitFor ensures the API doesn't start accepting requests until PostgreSQL is healthy, preventing connection errors during cold starts."
+        }
+      ],
+      "scalingNotes": "Scale horizontally by running multiple API instances behind a load balancer. PostgreSQL can be upgraded to a managed service (Azure Database for PostgreSQL) at deployment time without code changes \u2014 Aspire's publish model handles the swap."
+    }
+  },
+  {
     "id": "ecommerce",
-    "title": "🛒 E-Commerce Platform",
+    "title": "\ud83d\uded2 E-Commerce Platform",
+    "category": "Web & Commerce",
+    "difficulty": "intermediate",
     "description": "A full-featured e-commerce system with separate microservices for catalog, orders, and cart management. Uses message-driven architecture with RabbitMQ for order event processing and Redis for high-speed cart and session caching.",
     "services": [
       {
@@ -118,317 +190,36 @@
       "Redis Caching",
       "Message-Driven Architecture"
     ],
-    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 5: Integration Mastery"
-  },
-  {
-    "id": "saas",
-    "title": "🏢 SaaS Multi-Tenant App",
-    "description": "A multi-tenant SaaS platform with isolated tenant databases, centralized authentication, file storage with Azure Blob, and background job processing. Demonstrates secret management with Aspire Parameters.",
-    "services": [
-      {
-        "id": "admin",
-        "name": "Admin\nPortal",
-        "type": "frontend",
-        "row": 0,
-        "col": 0
-      },
-      {
-        "id": "auth",
-        "name": "Auth\nService",
-        "type": "api",
-        "row": 0,
-        "col": 1
-      },
-      {
-        "id": "tenantapi",
-        "name": "Tenant\nAPI",
-        "type": "api",
-        "row": 0,
-        "col": 2
-      },
-      {
-        "id": "worker",
-        "name": "Background\nWorker",
-        "type": "worker",
-        "row": 1,
-        "col": 0
-      },
-      {
-        "id": "tenantdb",
-        "name": "Tenant\nDB",
-        "type": "database",
-        "row": 1,
-        "col": 1
-      },
-      {
-        "id": "redis",
-        "name": "Redis",
-        "type": "cache",
-        "row": 1,
-        "col": 2
-      },
-      {
-        "id": "blob",
-        "name": "Azure\nBlob",
-        "type": "container",
-        "row": 1,
-        "col": 3
-      }
-    ],
-    "connections": [
-      {
-        "from": "admin",
-        "to": "auth",
-        "label": "auth"
-      },
-      {
-        "from": "auth",
-        "to": "tenantapi",
-        "label": "JWT"
-      },
-      {
-        "from": "tenantapi",
-        "to": "tenantdb",
-        "label": "queries"
-      },
-      {
-        "from": "tenantapi",
-        "to": "redis",
-        "label": "cache"
-      },
-      {
-        "from": "tenantapi",
-        "to": "blob",
-        "label": "files"
-      },
-      {
-        "from": "worker",
-        "to": "tenantdb",
-        "label": "jobs"
-      }
-    ],
-    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Secrets via Parameters\nvar dbPassword = builder.AddParameter(\"db-password\", secret: true);\nvar jwtSecret = builder.AddParameter(\"jwt-secret\", secret: true);\n\n// Infrastructure\nvar tenantDb = builder.AddPostgres(\"pg\", password: dbPassword)\n    .AddDatabase(\"tenantdb\");\nvar redis = builder.AddRedis(\"redis\");\nvar blobStorage = builder.AddAzureStorage(\"storage\")\n    .AddBlobs(\"blobs\");\n\n// Auth Service\nvar authService = builder.AddProject<Projects.AuthService>(\"auth\")\n    .WithReference(tenantDb)\n    .WithEnvironment(\"JWT_SECRET\", jwtSecret);\n\n// Tenant API\nvar tenantApi = builder.AddProject<Projects.TenantApi>(\"tenant-api\")\n    .WithReference(tenantDb)\n    .WithReference(redis)\n    .WithReference(blobStorage)\n    .WithReference(authService);\n\n// Background Worker\nbuilder.AddProject<Projects.BackgroundWorker>(\"worker\")\n    .WithReference(tenantDb)\n    .WithReference(redis);\n\n// Admin Portal\nbuilder.AddProject<Projects.AdminPortal>(\"admin\")\n    .WithReference(authService)\n    .WithReference(tenantApi);\n\nbuilder.Build().Run();",
-    "concepts": [
-      "Parameters & Secrets",
-      "Azure Blob Storage",
-      "Health Checks",
-      "Connection Strings",
-      "Background Workers"
-    ],
-    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 3: Resource Wiring"
-  },
-  {
-    "id": "realtime",
-    "title": "📊 Real-Time Dashboard",
-    "description": "A real-time analytics dashboard ingesting high-velocity event streams via Kafka. Features a Node.js React frontend connected through WebSockets, with PostgreSQL for durable metrics storage and Redis pub/sub for live updates.",
-    "services": [
-      {
-        "id": "dashboard",
-        "name": "React\nDashboard",
-        "type": "frontend",
-        "row": 0,
-        "col": 0
-      },
-      {
-        "id": "wsgateway",
-        "name": "WebSocket\nGateway",
-        "type": "api",
-        "row": 0,
-        "col": 1
-      },
-      {
-        "id": "analytics",
-        "name": "Analytics\nAPI",
-        "type": "api",
-        "row": 0,
-        "col": 2
-      },
-      {
-        "id": "ingestion",
-        "name": "Data\nIngestion",
-        "type": "worker",
-        "row": 1,
-        "col": 0
-      },
-      {
-        "id": "kafka",
-        "name": "Kafka",
-        "type": "messaging",
-        "row": 1,
-        "col": 1
-      },
-      {
-        "id": "redis",
-        "name": "Redis\nPub/Sub",
-        "type": "cache",
-        "row": 1,
-        "col": 2
-      },
-      {
-        "id": "metricsdb",
-        "name": "Metrics\nDB",
-        "type": "database",
-        "row": 2,
-        "col": 1
-      }
-    ],
-    "connections": [
-      {
-        "from": "dashboard",
-        "to": "wsgateway",
-        "label": "WS"
-      },
-      {
-        "from": "wsgateway",
-        "to": "analytics",
-        "label": "WithReference"
-      },
-      {
-        "from": "ingestion",
-        "to": "kafka",
-        "label": "produce"
-      },
-      {
-        "from": "kafka",
-        "to": "analytics",
-        "label": "consume"
-      },
-      {
-        "from": "analytics",
-        "to": "redis",
-        "label": "pub/sub"
-      },
-      {
-        "from": "analytics",
-        "to": "metricsdb",
-        "label": "queries"
-      },
-      {
-        "from": "wsgateway",
-        "to": "redis",
-        "label": "subscribe"
-      }
-    ],
-    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Infrastructure\nvar metricsDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"metricsdb\");\nvar redis = builder.AddRedis(\"redis\");\nvar kafka = builder.AddKafka(\"kafka\");\n\n// Data Ingestion (produces events)\nvar ingestion = builder.AddProject<Projects.DataIngestion>(\"ingestion\")\n    .WithReference(kafka);\n\n// Analytics API (consumes + queries)\nvar analyticsApi = builder.AddProject<Projects.AnalyticsApi>(\"analytics\")\n    .WithReference(kafka)\n    .WithReference(metricsDb)\n    .WithReference(redis);\n\n// WebSocket Gateway\nvar wsGateway = builder.AddProject<Projects.WsGateway>(\"ws-gateway\")\n    .WithReference(analyticsApi)\n    .WithReference(redis);\n\n// React Dashboard (Node.js frontend)\nbuilder.AddNpmApp(\"dashboard\", \"../dashboard-app\")\n    .WithReference(wsGateway)\n    .WithHttpEndpoint(env: \"PORT\");\n\nbuilder.Build().Run();",
-    "concepts": [
-      "Kafka Integration",
-      "Real-Time Processing",
-      "Polyglot (Node.js)",
-      "WebSockets",
-      "Redis Pub/Sub"
-    ],
-    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 6: Advanced Patterns"
-  },
-  {
-    "id": "mlpipeline",
-    "title": "🤖 ML Pipeline",
-    "description": "An end-to-end machine learning pipeline with a Python training worker, .NET inference API, and model registry. Uses Redis as a job queue and PostgreSQL for experiment metadata. Demonstrates Aspire's polyglot support with AddPythonApp.",
-    "services": [
-      {
-        "id": "apiservice",
-        "name": "API\nService",
-        "type": "api",
-        "row": 0,
-        "col": 0
-      },
-      {
-        "id": "inference",
-        "name": "Inference\nAPI",
-        "type": "api",
-        "row": 0,
-        "col": 1
-      },
-      {
-        "id": "registry",
-        "name": "Model\nRegistry",
-        "type": "api",
-        "row": 0,
-        "col": 2
-      },
-      {
-        "id": "trainer",
-        "name": "Training\nWorker",
-        "type": "worker",
-        "row": 1,
-        "col": 0
-      },
-      {
-        "id": "redis",
-        "name": "Redis\nJob Queue",
-        "type": "cache",
-        "row": 1,
-        "col": 1
-      },
-      {
-        "id": "metadb",
-        "name": "Metadata\nDB",
-        "type": "database",
-        "row": 1,
-        "col": 2
-      },
-      {
-        "id": "modelstore",
-        "name": "Model\nStorage",
-        "type": "container",
-        "row": 2,
-        "col": 1
-      }
-    ],
-    "connections": [
-      {
-        "from": "apiservice",
-        "to": "inference",
-        "label": "predict"
-      },
-      {
-        "from": "apiservice",
-        "to": "redis",
-        "label": "enqueue"
-      },
-      {
-        "from": "trainer",
-        "to": "redis",
-        "label": "dequeue"
-      },
-      {
-        "from": "trainer",
-        "to": "metadb",
-        "label": "metadata"
-      },
-      {
-        "from": "trainer",
-        "to": "modelstore",
-        "label": "save model"
-      },
-      {
-        "from": "inference",
-        "to": "registry",
-        "label": "load model"
-      },
-      {
-        "from": "registry",
-        "to": "modelstore",
-        "label": "artifacts"
-      },
-      {
-        "from": "registry",
-        "to": "metadb",
-        "label": "queries"
-      }
-    ],
-    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Infrastructure\nvar metadataDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"metadatadb\");\nvar redis = builder.AddRedis(\"redis\");\n\n// Model Storage (MinIO-compatible)\nvar modelStorage = builder.AddContainer(\"model-storage\", \"minio/minio\")\n    .WithHttpEndpoint(port: 9000, targetPort: 9000)\n    .WithEnvironment(\"MINIO_ROOT_USER\", \"minioadmin\")\n    .WithEnvironment(\"MINIO_ROOT_PASSWORD\", \"minioadmin\")\n    .WithArgs(\"server\", \"/data\");\n\n// Python Training Worker\nvar trainer = builder.AddPythonApp(\"trainer\", \"../ml-trainer\", \"train.py\")\n    .WithReference(redis)\n    .WithReference(metadataDb)\n    .WithReference(modelStorage);\n\n// Model Registry\nvar registry = builder.AddProject<Projects.ModelRegistry>(\"registry\")\n    .WithReference(metadataDb)\n    .WithReference(modelStorage);\n\n// Inference API\nvar inference = builder.AddProject<Projects.InferenceApi>(\"inference\")\n    .WithReference(registry);\n\n// API Service\nbuilder.AddProject<Projects.ApiService>(\"api\")\n    .WithReference(inference)\n    .WithReference(redis);\n\nbuilder.Build().Run();",
-    "concepts": [
-      "AddPythonApp",
-      "Polyglot Architecture",
-      "Container Resources",
-      "Custom Containers",
-      "Job Queues"
-    ],
-    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 4: Beyond .NET"
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 5: Integration Mastery",
+    "explanation": {
+      "overview": "This e-commerce platform follows the domain-driven decomposition pattern where each business capability \u2014 catalog browsing, order processing, and shopping cart management \u2014 lives in its own microservice with its own dedicated data store.\n\nThe architecture uses RabbitMQ as an event bus between services. When a customer places an order, the Order Service publishes an OrderPlaced event. The Catalog Service consumes this to update inventory counts, while other services (notifications, analytics) can subscribe without coupling. This event-driven approach means services can evolve independently.\n\nRedis serves a dual purpose: it provides sub-millisecond cart operations (shoppers expect instant add-to-cart) and session caching for the API gateway. The gateway itself acts as a Backend-for-Frontend (BFF), aggregating calls to multiple downstream services into a single response for the web frontend.",
+      "whyAspire": "E-commerce systems involve many moving parts \u2014 multiple databases, a message broker, a cache, and several services that need to start in the right order. Aspire lets you express this entire topology in a single Program.cs file. Each WithReference call automatically configures connection strings, and the Aspire dashboard gives you unified tracing across all services \u2014 critical for debugging flows like 'why did this order fail?' that span multiple services and a message broker.",
+      "keyPatterns": [
+        {
+          "name": "Database-per-Service",
+          "description": "Each microservice owns its data store, preventing tight coupling. The Catalog Service uses a products database while the Order Service has its own orders database. This allows independent schema evolution and scaling."
+        },
+        {
+          "name": "Event-Driven Architecture",
+          "description": "RabbitMQ decouples services through asynchronous events. The Order Service doesn't call the Catalog Service directly \u2014 it publishes events that any interested service can consume, enabling loose coupling."
+        },
+        {
+          "name": "API Gateway / BFF",
+          "description": "The gateway aggregates calls to backend services, providing a single entry point for the frontend. This simplifies the client and enables cross-cutting concerns like rate limiting and authentication."
+        },
+        {
+          "name": "Cache-Aside Pattern",
+          "description": "Redis provides sub-millisecond reads for frequently accessed data like shopping carts and product listings, falling back to the database on cache misses."
+        }
+      ],
+      "scalingNotes": "Each service scales independently based on load. The Catalog Service might need 3 replicas during a sale event while the Cart Service stays at 1. RabbitMQ enables competing consumers \u2014 multiple Order Service instances can process orders in parallel. Redis handles session stickiness, so gateway instances are stateless."
+    }
   },
   {
     "id": "blog",
-    "title": "📝 Microservices Blog Platform",
+    "title": "\ud83d\udcdd Microservices Blog Platform",
+    "category": "Web & Commerce",
+    "difficulty": "intermediate",
     "description": "A microservices blog with dedicated services for posts, users, and comments. Uses PostgreSQL for structured data, MongoDB for flexible comment storage, and an API gateway to unify access. Demonstrates the WaitFor pattern for startup ordering.",
     "services": [
       {
@@ -545,11 +336,556 @@
       "WaitFor Ordering",
       "Service Discovery"
     ],
-    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 5: Integration Mastery"
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 5: Integration Mastery",
+    "explanation": {
+      "overview": "This blog platform demonstrates polyglot persistence \u2014 using the right database for each domain. PostgreSQL handles structured post and user data with full relational integrity, while MongoDB stores comments as flexible documents that can evolve (adding reactions, nested replies, rich media) without schema migrations.\n\nThe architecture chains WaitFor dependencies to create a precise startup graph: databases start first, then domain services, then the gateway, and finally the frontend. This prevents the common distributed systems problem of services crashing on startup because their dependencies aren't ready yet.\n\nThe API gateway aggregates data from multiple services. When rendering a blog post page, the gateway fetches the post from the Posts API, the author profile from the Users API, and comments from the Comments API \u2014 combining them into a single response for the frontend.",
+      "whyAspire": "Managing multiple database types (PostgreSQL + MongoDB) traditionally means juggling different connection string formats, Docker containers, and health check implementations. Aspire normalizes this \u2014 AddPostgres and AddMongoDB both follow the same pattern, and WithReference handles the different connection string formats automatically. The WaitFor chain is especially valuable here: without it, you'd need custom retry logic in every service to handle database unavailability at startup.",
+      "keyPatterns": [
+        {
+          "name": "Polyglot Persistence",
+          "description": "Different data stores for different needs. PostgreSQL excels at structured, relational data (users, posts with foreign keys). MongoDB handles semi-structured data (comments with varying shapes, nested replies) without rigid schemas."
+        },
+        {
+          "name": "WaitFor Dependency Chain",
+          "description": "A multi-level dependency graph: DBs \u2192 services \u2192 gateway \u2192 frontend. Aspire health-checks each level before starting the next, eliminating race conditions."
+        },
+        {
+          "name": "Gateway Aggregation",
+          "description": "The API gateway combines data from multiple backend services into cohesive responses, reducing the number of network calls the frontend needs to make."
+        },
+        {
+          "name": "Session Caching",
+          "description": "Redis provides shared session storage across gateway instances, enabling stateless horizontal scaling of the gateway layer."
+        }
+      ],
+      "scalingNotes": "The Posts API likely gets the most read traffic and can be scaled independently. MongoDB's document model handles comment workloads well (writes are append-only, reads are by post ID). Redis session storage means any gateway instance can handle any user."
+    }
+  },
+  {
+    "id": "ragchat",
+    "title": "\ud83d\udcac AI-Powered Chat (RAG)",
+    "category": "AI & Intelligence",
+    "difficulty": "advanced",
+    "description": "A Retrieval-Augmented Generation chatbot that grounds AI responses in your own documents. Uses a vector database for semantic search, OpenAI for language generation, and Redis for conversation caching. Shows Aspire's AI integration and container orchestration.",
+    "services": [
+      {
+        "id": "chatui",
+        "name": "Chat\nFrontend",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "chatapi",
+        "name": "Chat\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "embedworker",
+        "name": "Embedding\nWorker",
+        "type": "worker",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "openai",
+        "name": "OpenAI",
+        "type": "container",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "vectordb",
+        "name": "Qdrant\nVector DB",
+        "type": "database",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nCache",
+        "type": "cache",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "chatdb",
+        "name": "Chat\nHistory DB",
+        "type": "database",
+        "row": 2,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "chatui",
+        "to": "chatapi",
+        "label": "HTTP"
+      },
+      {
+        "from": "chatapi",
+        "to": "openai",
+        "label": "generate"
+      },
+      {
+        "from": "chatapi",
+        "to": "vectordb",
+        "label": "search"
+      },
+      {
+        "from": "chatapi",
+        "to": "redis",
+        "label": "sessions"
+      },
+      {
+        "from": "chatapi",
+        "to": "chatdb",
+        "label": "history"
+      },
+      {
+        "from": "embedworker",
+        "to": "openai",
+        "label": "embed"
+      },
+      {
+        "from": "embedworker",
+        "to": "vectordb",
+        "label": "store"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// AI & Vector Infrastructure\nvar openai = builder.AddConnectionString(\"openai\");\nvar vectorDb = builder.AddQdrant(\"vectors\")\n    .WithLifetime(ContainerLifetime.Persistent);\n\n// Data Storage\nvar chatDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"chatdb\");\nvar redis = builder.AddRedis(\"redis\");\n\n// Embedding Worker \u2014 indexes documents into vector DB\nvar embedWorker = builder.AddProject<Projects.EmbeddingWorker>(\"embeddings\")\n    .WithReference(vectorDb)\n    .WithReference(openai)\n    .WaitFor(vectorDb);\n\n// Chat API \u2014 handles conversations with RAG\nvar chatApi = builder.AddProject<Projects.ChatApi>(\"chat-api\")\n    .WithReference(vectorDb)\n    .WithReference(redis)\n    .WithReference(chatDb)\n    .WithReference(openai)\n    .WaitFor(chatDb)\n    .WaitFor(vectorDb);\n\n// Chat Frontend\nbuilder.AddNpmApp(\"chat-ui\", \"../chat-frontend\")\n    .WithReference(chatApi)\n    .WithHttpEndpoint(env: \"PORT\")\n    .WaitFor(chatApi);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Qdrant Vector DB",
+      "OpenAI Integration",
+      "RAG Pattern",
+      "Embedding Pipeline",
+      "ContainerLifetime.Persistent"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and explore the OpenAI and Qdrant Aspire integrations",
+    "explanation": {
+      "overview": "Retrieval-Augmented Generation (RAG) is the dominant pattern for building AI applications that need to answer questions about private data \u2014 company documents, knowledge bases, support tickets. Instead of relying solely on the LLM's training data, RAG retrieves relevant context from your own documents before generating a response.\n\nThe architecture has two main data flows. The indexing pipeline (Embedding Worker) processes documents: it chunks text, generates vector embeddings via OpenAI, and stores them in Qdrant. The query pipeline (Chat API) handles user questions: it embeds the question, performs a similarity search against Qdrant to find relevant document chunks, and passes those chunks as context to OpenAI's chat completion API.\n\nRedis caches conversation history for active sessions (fast retrieval during back-and-forth chat), while PostgreSQL stores the full conversation archive for analytics and fine-tuning.",
+      "whyAspire": "RAG applications have particularly complex infrastructure needs: a vector database (not your typical RDBMS), an AI API connection, a regular database, a cache, and both synchronous (chat API) and asynchronous (embedding worker) processing. Aspire's AddQdrant integration handles the Qdrant container lifecycle, ContainerLifetime.Persistent preserves indexed vectors across restarts, and AddConnectionString cleanly manages the OpenAI API key. The Aspire dashboard's distributed tracing is invaluable for debugging RAG \u2014 you can trace a single chat message through the embedding lookup, context assembly, and LLM generation steps.",
+      "keyPatterns": [
+        {
+          "name": "Retrieval-Augmented Generation",
+          "description": "Combines information retrieval (vector similarity search) with language generation (LLM). Retrieved document chunks are injected into the LLM prompt as context, grounding responses in factual data rather than hallucinations."
+        },
+        {
+          "name": "Embedding Pipeline",
+          "description": "A background worker continuously processes new documents: splitting them into chunks, generating vector embeddings, and upserting into the vector database. This decouples indexing from query-time performance."
+        },
+        {
+          "name": "Persistent Containers",
+          "description": "ContainerLifetime.Persistent keeps the Qdrant container and its data across Aspire restarts, critical for vector databases where re-indexing thousands of documents is expensive."
+        },
+        {
+          "name": "Hybrid Storage",
+          "description": "Three storage tiers serve different access patterns: vectors for semantic search (Qdrant), ephemeral session data (Redis), and durable conversation history (PostgreSQL)."
+        }
+      ],
+      "scalingNotes": "The embedding worker can be parallelized (multiple instances processing different document queues). The Chat API scales horizontally since all state is in external stores. Qdrant supports sharding and replication for large vector collections. For production, swap AddConnectionString(\"openai\") for Azure OpenAI with managed scaling and content filtering."
+    }
+  },
+  {
+    "id": "mlpipeline",
+    "title": "\ud83e\udd16 ML Pipeline",
+    "category": "AI & Intelligence",
+    "difficulty": "advanced",
+    "description": "An end-to-end machine learning pipeline with a Python training worker, .NET inference API, and model registry. Uses Redis as a job queue and PostgreSQL for experiment metadata. Demonstrates Aspire's polyglot support with AddPythonApp.",
+    "services": [
+      {
+        "id": "apiservice",
+        "name": "API\nService",
+        "type": "api",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "inference",
+        "name": "Inference\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "registry",
+        "name": "Model\nRegistry",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "trainer",
+        "name": "Training\nWorker",
+        "type": "worker",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nJob Queue",
+        "type": "cache",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "metadb",
+        "name": "Metadata\nDB",
+        "type": "database",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "modelstore",
+        "name": "Model\nStorage",
+        "type": "container",
+        "row": 2,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "apiservice",
+        "to": "inference",
+        "label": "predict"
+      },
+      {
+        "from": "apiservice",
+        "to": "redis",
+        "label": "enqueue"
+      },
+      {
+        "from": "trainer",
+        "to": "redis",
+        "label": "dequeue"
+      },
+      {
+        "from": "trainer",
+        "to": "metadb",
+        "label": "metadata"
+      },
+      {
+        "from": "trainer",
+        "to": "modelstore",
+        "label": "save model"
+      },
+      {
+        "from": "inference",
+        "to": "registry",
+        "label": "load model"
+      },
+      {
+        "from": "registry",
+        "to": "modelstore",
+        "label": "artifacts"
+      },
+      {
+        "from": "registry",
+        "to": "metadb",
+        "label": "queries"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Infrastructure\nvar metadataDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"metadatadb\");\nvar redis = builder.AddRedis(\"redis\");\n\n// Model Storage (MinIO-compatible)\nvar modelStorage = builder.AddContainer(\"model-storage\", \"minio/minio\")\n    .WithHttpEndpoint(port: 9000, targetPort: 9000)\n    .WithEnvironment(\"MINIO_ROOT_USER\", \"minioadmin\")\n    .WithEnvironment(\"MINIO_ROOT_PASSWORD\", \"minioadmin\")\n    .WithArgs(\"server\", \"/data\");\n\n// Python Training Worker\nvar trainer = builder.AddPythonApp(\"trainer\", \"../ml-trainer\", \"train.py\")\n    .WithReference(redis)\n    .WithReference(metadataDb)\n    .WithReference(modelStorage);\n\n// Model Registry\nvar registry = builder.AddProject<Projects.ModelRegistry>(\"registry\")\n    .WithReference(metadataDb)\n    .WithReference(modelStorage);\n\n// Inference API\nvar inference = builder.AddProject<Projects.InferenceApi>(\"inference\")\n    .WithReference(registry);\n\n// API Service\nbuilder.AddProject<Projects.ApiService>(\"api\")\n    .WithReference(inference)\n    .WithReference(redis);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "AddPythonApp",
+      "Polyglot Architecture",
+      "Container Resources",
+      "Custom Containers",
+      "Job Queues"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 4: Beyond .NET",
+    "explanation": {
+      "overview": "This architecture bridges the gap between data science and production engineering. Data scientists train models in Python (using PyTorch, scikit-learn, or TensorFlow), while the production inference API runs in .NET for performance and operational maturity.\n\nThe pipeline has three phases: training (Python worker pulls jobs from Redis, trains models, saves artifacts to MinIO), registry (a .NET service that tracks model versions, accuracy metrics, and deployment status in PostgreSQL), and serving (the Inference API loads the latest approved model and serves predictions via a REST endpoint).\n\nThis separation of concerns means data scientists can iterate on models without touching the production serving infrastructure, and the platform team can manage deployment, monitoring, and scaling independently.",
+      "whyAspire": "ML pipelines are inherently polyglot \u2014 Python dominates training while .NET or Go often handles serving. Aspire's AddPythonApp integrates Python workers as first-class citizens in your orchestration graph, with full environment variable injection and health monitoring. The custom MinIO container (AddContainer) shows how Aspire manages non-standard infrastructure. The Aspire dashboard provides end-to-end tracing from 'training job submitted' through 'model served prediction', which is typically impossible to achieve across Python and .NET without significant custom instrumentation.",
+      "keyPatterns": [
+        {
+          "name": "Polyglot Services",
+          "description": "Python for training (where the ML ecosystem lives) and .NET for serving (where the performance and operational tooling lives). Aspire orchestrates both languages seamlessly."
+        },
+        {
+          "name": "Model Registry Pattern",
+          "description": "A central registry tracks model versions, training metrics, and promotion status. The Inference API queries the registry to know which model version to load."
+        },
+        {
+          "name": "Job Queue with Redis",
+          "description": "Redis serves as a lightweight job queue for training requests. The API enqueues training jobs, and the Python worker dequeues and processes them asynchronously."
+        },
+        {
+          "name": "Custom Container Resources",
+          "description": "MinIO runs as a custom container for S3-compatible object storage, demonstrating how AddContainer integrates any Docker image into the Aspire graph."
+        }
+      ],
+      "scalingNotes": "Training workers can run on GPU-enabled nodes while serving runs on cost-effective CPU instances. MinIO can be swapped for Azure Blob Storage in production using Aspire's publish model. Multiple inference replicas provide prediction throughput scaling."
+    }
+  },
+  {
+    "id": "realtime",
+    "title": "\ud83d\udcca Real-Time Dashboard",
+    "category": "Data & Streaming",
+    "difficulty": "intermediate",
+    "description": "A real-time analytics dashboard ingesting high-velocity event streams via Kafka. Features a Node.js React frontend connected through WebSockets, with PostgreSQL for durable metrics storage and Redis pub/sub for live updates.",
+    "services": [
+      {
+        "id": "dashboard",
+        "name": "React\nDashboard",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "wsgateway",
+        "name": "WebSocket\nGateway",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "analytics",
+        "name": "Analytics\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "ingestion",
+        "name": "Data\nIngestion",
+        "type": "worker",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "kafka",
+        "name": "Kafka",
+        "type": "messaging",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nPub/Sub",
+        "type": "cache",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "metricsdb",
+        "name": "Metrics\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "dashboard",
+        "to": "wsgateway",
+        "label": "WS"
+      },
+      {
+        "from": "wsgateway",
+        "to": "analytics",
+        "label": "WithReference"
+      },
+      {
+        "from": "ingestion",
+        "to": "kafka",
+        "label": "produce"
+      },
+      {
+        "from": "kafka",
+        "to": "analytics",
+        "label": "consume"
+      },
+      {
+        "from": "analytics",
+        "to": "redis",
+        "label": "pub/sub"
+      },
+      {
+        "from": "analytics",
+        "to": "metricsdb",
+        "label": "queries"
+      },
+      {
+        "from": "wsgateway",
+        "to": "redis",
+        "label": "subscribe"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Infrastructure\nvar metricsDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"metricsdb\");\nvar redis = builder.AddRedis(\"redis\");\nvar kafka = builder.AddKafka(\"kafka\");\n\n// Data Ingestion (produces events)\nvar ingestion = builder.AddProject<Projects.DataIngestion>(\"ingestion\")\n    .WithReference(kafka);\n\n// Analytics API (consumes + queries)\nvar analyticsApi = builder.AddProject<Projects.AnalyticsApi>(\"analytics\")\n    .WithReference(kafka)\n    .WithReference(metricsDb)\n    .WithReference(redis);\n\n// WebSocket Gateway\nvar wsGateway = builder.AddProject<Projects.WsGateway>(\"ws-gateway\")\n    .WithReference(analyticsApi)\n    .WithReference(redis);\n\n// React Dashboard (Node.js frontend)\nbuilder.AddNpmApp(\"dashboard\", \"../dashboard-app\")\n    .WithReference(wsGateway)\n    .WithHttpEndpoint(env: \"PORT\");\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Kafka Integration",
+      "Real-Time Processing",
+      "Polyglot (Node.js)",
+      "WebSockets",
+      "Redis Pub/Sub"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 6: Advanced Patterns",
+    "explanation": {
+      "overview": "This architecture handles three different data velocity requirements: high-throughput ingestion (Kafka handles millions of events per second), real-time fan-out (Redis pub/sub delivers updates to all connected WebSocket clients within milliseconds), and durable analytics (PostgreSQL stores aggregated metrics for historical queries and reporting).\n\nThe data flow is: external sources push events to the Data Ingestion service, which produces them to Kafka topics. The Analytics API consumes these events, computes aggregations (counts, averages, percentiles), stores results in PostgreSQL, and publishes real-time summaries to Redis pub/sub channels. The WebSocket Gateway subscribes to these Redis channels and pushes updates to all connected dashboard clients.\n\nThis separation of ingestion, processing, and delivery means each layer can be optimized and scaled independently.",
+      "whyAspire": "Real-time systems require careful infrastructure orchestration \u2014 Kafka needs ZooKeeper (or KRaft), Redis needs to be configured for pub/sub, and services need to start in dependency order. Aspire's AddKafka handles the entire Kafka infrastructure (including the KRaft controller), AddRedis sets up the cache, and the Aspire dashboard provides real-time observability into message throughput, processing latency, and WebSocket connection counts across all services.",
+      "keyPatterns": [
+        {
+          "name": "Event Streaming",
+          "description": "Kafka provides durable, ordered, high-throughput event streaming. Events are retained for configurable periods, enabling replay and multiple consumer groups processing the same data differently."
+        },
+        {
+          "name": "Pub/Sub Fan-Out",
+          "description": "Redis pub/sub broadcasts real-time updates to all WebSocket gateway instances. This is more efficient than polling and enables true real-time updates to dashboard users."
+        },
+        {
+          "name": "CQRS-Lite",
+          "description": "Write path (ingestion \u2192 Kafka \u2192 processing) is separated from read path (PostgreSQL \u2192 Analytics API \u2192 dashboard), allowing each to be optimized independently."
+        },
+        {
+          "name": "Polyglot Frontend",
+          "description": "The React dashboard runs as a Node.js app via AddNpmApp, showing Aspire's ability to orchestrate JavaScript frontends alongside .NET backends."
+        }
+      ],
+      "scalingNotes": "Kafka consumers scale via consumer groups \u2014 add more Analytics API instances and Kafka automatically partitions the load. WebSocket gateways scale horizontally with Redis pub/sub handling cross-instance message delivery. PostgreSQL can be partitioned by time for efficient historical queries."
+    }
+  },
+  {
+    "id": "searchplatform",
+    "title": "\ud83d\udd0d Search Platform",
+    "category": "Data & Streaming",
+    "difficulty": "advanced",
+    "description": "A full-text search platform with web crawling workers, an Elasticsearch index, and a search API with Redis-backed result caching. Uses RabbitMQ to distribute crawl jobs across multiple workers. Demonstrates Aspire's Elasticsearch integration.",
+    "services": [
+      {
+        "id": "searchui",
+        "name": "Search\nFrontend",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "searchapi",
+        "name": "Search\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "crawler",
+        "name": "Crawler\nWorker",
+        "type": "worker",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "indexer",
+        "name": "Indexer\nWorker",
+        "type": "worker",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "elastic",
+        "name": "Elasticsearch",
+        "type": "database",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "rabbitmq",
+        "name": "RabbitMQ",
+        "type": "messaging",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nCache",
+        "type": "cache",
+        "row": 2,
+        "col": 0
+      },
+      {
+        "id": "crawlerdb",
+        "name": "Crawler\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 2
+      }
+    ],
+    "connections": [
+      {
+        "from": "searchui",
+        "to": "searchapi",
+        "label": "HTTP"
+      },
+      {
+        "from": "searchapi",
+        "to": "elastic",
+        "label": "query"
+      },
+      {
+        "from": "searchapi",
+        "to": "redis",
+        "label": "cache"
+      },
+      {
+        "from": "crawler",
+        "to": "rabbitmq",
+        "label": "URLs"
+      },
+      {
+        "from": "crawler",
+        "to": "crawlerdb",
+        "label": "state"
+      },
+      {
+        "from": "rabbitmq",
+        "to": "indexer",
+        "label": "documents"
+      },
+      {
+        "from": "indexer",
+        "to": "elastic",
+        "label": "index"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Search Infrastructure\nvar elastic = builder.AddElasticsearch(\"search\")\n    .WithLifetime(ContainerLifetime.Persistent);\nvar crawlerDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"crawlerdb\");\nvar rabbitmq = builder.AddRabbitMQ(\"rabbitmq\");\nvar redis = builder.AddRedis(\"redis\");\n\n// Crawler discovers pages and pushes URLs to queue\nvar crawler = builder.AddProject<Projects.CrawlerWorker>(\"crawler\")\n    .WithReference(rabbitmq)\n    .WithReference(crawlerDb)\n    .WaitFor(rabbitmq);\n\n// Indexer fetches content and indexes into Elasticsearch\nvar indexer = builder.AddProject<Projects.IndexerWorker>(\"indexer\")\n    .WithReference(rabbitmq)\n    .WithReference(elastic)\n    .WaitFor(elastic)\n    .WaitFor(rabbitmq);\n\n// Search API queries Elasticsearch with caching\nvar searchApi = builder.AddProject<Projects.SearchApi>(\"search-api\")\n    .WithReference(elastic)\n    .WithReference(redis)\n    .WaitFor(elastic);\n\n// Search Frontend\nbuilder.AddProject<Projects.SearchFrontend>(\"search-ui\")\n    .WithReference(searchApi)\n    .WaitFor(searchApi);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Elasticsearch",
+      "Worker Pipelines",
+      "Competing Consumers",
+      "Result Caching",
+      "Persistent Containers"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and explore the Elasticsearch Aspire integration",
+    "explanation": {
+      "overview": "This search platform implements the classic index-then-query pattern with a modern distributed twist. The crawling pipeline discovers and fetches web pages or documents, while the indexing pipeline processes and indexes them into Elasticsearch for fast full-text search.\n\nThe architecture uses RabbitMQ as a job distribution layer. The Crawler Worker discovers URLs and publishes them to a queue. The Indexer Worker (which can run multiple instances as competing consumers) fetches page content, extracts text, and indexes documents into Elasticsearch. The Search API provides a fast query interface with Redis caching for frequently searched terms.\n\nPostgreSQL tracks crawler state: which URLs have been visited, when they were last crawled, and their robots.txt compliance status. This separation of crawling state from search index keeps both systems optimized for their specific workloads.",
+      "whyAspire": "Search platforms involve multiple specialized infrastructure components that are painful to set up manually: Elasticsearch requires JVM tuning and index configuration, RabbitMQ needs queue topology, and crawlers need careful state management. Aspire's AddElasticsearch handles the container and default configuration, ContainerLifetime.Persistent preserves the search index across restarts (critical during development when re-indexing is slow), and the Aspire dashboard lets you monitor crawl throughput, indexing latency, and search query performance in one place.",
+      "keyPatterns": [
+        {
+          "name": "Competing Consumers",
+          "description": "Multiple Indexer Worker instances pull from the same RabbitMQ queue. RabbitMQ distributes work evenly, providing horizontal scaling for the CPU-intensive indexing step."
+        },
+        {
+          "name": "Pipeline Architecture",
+          "description": "Data flows through stages: Discovery (Crawler) \u2192 Processing (Indexer) \u2192 Serving (Search API). Each stage can be scaled independently based on its bottleneck."
+        },
+        {
+          "name": "Result Caching",
+          "description": "Redis caches search results for popular queries, dramatically reducing Elasticsearch load. Cache entries expire based on index freshness."
+        },
+        {
+          "name": "Persistent Containers",
+          "description": "Elasticsearch uses ContainerLifetime.Persistent to preserve indexed data across Aspire restarts, avoiding expensive re-indexing during development."
+        }
+      ],
+      "scalingNotes": "Scale indexer workers to increase indexing throughput (linear scaling via competing consumers). Elasticsearch scales via sharding and replicas. The Search API scales horizontally with Redis reducing redundant queries. Rate-limit crawlers to be respectful of target sites."
+    }
   },
   {
     "id": "iot",
-    "title": "🌡️ IoT Data Platform",
+    "title": "\ud83c\udf21\ufe0f IoT Data Platform",
+    "category": "Event-Driven",
+    "difficulty": "advanced",
     "description": "A high-throughput IoT platform processing device telemetry via Kafka event streams. Features a custom device gateway container, real-time alert processing, and Redis-backed latest-readings cache for instant dashboard queries.",
     "services": [
       {
@@ -659,6 +995,590 @@
       "Kafka",
       "WaitFor Ordering"
     ],
-    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 6: Advanced Patterns"
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 6: Advanced Patterns",
+    "explanation": {
+      "overview": "IoT platforms must handle massive volumes of small messages from thousands or millions of devices while providing both real-time visibility and historical analysis. This architecture separates these concerns into specialized layers.\n\nThe Device Gateway is a custom container (perhaps written in Go or Rust for performance) that speaks MQTT or CoAP \u2014 protocols optimized for constrained IoT devices. It authenticates devices against the registry, translates messages into a canonical format, and publishes them to Kafka topics partitioned by device type or region.\n\nThe Telemetry Processor consumes from Kafka, performing two operations per message: it updates the 'latest reading' in Redis (so the dashboard always shows current values instantly) and appends the reading to the TimeSeries database (for historical queries, trend analysis, and anomaly detection). When readings exceed thresholds, it triggers the Alert Service.",
+      "whyAspire": "IoT architectures blend custom containers (device gateways in non-.NET languages), standard infrastructure (Kafka, Redis, PostgreSQL), and .NET services \u2014 exactly the heterogeneous environment Aspire is designed to manage. AddContainer integrates the custom gateway, AddKafka handles the event streaming infrastructure, and WithReference wires everything together. The Aspire dashboard's real-time metrics are especially valuable for monitoring telemetry throughput and detecting processing bottlenecks.",
+      "keyPatterns": [
+        {
+          "name": "Lambda Architecture (Simplified)",
+          "description": "Real-time path (Redis latest readings) provides instant current state. Batch path (TimeSeries DB) provides historical analysis. Both are fed from the same Kafka stream."
+        },
+        {
+          "name": "Protocol Translation",
+          "description": "The Device Gateway translates IoT-specific protocols (MQTT, CoAP) into standard Kafka messages, decoupling device communication from backend processing."
+        },
+        {
+          "name": "Hot/Warm/Cold Storage",
+          "description": "Redis holds the latest reading per device (hot), the TimeSeries DB holds recent history (warm), and old data can be archived to blob storage (cold)."
+        },
+        {
+          "name": "Threshold Alerting",
+          "description": "The processor evaluates rules against incoming telemetry in real-time, triggering alerts for anomalous readings (temperature spikes, connectivity loss, etc.)."
+        }
+      ],
+      "scalingNotes": "Kafka partitioning enables horizontal scaling of processors (partition by device ID or region). The Device Gateway can run multiple replicas behind a load balancer. Redis handles millions of key-value reads/writes per second. Consider TimescaleDB (PostgreSQL extension) for time-series-optimized queries."
+    }
+  },
+  {
+    "id": "cqrs",
+    "title": "\ud83d\udd04 CQRS Order System",
+    "category": "Event-Driven",
+    "difficulty": "advanced",
+    "description": "A Command Query Responsibility Segregation (CQRS) architecture for order management. Commands go through a write-optimized path with event publishing, while queries hit a denormalized read store. Uses RabbitMQ for event propagation and YARP for intelligent routing.",
+    "services": [
+      {
+        "id": "frontend",
+        "name": "Order\nFrontend",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "gateway",
+        "name": "YARP\nGateway",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "commandapi",
+        "name": "Command\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "queryapi",
+        "name": "Query\nAPI",
+        "type": "api",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "projector",
+        "name": "Event\nProjector",
+        "type": "worker",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "rabbitmq",
+        "name": "RabbitMQ",
+        "type": "messaging",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "writedb",
+        "name": "Write\nStore",
+        "type": "database",
+        "row": 2,
+        "col": 0
+      },
+      {
+        "id": "readdb",
+        "name": "Read\nStore",
+        "type": "database",
+        "row": 2,
+        "col": 2
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nCache",
+        "type": "cache",
+        "row": 2,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "frontend",
+        "to": "gateway",
+        "label": "HTTP"
+      },
+      {
+        "from": "gateway",
+        "to": "commandapi",
+        "label": "writes"
+      },
+      {
+        "from": "gateway",
+        "to": "queryapi",
+        "label": "reads"
+      },
+      {
+        "from": "commandapi",
+        "to": "writedb",
+        "label": "persist"
+      },
+      {
+        "from": "commandapi",
+        "to": "rabbitmq",
+        "label": "events"
+      },
+      {
+        "from": "rabbitmq",
+        "to": "projector",
+        "label": "consume"
+      },
+      {
+        "from": "projector",
+        "to": "readdb",
+        "label": "project"
+      },
+      {
+        "from": "queryapi",
+        "to": "readdb",
+        "label": "queries"
+      },
+      {
+        "from": "queryapi",
+        "to": "redis",
+        "label": "cache"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Separate Write and Read stores\nvar writeDb = builder.AddPostgres(\"pg-write\")\n    .AddDatabase(\"orderswrite\");\nvar readDb = builder.AddPostgres(\"pg-read\")\n    .AddDatabase(\"ordersread\");\nvar rabbitmq = builder.AddRabbitMQ(\"rabbitmq\");\nvar redis = builder.AddRedis(\"redis\");\n\n// Command API \u2014 validates and persists commands\nvar commandApi = builder.AddProject<Projects.CommandApi>(\"command-api\")\n    .WithReference(writeDb)\n    .WithReference(rabbitmq)\n    .WaitFor(writeDb)\n    .WaitFor(rabbitmq);\n\n// Event Projector \u2014 builds read models from events\nvar projector = builder.AddProject<Projects.Projector>(\"projector\")\n    .WithReference(rabbitmq)\n    .WithReference(readDb)\n    .WaitFor(rabbitmq)\n    .WaitFor(readDb);\n\n// Query API \u2014 serves read-optimized queries\nvar queryApi = builder.AddProject<Projects.QueryApi>(\"query-api\")\n    .WithReference(readDb)\n    .WithReference(redis)\n    .WaitFor(readDb);\n\n// YARP Gateway routes writes vs reads\nvar gateway = builder.AddProject<Projects.Gateway>(\"gateway\")\n    .WithReference(commandApi)\n    .WithReference(queryApi)\n    .WaitFor(commandApi)\n    .WaitFor(queryApi);\n\n// Frontend\nbuilder.AddNpmApp(\"frontend\", \"../frontend\")\n    .WithReference(gateway)\n    .WithHttpEndpoint(env: \"PORT\")\n    .WaitFor(gateway);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "CQRS Pattern",
+      "Event Projections",
+      "YARP Gateway",
+      "Separate Read/Write Stores",
+      "RabbitMQ Events"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and explore the YARP and RabbitMQ Aspire integrations",
+    "explanation": {
+      "overview": "CQRS separates an application's write operations (commands) from read operations (queries) into distinct models and often distinct services. This separation enables independent optimization: the write store uses a normalized schema optimized for transactional consistency, while the read store uses denormalized views optimized for query performance.\n\nWhen a user places an order, the Command API validates the request, persists it to the write database, and publishes domain events (OrderPlaced, PaymentProcessed, OrderShipped) to RabbitMQ. The Event Projector subscribes to these events and builds optimized read models \u2014 for example, a single 'order summary' document that joins order, customer, and item data so the Query API can return it in a single database read.\n\nThe YARP gateway intelligently routes traffic: POST/PUT/DELETE requests go to the Command API, while GET requests go to the Query API. This routing is transparent to the frontend, which sees a single unified API.",
+      "whyAspire": "CQRS systems have many moving parts that must start in a specific order and communicate through a message broker. Aspire's WaitFor chain ensures correct startup (databases \u2192 services \u2192 gateway \u2192 frontend), WithReference handles all connection wiring, and the dashboard's distributed tracing lets you follow a command through the entire pipeline: command validation \u2192 write store \u2192 event publication \u2192 event projection \u2192 read store update. This end-to-end visibility is essential for debugging eventual consistency issues.",
+      "keyPatterns": [
+        {
+          "name": "Command/Query Separation",
+          "description": "Write operations (commands) and read operations (queries) use different code paths, different data models, and potentially different databases \u2014 each optimized for its specific access pattern."
+        },
+        {
+          "name": "Event-Driven Projections",
+          "description": "Domain events flow from the write side through RabbitMQ to projectors that build read-optimized views. This creates eventual consistency but enables read models tailored to specific UI needs."
+        },
+        {
+          "name": "Intelligent API Routing",
+          "description": "YARP routes commands to the write service and queries to the read service based on HTTP method, providing a unified API surface to the frontend."
+        },
+        {
+          "name": "Event Replay",
+          "description": "If the read model schema changes, the projector can replay all historical events from RabbitMQ (with appropriate retention) to rebuild the read store from scratch."
+        }
+      ],
+      "scalingNotes": "The read side (Query API + read database) scales independently from the write side. Since reads typically outnumber writes 10:1 or more, you can run many Query API replicas with Redis caching. The projector must maintain ordering within an aggregate, but can parallelize across different aggregate IDs."
+    }
+  },
+  {
+    "id": "notifications",
+    "title": "\ud83d\udcec Notification Hub",
+    "category": "Event-Driven",
+    "difficulty": "intermediate",
+    "description": "A multi-channel notification system that dispatches messages across email, SMS, and push channels. Uses RabbitMQ for reliable message delivery with per-channel worker queues. Demonstrates fan-out patterns and background worker services in Aspire.",
+    "services": [
+      {
+        "id": "admin",
+        "name": "Admin\nDashboard",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "notifyapi",
+        "name": "Notification\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "rabbitmq",
+        "name": "RabbitMQ",
+        "type": "messaging",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "emailworker",
+        "name": "Email\nWorker",
+        "type": "worker",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "smsworker",
+        "name": "SMS\nWorker",
+        "type": "worker",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "pushworker",
+        "name": "Push\nWorker",
+        "type": "worker",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "notifydb",
+        "name": "Notification\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 0
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nCache",
+        "type": "cache",
+        "row": 2,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "admin",
+        "to": "notifyapi",
+        "label": "HTTP"
+      },
+      {
+        "from": "notifyapi",
+        "to": "rabbitmq",
+        "label": "dispatch"
+      },
+      {
+        "from": "notifyapi",
+        "to": "notifydb",
+        "label": "log"
+      },
+      {
+        "from": "notifyapi",
+        "to": "redis",
+        "label": "rate limit"
+      },
+      {
+        "from": "rabbitmq",
+        "to": "emailworker",
+        "label": "emails"
+      },
+      {
+        "from": "rabbitmq",
+        "to": "smsworker",
+        "label": "SMS"
+      },
+      {
+        "from": "rabbitmq",
+        "to": "pushworker",
+        "label": "push"
+      },
+      {
+        "from": "emailworker",
+        "to": "notifydb",
+        "label": "status"
+      },
+      {
+        "from": "pushworker",
+        "to": "redis",
+        "label": "tokens"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Infrastructure\nvar notifyDb = builder.AddPostgres(\"pg\")\n    .AddDatabase(\"notifications\");\nvar rabbitmq = builder.AddRabbitMQ(\"rabbitmq\")\n    .WithManagementPlugin();\nvar redis = builder.AddRedis(\"redis\");\n\n// Notification API \u2014 accepts and routes notifications\nvar notifyApi = builder.AddProject<Projects.NotificationApi>(\"notify-api\")\n    .WithReference(notifyDb)\n    .WithReference(rabbitmq)\n    .WithReference(redis)\n    .WaitFor(notifyDb)\n    .WaitFor(rabbitmq);\n\n// Channel Workers \u2014 each handles one delivery channel\nbuilder.AddProject<Projects.EmailWorker>(\"email-worker\")\n    .WithReference(rabbitmq)\n    .WithReference(notifyDb)\n    .WaitFor(rabbitmq);\n\nbuilder.AddProject<Projects.SmsWorker>(\"sms-worker\")\n    .WithReference(rabbitmq)\n    .WaitFor(rabbitmq);\n\nbuilder.AddProject<Projects.PushWorker>(\"push-worker\")\n    .WithReference(rabbitmq)\n    .WithReference(redis)\n    .WaitFor(rabbitmq);\n\n// Admin Dashboard\nbuilder.AddProject<Projects.AdminDashboard>(\"admin\")\n    .WithReference(notifyApi)\n    .WaitFor(notifyApi);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Fan-Out Pattern",
+      "Background Workers",
+      "RabbitMQ Management",
+      "Rate Limiting",
+      "Multi-Channel Delivery"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 5: Integration Mastery",
+    "explanation": {
+      "overview": "Modern applications need to reach users across multiple channels \u2014 email for detailed communications, SMS for urgent alerts, and push notifications for real-time engagement. This architecture centralizes notification logic while distributing delivery across specialized workers.\n\nThe Notification API is the single entry point: it validates the request, applies rate limiting (Redis tracks per-user send counts to prevent spam), logs the notification to PostgreSQL for audit and analytics, and publishes messages to RabbitMQ with routing keys that direct them to the appropriate channel workers.\n\nEach worker is specialized for its channel: the Email Worker renders HTML templates and connects to SMTP servers, the SMS Worker integrates with Twilio or similar APIs, and the Push Worker manages device tokens (stored in Redis for fast lookup) and sends via Firebase Cloud Messaging or APNs. If any delivery fails, RabbitMQ's dead-letter exchange captures the failure for retry.",
+      "whyAspire": "Notification systems involve many lightweight worker services that all need the same infrastructure connections (RabbitMQ, database) but serve different purposes. Aspire makes it trivial to declare multiple workers: each AddProject call wires up the message broker connection identically, and the Aspire dashboard shows all workers' health and message processing rates side-by-side. The WithManagementPlugin() call on RabbitMQ adds the management UI \u2014 accessible through the dashboard \u2014 for monitoring queue depths and dead letters.",
+      "keyPatterns": [
+        {
+          "name": "Fan-Out / Pub-Sub",
+          "description": "A single notification request fans out to multiple channel-specific queues via RabbitMQ exchange routing. Each channel worker independently processes its queue at its own pace."
+        },
+        {
+          "name": "Specialized Workers",
+          "description": "Each delivery channel has its own worker service with channel-specific logic (SMTP for email, REST APIs for SMS, WebSocket for push). Workers can be deployed and scaled independently."
+        },
+        {
+          "name": "Rate Limiting",
+          "description": "Redis-backed rate limiting prevents notification fatigue. The API checks per-user send counts before dispatching, respecting user preferences and regulatory requirements."
+        },
+        {
+          "name": "Dead Letter Handling",
+          "description": "Failed deliveries route to dead-letter queues for inspection and retry. This ensures no notification is silently lost, even when external services (SMTP, Twilio) are temporarily unavailable."
+        }
+      ],
+      "scalingNotes": "Scale workers independently per channel load \u2014 email workers might need more instances during marketing campaigns. RabbitMQ prefetch limits prevent any single worker from being overwhelmed. Redis rate limiting is atomic and works correctly across multiple API instances."
+    }
+  },
+  {
+    "id": "saas",
+    "title": "\ud83c\udfe2 SaaS Multi-Tenant App",
+    "category": "Enterprise",
+    "difficulty": "intermediate",
+    "description": "A multi-tenant SaaS platform with isolated tenant databases, centralized authentication, file storage with Azure Blob, and background job processing. Demonstrates secret management with Aspire Parameters.",
+    "services": [
+      {
+        "id": "admin",
+        "name": "Admin\nPortal",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "auth",
+        "name": "Auth\nService",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "tenantapi",
+        "name": "Tenant\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "worker",
+        "name": "Background\nWorker",
+        "type": "worker",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "tenantdb",
+        "name": "Tenant\nDB",
+        "type": "database",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "redis",
+        "name": "Redis",
+        "type": "cache",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "blob",
+        "name": "Azure\nBlob",
+        "type": "container",
+        "row": 1,
+        "col": 3
+      }
+    ],
+    "connections": [
+      {
+        "from": "admin",
+        "to": "auth",
+        "label": "auth"
+      },
+      {
+        "from": "auth",
+        "to": "tenantapi",
+        "label": "JWT"
+      },
+      {
+        "from": "tenantapi",
+        "to": "tenantdb",
+        "label": "queries"
+      },
+      {
+        "from": "tenantapi",
+        "to": "redis",
+        "label": "cache"
+      },
+      {
+        "from": "tenantapi",
+        "to": "blob",
+        "label": "files"
+      },
+      {
+        "from": "worker",
+        "to": "tenantdb",
+        "label": "jobs"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Secrets via Parameters\nvar dbPassword = builder.AddParameter(\"db-password\", secret: true);\nvar jwtSecret = builder.AddParameter(\"jwt-secret\", secret: true);\n\n// Infrastructure\nvar tenantDb = builder.AddPostgres(\"pg\", password: dbPassword)\n    .AddDatabase(\"tenantdb\");\nvar redis = builder.AddRedis(\"redis\");\nvar blobStorage = builder.AddAzureStorage(\"storage\")\n    .AddBlobs(\"blobs\");\n\n// Auth Service\nvar authService = builder.AddProject<Projects.AuthService>(\"auth\")\n    .WithReference(tenantDb)\n    .WithEnvironment(\"JWT_SECRET\", jwtSecret);\n\n// Tenant API\nvar tenantApi = builder.AddProject<Projects.TenantApi>(\"tenant-api\")\n    .WithReference(tenantDb)\n    .WithReference(redis)\n    .WithReference(blobStorage)\n    .WithReference(authService);\n\n// Background Worker\nbuilder.AddProject<Projects.BackgroundWorker>(\"worker\")\n    .WithReference(tenantDb)\n    .WithReference(redis);\n\n// Admin Portal\nbuilder.AddProject<Projects.AdminPortal>(\"admin\")\n    .WithReference(authService)\n    .WithReference(tenantApi);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "Parameters & Secrets",
+      "Azure Blob Storage",
+      "Health Checks",
+      "Connection Strings",
+      "Background Workers"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and follow World 3: Resource Wiring",
+    "explanation": {
+      "overview": "Multi-tenant SaaS platforms must balance shared infrastructure efficiency with tenant data isolation. This architecture uses a shared application tier with tenant-scoped database access \u2014 each API request is contextualized to the authenticated tenant, and database queries are automatically filtered.\n\nThe Auth Service handles tenant onboarding, user management, and JWT token issuance. Tokens include the tenant ID as a claim, which the Tenant API uses to scope all database operations. Redis caches tenant configuration (feature flags, plan limits, custom branding) to avoid database roundtrips on every request.\n\nAzure Blob Storage handles file uploads (documents, avatars, exports) with tenant-scoped containers for logical isolation. The Background Worker processes scheduled jobs like report generation, data exports, and subscription billing \u2014 all scoped to individual tenants.",
+      "whyAspire": "SaaS platforms require careful secret management (database passwords, JWT signing keys, API keys for payment providers) and multi-environment deployment (dev uses local containers, production uses Azure managed services). Aspire's AddParameter with secret: true ensures secrets are never logged or exposed in the dashboard, while the same AppHost code works across environments \u2014 AddPostgres uses a container locally but maps to Azure Database for PostgreSQL when published. AddAzureStorage similarly uses the Azurite emulator locally and real Azure Storage in production.",
+      "keyPatterns": [
+        {
+          "name": "Tenant Isolation",
+          "description": "Row-level security in the database ensures tenants never see each other's data. The JWT token carries the tenant context, and middleware automatically applies the scope to every query."
+        },
+        {
+          "name": "Secret Management",
+          "description": "Aspire Parameters handle secrets like database passwords and JWT keys. In development, they're prompted interactively or stored locally. In production, they map to Azure Key Vault or environment variables."
+        },
+        {
+          "name": "Local/Cloud Parity",
+          "description": "AddAzureStorage uses the Azurite emulator during development and real Azure Storage in production. No code changes needed \u2014 Aspire's publish model handles the swap."
+        },
+        {
+          "name": "Background Job Processing",
+          "description": "The worker service handles tenant-scoped background jobs (reports, exports, billing) using the same database connection and tenant context as the API tier."
+        }
+      ],
+      "scalingNotes": "For large tenants, consider database-per-tenant isolation (Aspire can dynamically add database resources). The Tenant API scales horizontally since tenant context comes from JWT tokens. Redis caching reduces database load for read-heavy tenant configuration queries."
+    }
+  },
+  {
+    "id": "apigateway",
+    "title": "\ud83d\udd00 API Gateway with YARP",
+    "category": "Enterprise",
+    "difficulty": "intermediate",
+    "description": "An enterprise API gateway architecture using YARP (Yet Another Reverse Proxy) to route and load-balance traffic across multiple backend microservices. Features centralized authentication, rate limiting with Redis, and independent service scaling.",
+    "services": [
+      {
+        "id": "spa",
+        "name": "SPA\nFrontend",
+        "type": "frontend",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "gateway",
+        "name": "YARP\nGateway",
+        "type": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "authapi",
+        "name": "Auth\nAPI",
+        "type": "api",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "usersapi",
+        "name": "Users\nAPI",
+        "type": "api",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "productsapi",
+        "name": "Products\nAPI",
+        "type": "api",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "usersdb",
+        "name": "Users\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 0
+      },
+      {
+        "id": "productsdb",
+        "name": "Products\nDB",
+        "type": "database",
+        "row": 2,
+        "col": 2
+      },
+      {
+        "id": "redis",
+        "name": "Redis\nRate Limit",
+        "type": "cache",
+        "row": 1,
+        "col": 1
+      }
+    ],
+    "connections": [
+      {
+        "from": "spa",
+        "to": "gateway",
+        "label": "HTTP"
+      },
+      {
+        "from": "gateway",
+        "to": "authapi",
+        "label": "auth"
+      },
+      {
+        "from": "gateway",
+        "to": "usersapi",
+        "label": "route"
+      },
+      {
+        "from": "gateway",
+        "to": "productsapi",
+        "label": "route"
+      },
+      {
+        "from": "gateway",
+        "to": "redis",
+        "label": "rate limit"
+      },
+      {
+        "from": "authapi",
+        "to": "usersdb",
+        "label": "queries"
+      },
+      {
+        "from": "authapi",
+        "to": "redis",
+        "label": "sessions"
+      },
+      {
+        "from": "usersapi",
+        "to": "usersdb",
+        "label": "queries"
+      },
+      {
+        "from": "productsapi",
+        "to": "productsdb",
+        "label": "queries"
+      }
+    ],
+    "code": "var builder = DistributedApplication.CreateBuilder(args);\n\n// Databases\nvar usersDb = builder.AddPostgres(\"pg-users\")\n    .AddDatabase(\"usersdb\");\nvar productsDb = builder.AddPostgres(\"pg-products\")\n    .AddDatabase(\"productsdb\");\nvar redis = builder.AddRedis(\"redis\");\n\n// Backend Microservices\nvar usersApi = builder.AddProject<Projects.UsersApi>(\"users-api\")\n    .WithReference(usersDb)\n    .WaitFor(usersDb);\n\nvar productsApi = builder.AddProject<Projects.ProductsApi>(\"products-api\")\n    .WithReference(productsDb)\n    .WaitFor(productsDb);\n\n// Auth API\nvar authApi = builder.AddProject<Projects.AuthApi>(\"auth-api\")\n    .WithReference(usersDb)\n    .WithReference(redis)\n    .WaitFor(redis);\n\n// YARP Gateway \u2014 routes, authenticates, rate-limits\nvar gateway = builder.AddProject<Projects.Gateway>(\"gateway\")\n    .WithReference(usersApi)\n    .WithReference(productsApi)\n    .WithReference(authApi)\n    .WithReference(redis)\n    .WaitFor(authApi);\n\n// SPA Frontend\nbuilder.AddNpmApp(\"spa\", \"../frontend\")\n    .WithReference(gateway)\n    .WithHttpEndpoint(env: \"PORT\")\n    .WaitFor(gateway);\n\nbuilder.Build().Run();",
+    "concepts": [
+      "YARP Reverse Proxy",
+      "Centralized Auth",
+      "Rate Limiting",
+      "Service Discovery",
+      "Database-per-Service"
+    ],
+    "tryPrompt": "Want to build this? Start with `aspire new` and explore the YARP Aspire integration",
+    "explanation": {
+      "overview": "The API Gateway pattern provides a single entry point for all client requests, handling cross-cutting concerns like authentication, rate limiting, and request routing before forwarding traffic to backend microservices. This architecture uses YARP (Yet Another Reverse Proxy) as the gateway implementation.\n\nYARP integrates natively with .NET and Aspire's service discovery. When the gateway receives a request for /api/users/*, it routes it to the Users API. Requests for /api/products/* go to the Products API. Authentication is handled centrally at the gateway level \u2014 the Auth API validates tokens and the gateway adds identity claims to forwarded requests, so backend services don't need to implement auth themselves.\n\nRedis serves dual duty: it stores session data for the Auth API and implements a sliding-window rate limiter at the gateway to prevent API abuse. The rate limiter uses Redis's atomic increment operations to ensure accurate counting across multiple gateway instances.",
+      "whyAspire": "YARP's configuration-based routing becomes even more powerful with Aspire's service discovery. Instead of hardcoding backend service URLs in YARP's routing config, WithReference automatically discovers them \u2014 meaning the same routing configuration works in local development, staging, and production. Aspire's dashboard shows gateway routing decisions in traces, making it easy to debug why a request went to the wrong service or was rate-limited.",
+      "keyPatterns": [
+        {
+          "name": "API Gateway",
+          "description": "A single entry point handles cross-cutting concerns (auth, rate limiting, CORS, logging) and routes requests to appropriate backend services. Clients only need to know one URL."
+        },
+        {
+          "name": "YARP Reverse Proxy",
+          "description": "YARP provides configuration-driven routing, load balancing, health checking, and header transformation. It integrates with Aspire's service discovery for automatic backend resolution."
+        },
+        {
+          "name": "Centralized Authentication",
+          "description": "Authentication is handled once at the gateway level. Backend services receive pre-authenticated requests with identity claims, simplifying their code and ensuring consistent auth policy."
+        },
+        {
+          "name": "Distributed Rate Limiting",
+          "description": "Redis-backed rate limiting works correctly across multiple gateway instances. Sliding window counters prevent API abuse while allowing legitimate burst traffic."
+        }
+      ],
+      "scalingNotes": "The gateway is stateless (session state in Redis, no local state) and scales horizontally. YARP supports weighted load balancing across backend replicas. Each backend service scales independently \u2014 the Products API might need more instances during a catalog update while the Users API stays small."
+    }
   }
 ]

@@ -5,6 +5,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { system, initColorMode } from './theme/aspireTheme';
 import App from './App';
+import './index.css';
 import './App.css';
 
 initColorMode();

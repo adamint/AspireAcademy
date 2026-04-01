@@ -82,7 +82,9 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
       <Flex align="center" gap="3">
         {isAuthenticated ? (
           <>
-            <XPProgressBar />
+            <Box data-tour="xp-bar">
+              <XPProgressBar />
+            </Box>
 
             {loginStreakDays > 0 && (
               <Text {...pixelFontProps} fontSize="10px" color="game.streak" whiteSpace="nowrap">

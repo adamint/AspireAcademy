@@ -79,7 +79,7 @@ export default function DashboardPage() {
   return (
     <Box maxW="1100px" mx="auto" p="6" display="flex" flexDirection="column" gap="6">
       {/* Welcome */}
-      <Heading as="h1" size="2xl" color="dark.text">
+      <Heading as="h1" size="xl" color="dark.text" {...pixelFontProps} lineHeight="1.8">
         {isAuthenticated
           ? `Welcome back, ${user?.displayName ?? user?.username ?? 'Learner'}!`
           : 'Explore the Curriculum'}

@@ -22,16 +22,46 @@ import type { ServiceNode, DiagramConnection } from '../components/common/archit
 
 // ─── Gallery Types ─────────────────────────────────────────────────────────────
 
+interface KeyPattern {
+  name: string;
+  description: string;
+}
+
+interface GalleryExplanation {
+  overview: string;
+  whyAspire: string;
+  keyPatterns: KeyPattern[];
+  scalingNotes: string;
+}
+
 interface GalleryEntry {
   id: string;
   title: string;
+  category: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
   description: string;
   services: ServiceNode[];
   connections: DiagramConnection[];
   code: string;
   concepts: string[];
   tryPrompt: string;
+  explanation: GalleryExplanation;
 }
+
+const CATEGORIES = [
+  { label: 'All', value: 'all', icon: '🏛️' },
+  { label: 'Web & Commerce', value: 'Web & Commerce', icon: '🌐' },
+  { label: 'AI & Intelligence', value: 'AI & Intelligence', icon: '🤖' },
+  { label: 'Data & Streaming', value: 'Data & Streaming', icon: '📊' },
+  { label: 'Event-Driven', value: 'Event-Driven', icon: '⚡' },
+  { label: 'Enterprise', value: 'Enterprise', icon: '🏢' },
+];
+
+const difficultyConfig = {
+  beginner: { label: 'Beginner', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.15)' },
+  intermediate: { label: 'Intermediate', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)' },
+  advanced: { label: 'Advanced', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)' },
+} as const;
 
 // ─── Clipboard Utility ─────────────────────────────────────────────────────────
 
@@ -475,6 +505,23 @@ function getFileIcon(fileName: string): string {
 
 // ─── Gallery Card Component ───────────────────────────────────────────────────
 
+function DifficultyBadge({ difficulty }: { difficulty: GalleryEntry['difficulty'] }) {
+  const config = difficultyConfig[difficulty];
+  return (
+    <Badge
+      fontSize="7px"
+      bg={config.bg}
+      color={config.color}
+      px="2"
+      py="0.5"
+      {...pixelFontProps}
+      borderRadius="sm"
+    >
+      {config.label}
+    </Badge>
+  );
+}
+
 function GalleryCard({
   entry,
   onClick,
@@ -495,9 +542,13 @@ function GalleryCard({
       }}
     >
       <Card.Body p="4" gap="3">
-        <Heading size="sm" color="dark.text" {...pixelFontProps} lineHeight="1.4">
-          {entry.title}
-        </Heading>
+        {/* Title row with difficulty badge */}
+        <Flex justify="space-between" align="flex-start" gap="2">
+          <Heading size="sm" color="dark.text" {...pixelFontProps} lineHeight="1.4" flex="1">
+            {entry.title}
+          </Heading>
+          <DifficultyBadge difficulty={entry.difficulty} />
+        </Flex>
 
         <Text fontSize="xs" color="dark.muted" lineHeight="1.5" lineClamp={2}>
           {entry.description}
@@ -518,33 +569,38 @@ function GalleryCard({
           />
         </Box>
 
-        {/* Concept tags */}
-        <Flex gap="1" flexWrap="wrap">
-          {entry.concepts.slice(0, 3).map((concept) => (
-            <Badge
-              key={concept}
-              fontSize="7px"
-              bg="aspire.100"
-              color="aspire.400"
-              px="2"
-              py="0.5"
-              {...pixelFontProps}
-            >
-              {concept}
-            </Badge>
-          ))}
-          {entry.concepts.length > 3 && (
-            <Badge
-              fontSize="7px"
-              bg="dark.surface"
-              color="dark.muted"
-              px="2"
-              py="0.5"
-              {...pixelFontProps}
-            >
-              +{entry.concepts.length - 3}
-            </Badge>
-          )}
+        {/* Bottom row: concept tags + service count */}
+        <Flex justify="space-between" align="center" gap="2">
+          <Flex gap="1" flexWrap="wrap" flex="1">
+            {entry.concepts.slice(0, 3).map((concept) => (
+              <Badge
+                key={concept}
+                fontSize="7px"
+                bg="aspire.100"
+                color="aspire.400"
+                px="2"
+                py="0.5"
+                {...pixelFontProps}
+              >
+                {concept}
+              </Badge>
+            ))}
+            {entry.concepts.length > 3 && (
+              <Badge
+                fontSize="7px"
+                bg="dark.surface"
+                color="dark.muted"
+                px="2"
+                py="0.5"
+                {...pixelFontProps}
+              >
+                +{entry.concepts.length - 3}
+              </Badge>
+            )}
+          </Flex>
+          <Text fontSize="9px" color="dark.muted" {...pixelFontProps} flexShrink={0}>
+            {entry.services.length} services
+          </Text>
         </Flex>
       </Card.Body>
     </Card.Root>
@@ -582,6 +638,18 @@ function GalleryDetail({
       <Heading size="lg" color="dark.text" {...pixelFontProps} mb="2" lineHeight="1.6">
         {entry.title}
       </Heading>
+
+      {/* Category + Difficulty row */}
+      <Flex gap="2" align="center" mb="3">
+        <Badge fontSize="8px" bg="dark.surface" color="dark.muted" px="3" py="1" {...pixelFontProps}>
+          {CATEGORIES.find(c => c.value === entry.category)?.icon} {entry.category}
+        </Badge>
+        <DifficultyBadge difficulty={entry.difficulty} />
+        <Text fontSize="8px" color="dark.muted" {...pixelFontProps}>
+          {entry.services.length} services · {entry.connections.length} connections
+        </Text>
+      </Flex>
+
       <Text fontSize="sm" color="dark.muted" mb="5" lineHeight="1.6" maxW="700px">
         {entry.description}
       </Text>
@@ -756,98 +824,73 @@ function GalleryDetail({
         {/* Explanation Tab */}
         <Tabs.Content value="explanation">
           <Card.Root {...retroCardProps} bg="dark.card" p="4">
-            <Card.Body gap="4">
+            <Card.Body gap="5">
+              {/* Architecture Overview */}
               <Box>
-                <Heading size="sm" mb="2" color="dark.text" {...pixelFontProps}>
-                  Services ({entry.services.length})
+                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+                  📖 Architecture Overview
                 </Heading>
-                <SimpleGrid columns={{ base: 1, md: 2 }} gap="2">
-                  {entry.services.map((svc) => {
-                    const colors = serviceTypeColors[svc.type];
-                    return (
-                      <Flex
-                        key={svc.id}
-                        align="center"
-                        gap="2"
-                        p="2"
-                        bg="dark.surface"
-                        borderRadius="sm"
-                        border="1px solid"
-                        borderColor="dark.border"
-                      >
-                        <Box
-                          w="8px"
-                          h="8px"
-                          bg={colors.border}
-                          borderRadius="sm"
-                          flexShrink={0}
-                        />
-                        <Text fontSize="xs" color="dark.text">
-                          {svc.name.replace('\n', ' ')}
-                        </Text>
-                        <Badge
-                          fontSize="7px"
-                          bg={colors.bg}
-                          color={colors.border}
-                          px="1.5"
-                          ml="auto"
-                        >
-                          {svc.type}
-                        </Badge>
-                      </Flex>
-                    );
-                  })}
-                </SimpleGrid>
+                <Box bg="dark.surface" borderRadius="sm" border="1px solid" borderColor="dark.border" p="4">
+                  {entry.explanation.overview.split('\n\n').map((paragraph, i) => (
+                    <Text key={i} fontSize="sm" color="dark.muted" lineHeight="1.7" mb={i < entry.explanation.overview.split('\n\n').length - 1 ? '3' : '0'}>
+                      {paragraph}
+                    </Text>
+                  ))}
+                </Box>
               </Box>
 
+              {/* Why Aspire? */}
               <Box>
-                <Heading size="sm" mb="2" color="dark.text" {...pixelFontProps}>
-                  Connections ({entry.connections.length})
+                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+                  ✨ Why Aspire?
                 </Heading>
-                <Flex direction="column" gap="1">
-                  {entry.connections.map((conn, i) => {
-                    const fromSvc = entry.services.find(
-                      (s) => s.id === conn.from,
-                    );
-                    const toSvc = entry.services.find((s) => s.id === conn.to);
-                    return (
-                      <Flex
-                        key={i}
-                        align="center"
-                        gap="2"
-                        p="1.5"
-                        fontSize="xs"
-                        color="dark.muted"
-                      >
-                        <Text color="dark.text">
-                          {fromSvc?.name.replace('\n', ' ')}
-                        </Text>
-                        <Text color="aspire.500">→</Text>
-                        <Text color="dark.text">
-                          {toSvc?.name.replace('\n', ' ')}
-                        </Text>
-                        {conn.label && (
-                          <Badge
-                            fontSize="7px"
-                            bg="aspire.100"
-                            color="aspire.400"
-                            px="1.5"
-                            ml="auto"
-                          >
-                            {conn.label}
-                          </Badge>
-                        )}
-                      </Flex>
-                    );
-                  })}
+                <Box
+                  bg="rgba(107, 79, 187, 0.08)"
+                  borderRadius="sm"
+                  border="2px solid"
+                  borderColor="aspire.300"
+                  p="4"
+                >
+                  <Text fontSize="sm" color="dark.muted" lineHeight="1.7">
+                    {entry.explanation.whyAspire}
+                  </Text>
+                </Box>
+              </Box>
+
+              {/* Key Architecture Patterns */}
+              <Box>
+                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+                  🏗️ Key Architecture Patterns
+                </Heading>
+                <Flex direction="column" gap="3">
+                  {entry.explanation.keyPatterns.map((pattern) => (
+                    <Box
+                      key={pattern.name}
+                      p="3"
+                      bg="dark.surface"
+                      borderRadius="sm"
+                      border="1px solid"
+                      borderColor="dark.border"
+                      borderLeft="3px solid"
+                      borderLeftColor="aspire.400"
+                    >
+                      <Text fontSize="xs" color="aspire.400" fontWeight="bold" {...pixelFontProps} mb="1">
+                        {pattern.name}
+                      </Text>
+                      <Text fontSize="sm" color="dark.muted" lineHeight="1.6">
+                        {pattern.description}
+                      </Text>
+                    </Box>
+                  ))}
                 </Flex>
               </Box>
 
+              {/* Aspire Concepts Used */}
               <Box>
-                <Heading size="sm" mb="2" color="dark.text" {...pixelFontProps}>
-                  Key Aspire Concepts
+                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+                  ⭐ Aspire Concepts Used
                 </Heading>
-                <Flex direction="column" gap="2">
+                <SimpleGrid columns={{ base: 1, md: 2 }} gap="2">
                   {entry.concepts.map((concept) => (
                     <Flex
                       key={concept}
@@ -859,15 +902,87 @@ function GalleryDetail({
                       border="1px solid"
                       borderColor="dark.border"
                     >
-                      <Text color="game.xpGold" fontSize="sm">
-                        ⭐
-                      </Text>
-                      <Text fontSize="xs" color="dark.text">
-                        {concept}
-                      </Text>
+                      <Text color="game.xpGold" fontSize="sm">⭐</Text>
+                      <Text fontSize="xs" color="dark.text">{concept}</Text>
                     </Flex>
                   ))}
-                </Flex>
+                </SimpleGrid>
+              </Box>
+
+              {/* Scaling Notes */}
+              <Box>
+                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+                  📈 Scaling Considerations
+                </Heading>
+                <Box
+                  bg="dark.surface"
+                  borderRadius="sm"
+                  border="1px solid"
+                  borderColor="dark.border"
+                  p="4"
+                >
+                  <Text fontSize="sm" color="dark.muted" lineHeight="1.7">
+                    {entry.explanation.scalingNotes}
+                  </Text>
+                </Box>
+              </Box>
+
+              {/* Services & Connections Summary */}
+              <Box>
+                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+                  🔌 Services & Connections
+                </Heading>
+                <SimpleGrid columns={{ base: 1, md: 2 }} gap="4">
+                  <Box>
+                    <Text fontSize="8px" color="dark.muted" {...pixelFontProps} mb="2">
+                      Services ({entry.services.length})
+                    </Text>
+                    <Flex direction="column" gap="1">
+                      {entry.services.map((svc) => {
+                        const colors = serviceTypeColors[svc.type];
+                        return (
+                          <Flex
+                            key={svc.id}
+                            align="center"
+                            gap="2"
+                            p="1.5"
+                            bg="dark.surface"
+                            borderRadius="sm"
+                          >
+                            <Box w="8px" h="8px" bg={colors.border} borderRadius="sm" flexShrink={0} />
+                            <Text fontSize="xs" color="dark.text">{svc.name.replace('\n', ' ')}</Text>
+                            <Badge fontSize="7px" bg={colors.bg} color={colors.border} px="1.5" ml="auto">
+                              {svc.type}
+                            </Badge>
+                          </Flex>
+                        );
+                      })}
+                    </Flex>
+                  </Box>
+                  <Box>
+                    <Text fontSize="8px" color="dark.muted" {...pixelFontProps} mb="2">
+                      Connections ({entry.connections.length})
+                    </Text>
+                    <Flex direction="column" gap="1">
+                      {entry.connections.map((conn, i) => {
+                        const fromSvc = entry.services.find((s) => s.id === conn.from);
+                        const toSvc = entry.services.find((s) => s.id === conn.to);
+                        return (
+                          <Flex key={i} align="center" gap="2" p="1.5" fontSize="xs" color="dark.muted">
+                            <Text color="dark.text">{fromSvc?.name.replace('\n', ' ')}</Text>
+                            <Text color="aspire.500">→</Text>
+                            <Text color="dark.text">{toSvc?.name.replace('\n', ' ')}</Text>
+                            {conn.label && (
+                              <Badge fontSize="7px" bg="aspire.100" color="aspire.400" px="1.5" ml="auto">
+                                {conn.label}
+                              </Badge>
+                            )}
+                          </Flex>
+                        );
+                      })}
+                    </Flex>
+                  </Box>
+                </SimpleGrid>
               </Box>
             </Card.Body>
           </Card.Root>
@@ -936,12 +1051,28 @@ function ServiceLegend() {
 
 export default function GalleryPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
 
   const { data: galleryEntries = [] } = useQuery<GalleryEntry[]>({
     queryKey: ['gallery'],
     queryFn: () => api.get('/gallery').then((r) => r.data),
     staleTime: 10 * 60_000,
   });
+
+  const filteredEntries = useMemo(
+    () => activeCategory === 'all'
+      ? galleryEntries
+      : galleryEntries.filter((e) => e.category === activeCategory),
+    [activeCategory, galleryEntries],
+  );
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: galleryEntries.length };
+    for (const entry of galleryEntries) {
+      counts[entry.category] = (counts[entry.category] ?? 0) + 1;
+    }
+    return counts;
+  }, [galleryEntries]);
 
   const selectedEntry = useMemo(
     () => galleryEntries.find((e) => e.id === selectedId) ?? null,
@@ -973,17 +1104,67 @@ export default function GalleryPage() {
           🏛️ Real World Gallery
         </Heading>
         <Text fontSize="sm" color="dark.muted" maxW="600px" mx="auto" lineHeight="1.6">
-          Explore production-ready Aspire architectures. Each example includes
-          an interactive diagram, complete AppHost code, and key concept breakdowns.
+          Explore production-ready Aspire architectures across {galleryEntries.length} real-world examples.
+          Each includes an interactive diagram, complete AppHost code, and in-depth explanations
+          of architecture patterns and Aspire concepts.
         </Text>
       </Box>
+
+      {/* Category Filter */}
+      <Flex
+        gap="2"
+        flexWrap="wrap"
+        justify="center"
+        mb="5"
+        p="2"
+        bg="dark.surface"
+        borderRadius="sm"
+        border="2px solid"
+        borderColor="dark.border"
+      >
+        {CATEGORIES.map((cat) => {
+          const isActive = activeCategory === cat.value;
+          const count = categoryCounts[cat.value] ?? 0;
+          return (
+            <Button
+              key={cat.value}
+              size="xs"
+              variant="ghost"
+              onClick={() => setActiveCategory(cat.value)}
+              bg={isActive ? 'aspire.200' : 'transparent'}
+              color={isActive ? 'aspire.400' : 'dark.muted'}
+              _hover={{ bg: isActive ? 'aspire.200' : 'dark.card' }}
+              {...pixelFontProps}
+              fontSize="9px"
+              px="3"
+              py="2"
+              borderRadius="sm"
+              transition="all 0.15s"
+            >
+              {cat.icon} {cat.label}
+              <Badge
+                ml="1.5"
+                fontSize="7px"
+                bg={isActive ? 'aspire.300' : 'dark.border'}
+                color={isActive ? 'aspire.500' : 'dark.muted'}
+                px="1.5"
+                borderRadius="full"
+                minW="18px"
+                textAlign="center"
+              >
+                {count}
+              </Badge>
+            </Button>
+          );
+        })}
+      </Flex>
 
       {/* Service Type Legend */}
       <ServiceLegend />
 
       {/* Gallery Grid */}
       <SimpleGrid columns={{ base: 1, md: 2 }} gap="4">
-        {galleryEntries.map((entry) => (
+        {filteredEntries.map((entry) => (
           <GalleryCard
             key={entry.id}
             entry={entry}
@@ -992,13 +1173,23 @@ export default function GalleryPage() {
         ))}
       </SimpleGrid>
 
+      {/* Empty state */}
+      {filteredEntries.length === 0 && galleryEntries.length > 0 && (
+        <Box textAlign="center" py="12">
+          <Text fontSize="xl" mb="2">🏗️</Text>
+          <Text fontSize="sm" color="dark.muted">
+            No architectures in this category yet.
+          </Text>
+        </Box>
+      )}
+
       {/* Footer */}
       <Box textAlign="center" mt="8">
         <Text fontSize="9px" color="dark.muted" {...pixelFontProps}>
-          All architectures use Aspire for orchestration
+          All architectures use Aspire for orchestration · {galleryEntries.length} examples across {CATEGORIES.length - 1} categories
         </Text>
         <Text fontSize="xs" color="dark.muted" mt="1">
-          Click any card to explore the full architecture diagram and AppHost code
+          Click any card to explore the full architecture diagram, AppHost code, and detailed explanation
         </Text>
       </Box>
     </Box>

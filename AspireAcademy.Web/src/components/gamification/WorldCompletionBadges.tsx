@@ -56,7 +56,7 @@ export default function WorldCompletionBadges({ worlds }: WorldCompletionBadgesP
                   <Text fontSize="20px" lineHeight="1">{world.icon}</Text>
                   <Text
                     {...pixelFontProps}
-                    fontSize="6px"
+                    fontSize="8px"
                     color={isComplete ? 'game.xpGold' : 'dark.muted'}
                     mt={1}
                   >

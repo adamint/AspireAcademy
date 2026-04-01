@@ -28,6 +28,8 @@ const config = defineConfig({
         },
       },
       fonts: {
+        body: { value: '"Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif' },
+        heading: { value: '"Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif' },
         pixel: { value: '"Press Start 2P", monospace' },
       },
     },

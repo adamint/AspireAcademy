@@ -4,6 +4,7 @@ import { Flex, Spinner, Text } from '@chakra-ui/react';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { AdminRoute } from './components/layout/AdminRoute';
 import { AppShell } from './components/layout/AppShell';
+import { pixelFontProps } from './theme/aspireTheme';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
@@ -34,7 +35,7 @@ function LazyFallback() {
     <Flex align="center" justify="center" h="100%" p="12" role="status" aria-label="Loading page">
       <Flex direction="column" align="center" gap="3">
         <Spinner size="lg" color="aspire.600" borderWidth="3px" aria-hidden="true" />
-        <Text fontSize="sm" color="aspire.500" fontFamily="pixel">
+        <Text fontSize="sm" color="aspire.500" {...pixelFontProps}>
           Loading...
         </Text>
       </Flex>
