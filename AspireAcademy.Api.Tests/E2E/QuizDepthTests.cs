@@ -26,17 +26,17 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
 
     private static async Task SelectFirstOptionAndSubmit(IPage page)
     {
-        var radio = page.Locator("input[type='radio']").First;
+        var radio = page.Locator("[role='radio']").First;
         if (await radio.IsVisibleAsync())
         {
-            await radio.ClickAsync(new() { Force = true });
+            await radio.ClickAsync();
         }
         else
         {
-            var checkbox = page.Locator("input[type='checkbox']").First;
+            var checkbox = page.Locator("[role='checkbox']").First;
             if (await checkbox.IsVisibleAsync())
             {
-                await checkbox.ClickAsync(new() { Force = true });
+                await checkbox.ClickAsync();
             }
         }
 
@@ -65,7 +65,7 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
             for (var attempt = 0; attempt < 10; attempt++)
             {
                 // Try each radio option on the current question
-                var radios = page.Locator("input[type='radio']");
+                var radios = page.Locator("[role='radio']");
                 var radioCount = await radios.CountAsync();
                 Console.WriteLine($"[DIAG] Attempt {attempt}: radioCount={radioCount}, url={page.Url}");
                 if (radioCount == 0)
@@ -84,7 +84,7 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
 
                     if (await submitBtn.IsDisabledAsync())
                     {
-                        await radios.Nth(i).ClickAsync(new() { Force = true });
+                        await radios.Nth(i).ClickAsync();
                     }
 
                     if (await submitBtn.IsEnabledAsync())
@@ -157,11 +157,11 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
             for (var attempt = 0; attempt < 10; attempt++)
             {
                 // Select the LAST radio option (more likely to be wrong)
-                var radios = page.Locator("input[type='radio']");
+                var radios = page.Locator("[role='radio']");
                 var radioCount = await radios.CountAsync();
                 if (radioCount > 0)
                 {
-                    await radios.Nth(radioCount - 1).ClickAsync(new() { Force = true });
+                    await radios.Nth(radioCount - 1).ClickAsync();
                 }
 
                 var submitBtn = page.GetByTestId("quiz-submit");
@@ -246,15 +246,15 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
                     var subBtn = page.GetByTestId("quiz-submit");
                     await Assertions.Expect(subBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
-                    var r = page.Locator("input[type='radio']").First;
+                    var r = page.Locator("[role='radio']").First;
                     if (await r.IsVisibleAsync())
                     {
-                        await r.ClickAsync(new() { Force = true });
+                        await r.ClickAsync();
                     }
 
                     await Assertions.Expect(subBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
                     await subBtn.ClickAsync();
-                    await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
+                    await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase)).First).ToBeVisibleAsync(new() { Timeout = 10_000 });
                     continue;
                 }
 
@@ -262,16 +262,16 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
                 var submitBtn = page.GetByTestId("quiz-submit");
                 if (await submitBtn.IsVisibleAsync())
                 {
-                    var radio = page.Locator("input[type='radio']").First;
+                    var radio = page.Locator("[role='radio']").First;
                     if (await radio.IsVisibleAsync())
                     {
-                        await radio.ClickAsync(new() { Force = true });
+                        await radio.ClickAsync();
                     }
 
                     if (await submitBtn.IsEnabledAsync())
                     {
                         await submitBtn.ClickAsync();
-                        await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
+                        await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase)).First).ToBeVisibleAsync(new() { Timeout = 10_000 });
                     }
                 }
 
@@ -340,10 +340,10 @@ public class QuizDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
                 var submitBtn = page.GetByTestId("quiz-submit");
                 if (await submitBtn.IsVisibleAsync())
                 {
-                    var radio = page.Locator("input[type='radio']").First;
+                    var radio = page.Locator("[role='radio']").First;
                     if (await radio.IsVisibleAsync())
                     {
-                        await radio.ClickAsync(new() { Force = true });
+                        await radio.ClickAsync();
                     }
 
                     if (await submitBtn.IsEnabledAsync())

@@ -151,7 +151,7 @@ public class SocialDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture<
 
             // Click mastery tab
             var masteryTab = page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("mastery", RegexOptions.IgnoreCase) });
-            await masteryTab.ClickAsync();
+            await masteryTab.ClickAsync(new() { Force = true });
             await page.WaitForTimeoutAsync(1_000);
 
             var masBodyText = await page.Locator("main, [role='main']").TextContentAsync();

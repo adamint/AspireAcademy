@@ -16,9 +16,9 @@ public class WhatsNewTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
             await page.GotoAsync(fixture.WebBaseUrl + "/whats-new");
             await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
             
-            // Look for timeline or version history content
-            var timeline = page.Locator("[data-testid='timeline'], .timeline, [data-testid='version-history'], .version-history, .whats-new");
-            await Assertions.Expect(timeline.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            // WhatsNew page renders stacked version cards — look for version pattern text
+            var versionText = page.GetByText(new Regex(@"v?\d+\.\d+", RegexOptions.IgnoreCase));
+            await Assertions.Expect(versionText.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

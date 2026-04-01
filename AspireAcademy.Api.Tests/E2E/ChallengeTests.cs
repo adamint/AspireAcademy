@@ -15,7 +15,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
         {
             var username = UniqueUser("chalmonaco");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.2.1", "1.2.2", "1.2.3", "1.2.4");
+            await UnlockFirstChallenge(page);
             await LoginUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
             await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });
@@ -31,7 +31,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
         {
             var username = UniqueUser("chalstarter");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.2.1", "1.2.2", "1.2.3", "1.2.4");
+            await UnlockFirstChallenge(page);
             await LoginUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
             await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });
@@ -48,7 +48,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
         {
             var username = UniqueUser("chalinstr");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.2.1", "1.2.2", "1.2.3", "1.2.4");
+            await UnlockFirstChallenge(page);
             await LoginUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
             await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });
@@ -65,7 +65,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
         {
             var username = UniqueUser("chaltests");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.2.1", "1.2.2", "1.2.3", "1.2.4");
+            await UnlockFirstChallenge(page);
             await LoginUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
             await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });
@@ -88,7 +88,7 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
         {
             var username = UniqueUser("chalhint");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.2.1", "1.2.2", "1.2.3", "1.2.4");
+            await UnlockFirstChallenge(page);
             await LoginUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
             await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });

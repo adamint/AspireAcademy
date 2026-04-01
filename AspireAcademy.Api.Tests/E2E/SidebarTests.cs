@@ -17,7 +17,7 @@ public class SidebarTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
             await RegisterUser(page, username);
             var sidebar = page.GetByRole(AriaRole.Navigation);
             await Assertions.Expect(sidebar.GetByText("Worlds")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(sidebar.GetByText("The Distributed Problem")).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -31,9 +31,9 @@ public class SidebarTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
             var username = UniqueUser("sideexpand");
             await RegisterUser(page, username);
             var sidebar = page.GetByRole(AriaRole.Navigation);
-            await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(sidebar.GetByText("The Distributed Problem")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await sidebar.GetByText("The Distributed Problem").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("Why Distributed Apps Are Hard")).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -47,13 +47,13 @@ public class SidebarTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
             var username = UniqueUser("sidecollapse");
             await RegisterUser(page, username);
             var sidebar = page.GetByRole(AriaRole.Navigation);
-            await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(sidebar.GetByText("The Distributed Problem")).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
-            await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await sidebar.GetByText("The Distributed Problem").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("Why Distributed Apps Are Hard")).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
-            await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).Not.ToBeVisibleAsync(new() { Timeout = 3_000 });
+            await sidebar.GetByText("The Distributed Problem").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("Why Distributed Apps Are Hard")).Not.ToBeVisibleAsync(new() { Timeout = 3_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -67,10 +67,10 @@ public class SidebarTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
             var username = UniqueUser("sidenav");
             await RegisterUser(page, username);
             var sidebar = page.GetByRole(AriaRole.Navigation);
-            await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
-            await sidebar.GetByText("Why Aspire?").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("The Distributed Problem")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await sidebar.GetByText("The Distributed Problem").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("Why Distributed Apps Are Hard")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await sidebar.GetByText("Why Distributed Apps Are Hard").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }

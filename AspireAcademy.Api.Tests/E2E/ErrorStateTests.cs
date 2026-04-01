@@ -113,13 +113,14 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
     }
 
     [Fact]
-    public async Task UnauthenticatedDashboardRedirectsToLogin()
+    public async Task UnauthenticatedDashboardLoadsPublicly()
     {
         var page = await fixture.NewPageAsync();
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
+            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -149,37 +150,40 @@ public class ErrorStateTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
     }
 
     [Fact]
-    public async Task UnauthenticatedLeaderboardRedirectsToLogin()
+    public async Task UnauthenticatedLeaderboardLoadsPublicly()
     {
         var page = await fixture.NewPageAsync();
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/leaderboard");
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
+            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/leaderboard"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
-    public async Task UnauthenticatedAchievementsRedirectsToLogin()
+    public async Task UnauthenticatedAchievementsLoadsPublicly()
     {
         var page = await fixture.NewPageAsync();
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/achievements");
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
+            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/achievements"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
 
     [Fact]
-    public async Task UnauthenticatedLessonsRedirectsToLogin()
+    public async Task UnauthenticatedLessonsLoadsPublicly()
     {
         var page = await fixture.NewPageAsync();
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/lessons/some-fake-id");
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
+            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

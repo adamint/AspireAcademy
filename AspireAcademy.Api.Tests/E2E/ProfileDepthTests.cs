@@ -60,7 +60,7 @@ public class ProfileDepthTests(AppHostPlaywrightFixture fixture) : IClassFixture
             Assert.Contains("Total XP", statsText);
 
             // Lessons count should show at least 1
-            await Assertions.Expect(page.GetByText("Lessons")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(page.GetByTestId("profile-stats").GetByText("Lessons")).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

@@ -102,7 +102,7 @@ public class FriendsTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
             await searchInput.FillAsync(user2);
             await Assertions.Expect(page.GetByText("Search Results")).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
-            var addBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("add", RegexOptions.IgnoreCase) });
+            var addBtn = page.GetByRole(AriaRole.Button, new() { Name = "Add", Exact = true });
             if (await addBtn.IsVisibleAsync())
             {
                 await addBtn.First.ClickAsync();

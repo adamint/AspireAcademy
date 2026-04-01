@@ -64,18 +64,18 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
             var submitBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) });
             await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
-            var radio = page.Locator("input[type='radio']").First;
+            var radio = page.Locator("[role='radio']").First;
             if (await radio.IsVisibleAsync())
             {
-                await radio.ClickAsync(new() { Force = true });
+                await radio.ClickAsync();
                 await Assertions.Expect(submitBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
                 return;
             }
 
-            var checkbox = page.Locator("input[type='checkbox']").First;
+            var checkbox = page.Locator("[role='checkbox']").First;
             if (await checkbox.IsVisibleAsync())
             {
-                await checkbox.ClickAsync(new() { Force = true });
+                await checkbox.ClickAsync();
                 await Assertions.Expect(submitBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
             }
         }
@@ -98,16 +98,16 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
             }
 
             var submitBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) });
-            var radio = page.Locator("input[type='radio']").First;
+            var radio = page.Locator("[role='radio']").First;
             if (await radio.IsVisibleAsync())
             {
-                await radio.ClickAsync(new() { Force = true });
+                await radio.ClickAsync();
             }
 
             await Assertions.Expect(submitBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
             await submitBtn.ClickAsync();
 
-            await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase)).First).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("next question|see results", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
         finally { await fixture.ClosePageAsync(page); }

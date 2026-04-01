@@ -63,19 +63,19 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture) : IClassFixt
 
             // Step 6: Dashboard shows world cards
             await Assertions.Expect(page.GetByText("🌍 Your Worlds")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await Assertions.Expect(page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByRole(AriaRole.Main).GetByText("The Distributed Problem").First).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Step 7: XP bar shows Level 1
             await Assertions.Expect(page.GetByText("Lvl 1")).ToBeVisibleAsync(new() { Timeout = 5_000 });
             await Assertions.Expect(page.Locator(".xp-bar-track")).ToBeVisibleAsync();
 
             // Step 8: Click world card → see module list
-            await page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations").ClickAsync();
+            await page.GetByRole(AriaRole.Main).GetByText("The Distributed Problem").First.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
             await Assertions.Expect(page.GetByText(new Regex("back to dashboard", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Step 9: First module with lessons visible
-            await Assertions.Expect(page.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByText("Why Distributed Apps Are Hard")).ToBeVisibleAsync(new() { Timeout = 10_000 });
             var lessonItems = page.Locator("[role='button']").Filter(new() { HasText = "XP" });
             await Assertions.Expect(lessonItems.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
             Assert.True(await lessonItems.CountAsync() >= 1);
@@ -246,9 +246,9 @@ public class FullUserJourneyTests(AppHostPlaywrightFixture fixture) : IClassFixt
             await Assertions.Expect(page.GetByText("🎖️ Achievements")).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Step 29: Sidebar world dropdown expands
-            await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 5_000 });
-            await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(sidebar.GetByText("The Distributed Problem")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await sidebar.GetByText("The Distributed Problem").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("Why Distributed Apps Are Hard")).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
             // Step 30: Theme toggle switches theme
             var themeBtn = page.GetByLabel("Toggle color mode");

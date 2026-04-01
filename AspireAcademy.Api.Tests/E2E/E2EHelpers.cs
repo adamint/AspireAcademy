@@ -67,13 +67,24 @@ internal static class E2EHelpers
                 resp.Url.Contains("/api/auth/register") && resp.Status > 0,
                 new() { Timeout = 15_000 });
 
-            await page.GetByRole(AriaRole.Button, new() { Name = "Create Account" }).ClickAsync();
+            await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("create.*account", RegexOptions.IgnoreCase) }).ClickAsync();
 
             try
             {
                 var response = await responseTask;
                 if (response.Ok)
                 {
+                    // Handle persona selection step — skip it
+                    var skipButton = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("skip", RegexOptions.IgnoreCase) });
+                    try
+                    {
+                        await skipButton.WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 5_000 });
+                        await skipButton.ClickAsync();
+                    }
+                    catch
+                    {
+                        // Persona step may not appear if already selected
+                    }
                     await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 15_000 });
                     return;
                 }
@@ -195,12 +206,18 @@ internal static class E2EHelpers
 
     public static async Task ClearAuth(IPage page)
     {
+        // Ensure we're on the app origin so localStorage is accessible
+        if (page.Url.StartsWith("about:") || !page.Url.StartsWith("http"))
+        {
+            await page.GotoAsync(WebBaseUrl + "/login");
+            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+        }
         await page.EvaluateAsync("() => localStorage.removeItem('aspire-learn-auth')");
     }
 
-    public static async Task NavigateToWorld(IPage page, string worldName = "Aspire Foundations")
+    public static async Task NavigateToWorld(IPage page, string worldName = "The Distributed Problem")
     {
-        await page.GetByRole(AriaRole.Main).GetByText(worldName).ClickAsync();
+        await page.GetByRole(AriaRole.Main).GetByText(worldName).First.ClickAsync();
         await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
         await Assertions.Expect(page.GetByText(new Regex("back to dashboard", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
     }
@@ -220,7 +237,7 @@ internal static class E2EHelpers
         await ExpectDashboard(page);
     }
 
-    public static async Task LoginAndGoToWorld(IPage page, string username, string worldName = "Aspire Foundations")
+    public static async Task LoginAndGoToWorld(IPage page, string username, string worldName = "The Distributed Problem")
     {
         await LoginUser(page, username);
         await ExpectDashboard(page);

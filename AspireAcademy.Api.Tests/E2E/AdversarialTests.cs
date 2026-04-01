@@ -65,7 +65,13 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/register");
-            await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("create account", RegexOptions.IgnoreCase) }).ClickAsync();
+            await page.GetByTestId("register-form").WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 10_000 });
+            // Fill with values that pass native required/type validation but fail custom validation
+            await page.Locator("#reg-user").FillAsync("ab");
+            await page.Locator("#reg-email").FillAsync("x@y");
+            await page.Locator("#reg-pass").FillAsync("abc");
+            await page.Locator("#reg-confirm").FillAsync("def");
+            await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("create.*account", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("username must be", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
             await Assertions.Expect(page.GetByText(new Regex("valid email", RegexOptions.IgnoreCase))).ToBeVisibleAsync();
             await Assertions.Expect(page.GetByText(new Regex("password must be", RegexOptions.IgnoreCase))).ToBeVisibleAsync();
@@ -80,7 +86,13 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/register");
-            await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("create account", RegexOptions.IgnoreCase) }).ClickAsync();
+            await page.GetByTestId("register-form").WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 10_000 });
+            // Fill with invalid values to trigger custom validation
+            await page.Locator("#reg-user").FillAsync("ab");
+            await page.Locator("#reg-email").FillAsync("x@y");
+            await page.Locator("#reg-pass").FillAsync("abc");
+            await page.Locator("#reg-confirm").FillAsync("def");
+            await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("create.*account", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("username must be", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
             await page.Locator("#reg-user").FillAsync("valid_username");
@@ -96,11 +108,12 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/register");
+            await page.GetByTestId("register-form").WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 10_000 });
             await page.Locator("#reg-user").FillAsync("valid_user");
             await page.Locator("#reg-email").FillAsync("valid@test.com");
             await page.Locator("#reg-pass").FillAsync("TestPassword1!");
             await page.Locator("#reg-confirm").FillAsync("DifferentPassword1!");
-            await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("create account", RegexOptions.IgnoreCase) }).ClickAsync();
+            await page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("create.*account", RegexOptions.IgnoreCase) }).ClickAsync();
             await Assertions.Expect(page.GetByText(new Regex("passwords do not match", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -136,7 +149,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<
             await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             await ClearAuth(page);
-            await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
+            await page.GotoAsync(fixture.WebBaseUrl + "/profile");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("login"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }

@@ -52,11 +52,11 @@ public class ErrorHandlingTests(AppHostPlaywrightFixture fixture) : IClassFixtur
         try
         {
             // Navigate to a protected page without authentication
-            await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
+            await page.GotoAsync(fixture.WebBaseUrl + "/profile");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
 
-            // Also verify lessons redirect
-            await page.GotoAsync(fixture.WebBaseUrl + "/lessons/1.1.1");
+            // Also verify friends redirects (protected route)
+            await page.GotoAsync(fixture.WebBaseUrl + "/friends");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }

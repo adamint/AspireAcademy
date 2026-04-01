@@ -16,7 +16,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             var username = UniqueUser("dash");
             await RegisterUser(page, username);
             await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 15_000 });
-            await Assertions.Expect(page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByRole(AriaRole.Main).GetByText("The Distributed Problem").First).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -30,7 +30,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             var username = UniqueUser("dashclick");
             await RegisterUser(page, username);
             await Assertions.Expect(page.GetByText(new Regex("welcome back", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await page.GetByRole(AriaRole.Main).GetByText("Aspire Foundations").ClickAsync();
+            await page.GetByRole(AriaRole.Main).GetByText("The Distributed Problem").First.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -59,7 +59,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             var username = UniqueUser("module");
             await RegisterUser(page, username);
             await NavigateToWorld(page);
-            await Assertions.Expect(page.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("Why Distributed Apps Are Hard", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 10_000 });
             var lessonItems = page.Locator("[role='button']").Filter(new() { HasText = "XP" });
             Assert.True(await lessonItems.CountAsync() >= 1);
         }

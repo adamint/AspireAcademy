@@ -50,10 +50,15 @@ public class SettingsTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
             await RegisterUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/settings");
             
-            // Verify change password section has inputs
+            // Verify change password section exists
             await Assertions.Expect(page.GetByText(new Regex("password", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
             
-            // Look for password input fields
+            // Click the change password button to open the dialog
+            var changePasswordBtn = page.GetByLabel(new Regex("change.*password", RegexOptions.IgnoreCase));
+            await Assertions.Expect(changePasswordBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await changePasswordBtn.ClickAsync();
+            
+            // Now verify password inputs appear in the dialog
             var passwordInputs = page.Locator("input[type='password']");
             await Assertions.Expect(passwordInputs.First).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }

@@ -16,9 +16,9 @@ public class NavigationDepthTests(AppHostPlaywrightFixture fixture) : IClassFixt
             var username = UniqueUser("navworld2");
             await RegisterUser(page, username);
             var sidebar = page.GetByRole(AriaRole.Navigation);
-            await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(sidebar.GetByText("The Distributed Problem")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await sidebar.GetByText("The Distributed Problem").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("Why Distributed Apps Are Hard")).ToBeVisibleAsync(new() { Timeout = 5_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -32,10 +32,10 @@ public class NavigationDepthTests(AppHostPlaywrightFixture fixture) : IClassFixt
             var username = UniqueUser("navmod2");
             await RegisterUser(page, username);
             var sidebar = page.GetByRole(AriaRole.Navigation);
-            await Assertions.Expect(sidebar.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await sidebar.GetByText("Aspire Foundations").ClickAsync();
-            await Assertions.Expect(sidebar.GetByText("Why Aspire?")).ToBeVisibleAsync(new() { Timeout = 5_000 });
-            await sidebar.GetByText("Why Aspire?").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("The Distributed Problem")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await sidebar.GetByText("The Distributed Problem").ClickAsync();
+            await Assertions.Expect(sidebar.GetByText("Why Distributed Apps Are Hard")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await sidebar.GetByText("Why Distributed Apps Are Hard").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -57,13 +57,14 @@ public class NavigationDepthTests(AppHostPlaywrightFixture fixture) : IClassFixt
     }
 
     [Fact]
-    public async Task DeepLinkLessonUnauthenticated_RedirectsToLogin()
+    public async Task DeepLinkLessonUnauthenticated_LoadsPublicly()
     {
         var page = await fixture.NewPageAsync();
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/lessons/1.1.1");
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/login"), new() { Timeout = 10_000 });
+            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

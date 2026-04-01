@@ -14,7 +14,7 @@ public class HomePageTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
         try
         {
             await page.GotoAsync(fixture.WebBaseUrl + "/");
-            await Assertions.Expect(page.GetByRole(AriaRole.Heading).GetByText("ASPIRE LEARN")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByTestId("hero-title")).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -28,9 +28,10 @@ public class HomePageTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
             await page.GotoAsync(fixture.WebBaseUrl + "/");
             await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
             
-            // Wait for world cards to be visible and verify there are at least 8
-            var worldCards = page.Locator("[data-testid*='world-card'], .world-card, [data-world-id], [data-testid='home-world-card']");
-            await Assertions.Expect(worldCards.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            // Wait for world cards to be visible inside the worlds grid
+            var worldsGrid = page.GetByTestId("worlds-grid");
+            await Assertions.Expect(worldsGrid).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            var worldCards = worldsGrid.Locator("> *");
             var count = await worldCards.CountAsync();
             Assert.True(count >= 1, $"Expected at least 1 world card, found {count}");
         }
@@ -46,8 +47,10 @@ public class HomePageTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
             await page.GotoAsync(fixture.WebBaseUrl + "/");
             await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
             
-            // Find first clickable world card
-            var worldCard = page.Locator("[data-testid*='world-card'], .world-card, [data-world-id], [data-testid='home-world-card']").First;
+            // Find first clickable world card in the worlds grid
+            var worldsGrid = page.GetByTestId("worlds-grid");
+            await Assertions.Expect(worldsGrid).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            var worldCard = worldsGrid.Locator("> *").First;
             await Assertions.Expect(worldCard).ToBeVisibleAsync(new() { Timeout = 10_000 });
             
             await worldCard.ClickAsync();
@@ -121,9 +124,9 @@ public class HomePageTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
         var page = await fixture.NewPageAsync();
         try
         {
-            // Intercept the achievements API call to verify it is made
+            // Intercept the worlds API call (home page fetches worlds, not achievements)
             var apiCalled = false;
-            await page.RouteAsync("**/api/achievements", async route =>
+            await page.RouteAsync("**/api/worlds", async route =>
             {
                 apiCalled = true;
                 await route.ContinueAsync();
@@ -132,7 +135,7 @@ public class HomePageTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
             await page.GotoAsync(fixture.WebBaseUrl + "/");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
 
-            Assert.True(apiCalled, "HomePage should fetch achievements from /api/achievements");
+            Assert.True(apiCalled, "HomePage should fetch worlds from /api/worlds");
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -144,7 +147,7 @@ public class HomePageTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
         try
         {
             var apiCalled = false;
-            await page.RouteAsync("**/api/leaderboard**", async route =>
+            await page.RouteAsync("**/api/personas", async route =>
             {
                 apiCalled = true;
                 await route.ContinueAsync();
@@ -153,7 +156,7 @@ public class HomePageTests(AppHostPlaywrightFixture fixture) : IClassFixture<App
             await page.GotoAsync(fixture.WebBaseUrl + "/");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
 
-            Assert.True(apiCalled, "HomePage should fetch leaderboard from /api/leaderboard");
+            Assert.True(apiCalled, "HomePage should fetch personas from /api/personas");
         }
         finally { await fixture.ClosePageAsync(page); }
     }

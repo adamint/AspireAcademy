@@ -183,10 +183,10 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
                 }
 
                 // Select first radio option
-                var radio = page.Locator("input[type='radio']").First;
+                var radio = page.Locator("[role='radio']").First;
                 if (await radio.IsVisibleAsync())
                 {
-                    await radio.ClickAsync(new() { Force = true });
+                    await radio.ClickAsync();
                 }
 
                 // Submit answer

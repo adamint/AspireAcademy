@@ -101,8 +101,8 @@ public class NavigationTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             var username = UniqueUser("navworld");
             await RegisterUser(page, username);
             var main = page.GetByRole(AriaRole.Main);
-            await Assertions.Expect(main.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await main.GetByText("Aspire Foundations").ClickAsync();
+            await Assertions.Expect(main.GetByText("The Distributed Problem").First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await main.GetByText("The Distributed Problem").First.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"));
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -117,8 +117,8 @@ public class NavigationTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             var username = UniqueUser("navback");
             await RegisterUser(page, username);
             var main = page.GetByRole(AriaRole.Main);
-            await Assertions.Expect(main.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await main.GetByText("Aspire Foundations").ClickAsync();
+            await Assertions.Expect(main.GetByText("The Distributed Problem").First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await main.GetByText("The Distributed Problem").First.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
             await page.GetByText("Back to Dashboard").ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"));
@@ -150,8 +150,8 @@ public class NavigationTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             var username = UniqueUser("navdeep");
             await RegisterUser(page, username);
             var main = page.GetByRole(AriaRole.Main);
-            await Assertions.Expect(main.GetByText("Aspire Foundations")).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await main.GetByText("Aspire Foundations").ClickAsync();
+            await Assertions.Expect(main.GetByText("The Distributed Problem").First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await main.GetByText("The Distributed Problem").First.ClickAsync();
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
             var worldUrl = page.Url;
 
