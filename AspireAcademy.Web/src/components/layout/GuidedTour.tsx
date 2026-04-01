@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
 import { pixelFontProps } from '../../theme/aspireTheme';
+import { TOUR_STORAGE_KEY } from './tourUtils';
 
 /* ─── Tour Step Definition ──────────────────────────────────────────────────── */
 
@@ -51,7 +52,6 @@ const TOUR_STEPS: TourStep[] = [
   },
 ];
 
-const TOUR_STORAGE_KEY = 'aspire-learn-tour-completed';
 const APPSHELL_ROUTES = ['/dashboard', '/worlds', '/playground', '/gallery', '/concept-map', '/leaderboard', '/achievements', '/weekly-challenge', '/whats-new', '/personas'];
 
 /* ─── Positioning Logic ─────────────────────────────────────────────────────── */
@@ -147,64 +147,6 @@ export function GuidedTour() {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const TOOLTIP_W = 340;
 
-  // Show tour on first visit to any AppShell route
-  useEffect(() => {
-    const completed = localStorage.getItem(TOUR_STORAGE_KEY);
-    if (completed) return;
-    const isAppShellRoute = APPSHELL_ROUTES.some(r => location.pathname.startsWith(r));
-    if (!isAppShellRoute) return;
-
-    const timer = setTimeout(() => setActive(true), 1000);
-    return () => clearTimeout(timer);
-  }, [location.pathname]);
-
-  // Reposition on step change or window resize
-  const reposition = useCallback(() => {
-    if (!active) return;
-    const step = TOUR_STEPS[stepIndex];
-    if (!step) return;
-
-    const el = document.querySelector(step.target);
-    if (!el) {
-      if (stepIndex < TOUR_STEPS.length - 1) setStepIndex(s => s + 1);
-      else completeTour();
-      return;
-    }
-
-    const r = el.getBoundingClientRect();
-    setRect(r);
-
-    const tooltipH = tooltipRef.current?.offsetHeight ?? 220;
-    const p = calcPosition(r, step.placement, TOOLTIP_W, tooltipH);
-
-    // Clamp to viewport
-    p.left = Math.max(12, Math.min(p.left, window.innerWidth - TOOLTIP_W - 12));
-    p.top = Math.max(12, Math.min(p.top, window.innerHeight - tooltipH - 12));
-    setPos(p);
-  }, [active, stepIndex]);
-
-  useEffect(() => {
-    reposition();
-  }, [reposition]);
-
-  useEffect(() => {
-    if (!active) return;
-    window.addEventListener('resize', reposition);
-    return () => window.removeEventListener('resize', reposition);
-  }, [active, reposition]);
-
-  // Keyboard support
-  useEffect(() => {
-    if (!active) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') completeTour();
-      else if (e.key === 'ArrowRight' || e.key === 'Enter') nextStep();
-      else if (e.key === 'ArrowLeft' && stepIndex > 0) prevStep();
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [active, stepIndex]);
-
   const completeTour = useCallback(() => {
     localStorage.setItem(TOUR_STORAGE_KEY, 'true');
     setActive(false);
@@ -226,6 +168,59 @@ export function GuidedTour() {
   const prevStep = useCallback(() => {
     if (stepIndex > 0) goToStep(stepIndex - 1);
   }, [stepIndex, goToStep]);
+
+  // Show tour on first visit to any AppShell route
+  useEffect(() => {
+    const completed = localStorage.getItem(TOUR_STORAGE_KEY);
+    if (completed) return;
+    const isAppShellRoute = APPSHELL_ROUTES.some(r => location.pathname.startsWith(r));
+    if (!isAppShellRoute) return;
+
+    const timer = setTimeout(() => setActive(true), 1000);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  // Reposition on step change or resize
+  useEffect(() => {
+    if (!active) return;
+    const step = TOUR_STEPS[stepIndex];
+    if (!step) return;
+
+    function doReposition() {
+      const el = document.querySelector(step.target);
+      if (!el) {
+        if (stepIndex < TOUR_STEPS.length - 1) setStepIndex(s => s + 1);
+        else completeTour();
+        return;
+      }
+
+      const r = el.getBoundingClientRect();
+      setRect(r);
+
+      const tooltipH = tooltipRef.current?.offsetHeight ?? 220;
+      const p = calcPosition(r, step.placement, TOOLTIP_W, tooltipH);
+
+      p.left = Math.max(12, Math.min(p.left, window.innerWidth - TOOLTIP_W - 12));
+      p.top = Math.max(12, Math.min(p.top, window.innerHeight - tooltipH - 12));
+      setPos(p);
+    }
+
+    doReposition();
+    window.addEventListener('resize', doReposition);
+    return () => window.removeEventListener('resize', doReposition);
+  }, [active, stepIndex, completeTour]);
+
+  // Keyboard support
+  useEffect(() => {
+    if (!active) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') completeTour();
+      else if (e.key === 'ArrowRight' || e.key === 'Enter') nextStep();
+      else if (e.key === 'ArrowLeft') prevStep();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [active, completeTour, nextStep, prevStep]);
 
   if (!active || !pos) return null;
 
@@ -358,14 +353,4 @@ export function GuidedTour() {
       </Box>
     </>
   );
-}
-
-/** Re-trigger the tour (called from Settings) */
-export function resetTour() {
-  localStorage.removeItem(TOUR_STORAGE_KEY);
-}
-
-/** Check if tour has been completed */
-export function isTourCompleted(): boolean {
-  return localStorage.getItem(TOUR_STORAGE_KEY) === 'true';
 }

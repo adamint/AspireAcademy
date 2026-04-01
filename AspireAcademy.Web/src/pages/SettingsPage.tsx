@@ -11,7 +11,7 @@ import { useSettingsStore, type EditorFontSize } from '../store/settingsStore';
 import { extractErrorMessage } from '../utils/errorHandler';
 import { useColorMode } from '../hooks/useColorMode';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
-import { resetTour } from '../components/layout/GuidedTour';
+import { resetTour } from '../components/layout/tourUtils';
 import type { PersonaSummary } from '../types';
 
 function SettingSwitch({ label, checked, onChange }: {
