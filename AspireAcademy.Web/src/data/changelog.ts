@@ -11,6 +11,26 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.4.0',
+    date: '2026-04-01',
+    title: 'Gallery Overhaul, Guided Tour & Style Fixes',
+    highlights: ['12 architecture examples across 5 categories', 'Guided tour for new users', 'Font & style consistency fixes'],
+    entries: [
+      { type: 'feature', text: 'Gallery expanded from 6 to 12 architecture examples organized into 5 categories (Web, AI, Data, Event-Driven, Enterprise)' },
+      { type: 'feature', text: 'Category filter bar with count badges and difficulty levels on all gallery cards' },
+      { type: 'feature', text: 'Rich explanation tab with architecture overview, Why Aspire section, key patterns, and scaling notes' },
+      { type: 'feature', text: 'Guided tour for first-time users: 5-step walkthrough with spotlight overlay, keyboard navigation, and progress dots' },
+      { type: 'feature', text: 'Restart Tour button in Settings page' },
+      { type: 'fix', text: 'Fixed font system: added body/heading fonts to Chakra theme to prevent Times New Roman fallback' },
+      { type: 'fix', text: 'Removed conflicting #root and h1/h2 CSS styles from index.css' },
+      { type: 'fix', text: 'Fixed sidebar external links using pixel font at unreadable sizes' },
+      { type: 'fix', text: 'Fixed 6px pixel font in WorldCompletionBadges' },
+      { type: 'improvement', text: 'Standardized all sidebar section headers to use pixelFontProps theme helper' },
+      { type: 'improvement', text: 'Dashboard heading now uses pixel font to match other page headings' },
+      { type: 'improvement', text: 'Form elements now inherit body font via CSS' },
+    ]
+  },
+  {
     version: '1.3.5',
     date: '2026-03-30',
     title: 'Deployment Resource Group Default',
