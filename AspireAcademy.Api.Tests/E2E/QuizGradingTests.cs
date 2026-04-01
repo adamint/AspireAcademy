@@ -59,7 +59,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
     /// </summary>
     private static async Task<bool> SelectRadioByOptionId(IPage page, string optionId)
     {
-        var radios = page.Locator("[role='radio']");
+        var radios = page.Locator("[data-scope='radio-group'][data-part='item'], [data-scope='checkbox'][data-part='item']");
         var radioCount = await radios.CountAsync();
         for (var i = 0; i < radioCount; i++)
         {
@@ -163,7 +163,7 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
             var correctIds = await GetCorrectOptionIdsForCurrentQuestion(page, token, "1.1.3", questionId);
 
             // Select a wrong radio (one that is NOT in correctIds) — match by option ID value
-            var radios = page.Locator("[role='radio']");
+            var radios = page.Locator("[data-scope='radio-group'][data-part='item'], [data-scope='checkbox'][data-part='item']");
             var radioCount = await radios.CountAsync();
             var selectedWrong = false;
             for (var i = radioCount - 1; i >= 0; i--)
@@ -266,13 +266,14 @@ public class QuizGradingTests(AppHostPlaywrightFixture fixture) : IClassFixture<
                 }
 
                 // Try to select correct radio by matching value against our map
-                var radios = page.Locator("[role='radio']");
+                var radios = page.Locator("[data-scope='radio-group'][data-part='item'], [data-scope='checkbox'][data-part='item']");
                 var radioCount = await radios.CountAsync();
                 var clickedCorrect = false;
 
                 for (var i = 0; i < radioCount; i++)
                 {
-                    var value = await radios.Nth(i).GetAttributeAsync("value");
+                    var value = await radios.Nth(i).GetAttributeAsync("data-value")
+                             ?? await radios.Nth(i).GetAttributeAsync("value");
                     if (correctAnswerMap.Values.Any(ids => ids.Contains(value)))
                     {
                         await radios.Nth(i).ClickAsync();

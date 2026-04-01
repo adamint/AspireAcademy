@@ -64,7 +64,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
             var submitBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) });
             await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
-            var radio = page.Locator("[role='radio']").First;
+            var radio = page.Locator("[data-scope='radio-group'][data-part='item'], [data-scope='checkbox'][data-part='item']").First;
             if (await radio.IsVisibleAsync())
             {
                 await radio.ClickAsync();
@@ -72,7 +72,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
                 return;
             }
 
-            var checkbox = page.Locator("[role='checkbox']").First;
+            var checkbox = page.Locator("[data-part='item']").First;
             if (await checkbox.IsVisibleAsync())
             {
                 await checkbox.ClickAsync();
@@ -98,7 +98,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
             }
 
             var submitBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) });
-            var radio = page.Locator("[role='radio']").First;
+            var radio = page.Locator("[data-scope='radio-group'][data-part='item'], [data-scope='checkbox'][data-part='item']").First;
             if (await radio.IsVisibleAsync())
             {
                 await radio.ClickAsync();

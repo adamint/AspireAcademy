@@ -183,7 +183,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
                 }
 
                 // Select first radio option
-                var radio = page.Locator("[role='radio']").First;
+                var radio = page.Locator("[data-scope='radio-group'][data-part='item'], [data-scope='checkbox'][data-part='item']").First;
                 if (await radio.IsVisibleAsync())
                 {
                     await radio.ClickAsync();
