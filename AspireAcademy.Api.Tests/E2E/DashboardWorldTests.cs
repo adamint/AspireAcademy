@@ -123,6 +123,8 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             await RegisterUser(page, username);
             await UnlockFirstChallenge(page);
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             await NavigateToWorld(page);
 
             var quizLesson = page.Locator("[role='button']").Filter(new() { HasText = "🧪" });
@@ -139,7 +141,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             }
 
             await firstQuiz.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 20_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -154,6 +156,8 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             await RegisterUser(page, username);
             await UnlockFirstChallenge(page);
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             await NavigateToWorld(page);
 
             var challengeLesson = page.Locator("[role='button']").Filter(new() { HasTextRegex = new Regex("💻|🏗️|🎮") });
@@ -163,7 +167,7 @@ public class DashboardWorldTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             }
 
             await challengeLesson.First.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/challenges/"), new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/challenges/"), new() { Timeout = 20_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

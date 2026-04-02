@@ -17,13 +17,14 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
             await RegisterUser(page, username);
             await UnlockFirstChallenge(page);
             await LoginUser(page, username);
-            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
-            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.3.6");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             // Wait for either Monaco editor or the challenge page content
             var editor = page.Locator(".monaco-editor");
             var challengeSubmit = page.GetByTestId("challenge-submit");
             var lockMsg = page.GetByText(new Regex("unlock.*challenge|prerequisites", RegexOptions.IgnoreCase));
-            await Assertions.Expect(editor.Or(challengeSubmit).Or(lockMsg).First).ToBeVisibleAsync(new() { Timeout = 20_000 });
+            await Assertions.Expect(editor.Or(challengeSubmit).Or(lockMsg).First).ToBeVisibleAsync(new() { Timeout = 30_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -38,14 +39,15 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
             await RegisterUser(page, username);
             await UnlockFirstChallenge(page);
             await LoginUser(page, username);
-            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
-            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.3.6");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             var editor = page.Locator(".monaco-editor");
             var lockMsg = page.GetByText(new Regex("unlock.*challenge|prerequisites", RegexOptions.IgnoreCase));
             // If locked, skip the assertion
             if (await lockMsg.IsVisibleAsync()) return;
-            await Assertions.Expect(editor).ToBeVisibleAsync(new() { Timeout = 20_000 });
-            await Assertions.Expect(editor).ToContainTextAsync("CreateBuilder", new() { Timeout = 10_000 });
+            await Assertions.Expect(editor).ToBeVisibleAsync(new() { Timeout = 30_000 });
+            await Assertions.Expect(editor).ToContainTextAsync("CreateBuilder", new() { Timeout = 15_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -60,11 +62,12 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
             await RegisterUser(page, username);
             await UnlockFirstChallenge(page);
             await LoginUser(page, username);
-            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
-            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.3.6");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             // Verify the challenge page loaded (either editor or heading)
             var heading = page.GetByRole(AriaRole.Heading).First;
-            await Assertions.Expect(heading).ToBeVisibleAsync(new() { Timeout = 15_000 });
+            await Assertions.Expect(heading).ToBeVisibleAsync(new() { Timeout = 20_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -79,13 +82,14 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
             await RegisterUser(page, username);
             await UnlockFirstChallenge(page);
             await LoginUser(page, username);
-            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
-            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.3.6");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             var lockMsg = page.GetByText(new Regex("unlock.*challenge|prerequisites", RegexOptions.IgnoreCase));
             if (await lockMsg.IsVisibleAsync()) return;
             var editor = page.Locator(".monaco-editor");
-            await Assertions.Expect(editor).ToBeVisibleAsync(new() { Timeout = 20_000 });
-            await Assertions.Expect(page.GetByText("Tests")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(editor).ToBeVisibleAsync(new() { Timeout = 30_000 });
+            await Assertions.Expect(page.GetByText("Tests")).ToBeVisibleAsync(new() { Timeout = 15_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -100,14 +104,15 @@ public class ChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixture<Ap
             await RegisterUser(page, username);
             await UnlockFirstChallenge(page);
             await LoginUser(page, username);
-            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
-            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.3.6");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             var lockMsg = page.GetByText(new Regex("unlock.*challenge|prerequisites", RegexOptions.IgnoreCase));
             if (await lockMsg.IsVisibleAsync()) return;
             var editor = page.Locator(".monaco-editor");
-            await Assertions.Expect(editor).ToBeVisibleAsync(new() { Timeout = 20_000 });
+            await Assertions.Expect(editor).ToBeVisibleAsync(new() { Timeout = 30_000 });
             var hint1Btn = page.GetByRole(AriaRole.Button, new() { Name = "Hint 1" });
-            await Assertions.Expect(hint1Btn).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(hint1Btn).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await hint1Btn.ClickAsync();
             await page.WaitForTimeoutAsync(1_000);
         }

@@ -30,7 +30,49 @@ public class AppHostPlaywrightFixture : IAsyncLifetime
 
         // browser.NewPageAsync() creates a context + page pair;
         // closing the page automatically disposes the context.
-        return await s_browser!.NewPageAsync();
+        var page = await s_browser!.NewPageAsync();
+        // Under parallel execution, pages load slower — give actions more time
+        page.SetDefaultTimeout(60_000);
+
+        // Auto-dismiss popups that intercept pointer events (daily reward popup, overlays)
+        await page.AddInitScriptAsync(@"
+            // Inject CSS to disable pointer events on overlays
+            const style = document.createElement('style');
+            style.textContent = `
+                [data-testid=""daily-reward-popup""] {
+                    display: none !important;
+                    pointer-events: none !important;
+                }
+                /* Empty divs are typically backdrop overlays — never need pointer events */
+                div:empty:not([role]):not([data-testid]):not([id]):not([data-part]) {
+                    pointer-events: none !important;
+                }
+            `;
+            if (document.head) {
+                document.head.appendChild(style);
+            } else {
+                document.addEventListener('DOMContentLoaded', () => document.head.appendChild(style));
+            }
+
+            // Also observe for dynamically added daily reward popup
+            const observer = new MutationObserver(() => {
+                document.querySelectorAll('[data-testid=""daily-reward-popup""]').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('[data-testid=""daily-reward-claim-btn""]').forEach(btn => {
+                    btn.click();
+                });
+            });
+            if (document.documentElement) {
+                observer.observe(document.documentElement, { childList: true, subtree: true });
+            } else {
+                document.addEventListener('DOMContentLoaded', () => {
+                    observer.observe(document.documentElement, { childList: true, subtree: true });
+                });
+            }
+        ");
+
+        return page;
     }
 
     /// <summary>

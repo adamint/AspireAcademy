@@ -22,7 +22,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<
             await NavigateToFirstLearnLesson(page);
 
             var completeBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("mark complete|completed", RegexOptions.IgnoreCase) });
-            await Assertions.Expect(completeBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(completeBtn).ToBeVisibleAsync(new() { Timeout = 20_000 });
 
             var btnText = await completeBtn.TextContentAsync();
             if (btnText?.Contains("Completed", StringComparison.OrdinalIgnoreCase) == true)
@@ -32,8 +32,8 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<
             }
 
             await completeBtn.ClickAsync();
-            await Assertions.Expect(completeBtn).ToBeDisabledAsync(new() { Timeout = 5_000 });
-            await Assertions.Expect(completeBtn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
+            await Assertions.Expect(completeBtn).ToBeDisabledAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(completeBtn).ToContainTextAsync("Completed", new() { Timeout = 15_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -46,7 +46,7 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<
         {
             var username = UniqueUser("advquiz");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
             await LoginUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/1.1.3");
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 10_000 });
@@ -191,12 +191,14 @@ public class AdversarialTests(AppHostPlaywrightFixture fixture) : IClassFixture<
             }
 
             await lessonLinks.First.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 20_000 });
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
 
             var backBtn = page.Locator("button").Filter(new() { HasTextRegex = new Regex("back to", RegexOptions.IgnoreCase) });
-            await Assertions.Expect(backBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(backBtn).ToBeVisibleAsync(new() { Timeout = 15_000 });
             await backBtn.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/|/dashboard"), new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/|/dashboard"), new() { Timeout = 15_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

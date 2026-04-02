@@ -38,7 +38,7 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             await NavigateToFirstLearnLesson(page);
 
             var btn = page.GetByTestId("mark-complete-btn");
-            await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 20_000 });
 
             var text = await btn.TextContentAsync();
             if (text?.Contains("Completed", StringComparison.OrdinalIgnoreCase) == true)
@@ -48,8 +48,8 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             }
 
             await btn.ClickAsync();
-            await Assertions.Expect(btn).ToBeDisabledAsync(new() { Timeout = 5_000 });
-            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToBeDisabledAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 15_000 });
             await Assertions.Expect(btn).ToBeDisabledAsync();
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -72,10 +72,11 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             }
 
             await uncompleted.First.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/lessons/"), new() { Timeout = 20_000 });
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
             var btn = page.GetByTestId("mark-complete-btn");
-            await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 20_000 });
 
             var text = await btn.TextContentAsync();
             if (System.Text.RegularExpressions.Regex.IsMatch(text ?? "", "completed", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
@@ -85,8 +86,8 @@ public class LessonCompleteTests(AppHostPlaywrightFixture fixture) : IClassFixtu
             }
 
             await btn.ClickAsync();
-            await Assertions.Expect(btn).ToBeDisabledAsync(new() { Timeout = 5_000 });
-            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToBeDisabledAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 15_000 });
             await Assertions.Expect(page.GetByText(new Regex("failed to mark complete", RegexOptions.IgnoreCase))).Not.ToBeVisibleAsync();
         }
         finally { await fixture.ClosePageAsync(page); }

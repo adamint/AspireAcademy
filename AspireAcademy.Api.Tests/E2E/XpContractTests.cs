@@ -34,6 +34,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             // Navigate to first lesson
             await page.GotoAsync(fixture.WebBaseUrl + "/lessons/1.1.1");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
 
             // Get initial XP text from the bar
             var xpBar = page.GetByTestId("xp-bar");
@@ -83,6 +84,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             // Navigate to dashboard to trigger XP fetch
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
 
             var xpBar = page.GetByTestId("xp-bar");
             await Assertions.Expect(xpBar).ToBeVisibleAsync(new() { Timeout = 10_000 });
@@ -94,6 +96,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             // Reload the page
             await page.ReloadAsync();
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             await page.WaitForTimeoutAsync(3000); // Wait for AppShell /api/xp fetch
 
             // XP should still be the same after reload
@@ -119,7 +122,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             await LoginUser(page, username);
 
             // Unlock quiz by completing prereqs
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
 
             // Submit quiz via API (first attempt)
             var token = await GetAuthToken(page);
@@ -128,6 +131,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             // Navigate to dashboard and read XP
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             await page.WaitForTimeoutAsync(2000);
 
             var xpBar = page.GetByTestId("xp-bar");
@@ -140,6 +144,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             // Reload dashboard
             await page.ReloadAsync();
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             await page.WaitForTimeoutAsync(3000);
 
             var xpAfterRetake = await page.GetByTestId("xp-bar").InnerTextAsync();
@@ -163,11 +168,12 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             var username = UniqueUser("quizbtn");
             await RegisterUser(page, username);
             await LoginUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
 
             // Navigate to quiz
             await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/1.1.3");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
 
             // Answer all questions (click through the quiz)
             for (var i = 0; i < 10; i++) // Upper bound on questions
@@ -175,7 +181,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
                 var submitBtn = page.GetByTestId("quiz-submit");
                 try
                 {
-                    await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 3_000 });
+                    await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
                 }
                 catch (PlaywrightException)
                 {
@@ -191,7 +197,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
 
                 // Submit answer
                 await submitBtn.ClickAsync();
-                await page.WaitForTimeoutAsync(1000);
+                await page.WaitForTimeoutAsync(1500);
 
                 // Click "Next Question" or "See Results"
                 var nextBtn = page.GetByRole(AriaRole.Button, new()
@@ -200,9 +206,9 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
                 });
                 try
                 {
-                    await Assertions.Expect(nextBtn).ToBeVisibleAsync(new() { Timeout = 5_000 });
+                    await Assertions.Expect(nextBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
                     await nextBtn.ClickAsync();
-                    await page.WaitForTimeoutAsync(500);
+                    await page.WaitForTimeoutAsync(1000);
                 }
                 catch (PlaywrightException)
                 {
@@ -215,7 +221,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
 
             // Check that retake and continue/back buttons exist
             var retakeBtn = page.GetByTestId("quiz-retake");
-            await Assertions.Expect(retakeBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(retakeBtn).ToBeVisibleAsync(new() { Timeout = 15_000 });
 
             // Should have either continue or back-to-lesson button
             var continueBtn = page.GetByTestId("quiz-continue");
@@ -245,6 +251,7 @@ public class XpContractTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             // Navigate to lesson 1.1.1 which has a markdown table
             await page.GotoAsync(fixture.WebBaseUrl + "/lessons/1.1.1");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             await page.WaitForTimeoutAsync(2000);
 
             // Should have an HTML <table> element rendered (not raw pipe text)

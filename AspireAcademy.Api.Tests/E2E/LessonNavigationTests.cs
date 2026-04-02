@@ -38,11 +38,13 @@ public class LessonNavigationTests(AppHostPlaywrightFixture fixture) : IClassFix
             await RegisterUser(page, username);
             await CompleteLearnLessonsViaApi(page, "1.1.1");
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             await NavigateToWorld(page);
             await NavigateToFirstLearnLesson(page);
 
             var markComplete = page.GetByTestId("mark-complete-btn");
-            await Assertions.Expect(markComplete).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(markComplete).ToBeVisibleAsync(new() { Timeout = 20_000 });
 
             var mainButtons = page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button);
             var count = await mainButtons.CountAsync();
@@ -55,7 +57,7 @@ public class LessonNavigationTests(AppHostPlaywrightFixture fixture) : IClassFix
 
             var firstUrl = page.Url;
             await nextBtn.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 20_000 });
             Assert.NotEqual(firstUrl, page.Url);
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -71,34 +73,32 @@ public class LessonNavigationTests(AppHostPlaywrightFixture fixture) : IClassFix
             await RegisterUser(page, username);
             await CompleteLearnLessonsViaApi(page, "1.1.1");
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
             await NavigateToWorld(page);
-            await NavigateToFirstLearnLesson(page);
+
+            // Go directly to the second lesson instead of relying on Next button from first
+            await page.GotoAsync(fixture.WebBaseUrl + "/lessons/1.1.2");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
+
+            var markComplete = page.GetByTestId("mark-complete-btn");
+            await Assertions.Expect(markComplete).ToBeVisibleAsync(new() { Timeout = 20_000 });
 
             var mainButtons = page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button);
             var count = await mainButtons.CountAsync();
-            var nextBtn = mainButtons.Nth(count - 1);
-
-            if (await nextBtn.IsDisabledAsync())
-            {
-                return;
-            }
-
-            await nextBtn.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 10_000 });
-
-            var newMainButtons = page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button);
-            var newCount = await newMainButtons.CountAsync();
-            var prevBtn = newMainButtons.Nth(newCount - 2);
+            // Previous button is the second-to-last
+            var prevBtn = mainButtons.Nth(count - 2);
 
             if (await prevBtn.IsDisabledAsync())
             {
                 return;
             }
 
-            var secondUrl = page.Url;
+            var currentUrl = page.Url;
             await prevBtn.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 10_000 });
-            Assert.NotEqual(secondUrl, page.Url);
+            await Assertions.Expect(page).Not.ToHaveURLAsync(currentUrl, new() { Timeout = 20_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 20_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

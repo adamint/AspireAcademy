@@ -117,11 +117,14 @@ public class NavigationTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             var username = UniqueUser("navback");
             await RegisterUser(page, username);
             var main = page.GetByRole(AriaRole.Main);
-            await Assertions.Expect(main.GetByText("The Distributed Problem").First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(main.GetByText("The Distributed Problem").First).ToBeVisibleAsync(new() { Timeout = 15_000 });
             await main.GetByText("The Distributed Problem").First.ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 10_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/worlds/"), new() { Timeout = 20_000 });
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await DismissPopups(page);
+            await Assertions.Expect(page.GetByText("Back to Dashboard")).ToBeVisibleAsync(new() { Timeout = 15_000 });
             await page.GetByText("Back to Dashboard").ClickAsync();
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"));
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/dashboard"), new() { Timeout = 15_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

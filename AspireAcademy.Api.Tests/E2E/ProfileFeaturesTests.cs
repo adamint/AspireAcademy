@@ -35,7 +35,7 @@ public class ProfileFeaturesTests(AppHostPlaywrightFixture fixture) : IClassFixt
             await RegisterUser(page, username);
             
             // Complete some lessons to generate skill data (need >= 3 skills for radar to show)
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
             
             await page.GotoAsync(fixture.WebBaseUrl + "/profile");
             

@@ -208,6 +208,7 @@ public class SocialFlowTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
 
             // Complete the first lesson
             await CompleteLearnLessonsViaApi(page, "1.1.1");
+            await page.WaitForTimeoutAsync(1_000);
 
             // Check achievements after — at least one more should be unlocked
             var afterResp = await page.APIRequest.GetAsync(ApiBaseUrl + "/api/achievements", new()

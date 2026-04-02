@@ -11,11 +11,13 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
     {
         await LoginUser(page, username);
         await page.GotoAsync(fixture.WebBaseUrl + "/quizzes/1.1.3");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await DismissPopups(page);
         try
         {
-            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 5_000 });
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex("/quizzes/"), new() { Timeout = 10_000 });
             var submitBtn = page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("submit answer", RegexOptions.IgnoreCase) });
-            await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(submitBtn).ToBeVisibleAsync(new() { Timeout = 20_000 });
             return true;
         }
         catch
@@ -32,7 +34,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
         {
             var username = UniqueUser("quizload");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
 
             if (!await NavigateToQuiz(page, username))
             {
@@ -54,7 +56,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
         {
             var username = UniqueUser("quizsel");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
 
             if (!await NavigateToQuiz(page, username))
             {
@@ -90,7 +92,7 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
         {
             var username = UniqueUser("quizsub");
             await RegisterUser(page, username);
-            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2", "1.1.2a");
+            await CompleteLearnLessonsViaApi(page, "1.1.1", "1.1.2");
 
             if (!await NavigateToQuiz(page, username))
             {
@@ -104,11 +106,11 @@ public class QuizTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHost
                 await radio.ClickAsync();
             }
 
-            await Assertions.Expect(submitBtn).ToBeEnabledAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(submitBtn).ToBeEnabledAsync(new() { Timeout = 10_000 });
             await submitBtn.ClickAsync();
 
-            await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase)).First).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await Assertions.Expect(page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("next question|see results", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(page.GetByText(new Regex("correct|incorrect", RegexOptions.IgnoreCase)).First).ToBeVisibleAsync(new() { Timeout = 15_000 });
+            await Assertions.Expect(page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("next question|see results", RegexOptions.IgnoreCase) })).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

@@ -60,7 +60,8 @@ public class ProfileTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
             await Assertions.Expect(dialog).ToBeVisibleAsync(new() { Timeout = 5_000 });
 
             await dialog.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("cancel", RegexOptions.IgnoreCase) }).ClickAsync();
-            await Assertions.Expect(dialog).Not.ToBeVisibleAsync(new() { Timeout = 3_000 });
+            // Dialog may remain in DOM with data-state="closed" — check for hidden/closed state
+            await Assertions.Expect(dialog).Not.ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

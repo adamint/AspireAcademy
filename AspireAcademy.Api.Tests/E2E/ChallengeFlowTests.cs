@@ -9,13 +9,15 @@ public class ChallengeFlowTests(AppHostPlaywrightFixture fixture) : IClassFixtur
 {
     private async Task<bool> UnlockAndGoToChallenge(IPage page, string username)
     {
-        // Complete all prerequisites for challenge 1.2.5
+        // Complete all prerequisites for challenge 1.3.6
         await UnlockFirstChallenge(page);
         await LoginUser(page, username);
-        await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.2.5");
+        await page.GotoAsync(fixture.WebBaseUrl + "/challenges/1.3.6");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await DismissPopups(page);
         try
         {
-            await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 15_000 });
+            await Assertions.Expect(page.Locator(".monaco-editor")).ToBeVisibleAsync(new() { Timeout = 30_000 });
             return true;
         }
         catch

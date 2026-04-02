@@ -19,7 +19,7 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             await NavigateToFirstLearnLesson(page);
 
             var skipBtn = page.GetByTestId("skip-lesson-btn");
-            await Assertions.Expect(skipBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(skipBtn).ToBeVisibleAsync(new() { Timeout = 20_000 });
             await Assertions.Expect(skipBtn).ToBeEnabledAsync();
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -37,7 +37,7 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             await NavigateToFirstLearnLesson(page);
 
             var skipBtn = page.GetByTestId("skip-lesson-btn");
-            await Assertions.Expect(skipBtn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(skipBtn).ToBeVisibleAsync(new() { Timeout = 20_000 });
 
             var text = await skipBtn.TextContentAsync();
             if (string.IsNullOrEmpty(text))
@@ -46,8 +46,8 @@ public class SkipLessonTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             }
 
             await skipBtn.ClickAsync();
-            await Assertions.Expect(page.GetByText(new Regex("skipped", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await Assertions.Expect(page.GetByTestId("undo-skip-btn")).ToBeVisibleAsync(new() { Timeout = 5_000 });
+            await Assertions.Expect(page.GetByText(new Regex("skipped", RegexOptions.IgnoreCase))).ToBeVisibleAsync(new() { Timeout = 15_000 });
+            await Assertions.Expect(page.GetByTestId("undo-skip-btn")).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }

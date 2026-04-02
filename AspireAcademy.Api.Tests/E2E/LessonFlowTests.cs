@@ -45,12 +45,12 @@ public class LessonFlowTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             await NavigateToFirstLearnLesson(page);
 
             var btn = page.GetByTestId("mark-complete-btn");
-            await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToBeVisibleAsync(new() { Timeout = 20_000 });
             await Assertions.Expect(btn).ToBeEnabledAsync();
-            await Assertions.Expect(btn).ToContainTextAsync("Mark Complete", new() { Timeout = 5_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Mark Complete", new() { Timeout = 10_000 });
 
             await btn.ClickAsync();
-            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 10_000 });
+            await Assertions.Expect(btn).ToContainTextAsync("Completed", new() { Timeout = 15_000 });
             await Assertions.Expect(btn).ToBeDisabledAsync();
         }
         finally { await fixture.ClosePageAsync(page); }
@@ -154,10 +154,11 @@ public class LessonFlowTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             await RegisterUser(page, username);
             await CompleteLearnLessonsViaApi(page, "1.1.1");
             await page.GotoAsync(fixture.WebBaseUrl + "/dashboard");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             await NavigateToWorld(page);
             await NavigateToFirstLearnLesson(page);
 
-            await Assertions.Expect(page.GetByTestId("mark-complete-btn")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(page.GetByTestId("mark-complete-btn")).ToBeVisibleAsync(new() { Timeout = 20_000 });
             var firstUrl = page.Url;
 
             // Find and click the next/forward navigation button
@@ -168,7 +169,7 @@ public class LessonFlowTests(AppHostPlaywrightFixture fixture) : IClassFixture<A
             if (await nextBtn.IsEnabledAsync())
             {
                 await nextBtn.ClickAsync();
-                await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 10_000 });
+                await Assertions.Expect(page).ToHaveURLAsync(new Regex(@"/(lessons|quizzes|challenges)/"), new() { Timeout = 20_000 });
                 Assert.NotEqual(firstUrl, page.Url);
             }
         }
