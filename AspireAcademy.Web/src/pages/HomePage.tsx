@@ -404,215 +404,89 @@ export default function HomePage() {
         </Flex>
 
         {/* ═══════════════════ HERO ═══════════════════ */}
-        <Box id="hero" position="relative" minH={{ base: '70vh', md: '75vh' }} overflow="hidden">
+        <Box id="hero" position="relative" minH={{ base: 'auto', md: '440px' }} overflow="hidden">
           <NetworkCanvas />
-          {/* Subtle multi-color gradient overlay */}
-          <Box
-            position="absolute"
-            inset="0"
-            background="linear-gradient(135deg, rgba(107,79,187,0.12), rgba(45,212,191,0.08), rgba(251,191,36,0.04))"
-            pointerEvents="none"
-            zIndex={0}
-            aria-hidden="true"
-          />
+          <Box position="absolute" inset="0" background="linear-gradient(135deg, rgba(107,79,187,0.12), rgba(45,212,191,0.08), rgba(251,191,36,0.04))" pointerEvents="none" zIndex={0} aria-hidden="true" />
 
-          <Flex
-            position="relative"
-            zIndex={1}
-            direction="column"
-            align="center"
-            justify="center"
-            textAlign="center"
-            minH={{ base: '70vh', md: '75vh' }}
-            pt={{ base: '8', md: '12' }}
-            px="4"
-            gap="6"
-          >
-            {/* Welcome back banner */}
-            {isLoggedIn && user && (
-              <Box
-                data-testid="welcome-back"
-                {...retroCardProps}
-                bg="dark.card"
-                px="6"
-                py="3"
-                mb="6"
-              >
-                <Text {...pixelFontProps} fontSize={{ base: '10px', md: '12px' }} color="game.gold">
-                  Welcome back, {user.displayName || user.username}!
-                </Text>
-                <Text fontSize="sm" color="dark.muted" mt="1">
-                  Continue your journey where you left off
+          {/* Split hero: left content + right side panel */}
+          <Flex position="relative" zIndex={1} direction={{ base: 'column', md: 'row' }} minH={{ base: 'auto', md: '440px' }}>
+            {/* Left: main hero content */}
+            <Flex flex="1" direction="column" justify="center" px={{ base: '6', md: '14' }} py={{ base: '12', md: '14' }} gap="4">
+              {isLoggedIn && user && (
+                <Box data-testid="welcome-back" px="4" py="2" borderRadius="md" bg="dark.card" border="1px solid" borderColor="game.pixelBorder" display="inline-block" alignSelf="flex-start">
+                  <Text {...pixelFontProps} fontSize="10px" color="game.gold">
+                    Welcome back, {user.displayName || user.username}!
+                  </Text>
+                  <Text fontSize="xs" color="dark.muted" mt="1">Continue your journey where you left off</Text>
+                </Box>
+              )}
+
+              <Heading data-testid="hero-title" as="h1" {...pixelFontProps} fontSize={{ base: '28px', sm: '36px', md: '44px', lg: '48px' }} color="aspire.600" lineHeight="1.3" style={{ animation: 'rainbow-glow 4s ease-in-out infinite' }}>
+                ASPIRE<br />LEARN
+              </Heading>
+
+              <Box h="24px" data-testid="hero-tagline">
+                <Text fontSize={{ base: 'md', md: 'lg' }} color="dark.text" letterSpacing="wide">
+                  {tagline.displayed}
+                  <Text as="span" style={{ animation: tagline.done ? 'typewriter-cursor 1s step-end infinite' : 'none', opacity: tagline.done ? undefined : 1 }} ml="1px">|</Text>
                 </Text>
               </Box>
-            )}
 
-            {/* Main title */}
-            <Heading
-              data-testid="hero-title"
-              as="h1"
-              {...pixelFontProps}
-              fontSize={{ base: '28px', sm: '36px', md: '56px', lg: '64px' }}
-              color="aspire.600"
-              lineHeight="1.3"
-              style={{ animation: 'rainbow-glow 4s ease-in-out infinite' }}
-            >
-              ASPIRE
-              <br />
-              LEARN
-            </Heading>
-
-            {/* Tagline with typewriter */}
-            <Box h="28px" data-testid="hero-tagline">
-              <Text
-                fontSize={{ base: 'md', md: 'xl' }}
-                color="dark.text"
-                letterSpacing="wide"
-              >
-                {tagline.displayed}
-                <Text
-                  as="span"
-                  style={{
-                    animation: tagline.done ? 'typewriter-cursor 1s step-end infinite' : 'none',
-                    opacity: tagline.done ? undefined : 1,
-                  }}
-                  ml="1px"
-                >
-                  |
-                </Text>
+              <Text maxW="440px" fontSize={{ base: 'sm', md: 'md' }} color="dark.muted" lineHeight="1.7">
+                Distributed apps are hard — tangled configs, scattered logs, painful deploys. Aspire fixes that. Learn the platform by building real apps.
               </Text>
-            </Box>
 
-            {/* Value proposition subtitle */}
-            <Text
-              maxW="520px"
-              fontSize={{ base: 'sm', md: 'md' }}
-              color="dark.muted"
-              lineHeight="1.7"
-              mt="2"
-            >
-              Distributed apps are hard — tangled configs, scattered logs, painful deploys.
-              Aspire fixes that. Learn the platform by building real apps.
-            </Text>
-
-            {/* CTA buttons */}
-            <Flex
-              data-testid="hero-ctas"
-              direction={{ base: 'column', sm: 'row' }}
-              gap="4"
-              mt="4"
-            >
-              <Button
-                data-testid="cta-start-journey"
-                size="lg"
-                bg="game.xpGold"
-                color="dark.bg"
-                {...pixelFontProps}
-                fontSize={{ base: '11px', md: '13px' }}
-                px="8"
-                py="6"
-                {...retroCardProps}
-                borderColor="game.xpGold"
-                boxShadow="4px 4px 0 rgba(255,215,0,0.4)"
-                _hover={{
-                  transform: 'translateY(-2px)',
-                  boxShadow: '4px 6px 0 rgba(255,215,0,0.5)',
-                }}
-                transition="all 0.2s"
-                onClick={() => navigate(isLoggedIn ? '/dashboard' : '/register')}
-              >
-                {isLoggedIn ? 'Continue Journey' : 'Start Your Journey'}
-              </Button>
-
-              <Button
-                data-testid="cta-browse-curriculum"
-                size="lg"
-                bg="transparent"
-                color="aspire.accent"
-                {...pixelFontProps}
-                fontSize={{ base: '11px', md: '13px' }}
-                px="8"
-                py="6"
-                border="3px solid"
-                borderColor="aspire.600"
-                boxShadow="4px 4px 0 #2B1260"
-                borderRadius="sm"
-                _hover={{
-                  bg: 'rgba(107,79,187,0.15)',
-                  transform: 'translateY(-2px)',
-                }}
-                transition="all 0.2s"
-                onClick={() => navigate('/dashboard')}
-              >
-                Browse Curriculum
-              </Button>
+              <Flex data-testid="hero-ctas" direction={{ base: 'column', sm: 'row' }} gap="3" mt="2">
+                <Button data-testid="cta-start-journey" size="lg" bg="aspire.600" color="white" {...pixelFontProps} fontSize={{ base: '10px', md: '12px' }} px="7" py="5" {...retroCardProps} borderColor="aspire.600" boxShadow="0 0 20px rgba(139,92,246,0.3), 4px 4px 0 #4C1D95" _hover={{ transform: 'translateY(-2px)', boxShadow: '0 0 30px rgba(139,92,246,0.4), 4px 6px 0 #4C1D95' }} transition="all 0.2s" onClick={() => navigate(isLoggedIn ? '/dashboard' : '/register')}>
+                  {isLoggedIn ? 'Continue Journey' : 'Start Your Journey'}
+                </Button>
+                <Button data-testid="cta-browse-curriculum" size="lg" bg="transparent" color="accent.teal" {...pixelFontProps} fontSize={{ base: '10px', md: '12px' }} px="7" py="5" border="3px solid" borderColor="accent.teal" boxShadow="4px 4px 0 rgba(45,212,191,0.2)" borderRadius="sm" _hover={{ bg: 'rgba(45,212,191,0.1)', transform: 'translateY(-2px)' }} transition="all 0.2s" onClick={() => navigate('/dashboard')}>
+                  Browse Curriculum
+                </Button>
+              </Flex>
             </Flex>
 
-            {/* Scroll hint */}
-            <Text
-              mt="10"
-              fontSize="xs"
-              color="dark.muted"
-              style={{ animation: 'float-node 2s ease-in-out infinite' }}
-              cursor="pointer"
-              role="button"
-              tabIndex={0}
-              onClick={() => scrollTo('why-aspire')}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scrollTo('why-aspire'); } }}
-            >
-              ▼ Scroll to explore ▼
-            </Text>
+            {/* Right: side panel with mini-cards */}
+            <Flex direction="column" w={{ base: '100%', md: '380px' }} gap="2.5" px={{ base: '6', md: '7' }} py={{ base: '6', md: '10' }} borderLeft={{ base: 'none', md: '1px solid' }} borderTop={{ base: '1px solid', md: 'none' }} borderColor="dark.border" justify="center">
+              {[
+                { icon: '🎮', label: 'Playground', sub: 'Build app models visually', to: '/playground', accentBg: 'rgba(45,212,191,0.1)', accentBorder: 'rgba(45,212,191,0.3)', testId: 'hero-link-playground' },
+                { icon: '🖼️', label: 'Gallery', sub: '12 architecture examples', to: '/gallery', accentBg: 'rgba(251,191,36,0.1)', accentBorder: 'rgba(251,191,36,0.3)', testId: 'hero-link-gallery' },
+                { icon: '🗺️', label: 'Concept Map', sub: 'Explore Aspire concepts', to: '/concept-map', accentBg: 'rgba(52,211,153,0.1)', accentBorder: 'rgba(52,211,153,0.3)', testId: 'hero-link-conceptmap' },
+                { icon: '📚', label: 'Curriculum', sub: `${worlds?.length ?? 13} worlds, ${worlds?.reduce((s, w) => s + w.totalLessons, 0) ?? 174} lessons`, to: '/dashboard', accentBg: 'rgba(56,189,248,0.1)', accentBorder: 'rgba(56,189,248,0.3)', testId: 'hero-link-curriculum' },
+                { icon: '📰', label: "What's New", sub: 'Latest updates & features', to: '/whats-new', accentBg: 'rgba(251,146,60,0.1)', accentBorder: 'rgba(251,146,60,0.3)', testId: 'hero-link-whatsnew' },
+                { icon: '🎓', label: 'Learning Tracks', sub: 'Find your personalized path', to: '/personas', accentBg: 'rgba(52,211,153,0.1)', accentBorder: 'rgba(52,211,153,0.3)', testId: 'hero-link-tracks' },
+              ].map((card) => (
+                <Flex
+                  key={card.label}
+                  data-testid={card.testId}
+                  align="center"
+                  gap="3"
+                  px="4"
+                  py="3"
+                  borderRadius="lg"
+                  bg="dark.card"
+                  border="1px solid"
+                  borderColor="dark.border"
+                  cursor="pointer"
+                  transition="all 0.2s"
+                  role="link"
+                  tabIndex={0}
+                  _hover={{ borderColor: card.accentBorder, transform: 'translateX(4px)', boxShadow: `0 0 12px ${card.accentBg}` }}
+                  onClick={() => navigate(card.to)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(card.to); } }}
+                >
+                  <Flex align="center" justify="center" w="36px" h="36px" borderRadius="lg" bg={card.accentBg} border="1px solid" borderColor={card.accentBorder} flexShrink={0}>
+                    <Text fontSize="16px">{card.icon}</Text>
+                  </Flex>
+                  <Box>
+                    <Text fontSize="12px" color="dark.text" fontWeight="bold">{card.label}</Text>
+                    <Text fontSize="10px" color="dark.muted" mt="0.5">{card.sub}</Text>
+                  </Box>
+                </Flex>
+              ))}
+            </Flex>
           </Flex>
         </Box>
-
-        {/* ═══════════════════ QUICK LINKS BAR ═══════════════════ */}
-        <Flex
-          justify="center"
-          align="center"
-          gap={{ base: '3', md: '6' }}
-          py="4"
-          px="4"
-          bg="dark.surface"
-          borderTop="1px solid rgba(107,79,187,0.2)"
-          borderBottom="1px solid rgba(107,79,187,0.2)"
-          wrap="wrap"
-        >
-          {[
-            { icon: '🎮', label: 'Playground', to: '/playground', accent: '#2DD4BF', accentBg: 'rgba(45,212,191,0.1)', accentBorder: 'rgba(45,212,191,0.3)', hoverBg: 'rgba(45,212,191,0.2)' },
-            { icon: '🖼️', label: 'Gallery', to: '/gallery', accent: '#FBBF24', accentBg: 'rgba(251,191,36,0.1)', accentBorder: 'rgba(251,191,36,0.3)', hoverBg: 'rgba(251,191,36,0.2)' },
-            { icon: '🗺️', label: 'Concept Map', to: '/concept-map', accent: '#34D399', accentBg: 'rgba(52,211,153,0.1)', accentBorder: 'rgba(52,211,153,0.3)', hoverBg: 'rgba(52,211,153,0.2)' },
-            { icon: '📚', label: 'Curriculum', to: '/dashboard', accent: '#38BDF8', accentBg: 'rgba(56,189,248,0.1)', accentBorder: 'rgba(56,189,248,0.3)', hoverBg: 'rgba(56,189,248,0.2)' },
-          ].map((link) => (
-            <Flex
-              key={link.label}
-              align="center"
-              gap="2"
-              px="4"
-              py="2"
-              borderRadius="full"
-              bg={link.accentBg}
-              border="1px solid"
-              borderColor={link.accentBorder}
-              cursor="pointer"
-              transition="all 0.25s ease"
-              role="link"
-              tabIndex={0}
-              _hover={{
-                bg: link.hoverBg,
-                borderColor: link.accent,
-                boxShadow: `0 0 16px ${link.accentBorder}`,
-                transform: 'translateY(-1px)',
-              }}
-              onClick={() => navigate(link.to)}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(link.to); } }}
-            >
-              <Text fontSize="sm">{link.icon}</Text>
-              <Text fontSize="xs" color={link.accent} fontWeight="bold" letterSpacing="wide">
-                {link.label}
-              </Text>
-            </Flex>
-          ))}
-        </Flex>
 
         {/* ═══════════════════ WHY ASPIRE ═══════════════════ */}
         <Box id="why-aspire" py={{ base: '16', md: '20' }} px="4">
@@ -1082,7 +956,7 @@ export default function HomePage() {
             Aspire Learn
           </Text>
           <Text fontSize="xs" color="dark.muted">
-            Learn Aspire · Build distributed apps · Have fun doing it
+            Learn Aspire · Build real apps · Level up your stack
           </Text>
           <Flex gap="4" mt="2">
             <a

@@ -17,16 +17,20 @@ public class HomePageImprovementsTests(AppHostPlaywrightFixture fixture) : IClas
             await page.GotoAsync(fixture.WebBaseUrl + "/");
             await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
-            // Verify quick links bar exists with expected links
-            var playgroundLink = page.GetByRole(AriaRole.Link, new() { NameRegex = new Regex("playground", RegexOptions.IgnoreCase) });
-            var galleryLink = page.GetByRole(AriaRole.Link, new() { NameRegex = new Regex("gallery", RegexOptions.IgnoreCase) });
-            var conceptMapLink = page.GetByRole(AriaRole.Link, new() { NameRegex = new Regex("concept.*map", RegexOptions.IgnoreCase) });
-            var curriculumLink = page.GetByRole(AriaRole.Link, new() { NameRegex = new Regex("curriculum", RegexOptions.IgnoreCase) });
+            // Verify hero mini-card links exist with expected links
+            var playgroundLink = page.GetByTestId("hero-link-playground");
+            var galleryLink = page.GetByTestId("hero-link-gallery");
+            var conceptMapLink = page.GetByTestId("hero-link-conceptmap");
+            var curriculumLink = page.GetByTestId("hero-link-curriculum");
+            var whatsNewLink = page.GetByTestId("hero-link-whatsnew");
+            var tracksLink = page.GetByTestId("hero-link-tracks");
 
-            await Assertions.Expect(playgroundLink.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await Assertions.Expect(galleryLink.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await Assertions.Expect(conceptMapLink.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await Assertions.Expect(curriculumLink.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(playgroundLink).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(galleryLink).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(conceptMapLink).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(curriculumLink).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(whatsNewLink).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(tracksLink).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }
         finally { await fixture.ClosePageAsync(page); }
     }
@@ -40,10 +44,10 @@ public class HomePageImprovementsTests(AppHostPlaywrightFixture fixture) : IClas
             await page.GotoAsync(fixture.WebBaseUrl + "/");
             await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
-            // Find the Playground quick link and click it
-            var playgroundLink = page.GetByRole(AriaRole.Link, new() { NameRegex = new Regex("playground", RegexOptions.IgnoreCase) });
-            await Assertions.Expect(playgroundLink.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
-            await playgroundLink.First.ClickAsync();
+            // Find the Playground hero link and click it
+            var playgroundLink = page.GetByTestId("hero-link-playground");
+            await Assertions.Expect(playgroundLink).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await playgroundLink.ClickAsync();
 
             // Verify navigation to /playground
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/playground"), new() { Timeout = 10_000 });
