@@ -527,6 +527,10 @@ function FileBrowser({ files }: { files: ProjectFile[] }) {
                   borderRadius: '4px !important',
                   fontSize: '12px !important',
                   lineHeight: '1.5 !important',
+                  whiteSpace: 'pre !important',
+                },
+                '& code': {
+                  whiteSpace: 'pre !important',
                 },
               }}
             >
@@ -1051,8 +1055,7 @@ function GalleryDetail({
 
         {/* Code Tab */}
         <Tabs.Content value="code">
-          <Card.Root {...retroCardProps} bg="dark.card">
-            <Card.Body p="0">
+          <Box {...retroCardProps} bg="dark.card" overflow="hidden">
               <Flex
                 justify="space-between"
                 align="center"
@@ -1069,14 +1072,6 @@ function GalleryDetail({
                 borderTop="1px solid"
                 borderColor="dark.border"
                 overflow="auto"
-                css={{
-                  '& pre': {
-                    margin: '0 !important',
-                    borderRadius: '0 !important',
-                    fontSize: '12px !important',
-                    lineHeight: '1.5 !important',
-                  },
-                }}
               >
                 <SyntaxHighlighter
                   language="csharp"
@@ -1084,13 +1079,13 @@ function GalleryDetail({
                   customStyle={{
                     background: 'transparent',
                     padding: '16px',
+                    margin: 0,
                   }}
                 >
                   {entry.code}
                 </SyntaxHighlighter>
               </Box>
-            </Card.Body>
-          </Card.Root>
+          </Box>
         </Tabs.Content>
 
         {/* Project Files Tab */}

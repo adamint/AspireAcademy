@@ -53,6 +53,15 @@ code,
   border-radius: 4px;
 }
 
+/* Code inside pre blocks must be block-level to preserve newlines */
+pre code {
+  display: block !important;
+  white-space: pre !important;
+  padding: 0;
+  background: transparent;
+  font-size: inherit;
+}
+
 code {
   font-size: 15px;
   line-height: 135%;
@@ -69,4 +78,11 @@ code {
 .skill-radar-dot {
   cursor: pointer;
   transition: r 0.15s ease;
+}
+
+/* Ensure code blocks preserve whitespace (Chakra v3 reset can strip it) */
+pre, pre code, pre code span, .prism-code, .prism-code span {
+  white-space: pre !important;
+  word-wrap: normal !important;
+  overflow-wrap: normal !important;
 }
