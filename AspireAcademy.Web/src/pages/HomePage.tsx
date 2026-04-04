@@ -489,7 +489,7 @@ export default function HomePage() {
         </Box>
 
         {/* ═══════════════════ WHY ASPIRE ═══════════════════ */}
-        <Box id="why-aspire" py={{ base: '16', md: '20' }} px="4">
+        <Box id="why-aspire" py={{ base: '10', md: '14' }} px="4">
             <Heading
               as="h2"
               fontSize={{ base: 'xl', md: '2xl' }}
@@ -579,11 +579,11 @@ export default function HomePage() {
                     </Flex>
                     <Text fontWeight="bold" fontSize="sm" color="dark.text">{card.title}</Text>
                   </Flex>
-                  <Text fontSize="sm" color="dark.muted" lineHeight="1.6" mb="3"
+                  <Text fontSize="11px" color="dark.muted" lineHeight="1.6" mb="3"
                     dangerouslySetInnerHTML={{ __html: card.desc }}
                   />
                   <Text
-                    fontSize="xs"
+                    fontSize="10px"
                     color={card.accent}
                     cursor="pointer"
                     _hover={{ textDecoration: 'underline' }}
@@ -599,9 +599,9 @@ export default function HomePage() {
         {/* ═══════════════════ STATS ═══════════════════ */}
         <Box
           id="stats"
-          py="6"
+          py="7"
           px="4"
-          background="linear-gradient(90deg, rgba(45,212,191,0.03), rgba(139,92,246,0.04), rgba(251,191,36,0.03))"
+          background="linear-gradient(90deg, rgba(45,212,191,0.06), rgba(139,92,246,0.08), rgba(251,191,36,0.06))"
           borderTop="1px solid"
           borderBottom="1px solid"
           borderColor="dark.border"
@@ -609,7 +609,7 @@ export default function HomePage() {
             <Flex
               data-testid="stats-section"
               justify="center"
-              gap={{ base: '6', md: '10' }}
+              gap={{ base: '8', md: '16' }}
               flexWrap="wrap"
             >
               {stats.map((s, i) => {
@@ -634,7 +634,7 @@ export default function HomePage() {
 
         {/* ═══════════════════ LEARNING TRACKS ═══════════════════ */}
         {(personas ?? []).length > 0 && (
-          <Box py={{ base: '16', md: '20' }} px="4">
+          <Box py={{ base: '10', md: '14' }} px="4">
               <Heading
                 as="h2"
                 {...pixelFontProps}
@@ -732,7 +732,7 @@ export default function HomePage() {
         )}
 
         {/* ═══════════════════ WORLDS ═══════════════════ */}
-        <Box id="worlds" py={{ base: '16', md: '20' }} px="4">
+        <Box id="worlds" py={{ base: '10', md: '14' }} px="4">
             <Heading
               data-testid="worlds-heading"
               as="h2"
@@ -750,7 +750,7 @@ export default function HomePage() {
 
           <Flex
             data-testid="worlds-grid"
-            gap="4"
+            gap="3"
             overflowX="auto"
             pb="2"
             maxW="1000px"
@@ -766,8 +766,9 @@ export default function HomePage() {
                   border="1px solid"
                   borderColor={accent}
                   borderRadius="lg"
-                  p="5"
-                  minW="175px"
+                  p="3"
+                  minW="155px"
+                  maxW="155px"
                   flexShrink={0}
                   textAlign="center"
                   cursor="pointer"
@@ -781,16 +782,17 @@ export default function HomePage() {
                   onClick={() => navigate(`/worlds/${w.id}`)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/worlds/${w.id}`); } }}
                 >
-                  <Text fontSize="36px" mb="2">{w.icon}</Text>
+                  <Text fontSize="28px" mb="1">{w.icon}</Text>
                   <Text
                     {...pixelFontProps}
-                    fontSize={{ base: '8px', md: '10px' }}
+                    fontSize="8px"
                     color={accent}
-                    mb="2"
+                    mb="1"
+                    noOfLines={1}
                   >
                     {w.name}
                   </Text>
-                  <Text fontSize="xs" color="dark.muted" lineHeight="1.5">
+                  <Text fontSize="9px" color="dark.muted" lineHeight="1.4" noOfLines={1}>
                     {w.description}
                   </Text>
                 </Card.Root>
@@ -800,7 +802,7 @@ export default function HomePage() {
         </Box>
 
         {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
-        <Box id="how-it-works" py={{ base: '16', md: '20' }} px="4" bg="dark.surface">
+        <Box id="how-it-works" py={{ base: '10', md: '14' }} px="4" bg="dark.surface">
             <Heading
               data-testid="how-it-works-heading"
               as="h2"
@@ -819,14 +821,14 @@ export default function HomePage() {
             justify="center"
             maxW="900px"
             mx="auto"
-            gap="0"
+            gap={{ base: '4', md: '0' }}
           >
               {HOW_IT_WORKS.map((item, i) => {
                 const stepColors = ['#2DD4BF', '#FBBF24', '#FB7185'];
                 const stepBgs = ['rgba(45,212,191,0.15)', 'rgba(251,191,36,0.15)', 'rgba(251,113,133,0.15)'];
                 return (
-                <Box key={item.step}>
-                  <Flex direction="column" align="center" textAlign="center" gap="3">
+                <Box key={item.step} display="contents">
+                  <Flex direction="column" align="center" textAlign="center" flex="1" px="4">
                     <Flex
                       align="center"
                       justify="center"
@@ -836,43 +838,39 @@ export default function HomePage() {
                       borderRadius="full"
                       border="2px solid"
                       borderColor={stepColors[i]}
+                      mb="3"
                     >
                       <Text {...pixelFontProps} fontSize="18px" color={stepColors[i]}>{item.step}</Text>
                     </Flex>
-                    <Text {...pixelFontProps} fontSize="14px" color={stepColors[i]}>
+                    <Text {...pixelFontProps} fontSize="14px" color={stepColors[i]} mb="2">
                       {item.title}
                     </Text>
-                    <Text fontSize="sm" color="dark.muted" maxW="240px">
+                    <Text fontSize="sm" color="dark.muted" maxW="200px">
                       {item.desc}
                     </Text>
                   </Flex>
                   {i < HOW_IT_WORKS.length - 1 && (
-                    <>
-                      <Text
-                        display={{ base: 'none', md: 'block' }}
-                        {...pixelFontProps}
-                        fontSize="20px"
-                        color="dark.border"
-                        px="2"
-                        textAlign="center"
-                        mt="4"
-                        mb="4"
-                      >
-                        →
-                      </Text>
-                      <Text
-                        display={{ base: 'block', md: 'none' }}
-                        {...pixelFontProps}
-                        fontSize="20px"
-                        color="dark.border"
-                        px="2"
-                        textAlign="center"
-                        mt="2"
-                        mb="2"
-                      >
-                        ▼
-                      </Text>
-                    </>
+                    <Text
+                      display={{ base: 'none', md: 'block' }}
+                      {...pixelFontProps}
+                      fontSize="22px"
+                      color="dark.border"
+                      mx="2"
+                      mt="-40px"
+                    >
+                      →
+                    </Text>
+                  )}
+                  {i < HOW_IT_WORKS.length - 1 && (
+                    <Text
+                      display={{ base: 'block', md: 'none' }}
+                      {...pixelFontProps}
+                      fontSize="18px"
+                      color="dark.border"
+                      textAlign="center"
+                    >
+                      ▼
+                    </Text>
                   )}
                 </Box>
                 );
@@ -883,7 +881,7 @@ export default function HomePage() {
         {/* ═══════════════════ FOOTER CTA ═══════════════════ */}
         <Box
           data-testid="footer-cta"
-          py={{ base: '16', md: '20' }}
+          py={{ base: '10', md: '14' }}
           px="4"
           background="linear-gradient(135deg, rgba(139,92,246,0.05), rgba(45,212,191,0.03))"
           textAlign="center"
@@ -898,18 +896,18 @@ export default function HomePage() {
             <Button
               data-testid="footer-cta-button"
               size="lg"
-              bg="game.xpGold"
-              color="dark.bg"
+              bg="linear-gradient(135deg, #8B5CF6, #2DD4BF)"
+              color="white"
               {...pixelFontProps}
               fontSize={{ base: '11px', md: '13px' }}
               px="10"
               py="6"
-              {...retroCardProps}
-              borderColor="game.xpGold"
-              boxShadow="4px 4px 0 rgba(255,215,0,0.4)"
+              border="none"
+              borderRadius="md"
+              boxShadow="0 0 25px rgba(139,92,246,0.2), 0 0 25px rgba(45,212,191,0.1)"
               _hover={{
                 transform: 'translateY(-2px)',
-                boxShadow: '4px 6px 0 rgba(255,215,0,0.5)',
+                boxShadow: '0 0 35px rgba(139,92,246,0.3), 0 0 35px rgba(45,212,191,0.15)',
               }}
               transition="all 0.2s"
               onClick={() => navigate(isLoggedIn ? '/dashboard' : '/register')}
