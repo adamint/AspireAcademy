@@ -138,6 +138,8 @@ export default function LeaderboardPage() {
             {entries.map((entry) => {
               const isCurrentUser = entry.userId === currentUser?.id;
               const isTop3 = entry.rank <= 3;
+              const podiumColors: Record<number, string> = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
+              const podiumBg: Record<number, string> = { 1: 'rgba(255,215,0,0.08)', 2: 'rgba(192,192,192,0.06)', 3: 'rgba(205,127,50,0.06)' };
               return (
                 <Flex
                   key={entry.userId}
@@ -145,8 +147,9 @@ export default function LeaderboardPage() {
                   p={3}
                   alignItems="center"
                   gap={4}
-                  bg={isCurrentUser ? 'aspire.50' : isTop3 ? 'rgba(255, 215, 0, 0.05)' : undefined}
-                  borderColor={isCurrentUser ? 'aspire.600' : isTop3 ? 'rgba(255, 215, 0, 0.3)' : 'game.pixelBorder'}
+                  bg={isCurrentUser ? 'aspire.50' : isTop3 ? podiumBg[entry.rank] : undefined}
+                  borderColor={isCurrentUser ? 'aspire.600' : isTop3 ? podiumColors[entry.rank] : 'game.pixelBorder'}
+                  boxShadow={isTop3 ? `4px 4px 0 ${podiumColors[entry.rank]}33` : undefined}
                 >
                   {/* Rank */}
                   <Box w="48px" textAlign="center" flexShrink={0}>

@@ -19,6 +19,8 @@ export default function WorldCard({ world }: WorldCardProps) {
   const navigate = useNavigate();
 
   const progress = world.totalLessons > 0 ? world.completionPercentage : 0;
+  const worldAccents = ['#2DD4BF', '#FBBF24', '#FB7185', '#34D399', '#38BDF8', '#FB923C', '#A78BFA', '#F472B6'];
+  const accent = worldAccents[(world.sortOrder - 1) % worldAccents.length];
 
   const handleClick = () => {
     if (!world.isLocked) {
@@ -35,7 +37,7 @@ export default function WorldCard({ world }: WorldCardProps) {
       opacity={world.isLocked ? 0.6 : 1}
       filter={world.isLocked ? 'grayscale(100%)' : 'none'}
       transition="transform 0.15s ease, box-shadow 0.15s ease"
-      _hover={world.isLocked ? {} : { transform: 'translateY(-2px)' }}
+      _hover={world.isLocked ? {} : { transform: 'translateY(-2px)', borderColor: accent, boxShadow: `0 4px 16px ${accent}33, 4px 4px 0 var(--chakra-colors-game-pixel-shadow, #2B1260)` }}
       onClick={handleClick}
       title={world.isLocked ? `${world.name} - Locked` : `Open ${world.name} world`}
       aria-label={world.isLocked ? `${world.name} world - Locked` : `Open ${world.name} world`}
@@ -56,9 +58,10 @@ export default function WorldCard({ world }: WorldCardProps) {
             w="11"
             h="11"
             borderRadius="sm"
-            bg={world.isLocked ? 'game.locked' : 'game.pixelBorder'}
+            bg={world.isLocked ? 'game.locked' : `${accent}22`}
             color="dark.text"
             fontSize="xl"
+            border={world.isLocked ? undefined : `1px solid ${accent}44`}
           >
             {world.isLocked ? <FiLock /> : world.icon}
           </Flex>
@@ -66,7 +69,7 @@ export default function WorldCard({ world }: WorldCardProps) {
             <Text fontWeight="semibold" fontSize="md" truncate>
               {world.name}
             </Text>
-            <Text {...pixelFontProps} fontSize="2xs" color="aspire.accent">
+            <Text {...pixelFontProps} fontSize="2xs" color={world.isLocked ? 'dark.muted' : accent}>
               World {world.sortOrder}
             </Text>
           </Box>

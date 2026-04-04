@@ -132,12 +132,14 @@ export default function AchievementsPage() {
                   textAlign="center"
                   cursor={ach.isUnlocked ? 'pointer' : 'default'}
                   transition="transform 0.15s ease"
-                  _hover={ach.isUnlocked ? { transform: 'translateY(-2px)' } : undefined}
+                  _hover={ach.isUnlocked ? { transform: 'translateY(-2px)', boxShadow: `0 4px 16px ${rarityColors[ach.rarity]}44, 4px 4px 0 var(--chakra-colors-game-pixel-shadow, #2B1260)` } : undefined}
                   position="relative"
                   borderColor={rarityColors[ach.rarity]}
                   filter={ach.isUnlocked ? undefined : 'grayscale(100%)'}
                   opacity={ach.isUnlocked ? 1 : 0.6}
                   onClick={() => ach.isUnlocked && setSelected(ach)}
+                  bg={ach.isUnlocked ? undefined : 'dark.card'}
+                  css={ach.isUnlocked ? { borderTopWidth: '3px', borderTopColor: rarityColors[ach.rarity] } : undefined}
                 >
                   {/* Lock overlay for locked achievements */}
                   {!ach.isUnlocked && (

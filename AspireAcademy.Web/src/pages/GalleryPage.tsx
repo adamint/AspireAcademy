@@ -108,12 +108,12 @@ interface GalleryEntry {
 }
 
 const CATEGORIES = [
-  { label: 'All', value: 'all', icon: '🏛️' },
-  { label: 'Web & Commerce', value: 'Web & Commerce', icon: '🌐' },
-  { label: 'AI & Intelligence', value: 'AI & Intelligence', icon: '🤖' },
-  { label: 'Data & Streaming', value: 'Data & Streaming', icon: '📊' },
-  { label: 'Event-Driven', value: 'Event-Driven', icon: '⚡' },
-  { label: 'Enterprise', value: 'Enterprise', icon: '🏢' },
+  { label: 'All', value: 'all', icon: '🏛️', accent: '#A78BFA' },
+  { label: 'Web & Commerce', value: 'Web & Commerce', icon: '🌐', accent: '#2DD4BF' },
+  { label: 'AI & Intelligence', value: 'AI & Intelligence', icon: '🤖', accent: '#38BDF8' },
+  { label: 'Data & Streaming', value: 'Data & Streaming', icon: '📊', accent: '#FBBF24' },
+  { label: 'Event-Driven', value: 'Event-Driven', icon: '⚡', accent: '#FB923C' },
+  { label: 'Enterprise', value: 'Enterprise', icon: '🏢', accent: '#34D399' },
 ];
 
 const difficultyConfig = {
@@ -1434,9 +1434,9 @@ export default function GalleryPage() {
               size="xs"
               variant="ghost"
               onClick={() => setActiveCategory(cat.value)}
-              bg={isActive ? 'aspire.200' : 'transparent'}
-              color={isActive ? 'aspire.accent' : 'dark.muted'}
-              _hover={{ bg: isActive ? 'aspire.200' : 'dark.card' }}
+              bg={isActive ? `${cat.accent}22` : 'transparent'}
+              color={isActive ? cat.accent : 'dark.muted'}
+              _hover={{ bg: isActive ? `${cat.accent}22` : 'dark.card' }}
               {...pixelFontProps}
               fontSize="9px"
               px="3"
@@ -1448,8 +1448,8 @@ export default function GalleryPage() {
               <Badge
                 ml="1.5"
                 fontSize="2xs"
-                bg={isActive ? 'aspire.300' : 'dark.border'}
-                color={isActive ? 'aspire.500' : 'dark.muted'}
+                bg={isActive ? `${cat.accent}33` : 'dark.border'}
+                color={isActive ? cat.accent : 'dark.muted'}
                 px="1.5"
                 borderRadius="full"
                 minW="18px"

@@ -276,16 +276,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           >
             Explore
           </Text>
-          <SideNavLink to="/playground" icon={<FiCpu size={16} />} onClose={onClose}>
+          <SideNavLink to="/playground" icon={<Flex align="center" gap="0"><Box w="6px" h="6px" borderRadius="full" bg="#2DD4BF" mr="2" flexShrink={0} /><FiCpu size={16} /></Flex>} onClose={onClose}>
             Playground
           </SideNavLink>
-          <SideNavLink to="/concept-map" icon={<FiMap size={16} />} onClose={onClose}>
+          <SideNavLink to="/concept-map" icon={<Flex align="center" gap="0"><Box w="6px" h="6px" borderRadius="full" bg="#34D399" mr="2" flexShrink={0} /><FiMap size={16} /></Flex>} onClose={onClose}>
             Concept Map
           </SideNavLink>
-          <SideNavLink to="/gallery" icon={<FiImage size={16} />} onClose={onClose}>
+          <SideNavLink to="/gallery" icon={<Flex align="center" gap="0"><Box w="6px" h="6px" borderRadius="full" bg="#FBBF24" mr="2" flexShrink={0} /><FiImage size={16} /></Flex>} onClose={onClose}>
             Gallery
           </SideNavLink>
-          <SideNavLink to="/weekly-challenge" icon={<FiTarget size={16} />} onClose={onClose}>
+          <SideNavLink to="/weekly-challenge" icon={<Flex align="center" gap="0"><Box w="6px" h="6px" borderRadius="full" bg="#FB7185" mr="2" flexShrink={0} /><FiTarget size={16} /></Flex>} onClose={onClose}>
             Weekly Challenge
           </SideNavLink>
           <SideNavLink to="/whats-new" icon={<FiStar size={16} />} onClose={onClose}>

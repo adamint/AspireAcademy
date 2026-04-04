@@ -1034,7 +1034,7 @@ export default function HomePage() {
           data-testid="footer-cta"
           py={{ base: '16', md: '20' }}
           px="4"
-          bg="dark.surface"
+          background="linear-gradient(135deg, var(--chakra-colors-dark-surface) 0%, rgba(45,212,191,0.06) 40%, rgba(107,79,187,0.08) 70%, var(--chakra-colors-dark-surface) 100%)"
           textAlign="center"
         >
             <Text {...pixelFontProps} fontSize={{ base: '14px', md: '20px' }} color="aspire.accent" mb="4">
