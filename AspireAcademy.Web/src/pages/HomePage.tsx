@@ -504,7 +504,7 @@ export default function HomePage() {
               coordinating startup, reading four log files to debug one request, maintaining separate configs
               per environment.
             </Text>
-            <SimpleGrid columns={{ base: 1, sm: 2 }} gap="5" maxW="1000px" mx="auto">
+            <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="5" maxW="1100px" mx="auto">
               {[
                 {
                   icon: '🏗️',
@@ -546,28 +546,16 @@ export default function HomePage() {
                 <Box
                   key={card.title}
                   borderRadius="md"
-                  position="relative"
-                  overflow="hidden"
                   bg="dark.card"
-                  p="5"
-                  pl="7"
+                  p="4"
                   cursor="pointer"
                   role="link"
                   tabIndex={0}
-                  borderLeft="4px solid"
-                  borderLeftColor={card.accent}
-                  border="2px solid"
+                  borderTop="3px solid"
+                  borderTopColor={card.accent}
+                  border="1px solid"
                   borderColor="dark.border"
-                  css={{ borderLeftWidth: '4px', borderLeftColor: card.accent }}
-                  _before={{
-                    content: '""',
-                    position: 'absolute',
-                    inset: '-1px',
-                    background: `linear-gradient(135deg, ${card.accentBg}, transparent)`,
-                    borderRadius: 'md',
-                    zIndex: 0,
-                    pointerEvents: 'none',
-                  }}
+                  css={{ borderTopWidth: '3px', borderTopColor: card.accent }}
                   _hover={{
                     transform: 'translateY(-4px)',
                     borderColor: card.accent,
@@ -577,89 +565,71 @@ export default function HomePage() {
                   onClick={() => navigate(card.linkTo)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(card.linkTo); } }}
                 >
-                  <Box position="relative" zIndex={1}>
-                    <Flex align="center" gap="3" mb="2">
-                      <Flex
-                        align="center"
-                        justify="center"
-                        w="36px"
-                        h="36px"
-                        borderRadius="md"
-                        bg={card.accentBg}
-                        flexShrink={0}
-                      >
-                        <Text fontSize="xl">{card.icon}</Text>
-                      </Flex>
-                      <Text fontWeight="bold" color="dark.text">{card.title}</Text>
-                    </Flex>
-                    <Text fontSize="sm" color="dark.muted" lineHeight="1.6" mb="3"
-                      dangerouslySetInnerHTML={{ __html: card.desc }}
-                    />
-                    <Text
-                      fontSize="xs"
-                      color={card.accent}
-                      cursor="pointer"
-                      _hover={{ textDecoration: 'underline' }}
-                      onClick={(e) => { e.stopPropagation(); navigate(card.linkTo); }}
+                  <Flex align="center" gap="3" mb="2">
+                    <Flex
+                      align="center"
+                      justify="center"
+                      w="36px"
+                      h="36px"
+                      borderRadius="md"
+                      bg={card.accentBg}
+                      flexShrink={0}
                     >
-                      {card.linkLabel}
-                    </Text>
-                  </Box>
+                      <Text fontSize="xl">{card.icon}</Text>
+                    </Flex>
+                    <Text fontWeight="bold" fontSize="sm" color="dark.text">{card.title}</Text>
+                  </Flex>
+                  <Text fontSize="sm" color="dark.muted" lineHeight="1.6" mb="3"
+                    dangerouslySetInnerHTML={{ __html: card.desc }}
+                  />
+                  <Text
+                    fontSize="xs"
+                    color={card.accent}
+                    cursor="pointer"
+                    _hover={{ textDecoration: 'underline' }}
+                    onClick={(e) => { e.stopPropagation(); navigate(card.linkTo); }}
+                  >
+                    {card.linkLabel}
+                  </Text>
                 </Box>
               ))}
             </SimpleGrid>
         </Box>
 
         {/* ═══════════════════ STATS ═══════════════════ */}
-        <Box id="stats" py={{ base: '16', md: '20' }} px="4" bg="dark.surface">
-            <SimpleGrid
+        <Box
+          id="stats"
+          py="6"
+          px="4"
+          background="linear-gradient(90deg, rgba(45,212,191,0.03), rgba(139,92,246,0.04), rgba(251,191,36,0.03))"
+          borderTop="1px solid"
+          borderBottom="1px solid"
+          borderColor="dark.border"
+        >
+            <Flex
               data-testid="stats-section"
-              columns={{ base: 2, md: 4 }}
-              gap="6"
-              maxW="900px"
-              mx="auto"
+              justify="center"
+              gap={{ base: '6', md: '10' }}
+              flexWrap="wrap"
             >
               {stats.map((s, i) => {
                 const statColors = ['#38BDF8', '#34D399', '#FBBF24', '#FB7185'];
-                const statGlows = [
-                  'rgba(56,189,248,0.4)',
-                  'rgba(52,211,153,0.4)',
-                  'rgba(251,191,36,0.4)',
-                  'rgba(251,113,133,0.4)',
-                ];
                 return (
-                <Flex
-                  key={s.label}
-                  direction="column"
-                  align="center"
-                  gap="2"
-                  {...retroCardProps}
-                  bg="dark.card"
-                  p="6"
-                  transition="all 0.3s ease"
-                  _hover={{
-                    transform: 'scale(1.06)',
-                    boxShadow: `0 0 20px ${statGlows[i]}, 4px 4px 0 #2B1260`,
-                  }}
-                  style={{
-                    animation: `card-glow 4s ease-in-out ${i * 0.5}s infinite`,
-                  }}
-                >
-                  <Box style={{ animation: `shimmer 3s ease-in-out ${i * 0.7}s infinite` }}>
-                    <CountUp target={s.num} color={statColors[i]} />
-                  </Box>
+                <Box key={s.label} textAlign="center">
+                  <CountUp target={s.num} color={statColors[i]} />
                   <Text
                     {...pixelFontProps}
                     fontSize={{ base: '8px', md: '10px' }}
                     color="dark.muted"
                     textTransform="uppercase"
+                    mt="1"
                   >
                     {s.label}
                   </Text>
-                </Flex>
+                </Box>
                 );
               })}
-            </SimpleGrid>
+            </Flex>
         </Box>
 
         {/* ═══════════════════ LEARNING TRACKS ═══════════════════ */}
@@ -778,10 +748,11 @@ export default function HomePage() {
               {worlds ? `${worlds.length} themed worlds` : 'Themed worlds'} take you from cloud fundamentals to production-ready distributed apps
             </Text>
 
-          <SimpleGrid
+          <Flex
             data-testid="worlds-grid"
-            columns={{ base: 2, sm: 2, md: 4 }}
-            gap="5"
+            gap="4"
+            overflowX="auto"
+            pb="2"
             maxW="1000px"
             mx="auto"
           >
@@ -790,9 +761,14 @@ export default function HomePage() {
               const accent = worldAccents[i % worldAccents.length];
               return (
                 <Card.Root
-                  {...retroCardProps}
+                  key={w.id}
                   bg="dark.card"
+                  border="1px solid"
+                  borderColor={accent}
+                  borderRadius="lg"
                   p="5"
+                  minW="175px"
+                  flexShrink={0}
                   textAlign="center"
                   cursor="pointer"
                   transition="all 0.25s"
@@ -800,11 +776,7 @@ export default function HomePage() {
                   tabIndex={0}
                   _hover={{
                     transform: 'scale(1.05) translateY(-4px)',
-                    borderColor: accent,
-                    boxShadow: `0 0 20px ${accent}33, 4px 4px 0 #2B1260`,
-                  }}
-                  style={{
-                    animation: `card-glow 4s ease-in-out infinite, slide-up-fade 0.6s ease-out ${i * 0.08}s both`,
+                    boxShadow: `0 0 20px ${accent}33`,
                   }}
                   onClick={() => navigate(`/worlds/${w.id}`)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/worlds/${w.id}`); } }}
@@ -824,7 +796,7 @@ export default function HomePage() {
                 </Card.Root>
               );
             })}
-          </SimpleGrid>
+          </Flex>
         </Box>
 
         {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
@@ -841,66 +813,71 @@ export default function HomePage() {
               How It Works
             </Heading>
 
-          <Box position="relative" maxW="900px" mx="auto">
-            {/* Connecting timeline bar (desktop only) */}
-            <Box
-              display={{ base: 'none', md: 'block' }}
-              position="absolute"
-              top="36px"
-              left="16%"
-              right="16%"
-              h="4px"
-              borderRadius="full"
-              background="linear-gradient(90deg, rgba(45,212,191,0.2), rgba(45,212,191,0.6), rgba(251,191,36,0.6), rgba(52,211,153,0.6), rgba(52,211,153,0.2))"
-              zIndex={0}
-            />
-
-            <SimpleGrid columns={{ base: 1, md: 3 }} gap="8" position="relative" zIndex={1}>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            align="center"
+            justify="center"
+            maxW="900px"
+            mx="auto"
+            gap="0"
+          >
               {HOW_IT_WORKS.map((item, i) => {
-                const stepColors = ['#2DD4BF', '#FBBF24', '#34D399'];
-                const stepBgs = ['rgba(45,212,191,0.15)', 'rgba(251,191,36,0.15)', 'rgba(52,211,153,0.15)'];
-                const stepBorderColors = ['#2DD4BF', '#FBBF24', '#34D399'];
+                const stepColors = ['#2DD4BF', '#FBBF24', '#FB7185'];
+                const stepBgs = ['rgba(45,212,191,0.15)', 'rgba(251,191,36,0.15)', 'rgba(251,113,133,0.15)'];
                 return (
-                <Flex key={item.step} direction="column" align="center" textAlign="center" gap="3">
-                  <Flex
-                    align="center"
-                    justify="center"
-                    w="72px"
-                    h="72px"
-                    bg={stepBgs[i]}
-                    border="2px solid"
-                    borderColor={stepBorderColors[i]}
-                    borderRadius="md"
-                    transition="all 0.3s ease"
-                    _hover={{
-                      animation: 'step-pulse 1s ease-in-out',
-                      borderColor: 'game.xpGold',
-                    }}
-                  >
-                    <Text {...pixelFontProps} fontSize="24px" color={stepColors[i]}>{item.step}</Text>
-                  </Flex>
-                  <Text {...pixelFontProps} fontSize="14px" color={stepColors[i]}>
-                    {item.title}
-                  </Text>
-                  <Text fontSize="sm" color="dark.muted" maxW="240px">
-                    {item.desc}
-                  </Text>
-                  {i < HOW_IT_WORKS.length - 1 && (
-                    <Text
-                      display={{ base: 'block', md: 'none' }}
-                      {...pixelFontProps}
-                      fontSize="18px"
-                      color={stepColors[i]}
-                      mt="2"
+                <Box key={item.step}>
+                  <Flex direction="column" align="center" textAlign="center" gap="3">
+                    <Flex
+                      align="center"
+                      justify="center"
+                      w="48px"
+                      h="48px"
+                      bg={stepBgs[i]}
+                      borderRadius="full"
+                      border="2px solid"
+                      borderColor={stepColors[i]}
                     >
-                      ▼
+                      <Text {...pixelFontProps} fontSize="18px" color={stepColors[i]}>{item.step}</Text>
+                    </Flex>
+                    <Text {...pixelFontProps} fontSize="14px" color={stepColors[i]}>
+                      {item.title}
                     </Text>
+                    <Text fontSize="sm" color="dark.muted" maxW="240px">
+                      {item.desc}
+                    </Text>
+                  </Flex>
+                  {i < HOW_IT_WORKS.length - 1 && (
+                    <>
+                      <Text
+                        display={{ base: 'none', md: 'block' }}
+                        {...pixelFontProps}
+                        fontSize="20px"
+                        color="dark.border"
+                        px="2"
+                        textAlign="center"
+                        mt="4"
+                        mb="4"
+                      >
+                        →
+                      </Text>
+                      <Text
+                        display={{ base: 'block', md: 'none' }}
+                        {...pixelFontProps}
+                        fontSize="20px"
+                        color="dark.border"
+                        px="2"
+                        textAlign="center"
+                        mt="2"
+                        mb="2"
+                      >
+                        ▼
+                      </Text>
+                    </>
                   )}
-                </Flex>
+                </Box>
                 );
               })}
-            </SimpleGrid>
-          </Box>
+          </Flex>
         </Box>
 
         {/* ═══════════════════ FOOTER CTA ═══════════════════ */}
@@ -908,7 +885,7 @@ export default function HomePage() {
           data-testid="footer-cta"
           py={{ base: '16', md: '20' }}
           px="4"
-          background="linear-gradient(135deg, var(--chakra-colors-dark-surface) 0%, rgba(45,212,191,0.06) 40%, rgba(107,79,187,0.08) 70%, var(--chakra-colors-dark-surface) 100%)"
+          background="linear-gradient(135deg, rgba(139,92,246,0.05), rgba(45,212,191,0.03))"
           textAlign="center"
         >
             <Text {...pixelFontProps} fontSize={{ base: '14px', md: '20px' }} color="aspire.accent" mb="4">
