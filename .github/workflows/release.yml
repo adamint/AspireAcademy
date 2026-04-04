@@ -2,6 +2,7 @@ name: "Release & Deploy"
 
 on:
   push:
+    branches: [main]
     tags:
       - 'v*'
   workflow_dispatch:
@@ -30,7 +31,7 @@ jobs:
   # ─── Stage 1: Validate ────────────────────────────────────────────
   validate:
     name: Validate Release
-    if: ${{ !inputs.deploy_only }}
+    if: ${{ !inputs.deploy_only && startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -53,7 +54,6 @@ jobs:
   # ─── Stage 2: Test (parallel) ─────────────────────────────────────
   backend-unit:
     name: Backend Unit Tests
-    needs: validate
     if: ${{ !inputs.deploy_only }}
     runs-on: ubuntu-latest
     steps:
@@ -73,7 +73,6 @@ jobs:
 
   backend-integration:
     name: Backend Integration Tests
-    needs: validate
     if: ${{ !inputs.deploy_only }}
     runs-on: ubuntu-latest
     steps:
@@ -94,7 +93,6 @@ jobs:
 
   frontend:
     name: Frontend Checks
-    needs: validate
     if: ${{ !inputs.deploy_only }}
     runs-on: ubuntu-latest
     steps:
@@ -207,11 +205,14 @@ jobs:
   # ─── Stage 4: Deploy to Azure ─────────────────────────────────────
   deploy:
     name: Deploy to Azure
-    needs: [release]
+    needs: [release, backend-unit, backend-integration, frontend]
     if: |
       always() &&
-      (needs.release.result == 'success' || inputs.deploy_only) &&
-      (startsWith(github.ref, 'refs/tags/v') || inputs.deploy_only)
+      (
+        needs.release.result == 'success' ||
+        (github.ref == 'refs/heads/main' && needs.backend-unit.result == 'success' && needs.backend-integration.result == 'success' && needs.frontend.result == 'success') ||
+        inputs.deploy_only
+      )
     runs-on: ubuntu-latest
     environment: production
     concurrency:

@@ -347,7 +347,7 @@ export default function HomePage() {
         </Flex>
 
         {/* ═══════════════════ HERO ═══════════════════ */}
-        <Box id="hero" position="relative" minH={{ base: '90vh', md: '92vh' }} overflow="hidden">
+        <Box id="hero" position="relative" minH={{ base: '70vh', md: '75vh' }} overflow="hidden">
           <NetworkCanvas />
 
           <Flex
@@ -357,7 +357,7 @@ export default function HomePage() {
             align="center"
             justify="center"
             textAlign="center"
-            minH={{ base: '90vh', md: '92vh' }}
+            minH={{ base: '70vh', md: '75vh' }}
             px="4"
             gap="6"
           >
@@ -415,6 +415,18 @@ export default function HomePage() {
                 </Text>
               </Text>
             </Box>
+
+            {/* Value proposition subtitle */}
+            <Text
+              maxW="520px"
+              fontSize={{ base: 'sm', md: 'md' }}
+              color="whiteAlpha.600"
+              lineHeight="1.7"
+              mt="2"
+            >
+              Distributed apps are hard — tangled configs, scattered logs, painful deploys.
+              Aspire fixes that. Learn the platform by building real apps.
+            </Text>
 
             {/* CTA buttons */}
             <Flex
@@ -476,48 +488,15 @@ export default function HomePage() {
               color="whiteAlpha.500"
               style={{ animation: 'float-node 2s ease-in-out infinite' }}
               cursor="pointer"
-              onClick={() => scrollTo('stats')}
+              onClick={() => scrollTo('why-aspire')}
             >
               ▼ Scroll to explore ▼
             </Text>
           </Flex>
         </Box>
 
-        {/* ═══════════════════ STATS ═══════════════════ */}
-        <Box id="stats" py={{ base: '16', md: '20' }} px="4" bg="#151224">
-            <SimpleGrid
-              data-testid="stats-section"
-              columns={{ base: 2, md: 4 }}
-              gap="6"
-              maxW="900px"
-              mx="auto"
-            >
-              {stats.map((s) => (
-                <Flex
-                  key={s.label}
-                  direction="column"
-                  align="center"
-                  gap="2"
-                  {...retroCardProps}
-                  bg="rgba(26,11,46,0.6)"
-                  p="6"
-                >
-                  <CountUp target={s.num} />
-                  <Text
-                    {...pixelFontProps}
-                    fontSize={{ base: '8px', md: '10px' }}
-                    color="whiteAlpha.700"
-                    textTransform="uppercase"
-                  >
-                    {s.label}
-                  </Text>
-                </Flex>
-              ))}
-            </SimpleGrid>
-        </Box>
-
         {/* ═══════════════════ WHY ASPIRE ═══════════════════ */}
-        <Box py={{ base: '16', md: '20' }} px="4">
+        <Box id="why-aspire" py={{ base: '16', md: '20' }} px="4">
             <Heading
               as="h2"
               fontSize={{ base: 'xl', md: '2xl' }}
@@ -565,6 +544,39 @@ export default function HomePage() {
                   No rewrites. Pick your target when you're ready.
                 </Text>
               </Box>
+            </SimpleGrid>
+        </Box>
+
+        {/* ═══════════════════ STATS ═══════════════════ */}
+        <Box id="stats" py={{ base: '16', md: '20' }} px="4" bg="#151224">
+            <SimpleGrid
+              data-testid="stats-section"
+              columns={{ base: 2, md: 4 }}
+              gap="6"
+              maxW="900px"
+              mx="auto"
+            >
+              {stats.map((s) => (
+                <Flex
+                  key={s.label}
+                  direction="column"
+                  align="center"
+                  gap="2"
+                  {...retroCardProps}
+                  bg="rgba(26,11,46,0.6)"
+                  p="6"
+                >
+                  <CountUp target={s.num} />
+                  <Text
+                    {...pixelFontProps}
+                    fontSize={{ base: '8px', md: '10px' }}
+                    color="whiteAlpha.700"
+                    textTransform="uppercase"
+                  >
+                    {s.label}
+                  </Text>
+                </Flex>
+              ))}
             </SimpleGrid>
         </Box>
 

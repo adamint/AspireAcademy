@@ -1,6 +1,8 @@
 # Aspire Academy — Deployment Guide
 
-This project uses **Aspire's built-in publish/deploy pipeline** to deploy to Azure. Releases are automated via GitHub Actions: push a version tag and the workflow runs tests, creates a GitHub Release, and deploys to Azure Container Apps.
+This project uses **Aspire's built-in publish/deploy pipeline** to deploy to Azure. Deployments are automated via GitHub Actions:
+- **Every push to `main`** runs tests and auto-deploys to production.
+- **Pushing a version tag** (`v*`) additionally creates a GitHub Release with changelog notes.
 
 ## What Gets Deployed
 
