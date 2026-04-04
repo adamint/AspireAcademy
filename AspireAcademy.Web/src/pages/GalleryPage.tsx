@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   Box,
@@ -11,6 +12,7 @@ import {
   IconButton,
   SimpleGrid,
   Tabs,
+  Input,
 } from '@chakra-ui/react';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -19,6 +21,62 @@ import api from '../services/apiClient';
 import ArchitectureDiagram from '../components/common/ArchitectureDiagram';
 import { serviceTypeColors } from '../components/common/architectureDiagramTypes';
 import type { ServiceNode, DiagramConnection } from '../components/common/architectureDiagramTypes';
+
+// ─── Concept Map Types (for "Learn this" links) ───────────────────────────────
+
+interface ConceptNode {
+  id: string;
+  label: string;
+  layer: string;
+  description: string;
+  lessonId: string;
+  emoji: string;
+}
+
+interface ConceptsData {
+  layerOrder: string[];
+  layers: Record<string, { label: string; color: string }>;
+  concepts: ConceptNode[];
+}
+
+// ─── Playground Types (for bridge) ────────────────────────────────────────────
+
+type ResourceType =
+  | 'postgres'
+  | 'redis'
+  | 'sqlserver'
+  | 'mongodb'
+  | 'rabbitmq'
+  | 'kafka'
+  | 'project'
+  | 'container'
+  | 'npmapp'
+  | 'pythonapp'
+  | 'azurestorage'
+  | 'keyvault'
+  | 'parameter';
+
+interface PlaygroundResource {
+  id: string;
+  type: ResourceType;
+  name: string;
+  databases: string[];
+  image: string;
+  references: string[];
+  waitFor: string[];
+  hasDataVolume: boolean;
+  hasExternalEndpoints: boolean;
+  ports: string;
+  envVars: { key: string; value: string }[];
+  isPersistent: boolean;
+  isSecret: boolean;
+  args: string;
+  scriptPath: string;
+  projectPath: string;
+  projectLanguage: 'csharp' | 'typescript';
+}
+
+const PLAYGROUND_STORAGE_KEY = 'aspire-playground-resources';
 
 // ─── Gallery Types ─────────────────────────────────────────────────────────────
 
@@ -609,6 +667,62 @@ function GalleryCard({
 
 // ─── Gallery Detail View ──────────────────────────────────────────────────────
 
+function mapServiceToResourceType(svc: ServiceNode): ResourceType {
+  const name = svc.name.toLowerCase();
+  switch (svc.type) {
+    case 'database':
+      if (name.includes('postgres')) return 'postgres';
+      if (name.includes('sql server') || name.includes('sqlserver') || name.includes('mssql')) return 'sqlserver';
+      if (name.includes('mongo')) return 'mongodb';
+      return 'postgres';
+    case 'cache':
+      return 'redis';
+    case 'messaging':
+      if (name.includes('kafka')) return 'kafka';
+      return 'rabbitmq';
+    case 'frontend':
+      return 'npmapp';
+    case 'api':
+    case 'worker':
+      return 'project';
+    default:
+      return 'container';
+  }
+}
+
+function convertToPlaygroundResources(
+  services: ServiceNode[],
+  connections: DiagramConnection[],
+): PlaygroundResource[] {
+  return services.map((svc) => {
+    const refs = connections
+      .filter((c) => c.from === svc.id)
+      .map((c) => c.to);
+    const waits = connections
+      .filter((c) => c.from === svc.id)
+      .map((c) => c.to);
+    return {
+      id: svc.id,
+      type: mapServiceToResourceType(svc),
+      name: svc.name.replace(/\n/g, ' '),
+      databases: [],
+      image: '',
+      references: refs,
+      waitFor: waits,
+      hasDataVolume: svc.type === 'database',
+      hasExternalEndpoints: svc.type === 'api' || svc.type === 'frontend',
+      ports: '',
+      envVars: [],
+      isPersistent: false,
+      isSecret: false,
+      args: '',
+      scriptPath: '',
+      projectPath: '',
+      projectLanguage: 'csharp',
+    };
+  });
+}
+
 function GalleryDetail({
   entry,
   onBack,
@@ -616,7 +730,32 @@ function GalleryDetail({
   entry: GalleryEntry;
   onBack: () => void;
 }) {
+  const navigate = useNavigate();
   const projectFiles = useMemo(() => buildProjectFiles(entry), [entry]);
+
+  const { data: conceptsData } = useQuery<ConceptsData>({
+    queryKey: ['concepts'],
+    queryFn: () => api.get('/concepts').then((r) => r.data),
+    staleTime: 10 * 60_000,
+  });
+
+  const relatedLessons = useMemo(() => {
+    if (!conceptsData) return [];
+    return entry.concepts
+      .map((concept) => {
+        const match = conceptsData.concepts.find(
+          (c) => c.label.toLowerCase() === concept.toLowerCase(),
+        );
+        return match ? { concept, lessonId: match.lessonId, emoji: match.emoji } : null;
+      })
+      .filter((r): r is { concept: string; lessonId: string; emoji: string } => r !== null && !!r.lessonId);
+  }, [entry.concepts, conceptsData]);
+
+  const handleOpenInPlayground = useCallback(() => {
+    const resources = convertToPlaygroundResources(entry.services, entry.connections);
+    localStorage.setItem(PLAYGROUND_STORAGE_KEY, JSON.stringify(resources));
+    navigate('/playground');
+  }, [entry.services, entry.connections, navigate]);
 
   return (
     <Box>
@@ -630,6 +769,7 @@ function GalleryDetail({
           _hover={{ color: 'aspire.500' }}
           {...pixelFontProps}
           fontSize="10px"
+          data-testid="gallery-back-button"
         >
           ← Back to Gallery
         </Button>
@@ -655,7 +795,7 @@ function GalleryDetail({
       </Text>
 
       {/* Concept Tags */}
-      <Flex gap="2" flexWrap="wrap" mb="5">
+      <Flex gap="2" flexWrap="wrap" mb="3">
         {entry.concepts.map((concept) => (
           <Badge
             key={concept}
@@ -670,6 +810,50 @@ function GalleryDetail({
           </Badge>
         ))}
       </Flex>
+
+      {/* Related Lessons */}
+      {relatedLessons.length > 0 && (
+        <Box mb="5" data-testid="related-lessons">
+          <Text fontSize="10px" color="dark.text" {...pixelFontProps} mb="2">
+            📚 Related Lessons
+          </Text>
+          <Flex gap="2" flexWrap="wrap">
+            {relatedLessons.map((lesson) => (
+              <Badge
+                key={lesson.lessonId}
+                fontSize="8px"
+                bg="dark.surface"
+                color="aspire.400"
+                px="3"
+                py="1"
+                cursor="pointer"
+                _hover={{ bg: 'aspire.200', color: 'aspire.500' }}
+                onClick={() => navigate(`/lessons/${lesson.lessonId}`)}
+                {...pixelFontProps}
+                data-testid={`related-lesson-${lesson.lessonId}`}
+              >
+                {lesson.emoji} {lesson.concept}
+              </Badge>
+            ))}
+          </Flex>
+        </Box>
+      )}
+
+      {/* Open in Playground */}
+      <Box mb="5">
+        <Button
+          size="sm"
+          bg="aspire.300"
+          color="aspire.500"
+          _hover={{ bg: 'aspire.400', color: 'white' }}
+          onClick={handleOpenInPlayground}
+          {...pixelFontProps}
+          fontSize="10px"
+          data-testid="open-in-playground"
+        >
+          🎮 Open in Playground
+        </Button>
+      </Box>
 
       {/* Architecture Overview — shown prominently above tabs */}
       <Card.Root {...retroCardProps} bg="dark.card" p="4" mb="4">

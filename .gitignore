@@ -15,8 +15,18 @@ dist/
 
 # Environment
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+!.env.template
+
+# Secrets & credentials
+*.pem
+*.key
+*.p12
+*.pfx
+*.cert
+secrets.json
+credentials.json
 
 # IDE
 .idea/

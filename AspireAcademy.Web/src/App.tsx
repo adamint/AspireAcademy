@@ -58,7 +58,7 @@ export default function App() {
           <Route path="/quizzes/:lessonId" element={<Suspense fallback={<LazyFallback />}><QuizPage /></Suspense>} />
           <Route path="/playground" element={<Suspense fallback={<LazyFallback />}><PlaygroundPage /></Suspense>} />
           <Route path="/concept-map" element={<Suspense fallback={<LazyFallback />}><ConceptMapPage /></Suspense>} />
-          <Route path="/gallery" element={<Suspense fallback={<LazyFallback />}><GalleryPage /></Suspense>} />
+          <Route path="/gallery/:projectId?" element={<Suspense fallback={<LazyFallback />}><GalleryPage /></Suspense>} />
           <Route path="/whats-new" element={<Suspense fallback={<LazyFallback />}><WhatsNewPage /></Suspense>} />
           <Route path="/personas" element={<Suspense fallback={<LazyFallback />}><PersonaHubPage /></Suspense>} />
           <Route path="/personas/:personaId" element={<Suspense fallback={<LazyFallback />}><PersonaDetailPage /></Suspense>} />
