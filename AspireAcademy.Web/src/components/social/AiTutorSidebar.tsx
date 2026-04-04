@@ -197,7 +197,7 @@ export default function AiTutorSidebar() {
                           const match = /language-(\w+)/.exec(className || '');
                           const codeString = String(children).replace(/\n$/, '');
                           return match ? (
-                            <SyntaxHighlighter style={vscDarkPlus} language={match[1]} PreTag="div">
+                            <SyntaxHighlighter style={vscDarkPlus} language={match[1]} PreTag="pre">
                               {codeString}
                             </SyntaxHighlighter>
                           ) : (

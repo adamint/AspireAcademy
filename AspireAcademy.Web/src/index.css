@@ -49,24 +49,27 @@ p {
 code,
 .counter {
   font-family: var(--mono);
-  display: inline-flex;
   border-radius: 4px;
 }
 
-/* Code inside pre blocks must be block-level to preserve newlines */
-pre code {
-  display: block !important;
-  white-space: pre !important;
-  padding: 0;
-  background: transparent;
-  font-size: inherit;
-}
-
-code {
+/* Inline code (not inside syntax-highlighted blocks) */
+code:not([class*="language-"]):not(pre code) {
+  display: inline-flex;
   font-size: 15px;
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* Syntax-highlighted code blocks must be block-level */
+pre code,
+code[class*="language-"] {
+  display: block !important;
+  white-space: pre !important;
+  padding: 0 !important;
+  background: transparent !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
 }
 
 /* Certificate SVG font */

@@ -161,7 +161,7 @@ const markdownComponents: Partial<Components> = {
         <SyntaxHighlighter
           style={oneDark}
           language={match[1]}
-          PreTag="div"
+          PreTag="pre"
           customStyle={{ borderRadius: 6, fontSize: 14 }}
         >
           {codeStr}
