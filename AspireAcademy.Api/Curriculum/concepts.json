@@ -98,7 +98,7 @@
       "label": "SQL Server",
       "layer": "resource",
       "description": "Add SQL Server with AddSqlServer() and databases for relational workloads.",
-      "lessonId": "4.1.2",
+      "lessonId": "5.2.1",
       "emoji": "🗄️",
       "prerequisites": [
         "AppHost"
@@ -109,7 +109,7 @@
       "label": "MongoDB",
       "layer": "resource",
       "description": "Add MongoDB with AddMongoDB() for document-based data storage.",
-      "lessonId": "4.1.3",
+      "lessonId": "5.2.2",
       "emoji": "🍃",
       "prerequisites": [
         "AppHost"
@@ -120,7 +120,7 @@
       "label": "RabbitMQ",
       "layer": "resource",
       "description": "Add RabbitMQ with AddRabbitMQ() for message broker communication.",
-      "lessonId": "4.3.1",
+      "lessonId": "5.3.2",
       "emoji": "🐇",
       "prerequisites": [
         "AppHost"
@@ -240,7 +240,7 @@
       "id": "WithArgs",
       "label": "WithArgs",
       "layer": "config",
-      "description": "Pass CLI arguments, scale with replicas, and expose external endpoints.",
+      "description": "Pass CLI arguments to a resource's executable process.",
       "lessonId": "2.1.3",
       "emoji": "📝",
       "prerequisites": [
@@ -263,7 +263,7 @@
       "label": "OpenTelemetry",
       "layer": "infra",
       "description": "Distributed tracing, structured logging, and metrics with OTLP export.",
-      "lessonId": "5.4.1",
+      "lessonId": "6.2.1",
       "emoji": "📊",
       "prerequisites": [
         "ServiceDefaults"
@@ -274,7 +274,7 @@
       "label": "HealthChecks",
       "layer": "infra",
       "description": "IHealthCheck registration and monitoring — how Aspire knows your services are ready.",
-      "lessonId": "5.5.1",
+      "lessonId": "6.3.2",
       "emoji": "❤️",
       "prerequisites": [
         "DistributedApplication"
@@ -296,7 +296,7 @@
       "label": "ServiceDiscovery",
       "layer": "infra",
       "description": "How services find each other at runtime — HttpClient integration and config-based resolution.",
-      "lessonId": "3.2.1",
+      "lessonId": "4.1.2",
       "emoji": "🔍",
       "prerequisites": [
         "DistributedApplication"
@@ -307,7 +307,7 @@
       "label": "Docker Compose",
       "layer": "deploy",
       "description": "Generate docker-compose.yaml from the Aspire app model.",
-      "lessonId": "6.3.1",
+      "lessonId": "10.3.1",
       "emoji": "🐋",
       "prerequisites": [
         "DistributedApplication"

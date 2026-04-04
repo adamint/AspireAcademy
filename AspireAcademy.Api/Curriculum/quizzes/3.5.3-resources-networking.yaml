@@ -38,7 +38,7 @@ questions:
     text: Secret parameters are encrypted at rest
     isCorrect: false
   - id: b
-    text: Secret parameters are never logged, never shown in the Dashboard, and stored securely in deployment manifests
+    text: Secret parameters are masked in the Dashboard, not logged, and marked as secret in deployment artifacts
     isCorrect: true
   - id: c
     text: Secret parameters can only be used by the AppHost
