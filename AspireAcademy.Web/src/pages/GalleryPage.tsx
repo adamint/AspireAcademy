@@ -1237,8 +1237,10 @@ function ServiceLegend() {
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function GalleryPage() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { projectId } = useParams<{ projectId: string }>();
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [search, setSearch] = useState('');
 
   const { data: galleryEntries = [] } = useQuery<GalleryEntry[]>({
     queryKey: ['gallery'],
@@ -1246,12 +1248,24 @@ export default function GalleryPage() {
     staleTime: 10 * 60_000,
   });
 
-  const filteredEntries = useMemo(
-    () => activeCategory === 'all'
+  const filteredEntries = useMemo(() => {
+    let entries = activeCategory === 'all'
       ? galleryEntries
-      : galleryEntries.filter((e) => e.category === activeCategory),
-    [activeCategory, galleryEntries],
-  );
+      : galleryEntries.filter((e) => e.category === activeCategory);
+
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      entries = entries.filter(
+        (e) =>
+          e.title.toLowerCase().includes(q) ||
+          e.description.toLowerCase().includes(q) ||
+          e.category.toLowerCase().includes(q) ||
+          e.concepts.some((c) => c.toLowerCase().includes(q)),
+      );
+    }
+
+    return entries;
+  }, [activeCategory, galleryEntries, search]);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { all: galleryEntries.length };
@@ -1262,8 +1276,8 @@ export default function GalleryPage() {
   }, [galleryEntries]);
 
   const selectedEntry = useMemo(
-    () => galleryEntries.find((e) => e.id === selectedId) ?? null,
-    [selectedId, galleryEntries],
+    () => (projectId ? galleryEntries.find((e) => e.id === projectId) ?? null : null),
+    [projectId, galleryEntries],
   );
 
   if (selectedEntry) {
@@ -1271,7 +1285,7 @@ export default function GalleryPage() {
       <Box maxW="900px" mx="auto" p="6">
         <GalleryDetail
           entry={selectedEntry}
-          onBack={() => setSelectedId(null)}
+          onBack={() => navigate('/gallery')}
         />
       </Box>
     );
@@ -1296,6 +1310,24 @@ export default function GalleryPage() {
           of architecture patterns and Aspire concepts.
         </Text>
       </Box>
+
+      {/* Search Bar */}
+      <Flex justify="center" mb="5">
+        <Input
+          placeholder="🔍 Search projects..."
+          value={search}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+          size="sm"
+          maxW="340px"
+          bg="dark.card"
+          color="dark.text"
+          borderColor="dark.border"
+          _placeholder={{ color: 'dark.muted' }}
+          {...pixelFontProps}
+          fontSize="2xs"
+          data-testid="gallery-search"
+        />
+      </Flex>
 
       {/* Category Filter */}
       <Flex
@@ -1355,7 +1387,7 @@ export default function GalleryPage() {
           <GalleryCard
             key={entry.id}
             entry={entry}
-            onClick={() => setSelectedId(entry.id)}
+            onClick={() => navigate(`/gallery/${entry.id}`)}
           />
         ))}
       </SimpleGrid>
