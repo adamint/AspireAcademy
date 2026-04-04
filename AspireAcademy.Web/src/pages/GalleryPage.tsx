@@ -739,7 +739,7 @@ function GalleryDetail({
 }) {
   const navigate = useNavigate();
   const projectFiles = useMemo(() => buildProjectFiles(entry), [entry]);
-  const [showFullOverview, setShowFullOverview] = useState(false);
+  const [showFullOverview, setShowFullOverview] = useState(true);
   const [showFullWhyAspire, setShowFullWhyAspire] = useState(false);
   const [expandedPatterns, setExpandedPatterns] = useState<Set<string>>(new Set());
 
