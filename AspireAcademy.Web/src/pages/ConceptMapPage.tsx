@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Flex, Text, Input, Heading, SimpleGrid, Button } from '@chakra-ui/react';
@@ -30,14 +30,6 @@ interface ConceptsData {
   layerOrder: string[];
   layers: Record<string, LayerDef>;
   concepts: ConceptNode[];
-}
-
-interface Edge {
-  fromX: number;
-  fromY: number;
-  toX: number;
-  toY: number;
-  color: string;
 }
 
 // ── Helpers ──
@@ -73,8 +65,6 @@ function isLessonLocked(lessonId: string, worlds: World[]): boolean {
 export default function ConceptMapPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [edges, setEdges] = useState<Edge[]>([]);
 
   const { data: worlds } = useQuery<World[]>({
     queryKey: ['worlds'],
@@ -110,66 +100,6 @@ export default function ConceptMapPage() {
     return map;
   }, [searchLower, layerOrder, concepts]);
 
-  // Visible concept IDs (for edge filtering)
-  const visibleConceptIds = useMemo(() => {
-    const ids = new Set<string>();
-    for (const arr of conceptsByLayer.values()) {
-      for (const c of arr) ids.add(c.id);
-    }
-    return ids;
-  }, [conceptsByLayer]);
-
-  // Compute edges between prerequisite concepts
-  const computeEdges = useCallback(() => {
-    const container = containerRef.current;
-    if (!container || concepts.length === 0) { setEdges([]); return; }
-
-    const containerRect = container.getBoundingClientRect();
-    const newEdges: Edge[] = [];
-
-    for (const concept of concepts) {
-      if (!concept.prerequisites?.length) continue;
-      if (!visibleConceptIds.has(concept.id)) continue;
-
-      const toEl = container.querySelector(`[data-concept-id="${concept.id}"]`);
-      if (!toEl) continue;
-      const toRect = toEl.getBoundingClientRect();
-      const layerDef = layers[concept.layer];
-      const color = layerDef?.color ?? '#888';
-
-      for (const preReqId of concept.prerequisites) {
-        if (!visibleConceptIds.has(preReqId)) continue;
-        const fromEl = container.querySelector(`[data-concept-id="${preReqId}"]`);
-        if (!fromEl) continue;
-        const fromRect = fromEl.getBoundingClientRect();
-
-        newEdges.push({
-          fromX: fromRect.left + fromRect.width / 2 - containerRect.left,
-          fromY: fromRect.top + fromRect.height / 2 - containerRect.top,
-          toX: toRect.left + toRect.width / 2 - containerRect.left,
-          toY: toRect.top + toRect.height / 2 - containerRect.top,
-          color,
-        });
-      }
-    }
-
-    setEdges(newEdges);
-  }, [concepts, visibleConceptIds, layers]);
-
-  useEffect(() => {
-    const timer = setTimeout(computeEdges, 100);
-    const container = containerRef.current;
-    let observer: ResizeObserver | undefined;
-    if (container) {
-      observer = new ResizeObserver(() => computeEdges());
-      observer.observe(container);
-    }
-    return () => {
-      clearTimeout(timer);
-      observer?.disconnect();
-    };
-  }, [computeEdges]);
-
   // Suggested next concepts
   const suggestedNext = useMemo(() => {
     if (!worlds || worlds.length === 0) return [];
@@ -201,14 +131,8 @@ export default function ConceptMapPage() {
     });
   }, [worlds, concepts]);
 
-  // Unique edge colors for SVG markers
-  const edgeColors = useMemo(() => {
-    const colorSet = new Set(edges.map(e => e.color));
-    return Array.from(colorSet);
-  }, [edges]);
-
   return (
-    <Box minH="100vh" bg="dark.bg" p={{ base: 3, md: 5 }} ref={containerRef} position="relative">
+    <Box minH="100vh" bg="dark.bg" p={{ base: 3, md: 5 }} position="relative">
       {/* Header */}
       <Flex align="center" justify="space-between" wrap="wrap" gap={3} mb={5}>
         <Heading
@@ -417,52 +341,6 @@ export default function ConceptMapPage() {
         </Flex>
       )}
 
-      {/* SVG overlay for prerequisite edges */}
-      {edges.length > 0 && (
-        <svg
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            overflow: 'visible',
-          }}
-          data-testid="concept-edges-svg"
-        >
-          <defs>
-            {edgeColors.map((color) => (
-              <marker
-                key={color}
-                id={`arrow-${color.replace('#', '')}`}
-                markerWidth={8}
-                markerHeight={6}
-                refX={8}
-                refY={3}
-                orient="auto"
-              >
-                <path d="M0,0 L8,3 L0,6 Z" fill={color} opacity={0.6} />
-              </marker>
-            ))}
-          </defs>
-          {edges.map((edge, i) => {
-            const midY = (edge.fromY + edge.toY) / 2;
-            const d = `M ${edge.fromX},${edge.fromY} C ${edge.fromX},${midY} ${edge.toX},${midY} ${edge.toX},${edge.toY}`;
-            return (
-              <path
-                key={i}
-                d={d}
-                fill="none"
-                stroke={edge.color}
-                strokeWidth={1.5}
-                opacity={0.35}
-                markerEnd={`url(#arrow-${edge.color.replace('#', '')})`}
-              />
-            );
-          })}
-        </svg>
-      )}
     </Box>
   );
 }
