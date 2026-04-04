@@ -738,6 +738,18 @@ function GalleryDetail({
 }) {
   const navigate = useNavigate();
   const projectFiles = useMemo(() => buildProjectFiles(entry), [entry]);
+  const [showFullOverview, setShowFullOverview] = useState(false);
+  const [showFullWhyAspire, setShowFullWhyAspire] = useState(false);
+  const [expandedPatterns, setExpandedPatterns] = useState<Set<string>>(new Set());
+
+  const togglePattern = useCallback((name: string) => {
+    setExpandedPatterns((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  }, []);
 
   const { data: conceptsData } = useQuery<ConceptsData>({
     queryKey: ['concepts'],
@@ -796,39 +808,20 @@ function GalleryDetail({
         </Text>
       </Flex>
 
-      <Text fontSize="sm" color="dark.muted" mb="5" lineHeight="1.6" maxW="700px">
+      <Text fontSize="sm" color="dark.muted" mb="3" lineHeight="1.6" maxW="700px">
         {entry.description}
       </Text>
 
-      {/* Concept Tags */}
-      <Flex gap="2" flexWrap="wrap" mb="3">
-        {entry.concepts.map((concept) => (
-          <Badge
-            key={concept}
-            fontSize="8px"
-            bg="aspire.100"
-            color="aspire.400"
-            px="3"
-            py="1"
-            {...pixelFontProps}
-          >
-            {concept}
-          </Badge>
-        ))}
-      </Flex>
-
-      {/* Related Lessons */}
-      {relatedLessons.length > 0 && (
-        <Box mb="5" data-testid="related-lessons">
-          <Text fontSize="10px" color="dark.text" {...pixelFontProps} mb="2">
-            📚 Related Lessons
-          </Text>
-          <Flex gap="2" flexWrap="wrap">
-            {relatedLessons.map((lesson) => (
+      {/* Concept Tags + Related Lessons (combined row) */}
+      <Flex gap="2" flexWrap="wrap" mb="3" align="center" data-testid="related-lessons">
+        {entry.concepts.map((concept) => {
+          const lesson = relatedLessons.find((l) => l.concept === concept);
+          if (lesson) {
+            return (
               <Badge
-                key={lesson.lessonId}
-                fontSize="2xs"
-                bg="dark.surface"
+                key={concept}
+                fontSize="8px"
+                bg="aspire.100"
                 color="aspire.400"
                 px="3"
                 py="1"
@@ -841,15 +834,28 @@ function GalleryDetail({
                 {...pixelFontProps}
                 data-testid={`related-lesson-${lesson.lessonId}`}
               >
-                {lesson.emoji} {lesson.concept}
+                {lesson.emoji} {concept} →
               </Badge>
-            ))}
-          </Flex>
-        </Box>
-      )}
+            );
+          }
+          return (
+            <Badge
+              key={concept}
+              fontSize="8px"
+              bg="aspire.100"
+              color="aspire.400"
+              px="3"
+              py="1"
+              {...pixelFontProps}
+            >
+              {concept}
+            </Badge>
+          );
+        })}
+      </Flex>
 
       {/* Open in Playground */}
-      <Box mb="5">
+      <Box mb="3">
         <Button
           size="sm"
           bg="aspire.300"
@@ -864,38 +870,87 @@ function GalleryDetail({
         </Button>
       </Box>
 
-      {/* Architecture Overview — shown prominently above tabs */}
-      <Card.Root {...retroCardProps} bg="dark.card" p="4" mb="4">
-        <Card.Body gap="4">
+      {/* Architecture Overview — collapsible with Why Aspire callout */}
+      <Card.Root {...retroCardProps} bg="dark.card" p="4" mb="3">
+        <Card.Body gap="3">
           <Box>
-            <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+            <Heading size="sm" mb="2" color="dark.text" {...pixelFontProps}>
               📖 Architecture Overview
             </Heading>
-            <Box bg="dark.surface" borderRadius="sm" border="1px solid" borderColor="dark.border" p="4">
-              {entry.explanation.overview.split('\n\n').map((paragraph, i) => (
-                <Text key={i} fontSize="sm" color="dark.muted" lineHeight="1.7" mb={i < entry.explanation.overview.split('\n\n').length - 1 ? '3' : '0'}>
-                  {paragraph}
-                </Text>
-              ))}
+            <Box bg="dark.surface" borderRadius="sm" border="1px solid" borderColor="dark.border" p="3">
+              {(() => {
+                const paragraphs = entry.explanation.overview.split('\n\n');
+                const visibleParagraphs = showFullOverview ? paragraphs : paragraphs.slice(0, 1);
+                return (
+                  <>
+                    {visibleParagraphs.map((paragraph, i) => (
+                      <Text key={i} fontSize="sm" color="dark.muted" lineHeight="1.7" mb={i < visibleParagraphs.length - 1 ? '2' : '0'}>
+                        {paragraph}
+                      </Text>
+                    ))}
+                    {paragraphs.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        fontSize="xs"
+                        color="aspire.400"
+                        mt="1"
+                        px="0"
+                        h="auto"
+                        minW="auto"
+                        _hover={{ color: 'aspire.500' }}
+                        onClick={() => setShowFullOverview((v) => !v)}
+                        {...pixelFontProps}
+                      >
+                        {showFullOverview ? 'Show less ▲' : 'Show more ▼'}
+                      </Button>
+                    )}
+                  </>
+                );
+              })()}
             </Box>
           </Box>
 
-          <Box>
-            <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
-              ✨ Why Aspire?
-            </Heading>
-            <Box
-              bg="rgba(107, 79, 187, 0.08)"
-              borderRadius="sm"
-              border="2px solid"
-              borderColor="aspire.300"
-              p="4"
-            >
-              <Text fontSize="sm" color="dark.muted" lineHeight="1.7">
-                {entry.explanation.whyAspire}
+          {/* Why Aspire — compact callout */}
+          <Flex
+            align="flex-start"
+            gap="2"
+            bg="rgba(107, 79, 187, 0.08)"
+            borderRadius="sm"
+            border="1px solid"
+            borderColor="aspire.300"
+            px="3"
+            py="2"
+          >
+            <Text flexShrink={0} fontSize="sm">✨</Text>
+            <Box>
+              <Text fontSize="xs" color="dark.muted" lineHeight="1.5" as="span">
+                {showFullWhyAspire
+                  ? entry.explanation.whyAspire
+                  : entry.explanation.whyAspire.length > 120
+                    ? entry.explanation.whyAspire.slice(0, 120) + '...'
+                    : entry.explanation.whyAspire}
               </Text>
+              {entry.explanation.whyAspire.length > 120 && (
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  fontSize="xs"
+                  color="aspire.400"
+                  ml="1"
+                  px="0"
+                  h="auto"
+                  minW="auto"
+                  verticalAlign="baseline"
+                  _hover={{ color: 'aspire.500' }}
+                  onClick={() => setShowFullWhyAspire((v) => !v)}
+                  {...pixelFontProps}
+                >
+                  {showFullWhyAspire ? 'less' : 'more'}
+                </Button>
+              )}
             </Box>
-          </Box>
+          </Flex>
         </Card.Body>
       </Card.Root>
 
@@ -908,7 +963,7 @@ function GalleryDetail({
           borderRadius="sm"
           p="1"
           gap="1"
-          mb="4"
+          mb="3"
         >
           <Tabs.Trigger
             value="diagram"
@@ -1052,32 +1107,50 @@ function GalleryDetail({
         {/* Explanation Tab */}
         <Tabs.Content value="explanation">
           <Card.Root {...retroCardProps} bg="dark.card" p="4">
-            <Card.Body gap="5">
-              {/* Key Architecture Patterns */}
+            <Card.Body gap="4">
+              {/* Key Architecture Patterns — compact list, expand on click */}
               <Box>
-                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+                <Heading size="sm" mb="2" color="dark.text" {...pixelFontProps}>
                   🏗️ Key Architecture Patterns
                 </Heading>
-                <Flex direction="column" gap="3">
-                  {entry.explanation.keyPatterns.map((pattern) => (
-                    <Box
-                      key={pattern.name}
-                      p="3"
-                      bg="dark.surface"
-                      borderRadius="sm"
-                      border="1px solid"
-                      borderColor="dark.border"
-                      borderLeft="3px solid"
-                      borderLeftColor="aspire.400"
-                    >
-                      <Text fontSize="xs" color="aspire.400" fontWeight="bold" {...pixelFontProps} mb="1">
-                        {pattern.name}
-                      </Text>
-                      <Text fontSize="sm" color="dark.muted" lineHeight="1.6">
-                        {pattern.description}
-                      </Text>
-                    </Box>
-                  ))}
+                <Flex direction="column" gap="1">
+                  {entry.explanation.keyPatterns.map((pattern) => {
+                    const isExpanded = expandedPatterns.has(pattern.name);
+                    return (
+                      <Box
+                        key={pattern.name}
+                        bg="dark.surface"
+                        borderRadius="sm"
+                        border="1px solid"
+                        borderColor="dark.border"
+                        borderLeft="3px solid"
+                        borderLeftColor="aspire.400"
+                        cursor="pointer"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => togglePattern(pattern.name)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePattern(pattern.name); } }}
+                        px="3"
+                        py="2"
+                        transition="all 0.15s"
+                        _hover={{ bg: 'dark.card' }}
+                      >
+                        <Flex align="center" justify="space-between">
+                          <Text fontSize="xs" color="aspire.400" fontWeight="bold" {...pixelFontProps}>
+                            {pattern.name}
+                          </Text>
+                          <Text fontSize="xs" color="dark.muted">
+                            {isExpanded ? '▲' : '▼'}
+                          </Text>
+                        </Flex>
+                        {isExpanded && (
+                          <Text fontSize="sm" color="dark.muted" lineHeight="1.6" mt="1">
+                            {pattern.description}
+                          </Text>
+                        )}
+                      </Box>
+                    );
+                  })}
                 </Flex>
               </Box>
 
@@ -1187,7 +1260,7 @@ function GalleryDetail({
 
       {/* Try This CTA */}
       <Card.Root
-        mt="5"
+        mt="3"
         bg="dark.surface"
         border="2px solid"
         borderColor="game.xpGold"
