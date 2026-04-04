@@ -671,6 +671,41 @@ function GalleryDetail({
         ))}
       </Flex>
 
+      {/* Architecture Overview — shown prominently above tabs */}
+      <Card.Root {...retroCardProps} bg="dark.card" p="4" mb="4">
+        <Card.Body gap="4">
+          <Box>
+            <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+              📖 Architecture Overview
+            </Heading>
+            <Box bg="dark.surface" borderRadius="sm" border="1px solid" borderColor="dark.border" p="4">
+              {entry.explanation.overview.split('\n\n').map((paragraph, i) => (
+                <Text key={i} fontSize="sm" color="dark.muted" lineHeight="1.7" mb={i < entry.explanation.overview.split('\n\n').length - 1 ? '3' : '0'}>
+                  {paragraph}
+                </Text>
+              ))}
+            </Box>
+          </Box>
+
+          <Box>
+            <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
+              ✨ Why Aspire?
+            </Heading>
+            <Box
+              bg="rgba(107, 79, 187, 0.08)"
+              borderRadius="sm"
+              border="2px solid"
+              borderColor="aspire.300"
+              p="4"
+            >
+              <Text fontSize="sm" color="dark.muted" lineHeight="1.7">
+                {entry.explanation.whyAspire}
+              </Text>
+            </Box>
+          </Box>
+        </Card.Body>
+      </Card.Root>
+
       {/* Tabbed Content */}
       <Tabs.Root defaultValue="diagram" variant="enclosed">
         <Tabs.List
@@ -728,7 +763,7 @@ function GalleryDetail({
             _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
             borderRadius="sm"
           >
-            Explanation
+            Deep Dive
           </Tabs.Trigger>
         </Tabs.List>
 
@@ -825,38 +860,6 @@ function GalleryDetail({
         <Tabs.Content value="explanation">
           <Card.Root {...retroCardProps} bg="dark.card" p="4">
             <Card.Body gap="5">
-              {/* Architecture Overview */}
-              <Box>
-                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
-                  📖 Architecture Overview
-                </Heading>
-                <Box bg="dark.surface" borderRadius="sm" border="1px solid" borderColor="dark.border" p="4">
-                  {entry.explanation.overview.split('\n\n').map((paragraph, i) => (
-                    <Text key={i} fontSize="sm" color="dark.muted" lineHeight="1.7" mb={i < entry.explanation.overview.split('\n\n').length - 1 ? '3' : '0'}>
-                      {paragraph}
-                    </Text>
-                  ))}
-                </Box>
-              </Box>
-
-              {/* Why Aspire? */}
-              <Box>
-                <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
-                  ✨ Why Aspire?
-                </Heading>
-                <Box
-                  bg="rgba(107, 79, 187, 0.08)"
-                  borderRadius="sm"
-                  border="2px solid"
-                  borderColor="aspire.300"
-                  p="4"
-                >
-                  <Text fontSize="sm" color="dark.muted" lineHeight="1.7">
-                    {entry.explanation.whyAspire}
-                  </Text>
-                </Box>
-              </Box>
-
               {/* Key Architecture Patterns */}
               <Box>
                 <Heading size="sm" mb="3" color="dark.text" {...pixelFontProps}>
