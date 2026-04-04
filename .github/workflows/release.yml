@@ -263,12 +263,11 @@ jobs:
           echo "AZURE_SUBSCRIPTION_ID=$SUBSCRIPTION_ID" >> "$GITHUB_ENV"
 
       - name: Deploy with Aspire
-        run: |
-          aspire deploy \
-            --non-interactive \
-            --subscription "${{ env.AZURE_SUBSCRIPTION_ID }}" \
-            --resource-group "${{ env.AZURE_RESOURCE_GROUP }}" \
-            --location "${{ env.AZURE_LOCATION }}"
+        env:
+          Azure__SubscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          Azure__ResourceGroup: ${{ env.AZURE_RESOURCE_GROUP }}
+          Azure__Location: ${{ env.AZURE_LOCATION }}
+        run: aspire deploy --non-interactive
         timeout-minutes: 20
 
       - name: Get app URL
