@@ -68,6 +68,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
         userSelect="none"
         whiteSpace="nowrap"
         onClick={() => navigate('/')}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/'); } }}
         title="Go to homepage"
         role="button"
         tabIndex={0}

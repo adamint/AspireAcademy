@@ -168,7 +168,7 @@ export default function LessonPage() {
 
   if (isLoading) {
     return (
-      <Box maxW="820px" mx="auto" p="6" display="flex" flexDirection="column" gap="5">
+      <Box maxW="820px" mx="auto" p="6" display="flex" flexDirection="column" gap="5" role="status" aria-busy="true" aria-label="Loading lesson">
         <Skeleton height="20px" width="200px" borderRadius="sm" />
         <Skeleton height="32px" width="400px" borderRadius="sm" />
         <Skeleton height="400px" borderRadius="sm" />

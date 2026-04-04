@@ -488,7 +488,10 @@ function FileBrowser({ files }: { files: ProjectFile[] }) {
                   bg={isSelected ? 'aspire.200' : 'transparent'}
                   color={isSelected ? 'aspire.400' : 'dark.muted'}
                   _hover={{ bg: isSelected ? 'aspire.200' : 'dark.card' }}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelectedPath(path)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedPath(path); } }}
                   transition="all 0.1s"
                 >
                   <Text fontSize="10px" fontFamily="mono">
@@ -567,7 +570,7 @@ function DifficultyBadge({ difficulty }: { difficulty: GalleryEntry['difficulty'
   const config = difficultyConfig[difficulty];
   return (
     <Badge
-      fontSize="7px"
+      fontSize="2xs"
       bg={config.bg}
       color={config.color}
       px="2"
@@ -592,7 +595,10 @@ function GalleryCard({
       {...retroCardProps}
       bg="dark.card"
       cursor="pointer"
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
       transition="all 0.2s"
       _hover={{
         transform: 'translateY(-4px)',
@@ -633,7 +639,7 @@ function GalleryCard({
             {entry.concepts.slice(0, 3).map((concept) => (
               <Badge
                 key={concept}
-                fontSize="7px"
+                fontSize="2xs"
                 bg="aspire.100"
                 color="aspire.400"
                 px="2"
@@ -645,7 +651,7 @@ function GalleryCard({
             ))}
             {entry.concepts.length > 3 && (
               <Badge
-                fontSize="7px"
+                fontSize="2xs"
                 bg="dark.surface"
                 color="dark.muted"
                 px="2"
@@ -821,14 +827,17 @@ function GalleryDetail({
             {relatedLessons.map((lesson) => (
               <Badge
                 key={lesson.lessonId}
-                fontSize="8px"
+                fontSize="2xs"
                 bg="dark.surface"
                 color="aspire.400"
                 px="3"
                 py="1"
                 cursor="pointer"
+                role="link"
+                tabIndex={0}
                 _hover={{ bg: 'aspire.200', color: 'aspire.500' }}
                 onClick={() => navigate(`/lessons/${lesson.lessonId}`)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/lessons/${lesson.lessonId}`); } }}
                 {...pixelFontProps}
                 data-testid={`related-lesson-${lesson.lessonId}`}
               >
@@ -1138,7 +1147,7 @@ function GalleryDetail({
                           >
                             <Box w="8px" h="8px" bg={colors.border} borderRadius="sm" flexShrink={0} />
                             <Text fontSize="xs" color="dark.text">{svc.name.replace('\n', ' ')}</Text>
-                            <Badge fontSize="7px" bg={colors.bg} color={colors.border} px="1.5" ml="auto">
+                            <Badge fontSize="2xs" bg={colors.bg} color={colors.border} px="1.5" ml="auto">
                               {svc.type}
                             </Badge>
                           </Flex>
@@ -1160,7 +1169,7 @@ function GalleryDetail({
                             <Text color="aspire.500">→</Text>
                             <Text color="dark.text">{toSvc?.name.replace('\n', ' ')}</Text>
                             {conn.label && (
-                              <Badge fontSize="7px" bg="aspire.100" color="aspire.400" px="1.5" ml="auto">
+                              <Badge fontSize="2xs" bg="aspire.100" color="aspire.400" px="1.5" ml="auto">
                                 {conn.label}
                               </Badge>
                             )}
@@ -1363,7 +1372,7 @@ export default function GalleryPage() {
               {cat.icon} {cat.label}
               <Badge
                 ml="1.5"
-                fontSize="7px"
+                fontSize="2xs"
                 bg={isActive ? 'aspire.300' : 'dark.border'}
                 color={isActive ? 'aspire.500' : 'dark.muted'}
                 px="1.5"

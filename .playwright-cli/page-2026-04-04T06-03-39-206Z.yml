@@ -1,0 +1,31 @@
+- generic [ref=e4]:
+  - paragraph [ref=e5]: Aspire Learn
+  - paragraph [ref=e6]: Create your hero account
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]: Username *
+      - textbox "Username *" [ref=e11]:
+        - /placeholder: hero_dev
+        - text: uitest_audit_9999
+    - generic [ref=e12]:
+      - generic [ref=e13]: Email *
+      - textbox "Email *" [ref=e14]:
+        - /placeholder: hero@aspire.dev
+        - text: uitest9999@test.com
+    - generic [ref=e15]:
+      - generic [ref=e16]: Display Name
+      - textbox "Display Name" [ref=e17]:
+        - /placeholder: Your display name (optional)
+    - generic [ref=e18]:
+      - generic [ref=e19]: Password *
+      - textbox "Password *" [active] [ref=e20]:
+        - /placeholder: ••••••••
+    - generic [ref=e21]:
+      - generic [ref=e22]: Confirm Password *
+      - textbox "Confirm Password *" [ref=e23]:
+        - /placeholder: ••••••••
+    - button "Create your account" [ref=e24] [cursor=pointer]: Create Account
+  - paragraph [ref=e25]:
+    - text: Already have an account?
+    - link "Log In" [ref=e26] [cursor=pointer]:
+      - /url: /login

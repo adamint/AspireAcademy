@@ -249,7 +249,7 @@ export default function HomePage() {
 
       <Box
         data-testid="home-page"
-        bg="#0D0B1A"
+        bg="dark.bg"
         color="#E8E0F0"
         minH="100vh"
         overflowX="hidden"
@@ -274,7 +274,10 @@ export default function HomePage() {
             fontSize={{ base: '10px', md: '14px' }}
             color="aspire.600"
             cursor="pointer"
+            role="button"
+            tabIndex={0}
             onClick={() => scrollTo('hero')}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scrollTo('hero'); } }}
           >
             Aspire Learn
           </Text>
@@ -347,7 +350,7 @@ export default function HomePage() {
               <Button
                 size="sm"
                 bg="game.xpGold"
-                color="#0D0B1A"
+                color="dark.bg"
                 {...pixelFontProps}
                 fontSize="10px"
                 _hover={{ bg: '#FFC107' }}
@@ -453,7 +456,7 @@ export default function HomePage() {
                 data-testid="cta-start-journey"
                 size="lg"
                 bg="game.xpGold"
-                color="#0D0B1A"
+                color="dark.bg"
                 {...pixelFontProps}
                 fontSize={{ base: '11px', md: '13px' }}
                 px="8"
@@ -502,7 +505,10 @@ export default function HomePage() {
               color="whiteAlpha.500"
               style={{ animation: 'float-node 2s ease-in-out infinite' }}
               cursor="pointer"
+              role="button"
+              tabIndex={0}
               onClick={() => scrollTo('why-aspire')}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scrollTo('why-aspire'); } }}
             >
               ▼ Scroll to explore ▼
             </Text>
@@ -538,6 +544,8 @@ export default function HomePage() {
               border="1px solid rgba(107,79,187,0.25)"
               cursor="pointer"
               transition="all 0.25s ease"
+              role="link"
+              tabIndex={0}
               _hover={{
                 bg: 'rgba(107,79,187,0.25)',
                 borderColor: 'aspire.400',
@@ -545,6 +553,7 @@ export default function HomePage() {
                 transform: 'translateY(-1px)',
               }}
               onClick={() => navigate(link.to)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(link.to); } }}
             >
               <Text fontSize="sm">{link.icon}</Text>
               <Text fontSize="xs" color="aspire.300" fontWeight="bold" letterSpacing="wide">
@@ -611,6 +620,8 @@ export default function HomePage() {
                   bg="rgba(26,11,46,0.6)"
                   p="5"
                   cursor="pointer"
+                  role="link"
+                  tabIndex={0}
                   _before={{
                     content: '""',
                     position: 'absolute',
@@ -627,6 +638,7 @@ export default function HomePage() {
                   }}
                   transition="all 0.3s ease"
                   onClick={() => navigate(card.linkTo)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(card.linkTo); } }}
                 >
                   <Box position="relative" zIndex={1}>
                     <Text fontSize="2xl" mb="2">{card.icon}</Text>
@@ -650,7 +662,7 @@ export default function HomePage() {
         </Box>
 
         {/* ═══════════════════ STATS ═══════════════════ */}
-        <Box id="stats" py={{ base: '16', md: '20' }} px="4" bg="#151224">
+        <Box id="stats" py={{ base: '16', md: '20' }} px="4" bg="dark.surface">
             <SimpleGrid
               data-testid="stats-section"
               columns={{ base: 2, md: 4 }}
@@ -724,11 +736,14 @@ export default function HomePage() {
                     textAlign="center"
                     cursor="pointer"
                     transition="all 0.25s"
+                    role="link"
+                    tabIndex={0}
                     _hover={{
                       transform: 'scale(1.05) translateY(-4px)',
                       borderColor: p.color,
                     }}
                     onClick={() => navigate(`/personas/${p.id}`)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/personas/${p.id}`); } }}
                   >
                     <Text fontSize="36px" mb="2">{p.icon}</Text>
                     <Text
@@ -807,6 +822,8 @@ export default function HomePage() {
                   textAlign="center"
                   cursor="pointer"
                   transition="all 0.25s"
+                  role="link"
+                  tabIndex={0}
                   _hover={{
                     transform: 'scale(1.05) translateY(-4px)',
                     borderColor: 'aspire.600',
@@ -815,6 +832,7 @@ export default function HomePage() {
                     animation: `card-glow 4s ease-in-out infinite, slide-up-fade 0.6s ease-out ${i * 0.08}s both`,
                   }}
                   onClick={() => navigate(`/worlds/${w.id}`)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/worlds/${w.id}`); } }}
                 >
                   <Text fontSize="36px" mb="2">{w.icon}</Text>
                   <Text
@@ -834,7 +852,7 @@ export default function HomePage() {
         </Box>
 
         {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
-        <Box id="how-it-works" py={{ base: '16', md: '20' }} px="4" bg="#151224">
+        <Box id="how-it-works" py={{ base: '16', md: '20' }} px="4" bg="dark.surface">
             <Heading
               data-testid="how-it-works-heading"
               as="h2"
@@ -909,7 +927,7 @@ export default function HomePage() {
           data-testid="footer-cta"
           py={{ base: '16', md: '20' }}
           px="4"
-          bg="#151224"
+          bg="dark.surface"
           textAlign="center"
         >
             <Text {...pixelFontProps} fontSize={{ base: '14px', md: '20px' }} color="aspire.400" mb="4">
@@ -923,7 +941,7 @@ export default function HomePage() {
               data-testid="footer-cta-button"
               size="lg"
               bg="game.xpGold"
-              color="#0D0B1A"
+              color="dark.bg"
               {...pixelFontProps}
               fontSize={{ base: '11px', md: '13px' }}
               px="10"

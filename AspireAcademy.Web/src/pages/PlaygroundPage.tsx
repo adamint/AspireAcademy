@@ -1377,6 +1377,7 @@ export default function PlaygroundPage() {
                       borderColor={isHighlighted ? '#FF6B6B' : isConnecting ? 'game.xpGold' : isTarget ? 'aspire.600' : 'game.pixelBorder'}
                       role="article" aria-label={`${tmpl.label}: ${resource.name}`}
                       data-resource-id={resource.id}
+                      tabIndex={isTarget ? 0 : undefined}
                       css={isConnecting ? {
                         animation: 'pulse 1s ease-in-out infinite',
                         '@keyframes pulse': {
@@ -1391,6 +1392,7 @@ export default function PlaygroundPage() {
                         '&:hover': { borderColor: '#FFD700', transform: 'scale(1.02)' },
                       } : undefined}
                       onClick={isTarget ? () => handleConnect(resource.id) : undefined}
+                      onKeyDown={isTarget ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleConnect(resource.id); } } : undefined}
                       data-testid={`resource-card-${resource.name}`}
                     >
                     <Card.Body p="4" display="flex" flexDirection="column" gap="3">
@@ -1658,10 +1660,21 @@ export default function PlaygroundPage() {
                       <Text
                         key={i} fontSize="xs" color={color} mb="1"
                         cursor={issue.resourceId ? 'pointer' : undefined}
+                        role={issue.resourceId ? 'button' : undefined}
+                        tabIndex={issue.resourceId ? 0 : undefined}
                         _hover={issue.resourceId ? { textDecoration: 'underline' } : undefined}
                         data-testid={`validation-issue-${i}`}
                         onClick={() => {
                           if (issue.resourceId) {
+                            setHighlightedResource(issue.resourceId);
+                            setTimeout(() => setHighlightedResource(null), 2000);
+                            const el = canvasContainerRef.current?.querySelector(`[data-resource-id="${issue.resourceId}"]`);
+                            el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (issue.resourceId && (e.key === 'Enter' || e.key === ' ')) {
+                            e.preventDefault();
                             setHighlightedResource(issue.resourceId);
                             setTimeout(() => setHighlightedResource(null), 2000);
                             const el = canvasContainerRef.current?.querySelector(`[data-resource-id="${issue.resourceId}"]`);
@@ -1792,7 +1805,7 @@ export default function PlaygroundPage() {
                       <Box key={scaffold.name}>
                         <Flex align="center" gap="2" mb="3">
                           <Text fontSize="xs" color="dark.text" fontWeight="bold">📦 {scaffold.name}</Text>
-                          <Badge fontSize="7px" colorPalette={scaffold.lang === 'TypeScript' || scaffold.lang === 'Node.js' ? 'blue' : scaffold.lang === 'Python' ? 'green' : 'purple'} variant="subtle">
+                          <Badge fontSize="2xs" colorPalette={scaffold.lang === 'TypeScript' || scaffold.lang === 'Node.js' ? 'blue' : scaffold.lang === 'Python' ? 'green' : 'purple'} variant="subtle">
                             {scaffold.lang}
                           </Badge>
                         </Flex>

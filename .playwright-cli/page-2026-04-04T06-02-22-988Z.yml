@@ -1,0 +1,111 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - button "Aspire Learn" [ref=e5] [cursor=pointer]
+    - generic [ref=e6]:
+      - button "Worlds" [ref=e7] [cursor=pointer]
+      - button "How It Works" [ref=e8] [cursor=pointer]
+      - link "Docs" [ref=e10] [cursor=pointer]:
+        - /url: https://aspire.dev/docs/
+        - paragraph [ref=e11]: Docs
+      - link "GitHub" [ref=e13] [cursor=pointer]:
+        - /url: https://github.com/microsoft/aspire
+        - paragraph [ref=e14]: GitHub
+      - button "Sign In" [ref=e15] [cursor=pointer]
+  - generic [ref=e17]:
+    - heading "ASPIRE LEARN" [level=1] [ref=e18]:
+      - text: ASPIRE
+      - text: LEARN
+    - paragraph [ref=e20]: "|"
+    - paragraph [ref=e21]: Distributed apps are hard — tangled configs, scattered logs, painful deploys. Aspire fixes that. Learn the platform by building real apps.
+    - generic [ref=e22]:
+      - button "Start Your Journey" [ref=e23] [cursor=pointer]
+      - button "Browse Curriculum" [ref=e24] [cursor=pointer]
+    - button "▼ Scroll to explore ▼" [ref=e25] [cursor=pointer]
+  - generic [ref=e26]:
+    - link "🎮 Playground" [ref=e27] [cursor=pointer]:
+      - paragraph [ref=e28]: 🎮
+      - paragraph [ref=e29]: Playground
+    - link "🖼️ Gallery" [ref=e30] [cursor=pointer]:
+      - paragraph [ref=e31]: 🖼️
+      - paragraph [ref=e32]: Gallery
+    - link "🗺️ Concept Map" [ref=e33] [cursor=pointer]:
+      - paragraph [ref=e34]: 🗺️
+      - paragraph [ref=e35]: Concept Map
+    - link "📚 Curriculum" [ref=e36] [cursor=pointer]:
+      - paragraph [ref=e37]: 📚
+      - paragraph [ref=e38]: Curriculum
+  - generic [ref=e39]:
+    - heading "Why Aspire?" [level=2] [ref=e40]
+    - paragraph [ref=e41]: "Every team that splits into services inherits the same problems: wiring connection strings, coordinating startup, reading four log files to debug one request, maintaining separate configs per environment."
+    - generic [ref=e42]:
+      - link "🏗️ Declare your app, not your infrastructure Define services, databases, and their relationships in code. One readable file replaces Docker Compose, env scripts, and tribal knowledge. Try it → Playground" [ref=e43] [cursor=pointer]:
+        - generic [ref=e44]:
+          - paragraph [ref=e45]: 🏗️
+          - paragraph [ref=e46]: Declare your app, not your infrastructure
+          - paragraph [ref=e47]: Define services, databases, and their relationships in code. One readable file replaces Docker Compose, env scripts, and tribal knowledge.
+          - paragraph [ref=e48]: Try it → Playground
+      - link "▶️ Start everything with one command aspire run starts containers, waits for health checks, injects connection strings, and opens a dashboard. New developer? Clone, run, done. See how → Gallery" [ref=e49] [cursor=pointer]:
+        - generic [ref=e50]:
+          - paragraph [ref=e51]: ▶️
+          - paragraph [ref=e52]: Start everything with one command
+          - paragraph [ref=e53]:
+            - code [ref=e54]: aspire run
+            - text: starts containers, waits for health checks, injects connection strings, and opens a dashboard. New developer? Clone, run, done.
+          - paragraph [ref=e55]: See how → Gallery
+      - link "📡 Manage and observe from a live dashboard Real-time logs, distributed traces, health checks, and custom commands — seed data, flush caches, run migrations — all from one dashboard. Learn more → Dashboard Lesson" [ref=e56] [cursor=pointer]:
+        - generic [ref=e57]:
+          - paragraph [ref=e58]: 📡
+          - paragraph [ref=e59]: Manage and observe from a live dashboard
+          - paragraph [ref=e60]: Real-time logs, distributed traces, health checks, and custom commands — seed data, flush caches, run migrations — all from one dashboard.
+          - paragraph [ref=e61]: Learn more → Dashboard Lesson
+      - link "🚀 Ship the same app to any cloud Your dev topology compiles to Docker Compose, Kubernetes Helm charts, or Azure Bicep. No rewrites. Pick your target when you're ready. Explore → Concept Map" [ref=e62] [cursor=pointer]:
+        - generic [ref=e63]:
+          - paragraph [ref=e64]: 🚀
+          - paragraph [ref=e65]: Ship the same app to any cloud
+          - paragraph [ref=e66]: Your dev topology compiles to Docker Compose, Kubernetes Helm charts, or Azure Bicep. No rewrites. Pick your target when you're ready.
+          - paragraph [ref=e67]: Explore → Concept Map
+  - generic [ref=e69]:
+    - generic [ref=e70]:
+      - generic [ref=e71]: "13"
+      - paragraph [ref=e72]: Worlds
+    - generic [ref=e73]:
+      - generic [ref=e74]: "174"
+      - paragraph [ref=e75]: Lessons
+    - generic [ref=e76]:
+      - generic [ref=e77]: "27"
+      - paragraph [ref=e78]: Code Challenges
+    - generic [ref=e79]:
+      - generic [ref=e80]: ∞
+      - paragraph [ref=e81]: Fun
+  - generic [ref=e82]:
+    - heading "🗺️ Choose Your World" [level=2] [ref=e83]
+    - paragraph [ref=e84]: Themed worlds take you from cloud fundamentals to production-ready distributed apps
+  - generic [ref=e85]:
+    - heading "How It Works" [level=2] [ref=e86]
+    - generic [ref=e89]:
+      - generic [ref=e90]:
+        - paragraph [ref=e92]: "1"
+        - paragraph [ref=e93]: Understand
+        - paragraph [ref=e94]: Each lesson explains why a concept matters before showing you the API
+      - generic [ref=e95]:
+        - paragraph [ref=e97]: "2"
+        - paragraph [ref=e98]: Build
+        - paragraph [ref=e99]: Code challenges have you wire real Aspire apps — not toy examples
+      - generic [ref=e100]:
+        - paragraph [ref=e102]: "3"
+        - paragraph [ref=e103]: Go Deep
+        - paragraph [ref=e104]: From your first aspire run to reading the Aspire source code
+  - generic [ref=e105]:
+    - paragraph [ref=e106]: Ready to make your services work as one?
+    - paragraph [ref=e107]: From your first aspire run to deploying to production — learn the platform that makes distributed apps simple.
+    - button "Start Your Journey" [ref=e108] [cursor=pointer]
+  - contentinfo [ref=e109]:
+    - paragraph [ref=e110]: Aspire Learn
+    - paragraph [ref=e111]: Learn Aspire · Build distributed apps · Have fun doing it
+    - generic [ref=e112]:
+      - link "Aspire Docs" [ref=e113] [cursor=pointer]:
+        - /url: https://aspire.dev/docs/
+        - paragraph [ref=e114]: Aspire Docs
+      - link "GitHub" [ref=e115] [cursor=pointer]:
+        - /url: https://github.com/microsoft/aspire
+        - paragraph [ref=e116]: GitHub
