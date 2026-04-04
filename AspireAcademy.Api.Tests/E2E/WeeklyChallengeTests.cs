@@ -33,8 +33,8 @@ public class WeeklyChallengeTests(AppHostPlaywrightFixture fixture) : IClassFixt
             await RegisterUser(page, username);
             await page.GotoAsync(fixture.WebBaseUrl + "/weekly-challenge");
             
-            // Verify countdown timer element visible
-            var countdown = page.GetByText(new Regex("countdown|timer|time.*left|days?|hours?", RegexOptions.IgnoreCase))
+            // Verify countdown/reset timer element visible
+            var countdown = page.GetByText(new Regex("resets? in|countdown|timer|time.*left|\\d+[dhms]", RegexOptions.IgnoreCase))
                 .Or(page.Locator("[data-testid*='countdown'], [data-testid*='timer']"));
             await Assertions.Expect(countdown.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
         }

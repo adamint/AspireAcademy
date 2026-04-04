@@ -169,10 +169,16 @@ public class PlaygroundImprovementsTests(AppHostPlaywrightFixture fixture) : ICl
             var palette = page.GetByTestId("resource-palette");
             await Assertions.Expect(palette).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
-            // Add a container resource (requires an image to be valid)
+            // Add a container resource
             var addContainer = page.GetByTestId("add-container");
             await Assertions.Expect(addContainer).ToBeVisibleAsync(new() { Timeout = 10_000 });
             await addContainer.ClickAsync();
+
+            // Add a second resource so the "not connected" validation triggers
+            var addRedis = page.GetByTestId("add-redis");
+            await Assertions.Expect(addRedis).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await addRedis.ClickAsync();
+            await page.WaitForTimeoutAsync(500);
 
             // Verify validation panel appears with issues
             var validationPanel = page.GetByTestId("validation-panel");
@@ -303,7 +309,13 @@ builder.Build().Run();";
                         await page.WaitForTimeoutAsync(500);
                     }
 
-                    // Verify resources were imported
+                    // Verify resources were imported (switch to Canvas tab first since cards are hidden on Code tab)
+                    var canvasTab = page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("canvas", RegexOptions.IgnoreCase) });
+                    if (await canvasTab.CountAsync() > 0)
+                    {
+                        await canvasTab.First.ClickAsync();
+                        await page.WaitForTimeoutAsync(500);
+                    }
                     var importedCards = page.Locator("[data-testid^='resource-card-']");
                     await Assertions.Expect(importedCards.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
                 }

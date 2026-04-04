@@ -17,9 +17,8 @@ public class PersonaTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
             await page.GotoAsync(fixture.WebBaseUrl + "/personas");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
 
-            // Verify persona cards render with names
-            var personaCards = page.Locator("[data-testid^='persona-card-']").Or(
-                page.Locator(".persona-card"));
+            // Verify persona cards render with names (Chakra UI Card.Root)
+            var personaCards = page.Locator(".chakra-card__root");
             await Assertions.Expect(personaCards.First).ToBeVisibleAsync(new() { Timeout = 15_000 });
 
             var cardCount = await personaCards.CountAsync();
@@ -42,23 +41,12 @@ public class PersonaTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppH
             await page.GotoAsync(fixture.WebBaseUrl + "/personas");
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
 
-            var personaCards = page.Locator("[data-testid^='persona-card-']").Or(
-                page.Locator(".persona-card"));
+            var personaCards = page.Locator(".chakra-card__root");
             await Assertions.Expect(personaCards.First).ToBeVisibleAsync(new() { Timeout = 15_000 });
 
-            // Find and extract the first persona link href, or click into the card
-            var personaLink = personaCards.First.Locator("a[href*='/personas/']");
-            var linkCount = await personaLink.CountAsync();
-
-            if (linkCount > 0)
-            {
-                await personaLink.First.ClickAsync();
-            }
-            else
-            {
-                // Card itself may be clickable
-                await personaCards.First.ClickAsync();
-            }
+            // Cards use onClick navigation (no <a> links) — click the card directly
+            await DismissPopups(page);
+            await personaCards.First.ClickAsync();
 
             // Verify we navigated to a persona detail page
             await Assertions.Expect(page).ToHaveURLAsync(new Regex("/personas/"), new() { Timeout = 10_000 });

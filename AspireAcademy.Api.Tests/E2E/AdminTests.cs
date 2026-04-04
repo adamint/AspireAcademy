@@ -82,7 +82,7 @@ public class AdminTests(AppHostPlaywrightFixture fixture) : IClassFixture<AppHos
             var sidebar = page.GetByRole(AriaRole.Navigation);
 
             // Wait for sidebar to fully load
-            await Assertions.Expect(sidebar.GetByText("Dashboard")).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await Assertions.Expect(sidebar.GetByRole(AriaRole.Link, new() { Name = "Dashboard", Exact = true })).ToBeVisibleAsync(new() { Timeout = 10_000 });
 
             // Admin Panel link should NOT be visible
             await Assertions.Expect(sidebar.GetByText("Admin Panel")).Not.ToBeVisibleAsync();
