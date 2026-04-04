@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Box, Flex, Text, VStack, Button, Input, Switch, Dialog,
@@ -65,10 +65,20 @@ export default function SettingsPage() {
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const passwordCloseTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+      if (passwordCloseTimerRef.current) clearTimeout(passwordCloseTimerRef.current);
+    };
+  }, []);
+
   const flashSaved = useCallback(() => {
     setSaved(true);
-    const timer = setTimeout(() => setSaved(false), 1500);
-    return () => clearTimeout(timer);
+    if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+    savedTimerRef.current = setTimeout(() => setSaved(false), 1500);
   }, []);
 
   const handleToggle = useCallback(
@@ -110,7 +120,7 @@ export default function SettingsPage() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      setTimeout(() => setChangePasswordOpen(false), 1500);
+      passwordCloseTimerRef.current = setTimeout(() => setChangePasswordOpen(false), 1500);
     },
     onError: (err) => {
       setPasswordError(extractErrorMessage(err, 'Failed to change password.'));
@@ -260,7 +270,8 @@ export default function SettingsPage() {
               onClick={() => {
                 resetTour();
                 setSaved(true);
-                setTimeout(() => setSaved(false), 1500);
+                if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+                savedTimerRef.current = setTimeout(() => setSaved(false), 1500);
               }}
             >
               Restart Tour

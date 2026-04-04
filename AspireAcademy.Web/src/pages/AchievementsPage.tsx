@@ -32,7 +32,7 @@ export default function AchievementsPage() {
   const navigate = useNavigate();
   const { token } = useAuthStore();
 
-  const { data: achievements, isLoading } = useQuery<AchievementItem[]>({
+  const { data: achievements, isLoading, error, refetch } = useQuery<AchievementItem[]>({
     queryKey: ['achievements'],
     queryFn: async () => {
       try {
@@ -95,7 +95,19 @@ export default function AchievementsPage() {
         </SimpleGrid>
       )}
 
-      {!isLoading && filtered.length === 0 && (
+      {error && (
+        <Flex direction="column" align="center" justify="center" py="12" gap="3">
+          <Text fontSize="2xl">⚠️</Text>
+          <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
+            Something went wrong loading this page
+          </Text>
+          <Button size="xs" variant="outline" colorPalette="purple" onClick={() => refetch()} {...pixelFontProps} fontSize="2xs">
+            Try Again
+          </Button>
+        </Flex>
+      )}
+
+      {!isLoading && !error && filtered.length === 0 && (
         <Box textAlign="center" py={12}>
           <Text {...pixelFontProps} fontSize="sm">
             {category === 'All' ? 'No achievements yet' : `No ${category} achievements`}
@@ -104,7 +116,7 @@ export default function AchievementsPage() {
         </Box>
       )}
 
-      {!isLoading && filtered.length > 0 && (
+      {!isLoading && !error && filtered.length > 0 && (
         <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} gap={4}>
           {filtered.map((ach) => (
             <Tooltip.Root key={ach.id} openDelay={300} closeDelay={100}>

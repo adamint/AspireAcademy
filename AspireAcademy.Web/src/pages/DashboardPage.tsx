@@ -33,7 +33,7 @@ export default function DashboardPage() {
   const token = useAuthStore((s) => s.token);
   const isAuthenticated = !!token && !!user;
 
-  const { data: worlds, isLoading: worldsLoading } = useQuery<World[]>({
+  const { data: worlds, isLoading: worldsLoading, error: worldsError, refetch: refetchWorlds } = useQuery<World[]>({
     queryKey: ['worlds'],
     queryFn: () => api.get('/worlds').then((r) => r.data).catch((err) => {
       console.error('[DashboardPage] Failed to fetch worlds:', err);
@@ -283,7 +283,17 @@ export default function DashboardPage() {
         />
       )}
 
-      {(!worlds || worlds.length === 0) ? (
+      {worldsError ? (
+        <Flex direction="column" align="center" justify="center" py="12" gap="3">
+          <Text fontSize="2xl">⚠️</Text>
+          <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
+            Something went wrong loading worlds
+          </Text>
+          <Button size="xs" variant="outline" colorPalette="purple" onClick={() => refetchWorlds()} {...pixelFontProps} fontSize="2xs">
+            Try Again
+          </Button>
+        </Flex>
+      ) : (!worlds || worlds.length === 0) ? (
         <Box textAlign="center" py={12} {...retroCardProps}>
           <Text {...pixelFontProps} fontSize="sm">No worlds available yet</Text>
           <Text fontSize="sm" color="dark.muted" mt={2}>Check back soon — new content is on the way!</Text>

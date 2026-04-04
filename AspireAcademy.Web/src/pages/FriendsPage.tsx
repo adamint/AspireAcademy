@@ -42,7 +42,7 @@ export default function FriendsPage() {
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, []);
 
-  const { data: friendsData, isLoading } = useQuery<FriendsData>({
+  const { data: friendsData, isLoading, error: friendsError, refetch: refetchFriends } = useQuery<FriendsData>({
     queryKey: ['friends'],
     queryFn: async () => {
       try {
@@ -117,6 +117,19 @@ export default function FriendsPage() {
         <Box role="alert" bg="rgba(209, 52, 56, 0.15)" border="2px solid" borderColor="game.error" borderRadius="sm" px="3" py="2">
           <Text color="game.error" fontSize="sm">{actionError}</Text>
         </Box>
+      )}
+
+      {/* Friends query error */}
+      {friendsError && (
+        <Flex direction="column" align="center" justify="center" py="12" gap="3">
+          <Text fontSize="2xl">⚠️</Text>
+          <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
+            Something went wrong loading this page
+          </Text>
+          <Button size="xs" variant="outline" colorPalette="purple" onClick={() => refetchFriends()} {...pixelFontProps} fontSize="2xs">
+            Try Again
+          </Button>
+        </Flex>
       )}
 
       {/* Search */}

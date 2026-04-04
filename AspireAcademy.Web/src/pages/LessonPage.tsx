@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -45,6 +45,11 @@ export default function LessonPage() {
   const isAuthenticated = !!token && !!user;
 
   const [xpAnim, setXpAnim] = useState<number | null>(null);
+  const xpAnimTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => {
+    return () => { if (xpAnimTimerRef.current) clearTimeout(xpAnimTimerRef.current); };
+  }, []);
 
   const { data: lesson, isLoading } = useQuery<LessonDetail>({
     queryKey: ['lesson', lessonId],
@@ -69,7 +74,7 @@ export default function LessonPage() {
       api.post('/progress/complete', { lessonId }).then((r) => r.data),
     onSuccess: (data) => {
       setXpAnim(data.xpEarned);
-      setTimeout(() => setXpAnim(null), 1800);
+      xpAnimTimerRef.current = setTimeout(() => setXpAnim(null), 1800);
 
       syncFromServer({
         totalXp: data.totalXp,

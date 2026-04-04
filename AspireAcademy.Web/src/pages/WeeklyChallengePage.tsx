@@ -112,23 +112,43 @@ export default function WeeklyChallengePage() {
   }, [nextMonday]);
 
   // Queries
-  const { data: challenge, isLoading: challengeLoading } = useQuery<WeeklyChallengeData>({
+  const { data: challenge, isLoading: challengeLoading, error: challengeError, refetch: refetchChallenge } = useQuery<WeeklyChallengeData>({
     queryKey: ['weekly-challenge'],
     queryFn: async () => (await api.get('/weekly-challenge')).data,
   });
 
-  const { data: leaderboard, isLoading: lbLoading } = useQuery<WeeklyLeaderboardData>({
+  const { data: leaderboard, isLoading: lbLoading, error: lbError, refetch: refetchLb } = useQuery<WeeklyLeaderboardData>({
     queryKey: ['weekly-challenge-leaderboard'],
     queryFn: async () => (await api.get('/weekly-challenge/leaderboard')).data,
   });
 
-  const { data: previous } = useQuery<PreviousChallenge[]>({
+  const { data: previous, error: prevError, refetch: refetchPrev } = useQuery<PreviousChallenge[]>({
     queryKey: ['weekly-challenge-previous'],
     queryFn: async () => (await api.get('/weekly-challenge/previous')).data,
   });
 
+  const hasError = challengeError || lbError || prevError;
+  const handleRetry = () => {
+    if (challengeError) refetchChallenge();
+    if (lbError) refetchLb();
+    if (prevError) refetchPrev();
+  };
+
   return (
     <VStack maxW="800px" mx="auto" p={6} gap={6} align="stretch">
+
+      {/* ── Error Banner ── */}
+      {hasError && (
+        <Flex direction="column" align="center" justify="center" py="12" gap="3">
+          <Text fontSize="2xl">⚠️</Text>
+          <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
+            Something went wrong loading this page
+          </Text>
+          <Button size="xs" variant="outline" colorPalette="purple" onClick={handleRetry} {...pixelFontProps} fontSize="2xs">
+            Try Again
+          </Button>
+        </Flex>
+      )}
 
       {/* ── Hero Banner ── */}
       <Box

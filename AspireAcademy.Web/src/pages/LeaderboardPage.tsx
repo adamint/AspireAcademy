@@ -45,7 +45,7 @@ export default function LeaderboardPage() {
   const { token } = useAuthStore();
   const navigate = useNavigate();
 
-  const { data, isLoading } = useQuery<LeaderboardData>({
+  const { data, isLoading, error, refetch } = useQuery<LeaderboardData>({
     queryKey: ['leaderboard', tab],
     queryFn: async () => {
       try {
@@ -90,7 +90,19 @@ export default function LeaderboardPage() {
         </VStack>
       )}
 
-      {!isLoading && entries.length === 0 && (
+      {error && (
+        <Flex direction="column" align="center" justify="center" py="12" gap="3">
+          <Text fontSize="2xl">⚠️</Text>
+          <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
+            Something went wrong loading this page
+          </Text>
+          <Button size="xs" variant="outline" colorPalette="purple" onClick={() => refetch()} {...pixelFontProps} fontSize="2xs">
+            Try Again
+          </Button>
+        </Flex>
+      )}
+
+      {!isLoading && !error && entries.length === 0 && (
         <Box textAlign="center" py={12}>
           <Text {...pixelFontProps} fontSize="sm">
             {tab === 'friends' ? 'No friends yet' : 'No data available'}
@@ -119,7 +131,7 @@ export default function LeaderboardPage() {
         </Box>
       )}
 
-      {!isLoading && entries.length > 0 && (
+      {!isLoading && !error && entries.length > 0 && (
         <>
           <VStack gap={1} align="stretch">
             {entries.map((entry) => {

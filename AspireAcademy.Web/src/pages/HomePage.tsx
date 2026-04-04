@@ -83,6 +83,7 @@ function NetworkCanvas() {
     function resize() {
       canvas!.width = canvas!.offsetWidth * devicePixelRatio;
       canvas!.height = canvas!.offsetHeight * devicePixelRatio;
+      ctx!.setTransform(1, 0, 0, 1, 0, 0);
       ctx!.scale(devicePixelRatio, devicePixelRatio);
     }
 

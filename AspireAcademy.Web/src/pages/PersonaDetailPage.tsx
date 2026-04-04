@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -16,8 +17,9 @@ export default function PersonaDetailPage() {
   const token = useAuthStore((s) => s.token);
   const updateUser = useAuthStore((s) => s.updateUser);
   const isAuthenticated = !!token && !!user;
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
-  const { data: persona, isLoading } = useQuery<PersonaDetail>({
+  const { data: persona, isLoading, error, refetch } = useQuery<PersonaDetail>({
     queryKey: ['persona', personaId],
     queryFn: () => api.get(`/personas/${personaId}`).then((r) => r.data),
     enabled: !!personaId,
@@ -28,6 +30,10 @@ export default function PersonaDetailPage() {
       api.put('/personas/select', { personaId: id }),
     onSuccess: (_, id) => {
       updateUser({ persona: id });
+      setMutationError(null);
+    },
+    onError: () => {
+      setMutationError('Failed to update track. Please try again.');
     },
   });
 
@@ -38,6 +44,22 @@ export default function PersonaDetailPage() {
       <Flex justify="center" align="center" h="60vh">
         <Spinner size="lg" color="aspire.600" />
       </Flex>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box maxW="800px" mx="auto" p="6">
+        <Flex direction="column" align="center" justify="center" py="12" gap="3">
+          <Text fontSize="2xl">⚠️</Text>
+          <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
+            Something went wrong loading this page
+          </Text>
+          <Button size="xs" variant="outline" colorPalette="purple" onClick={() => refetch()} {...pixelFontProps} fontSize="2xs">
+            Try Again
+          </Button>
+        </Flex>
+      </Box>
     );
   }
 
@@ -86,7 +108,13 @@ export default function PersonaDetailPage() {
         </Flex>
 
         {isAuthenticated && (
-          <Flex gap="3">
+          <>
+            {mutationError && (
+              <Box role="alert" bg="rgba(209, 52, 56, 0.15)" border="2px solid" borderColor="red.500" borderRadius="sm" px="3" py="2" mb="3">
+                <Text color="red.400" fontSize="sm">{mutationError}</Text>
+              </Box>
+            )}
+            <Flex gap="3">
             {isSelected ? (
               <Button
                 size="sm"
@@ -119,7 +147,8 @@ export default function PersonaDetailPage() {
             >
               Start Learning
             </Button>
-          </Flex>
+            </Flex>
+          </>
         )}
 
         {!isAuthenticated && (

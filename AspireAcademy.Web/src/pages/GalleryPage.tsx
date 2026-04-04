@@ -11,6 +11,7 @@ import {
   Badge,
   IconButton,
   SimpleGrid,
+  Skeleton,
   Tabs,
   Input,
 } from '@chakra-ui/react';
@@ -1324,7 +1325,7 @@ export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
 
-  const { data: galleryEntries = [] } = useQuery<GalleryEntry[]>({
+  const { data: galleryEntries = [], isLoading, error, refetch } = useQuery<GalleryEntry[]>({
     queryKey: ['gallery'],
     queryFn: () => api.get('/gallery').then((r) => r.data),
     staleTime: 10 * 60_000,
@@ -1464,18 +1465,40 @@ export default function GalleryPage() {
       <ServiceLegend />
 
       {/* Gallery Grid */}
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap="4">
-        {filteredEntries.map((entry) => (
-          <GalleryCard
-            key={entry.id}
-            entry={entry}
-            onClick={() => navigate(`/gallery/${entry.id}`)}
-          />
-        ))}
-      </SimpleGrid>
+      {isLoading && (
+        <SimpleGrid columns={{ base: 1, md: 2 }} gap="4">
+          {Array.from({ length: 6 }, (_, i) => (
+            <Skeleton key={i} h="200px" borderRadius="sm" />
+          ))}
+        </SimpleGrid>
+      )}
+
+      {error && (
+        <Flex direction="column" align="center" justify="center" py="12" gap="3">
+          <Text fontSize="2xl">⚠️</Text>
+          <Text {...pixelFontProps} fontSize="xs" color="dark.muted">
+            Something went wrong loading this page
+          </Text>
+          <Button size="xs" variant="outline" colorPalette="purple" onClick={() => refetch()} {...pixelFontProps} fontSize="2xs">
+            Try Again
+          </Button>
+        </Flex>
+      )}
+
+      {!isLoading && !error && (
+        <SimpleGrid columns={{ base: 1, md: 2 }} gap="4">
+          {filteredEntries.map((entry) => (
+            <GalleryCard
+              key={entry.id}
+              entry={entry}
+              onClick={() => navigate(`/gallery/${entry.id}`)}
+            />
+          ))}
+        </SimpleGrid>
+      )}
 
       {/* Empty state */}
-      {filteredEntries.length === 0 && galleryEntries.length > 0 && (
+      {!isLoading && !error && filteredEntries.length === 0 && galleryEntries.length > 0 && (
         <Box textAlign="center" py="12">
           <Text fontSize="xl" mb="2">🏗️</Text>
           <Text fontSize="sm" color="dark.muted">
