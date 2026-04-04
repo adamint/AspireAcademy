@@ -499,12 +499,12 @@ export default function HomePage() {
             >
               Why Aspire?
             </Heading>
-            <Text textAlign="center" color="dark.muted" mb="10" maxW="700px" mx="auto" lineHeight="1.7">
+            <Text textAlign="center" color="dark.muted" mb="6" maxW="700px" mx="auto" lineHeight="1.7">
               Every team that splits into services inherits the same problems: wiring connection strings,
               coordinating startup, reading four log files to debug one request, maintaining separate configs
               per environment.
             </Text>
-            <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="5" maxW="1100px" mx="auto">
+            <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="4" maxW="1100px" mx="auto">
               {[
                 {
                   icon: '🏗️',
@@ -543,16 +543,15 @@ export default function HomePage() {
                   accentBg: 'rgba(52,211,153,0.12)',
                 },
               ].map((card) => (
-                <Box
+                <Flex
                   key={card.title}
+                  direction="column"
                   borderRadius="md"
                   bg="dark.card"
                   p="4"
                   cursor="pointer"
                   role="link"
                   tabIndex={0}
-                  borderTop="3px solid"
-                  borderTopColor={card.accent}
                   border="1px solid"
                   borderColor="dark.border"
                   css={{ borderTopWidth: '3px', borderTopColor: card.accent }}
@@ -565,33 +564,22 @@ export default function HomePage() {
                   onClick={() => navigate(card.linkTo)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(card.linkTo); } }}
                 >
-                  <Flex align="center" gap="3" mb="2">
-                    <Flex
-                      align="center"
-                      justify="center"
-                      w="36px"
-                      h="36px"
-                      borderRadius="md"
-                      bg={card.accentBg}
-                      flexShrink={0}
-                    >
-                      <Text fontSize="xl">{card.icon}</Text>
-                    </Flex>
-                    <Text fontWeight="bold" fontSize="sm" color="dark.text">{card.title}</Text>
-                  </Flex>
-                  <Text fontSize="11px" color="dark.muted" lineHeight="1.6" mb="3"
+                  <Text fontSize="2xl" mb="2">{card.icon}</Text>
+                  <Text fontWeight="bold" fontSize="sm" color="dark.text" mb="2">{card.title}</Text>
+                  <Text fontSize="11px" color="dark.muted" lineHeight="1.6" flex="1"
                     dangerouslySetInnerHTML={{ __html: card.desc }}
                   />
                   <Text
                     fontSize="10px"
                     color={card.accent}
                     cursor="pointer"
+                    mt="3"
                     _hover={{ textDecoration: 'underline' }}
                     onClick={(e) => { e.stopPropagation(); navigate(card.linkTo); }}
                   >
                     {card.linkLabel}
                   </Text>
-                </Box>
+                </Flex>
               ))}
             </SimpleGrid>
         </Box>
