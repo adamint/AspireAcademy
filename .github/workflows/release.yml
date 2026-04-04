@@ -267,7 +267,7 @@ jobs:
           Azure__SubscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
           Azure__ResourceGroup: ${{ env.AZURE_RESOURCE_GROUP }}
           Azure__Location: ${{ env.AZURE_LOCATION }}
-        run: aspire deploy --non-interactive
+        run: aspire deploy --non-interactive --clear-cache
         timeout-minutes: 20
 
       - name: Get app URL
