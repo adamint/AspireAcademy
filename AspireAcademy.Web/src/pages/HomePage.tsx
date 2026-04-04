@@ -49,6 +49,19 @@ const KEYFRAMES = `
   0%,100% { box-shadow:4px 4px 0 #2B1260; }
   50%     { box-shadow:4px 4px 0 #2B1260, 0 0 12px rgba(107,79,187,0.4); }
 }
+@keyframes slide-up-fade {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes shimmer {
+  0%   { text-shadow: 0 0 4px rgba(255,215,0,0.3); }
+  50%  { text-shadow: 0 0 12px rgba(255,215,0,0.7), 0 0 24px rgba(255,215,0,0.3); }
+  100% { text-shadow: 0 0 4px rgba(255,215,0,0.3); }
+}
+@keyframes step-pulse {
+  0%,100% { transform:scale(1); box-shadow:0 0 0 rgba(107,79,187,0); }
+  50%     { transform:scale(1.08); box-shadow:0 0 20px rgba(107,79,187,0.5); }
+}
 `;
 
 /* ─────────────────── Network canvas background ──────────────────── */
@@ -358,6 +371,7 @@ export default function HomePage() {
             justify="center"
             textAlign="center"
             minH={{ base: '70vh', md: '75vh' }}
+            pt={{ base: '8', md: '12' }}
             px="4"
             gap="6"
           >
@@ -369,7 +383,7 @@ export default function HomePage() {
                 bg="rgba(26,11,46,0.85)"
                 px="6"
                 py="3"
-                mb="2"
+                mb="6"
               >
                 <Text {...pixelFontProps} fontSize={{ base: '10px', md: '12px' }} color="game.xpGold">
                   Welcome back, {user.displayName || user.username}!
@@ -495,6 +509,51 @@ export default function HomePage() {
           </Flex>
         </Box>
 
+        {/* ═══════════════════ QUICK LINKS BAR ═══════════════════ */}
+        <Flex
+          justify="center"
+          align="center"
+          gap={{ base: '3', md: '6' }}
+          py="4"
+          px="4"
+          bg="rgba(21,18,36,0.85)"
+          borderTop="1px solid rgba(107,79,187,0.2)"
+          borderBottom="1px solid rgba(107,79,187,0.2)"
+          wrap="wrap"
+        >
+          {[
+            { icon: '🎮', label: 'Playground', to: '/playground' },
+            { icon: '🖼️', label: 'Gallery', to: '/gallery' },
+            { icon: '🗺️', label: 'Concept Map', to: '/concept-map' },
+            { icon: '📚', label: 'Curriculum', to: '/dashboard' },
+          ].map((link) => (
+            <Flex
+              key={link.label}
+              align="center"
+              gap="2"
+              px="4"
+              py="2"
+              borderRadius="full"
+              bg="rgba(107,79,187,0.1)"
+              border="1px solid rgba(107,79,187,0.25)"
+              cursor="pointer"
+              transition="all 0.25s ease"
+              _hover={{
+                bg: 'rgba(107,79,187,0.25)',
+                borderColor: 'aspire.400',
+                boxShadow: '0 0 16px rgba(107,79,187,0.3)',
+                transform: 'translateY(-1px)',
+              }}
+              onClick={() => navigate(link.to)}
+            >
+              <Text fontSize="sm">{link.icon}</Text>
+              <Text fontSize="xs" color="aspire.300" fontWeight="bold" letterSpacing="wide">
+                {link.label}
+              </Text>
+            </Flex>
+          ))}
+        </Flex>
+
         {/* ═══════════════════ WHY ASPIRE ═══════════════════ */}
         <Box id="why-aspire" py={{ base: '16', md: '20' }} px="4">
             <Heading
@@ -512,38 +571,81 @@ export default function HomePage() {
               per environment.
             </Text>
             <SimpleGrid columns={{ base: 1, sm: 2 }} gap="5" maxW="1000px" mx="auto">
-              <Box {...retroCardProps} bg="rgba(26,11,46,0.6)" p="5">
-                <Text fontSize="2xl" mb="2">🏗️</Text>
-                <Text fontWeight="bold" color="aspire.300" mb="1">Declare your app, not your infrastructure</Text>
-                <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6">
-                  Define services, databases, and their relationships in code. One readable file replaces
-                  Docker Compose, env scripts, and tribal knowledge.
-                </Text>
-              </Box>
-              <Box {...retroCardProps} bg="rgba(26,11,46,0.6)" p="5">
-                <Text fontSize="2xl" mb="2">▶️</Text>
-                <Text fontWeight="bold" color="aspire.300" mb="1">Start everything with one command</Text>
-                <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6">
-                  <code>aspire run</code> starts containers, waits for health checks, injects connection strings,
-                  and opens a dashboard. New developer? Clone, run, done.
-                </Text>
-              </Box>
-              <Box {...retroCardProps} bg="rgba(26,11,46,0.6)" p="5">
-                <Text fontSize="2xl" mb="2">📡</Text>
-                <Text fontWeight="bold" color="aspire.300" mb="1">Manage and observe from a live dashboard</Text>
-                <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6">
-                  Real-time logs, distributed traces, health checks, and custom commands — seed data,
-                  flush caches, run migrations — all from one dashboard.
-                </Text>
-              </Box>
-              <Box {...retroCardProps} bg="rgba(26,11,46,0.6)" p="5">
-                <Text fontSize="2xl" mb="2">🚀</Text>
-                <Text fontWeight="bold" color="aspire.300" mb="1">Ship the same app to any cloud</Text>
-                <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6">
-                  Your dev topology compiles to Docker Compose, Kubernetes Helm charts, or Azure Bicep.
-                  No rewrites. Pick your target when you're ready.
-                </Text>
-              </Box>
+              {[
+                {
+                  icon: '🏗️',
+                  title: 'Declare your app, not your infrastructure',
+                  desc: 'Define services, databases, and their relationships in code. One readable file replaces Docker Compose, env scripts, and tribal knowledge.',
+                  linkLabel: 'Try it → Playground',
+                  linkTo: '/playground',
+                },
+                {
+                  icon: '▶️',
+                  title: 'Start everything with one command',
+                  desc: '\u003Ccode\u003Easpire run\u003C/code\u003E starts containers, waits for health checks, injects connection strings, and opens a dashboard. New developer? Clone, run, done.',
+                  linkLabel: 'See how → Gallery',
+                  linkTo: '/gallery',
+                },
+                {
+                  icon: '📡',
+                  title: 'Manage and observe from a live dashboard',
+                  desc: 'Real-time logs, distributed traces, health checks, and custom commands — seed data, flush caches, run migrations — all from one dashboard.',
+                  linkLabel: 'Learn more → Dashboard Lesson',
+                  linkTo: '/lessons/1.1.2',
+                },
+                {
+                  icon: '🚀',
+                  title: 'Ship the same app to any cloud',
+                  desc: 'Your dev topology compiles to Docker Compose, Kubernetes Helm charts, or Azure Bicep. No rewrites. Pick your target when you\'re ready.',
+                  linkLabel: 'Explore → Concept Map',
+                  linkTo: '/concept-map',
+                },
+              ].map((card) => (
+                <Box
+                  key={card.title}
+                  border="2px solid"
+                  borderColor="aspire.600"
+                  borderRadius="md"
+                  position="relative"
+                  overflow="hidden"
+                  bg="rgba(26,11,46,0.6)"
+                  p="5"
+                  cursor="pointer"
+                  _before={{
+                    content: '""',
+                    position: 'absolute',
+                    inset: '-1px',
+                    background: 'linear-gradient(135deg, rgba(107,79,187,0.3), transparent, rgba(107,79,187,0.15))',
+                    borderRadius: 'md',
+                    zIndex: 0,
+                    pointerEvents: 'none',
+                  }}
+                  _hover={{
+                    transform: 'translateY(-4px)',
+                    borderColor: 'aspire.400',
+                    boxShadow: '0 8px 32px rgba(107,79,187,0.3)',
+                  }}
+                  transition="all 0.3s ease"
+                  onClick={() => navigate(card.linkTo)}
+                >
+                  <Box position="relative" zIndex={1}>
+                    <Text fontSize="2xl" mb="2">{card.icon}</Text>
+                    <Text fontWeight="bold" color="aspire.300" mb="1">{card.title}</Text>
+                    <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6" mb="3"
+                      dangerouslySetInnerHTML={{ __html: card.desc }}
+                    />
+                    <Text
+                      fontSize="xs"
+                      color="aspire.400"
+                      cursor="pointer"
+                      _hover={{ textDecoration: 'underline' }}
+                      onClick={(e) => { e.stopPropagation(); navigate(card.linkTo); }}
+                    >
+                      {card.linkLabel}
+                    </Text>
+                  </Box>
+                </Box>
+              ))}
             </SimpleGrid>
         </Box>
 
@@ -556,7 +658,7 @@ export default function HomePage() {
               maxW="900px"
               mx="auto"
             >
-              {stats.map((s) => (
+              {stats.map((s, i) => (
                 <Flex
                   key={s.label}
                   direction="column"
@@ -565,8 +667,18 @@ export default function HomePage() {
                   {...retroCardProps}
                   bg="rgba(26,11,46,0.6)"
                   p="6"
+                  transition="all 0.3s ease"
+                  _hover={{
+                    transform: 'scale(1.06)',
+                    boxShadow: '0 0 20px rgba(107,79,187,0.4), 4px 4px 0 #2B1260',
+                  }}
+                  style={{
+                    animation: `card-glow 4s ease-in-out ${i * 0.5}s infinite`,
+                  }}
                 >
-                  <CountUp target={s.num} />
+                  <Box style={{ animation: `shimmer 3s ease-in-out ${i * 0.7}s infinite` }}>
+                    <CountUp target={s.num} />
+                  </Box>
                   <Text
                     {...pixelFontProps}
                     fontSize={{ base: '8px', md: '10px' }}
@@ -687,7 +799,7 @@ export default function HomePage() {
             maxW="1000px"
             mx="auto"
           >
-            {(worlds ?? []).map(w => (
+            {(worlds ?? []).map((w, i) => (
                 <Card.Root
                   {...retroCardProps}
                   bg="rgba(26,11,46,0.7)"
@@ -699,7 +811,9 @@ export default function HomePage() {
                     transform: 'scale(1.05) translateY(-4px)',
                     borderColor: 'aspire.600',
                   }}
-                  style={{ animation: 'card-glow 4s ease-in-out infinite' }}
+                  style={{
+                    animation: `card-glow 4s ease-in-out infinite, slide-up-fade 0.6s ease-out ${i * 0.08}s both`,
+                  }}
                   onClick={() => navigate(`/worlds/${w.id}`)}
                 >
                   <Text fontSize="36px" mb="2">{w.icon}</Text>
@@ -733,18 +847,37 @@ export default function HomePage() {
               How It Works
             </Heading>
 
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap="8" maxW="900px" mx="auto">
-            {HOW_IT_WORKS.map((item, i) => (
-                <Flex direction="column" align="center" textAlign="center" gap="3">
+          <Box position="relative" maxW="900px" mx="auto">
+            {/* Connecting timeline bar (desktop only) */}
+            <Box
+              display={{ base: 'none', md: 'block' }}
+              position="absolute"
+              top="36px"
+              left="16%"
+              right="16%"
+              h="4px"
+              borderRadius="full"
+              background="linear-gradient(90deg, rgba(107,79,187,0.15), rgba(107,79,187,0.5), rgba(255,215,0,0.4), rgba(107,79,187,0.5), rgba(107,79,187,0.15))"
+              zIndex={0}
+            />
+
+            <SimpleGrid columns={{ base: 1, md: 3 }} gap="8" position="relative" zIndex={1}>
+              {HOW_IT_WORKS.map((item, i) => (
+                <Flex key={item.step} direction="column" align="center" textAlign="center" gap="3">
                   <Flex
                     align="center"
                     justify="center"
                     w="72px"
                     h="72px"
-                    {...retroCardProps}
                     bg="rgba(107,79,187,0.2)"
+                    border="2px solid"
                     borderColor="aspire.600"
                     borderRadius="md"
+                    transition="all 0.3s ease"
+                    _hover={{
+                      animation: 'step-pulse 1s ease-in-out',
+                      borderColor: 'game.xpGold',
+                    }}
                   >
                     <Text {...pixelFontProps} fontSize="24px" color="game.xpGold">{item.step}</Text>
                   </Flex>
@@ -766,21 +899,9 @@ export default function HomePage() {
                     </Text>
                   )}
                 </Flex>
-            ))}
-          </SimpleGrid>
-
-          {/* Horizontal arrows between steps (desktop) */}
-          <Flex
-            display={{ base: 'none', md: 'flex' }}
-            justify="center"
-            gap="220px"
-            mt="-100px"
-            mb="8"
-            pointerEvents="none"
-          >
-            <Text {...pixelFontProps} fontSize="24px" color="aspire.600">→</Text>
-            <Text {...pixelFontProps} fontSize="24px" color="aspire.600">→</Text>
-          </Flex>
+              ))}
+            </SimpleGrid>
+          </Box>
         </Box>
 
         {/* ═══════════════════ FOOTER CTA ═══════════════════ */}
