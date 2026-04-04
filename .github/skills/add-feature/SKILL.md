@@ -35,12 +35,15 @@ Add tests in `AspireAcademy.Api.Tests/` using `WebApplicationFactory`:
 - Test auth (no token → 401, wrong user → 403)
 - Test edge cases (duplicate, not found, already completed)
 
-### 3. Write Playwright E2E tests
+### 3. Write Playwright E2E tests (MOST IMPORTANT)
+**E2E tests are the highest-priority deliverable for any feature.** Think carefully about what flows a real user would exercise and ensure every meaningful path has E2E coverage. A feature without adequate E2E tests is not done.
+
 Add tests in `AspireAcademy.Api.Tests/E2E/` using C# `Microsoft.Playwright`:
 - Test the full user flow through the browser
 - Seed prerequisites via `fixture.ApiClient`
 - Assert both API response AND visual state
 - Test error cases (what does the user see when it fails?)
+- Cover edge cases — empty states, validation errors, concurrent actions
 
 ### 4. Verify
 ```bash
@@ -58,7 +61,7 @@ E2E_WEB_URL=http://localhost:<PORT> dotnet test AspireAcademy.Api.Tests/ --filte
 cd AspireAcademy.Web && npx vitest run
 ```
 
-ALL tests must pass before the feature is considered done.
+ALL tests must pass before the feature is considered done. **E2E coverage is non-negotiable** — if you're unsure whether you have enough, you probably don't. Add more.
 
 ## Checklist
 - [ ] API endpoint has structured logging
