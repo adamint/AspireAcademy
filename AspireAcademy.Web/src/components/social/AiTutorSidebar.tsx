@@ -153,7 +153,7 @@ export default function AiTutorSidebar() {
             {/* Header */}
             <Drawer.Header bg="dark.sidebar" py={3} px={4}>
               <Flex align="center" justify="space-between" w="100%">
-                <Text {...pixelFontProps} fontSize="10px" color="whiteAlpha.900">
+                <Text {...pixelFontProps} fontSize="10px" color="dark.text">
                   AI Tutor
                 </Text>
                 <IconButton
@@ -161,8 +161,8 @@ export default function AiTutorSidebar() {
                   title="Close AI Tutor"
                   variant="ghost"
                   size="sm"
-                  color="whiteAlpha.900"
-                  _hover={{ bg: 'whiteAlpha.200' }}
+                  color="dark.text"
+                  _hover={{ bg: 'content.hover' }}
                   onClick={() => setOpen(false)}
                 >
                   <FiX />

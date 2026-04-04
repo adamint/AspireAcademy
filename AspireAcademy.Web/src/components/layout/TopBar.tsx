@@ -53,7 +53,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
         title="Toggle navigation"
         variant="ghost"
         size="sm"
-        color="whiteAlpha.800"
+        color="dark.text"
         onClick={onToggleSidebar}
       >
         <FiMenu />
@@ -100,8 +100,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
               title={soundEnabled ? "Disable sound effects" : "Enable sound effects"}
               variant="ghost"
               size="sm"
-              color="whiteAlpha.800"
-              _hover={{ bg: 'whiteAlpha.200' }}
+              color="dark.text"
+              _hover={{ bg: 'content.hover' }}
               onClick={toggleSound}
             >
               <Text fontSize="sm">{soundEnabled ? '🔊' : '🔇'}</Text>
@@ -114,8 +114,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
               title={colorMode === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
               variant="ghost"
               size="sm"
-              color="whiteAlpha.800"
-              _hover={{ bg: 'whiteAlpha.200' }}
+              color="dark.text"
+              _hover={{ bg: 'content.hover' }}
               onClick={toggleColorMode}
             >
               {colorMode === 'dark' ? <FiSun /> : <FiMoon />}
@@ -165,7 +165,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                     py="2"
                   >
                     <Box px="3" pb="2" borderBottom="1px solid" borderColor="game.pixelBorder">
-                      <Text fontWeight="600" fontSize="sm" color="whiteAlpha.900">
+                      <Text fontWeight="600" fontSize="sm" color="dark.text">
                         {user?.displayName ?? user?.username}
                       </Text>
                       <Text
@@ -188,8 +188,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                       bg="transparent"
                       border="none"
                       cursor="pointer"
-                      color="whiteAlpha.900"
-                      _hover={{ bg: 'whiteAlpha.100' }}
+                      color="dark.text"
+                      _hover={{ bg: 'content.hover' }}
                       onClick={() => {
                         setMenuOpen(false);
                         navigate('/profile');
@@ -210,8 +210,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                       bg="transparent"
                       border="none"
                       cursor="pointer"
-                      color="whiteAlpha.900"
-                      _hover={{ bg: 'whiteAlpha.100' }}
+                      color="dark.text"
+                      _hover={{ bg: 'content.hover' }}
                       onClick={() => {
                         setMenuOpen(false);
                         navigate('/settings');
@@ -233,7 +233,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
                       border="none"
                       cursor="pointer"
                       color="game.error"
-                      _hover={{ bg: 'whiteAlpha.100' }}
+                      _hover={{ bg: 'content.hover' }}
                       onClick={handleLogout}
                       title="Log out"
                       aria-label="Log out"
@@ -253,8 +253,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
               title={colorMode === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
               variant="ghost"
               size="sm"
-              color="whiteAlpha.800"
-              _hover={{ bg: 'whiteAlpha.200' }}
+              color="dark.text"
+              _hover={{ bg: 'content.hover' }}
               onClick={toggleColorMode}
             >
               {colorMode === 'dark' ? <FiSun /> : <FiMoon />}
@@ -264,8 +264,8 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
               asChild
               variant="ghost"
               size="sm"
-              color="whiteAlpha.800"
-              _hover={{ bg: 'whiteAlpha.200' }}
+              color="dark.text"
+              _hover={{ bg: 'content.hover' }}
               title="Go to login page"
             >
               <RouterLink to="/login">Log In</RouterLink>

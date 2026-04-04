@@ -60,10 +60,10 @@ function SideNavLink({
           py="2"
           borderRadius="md"
           fontSize="sm"
-          color={isActive ? 'game.xpGold' : 'whiteAlpha.800'}
-          bg={isActive ? 'whiteAlpha.100' : 'transparent'}
+          color={isActive ? 'game.xpGold' : 'dark.text'}
+          bg={isActive ? 'content.hover' : 'transparent'}
           fontWeight={isActive ? '600' : '400'}
-          _hover={{ bg: 'whiteAlpha.100', color: 'white' }}
+          _hover={{ bg: 'content.hover', color: 'dark.text' }}
           transition="all 0.15s"
         >
           {icon}
@@ -99,9 +99,9 @@ function WorldModules({
       py="1"
       borderRadius="md"
       fontSize="12px"
-      color={!mod.isUnlocked ? 'whiteAlpha.500' : 'whiteAlpha.700'}
+      color={!mod.isUnlocked ? 'dark.muted' : 'dark.muted'}
       cursor={mod.isUnlocked ? 'pointer' : 'default'}
-      _hover={mod.isUnlocked ? { bg: 'whiteAlpha.100', color: 'white' } : undefined}
+      _hover={mod.isUnlocked ? { bg: 'content.hover', color: 'dark.text' } : undefined}
       onClick={() => mod.isUnlocked && onNav(`/worlds/${worldId}`)}
       role="button"
       tabIndex={mod.isUnlocked ? 0 : -1}
@@ -207,7 +207,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <Text
             fontSize="10px"
             fontWeight="700"
-            color="whiteAlpha.700"
+            color="dark.muted"
             textTransform="uppercase"
             letterSpacing="0.5px"
             px="3"
@@ -229,12 +229,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 py="1.5"
                 borderRadius="md"
                 fontSize="13px"
-                color={!world.isUnlocked ? 'whiteAlpha.500' : 'whiteAlpha.800'}
+                color={!world.isUnlocked ? 'dark.muted' : 'dark.text'}
                 bg="transparent"
                 border="none"
                 cursor={world.isUnlocked ? 'pointer' : 'default'}
                 textAlign="left"
-                _hover={world.isUnlocked ? { bg: 'whiteAlpha.100' } : undefined}
+                _hover={world.isUnlocked ? { bg: 'content.hover' } : undefined}
                 onClick={() => world.isUnlocked && toggleWorld(world.id)}
                 title={world.isUnlocked ? `Toggle ${world.name} world` : `${world.name} - Locked`}
                 aria-label={world.isUnlocked ? `Toggle ${world.name} world` : `${world.name} world - Locked`}
@@ -266,7 +266,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <Text
             fontSize="10px"
             fontWeight="700"
-            color="whiteAlpha.700"
+            color="dark.muted"
             textTransform="uppercase"
             letterSpacing="0.5px"
             px="3"
@@ -301,7 +301,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <Text
             fontSize="10px"
             fontWeight="700"
-            color="whiteAlpha.700"
+            color="dark.muted"
             textTransform="uppercase"
             letterSpacing="0.5px"
             px="3"
@@ -333,7 +333,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <Text
             fontSize="10px"
             fontWeight="700"
-            color="whiteAlpha.700"
+            color="dark.muted"
             textTransform="uppercase"
             letterSpacing="0.5px"
             px="3"
@@ -354,10 +354,10 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               px="3"
               py="2"
               borderRadius="md"
-              color="whiteAlpha.800"
+              color="dark.text"
               fontSize="sm"
               transition="background 0.15s"
-              _hover={{ bg: 'whiteAlpha.100', color: 'white' }}
+              _hover={{ bg: 'content.hover', color: 'dark.text' }}
             >
               <FiExternalLink size={16} />
               <Text fontSize="sm">Aspire Docs</Text>
@@ -374,10 +374,10 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               px="3"
               py="2"
               borderRadius="md"
-              color="whiteAlpha.800"
+              color="dark.text"
               fontSize="sm"
               transition="background 0.15s"
-              _hover={{ bg: 'whiteAlpha.100', color: 'white' }}
+              _hover={{ bg: 'content.hover', color: 'dark.text' }}
             >
               <FiGithub size={16} />
               <Text fontSize="sm">Aspire on GitHub</Text>
@@ -391,7 +391,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             <Text
               fontSize="10px"
               fontWeight="700"
-              color="whiteAlpha.700"
+              color="dark.muted"
               textTransform="uppercase"
               letterSpacing="0.5px"
               px="3"

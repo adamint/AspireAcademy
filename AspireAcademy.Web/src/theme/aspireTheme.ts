@@ -39,7 +39,7 @@ const config = defineConfig({
         dark: {
           bg: { value: { base: '#F5F0FF', _dark: '#0D0B1A' } },
           card: { value: { base: '#FFFFFF', _dark: '#1A1630' } },
-          sidebar: { value: '#0A0818' },
+          sidebar: { value: { base: '#F0ECF5', _dark: '#0A0818' } },
           surface: { value: { base: '#EDE7F6', _dark: '#151224' } },
           text: { value: { base: '#1A0B2E', _dark: '#E8E0F0' } },
           muted: { value: { base: '#6B5B95', _dark: '#9B93B0' } },
@@ -47,7 +47,8 @@ const config = defineConfig({
         },
         // Game UI tokens
         game: {
-          pixelBorder: { value: '#2B1260' },
+          pixelBorder: { value: { base: '#9B8BBF', _dark: '#2B1260' } },
+          pixelShadow: { value: { base: '#C4B5D9', _dark: '#2B1260' } },
           retroBg: { value: { base: '#FFFFFF', _dark: '#1A0B2E' } },
         },
         // Semantic aliases for content area hover/highlight
@@ -66,7 +67,7 @@ export const system = createSystem(defaultConfig, config);
 export const retroCardProps = {
   border: '3px solid',
   borderColor: 'game.pixelBorder',
-  boxShadow: '4px 4px 0 var(--chakra-colors-game-pixel-border, #2B1260)',
+  boxShadow: '4px 4px 0 var(--chakra-colors-game-pixel-shadow, #2B1260)',
   borderRadius: 'sm',
 } as const;
 
