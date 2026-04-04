@@ -768,8 +768,9 @@ export default function HomePage() {
                   role="link"
                   tabIndex={0}
                   _hover={{
-                    transform: 'translateY(-4px)',
-                    boxShadow: `0 4px 20px ${accent}33`,
+                    transform: 'translateY(-3px)',
+                    boxShadow: `0 4px 12px ${accent}22`,
+                    borderColor: accent,
                   }}
                   onClick={() => navigate(`/worlds/${w.id}`)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/worlds/${w.id}`); } }}
