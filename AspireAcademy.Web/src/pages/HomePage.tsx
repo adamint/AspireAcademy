@@ -732,7 +732,7 @@ export default function HomePage() {
             >
               🗺️ Choose Your World
             </Heading>
-            <Text textAlign="center" color="dark.muted" mb="10" maxW="600px" mx="auto">
+            <Text textAlign="center" color="dark.muted" mb="6" maxW="600px" mx="auto">
               {worlds ? `${worlds.length} themed worlds` : 'Themed worlds'} take you from cloud fundamentals to production-ready distributed apps
             </Text>
 
@@ -741,22 +741,22 @@ export default function HomePage() {
             gap="3"
             overflowX="auto"
             pb="2"
-            maxW="1000px"
-            mx="auto"
+            flexWrap="nowrap"
+            css={{ '&::-webkit-scrollbar': { height: '4px' }, '&::-webkit-scrollbar-thumb': { background: '#2B1260', borderRadius: '2px' } }}
           >
             {(worlds ?? []).map((w, i) => {
               const worldAccents = ['#2DD4BF', '#FBBF24', '#FB7185', '#34D399', '#38BDF8', '#FB923C', '#A78BFA', '#F472B6'];
               const accent = worldAccents[i % worldAccents.length];
               return (
-                <Card.Root
+                <Box
                   key={w.id}
                   bg="dark.card"
                   border="1px solid"
                   borderColor={accent}
                   borderRadius="lg"
                   p="3"
-                  minW="155px"
-                  maxW="155px"
+                  minW="140px"
+                  maxW="140px"
                   flexShrink={0}
                   textAlign="center"
                   cursor="pointer"
@@ -764,26 +764,28 @@ export default function HomePage() {
                   role="link"
                   tabIndex={0}
                   _hover={{
-                    transform: 'scale(1.05) translateY(-4px)',
-                    boxShadow: `0 0 20px ${accent}33`,
+                    transform: 'translateY(-4px)',
+                    boxShadow: `0 0 16px ${accent}33`,
                   }}
                   onClick={() => navigate(`/worlds/${w.id}`)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/worlds/${w.id}`); } }}
                 >
-                  <Text fontSize="28px" mb="1">{w.icon}</Text>
+                  <Text fontSize="24px" mb="1">{w.icon}</Text>
                   <Text
                     {...pixelFontProps}
-                    fontSize="8px"
+                    fontSize="7px"
                     color={accent}
                     mb="1"
-                    noOfLines={1}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
                   >
                     {w.name}
                   </Text>
-                  <Text fontSize="9px" color="dark.muted" lineHeight="1.4" noOfLines={1}>
+                  <Text fontSize="9px" color="dark.muted" lineHeight="1.3" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
                     {w.description}
                   </Text>
-                </Card.Root>
+                </Box>
               );
             })}
           </Flex>
