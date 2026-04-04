@@ -868,10 +868,14 @@ export default function PlaygroundPage() {
       isUndoRedoRef.current = false;
       return;
     }
+    const snap = snapshotResources(resources);
     const h = historyRef.current;
     const idx = historyIndexRef.current;
+    // Skip if resources match the current history entry (avoids strict-mode double-fire)
+    const current = h[idx];
+    if (current && JSON.stringify(current) === JSON.stringify(snap)) return;
     const truncated = h.slice(0, idx + 1);
-    truncated.push(snapshotResources(resources));
+    truncated.push(snap);
     if (truncated.length > MAX_HISTORY) truncated.shift();
     historyRef.current = truncated;
     historyIndexRef.current = truncated.length - 1;
