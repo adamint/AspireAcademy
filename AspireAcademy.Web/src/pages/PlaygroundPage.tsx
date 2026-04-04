@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -41,6 +41,9 @@ import {
   TbVariable,
   TbDownload,
   TbUpload,
+  TbArrowBackUp,
+  TbArrowForwardUp,
+  TbShare,
 } from 'react-icons/tb';
 import type { IconType } from 'react-icons';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -763,17 +766,147 @@ function loadFromStorage(): PlaygroundResource[] | null {
   } catch { return null; }
 }
 
+// ─── Validation ──────────────────────────────────────────────────────────────
+
+interface ValidationIssue {
+  level: 'error' | 'warning' | 'info';
+  message: string;
+  resourceId?: string;
+}
+
+// ─── Share via URL ───────────────────────────────────────────────────────────
+
+function encodeState(resources: PlaygroundResource[]): string {
+  const compact = resources.map((r, _i, arr) => {
+    const c: Record<string, unknown> = { t: r.type, n: r.name };
+    if (r.databases.length) c.d = r.databases;
+    if (r.references.length) c.r = r.references.map(ref => arr.findIndex(x => x.id === ref));
+    if (r.waitFor.length) c.w = r.waitFor.map(ref => arr.findIndex(x => x.id === ref));
+    if (r.image) c.i = r.image;
+    if (r.ports) c.p = r.ports;
+    if (r.hasDataVolume) c.v = 1;
+    if (r.hasExternalEndpoints) c.e = 1;
+    if (r.envVars.length) c.ev = r.envVars;
+    if (r.isPersistent) c.ps = 1;
+    if (r.isSecret) c.s = 1;
+    if (r.args) c.a = r.args;
+    if (r.scriptPath) c.sp = r.scriptPath;
+    if (r.projectPath) c.pp = r.projectPath;
+    if (r.projectLanguage !== 'csharp') c.pl = r.projectLanguage;
+    return c;
+  });
+  return btoa(JSON.stringify(compact));
+}
+
+function decodeState(hash: string): PlaygroundResource[] | null {
+  try {
+    const compact = JSON.parse(atob(hash)) as Record<string, unknown>[];
+    if (!Array.isArray(compact)) return null;
+    const ids = compact.map(() => makeId());
+    return compact.map((c, i) =>
+      makeResource({
+        id: ids[i],
+        type: c.t as ResourceType,
+        name: c.n as string,
+        databases: (c.d as string[] | undefined) ?? [],
+        image: (c.i as string | undefined) ?? '',
+        references: ((c.r as number[] | undefined) ?? []).filter(idx => idx >= 0 && idx < ids.length).map(idx => ids[idx]),
+        waitFor: ((c.w as number[] | undefined) ?? []).filter(idx => idx >= 0 && idx < ids.length).map(idx => ids[idx]),
+        ports: (c.p as string | undefined) ?? '',
+        hasDataVolume: c.v === 1,
+        hasExternalEndpoints: c.e === 1,
+        envVars: (c.ev as EnvVar[] | undefined) ?? [],
+        isPersistent: c.ps === 1,
+        isSecret: c.s === 1,
+        args: (c.a as string | undefined) ?? '',
+        scriptPath: (c.sp as string | undefined) ?? '',
+        projectPath: (c.pp as string | undefined) ?? '',
+        projectLanguage: (c.pl as CodeLanguage | undefined) ?? 'csharp',
+      }),
+    );
+  } catch {
+    return null;
+  }
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function PlaygroundPage() {
-  const [resources, setResources] = useState<PlaygroundResource[]>(() => loadFromStorage() ?? []);
+  // Load initial resources from URL hash (priority) or localStorage
+  const [resources, setResources] = useState<PlaygroundResource[]>(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const decoded = decodeState(hash);
+      if (decoded) return decoded;
+    }
+    return loadFromStorage() ?? [];
+  });
   const [connectingFrom, setConnectingFrom] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [activeLanguage, setActiveLanguage] = useState<CodeLanguage>('csharp');
   const [showScaffolds, setShowScaffolds] = useState(false);
   const [activeTab, setActiveTab] = useState('canvas');
   const [importText, setImportText] = useState('');
   const [showImport, setShowImport] = useState(false);
+  const [highlightedResource, setHighlightedResource] = useState<string | null>(null);
+
+  // Undo/redo history
+  const MAX_HISTORY = 50;
+  const [history, setHistory] = useState<PlaygroundResource[][]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+
+  const pushHistory = useCallback((currentResources: PlaygroundResource[]) => {
+    setHistory(prev => {
+      const truncated = prev.slice(0, historyIndex + 1);
+      const next = [...truncated, currentResources.map(r => ({ ...r, envVars: [...r.envVars], databases: [...r.databases], references: [...r.references], waitFor: [...r.waitFor] }))];
+      if (next.length > MAX_HISTORY) next.shift();
+      return next;
+    });
+    setHistoryIndex(prev => Math.min(prev + 1, MAX_HISTORY - 1));
+  }, [historyIndex]);
+
+  const undo = useCallback(() => {
+    if (historyIndex < 0) return;
+    const target = history[historyIndex];
+    if (target) {
+      setResources(target);
+      setHistoryIndex(prev => prev - 1);
+    }
+  }, [history, historyIndex]);
+
+  const redo = useCallback(() => {
+    if (historyIndex + 1 >= history.length) return;
+    const target = history[historyIndex + 1];
+    if (target) {
+      setResources(target);
+      setHistoryIndex(prev => prev + 1);
+    }
+  }, [history, historyIndex]);
+
+  const canUndo = historyIndex >= 0;
+  const canRedo = historyIndex + 1 < history.length;
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey) {
+        e.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [undo, redo]);
+
+  // SVG connection overlay refs
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const [connectionLines, setConnectionLines] = useState<{ fromId: string; toId: string; type: 'reference' | 'waitFor' }[]>([]);
+  const [cardPositions, setCardPositions] = useState<Map<string, DOMRect>>(new Map());
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
 
   // Persist to localStorage on every change
   useEffect(() => { saveToStorage(resources); }, [resources]);
@@ -792,6 +925,7 @@ export default function PlaygroundPage() {
     let name = tmpl.defaultName;
     const existing = resources.filter((r) => r.type === type);
     if (existing.length > 0) name = `${tmpl.defaultName}${existing.length + 1}`;
+    pushHistory(resources);
     setResources((prev) => [...prev, makeResource({
       id: makeId(),
       type,
@@ -800,13 +934,15 @@ export default function PlaygroundPage() {
       scriptPath: type === 'pythonapp' ? 'main:app' : '',
       projectPath: type === 'npmapp' || type === 'pythonapp' ? `../${name}` : '',
     })]);
-  }, [resources]);
+  }, [resources, pushHistory]);
 
   const updateResource = useCallback((id: string, updates: Partial<PlaygroundResource>) => {
+    pushHistory(resources);
     setResources((prev) => prev.map((r) => r.id === id ? { ...r, ...updates } : r));
-  }, []);
+  }, [resources, pushHistory]);
 
   const removeResource = useCallback((id: string) => {
+    pushHistory(resources);
     setResources((prev) =>
       prev.filter((r) => r.id !== id).map((r) => ({
         ...r,
@@ -815,9 +951,10 @@ export default function PlaygroundPage() {
       })),
     );
     if (connectingFrom === id) setConnectingFrom(null);
-  }, [connectingFrom]);
+  }, [connectingFrom, resources, pushHistory]);
 
   const toggleReference = useCallback((fromId: string, toId: string) => {
+    pushHistory(resources);
     setResources((prev) => prev.map((r) => {
       if (r.id !== fromId) return r;
       const hasRef = r.references.includes(toId);
@@ -826,29 +963,32 @@ export default function PlaygroundPage() {
         references: hasRef ? r.references.filter((x) => x !== toId) : [...r.references, toId],
       };
     }));
-  }, []);
+  }, [resources, pushHistory]);
 
   const toggleWaitFor = useCallback((fromId: string, toId: string) => {
+    pushHistory(resources);
     setResources((prev) => prev.map((r) => {
       if (r.id !== fromId) return r;
       const has = r.waitFor.includes(toId);
       return { ...r, waitFor: has ? r.waitFor.filter((x) => x !== toId) : [...r.waitFor, toId] };
     }));
-  }, []);
+  }, [resources, pushHistory]);
 
   const addDatabase = useCallback((id: string) => {
+    pushHistory(resources);
     setResources((prev) => prev.map((r) => {
       if (r.id !== id) return r;
       return { ...r, databases: [...r.databases, `db${r.databases.length + 1}`] };
     }));
-  }, []);
+  }, [resources, pushHistory]);
 
   const removeDatabase = useCallback((id: string, dbIndex: number) => {
+    pushHistory(resources);
     setResources((prev) => prev.map((r) => {
       if (r.id !== id) return r;
       return { ...r, databases: r.databases.filter((_, i) => i !== dbIndex) };
     }));
-  }, []);
+  }, [resources, pushHistory]);
 
   const updateDatabase = useCallback((id: string, dbIndex: number, value: string) => {
     setResources((prev) => prev.map((r) => {
@@ -891,14 +1031,16 @@ export default function PlaygroundPage() {
   }, [generatedCode]);
 
   const reset = useCallback(() => {
+    pushHistory(resources);
     setResources([]);
     setConnectingFrom(null);
-  }, []);
+  }, [resources, pushHistory]);
 
   const loadExample = useCallback((example: Example) => {
+    pushHistory(resources);
     setResources(example.resources.map((r) => ({ ...r })));
     setConnectingFrom(null);
-  }, []);
+  }, [resources, pushHistory]);
 
   const handleConnect = useCallback((resourceId: string) => {
     if (connectingFrom === null) setConnectingFrom(resourceId);
@@ -941,12 +1083,113 @@ export default function PlaygroundPage() {
   const handleImport = useCallback(() => {
     const parsed = parseAppHostCode(importText);
     if (parsed.length > 0) {
+      pushHistory(resources);
       setResources(parsed);
       setShowImport(false);
       setImportText('');
       setActiveTab('canvas');
     }
-  }, [importText]);
+  }, [importText, resources, pushHistory]);
+
+  // Share via URL
+  const shareState = useCallback(async () => {
+    try {
+      const encoded = encodeState(resources);
+      window.location.hash = encoded;
+      await navigator.clipboard.writeText(window.location.href);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch { /* ignore */ }
+  }, [resources]);
+
+  // Live validation
+  const validationIssues = useMemo(() => {
+    const issues: ValidationIssue[] = [];
+    const names = resources.map(r => r.name);
+
+    for (const r of resources) {
+      if (!r.name.trim()) {
+        issues.push({ level: 'error', message: 'Resource needs a name', resourceId: r.id });
+      }
+      if (r.name.trim() && names.filter(n => n === r.name).length > 1) {
+        issues.push({ level: 'error', message: `Duplicate resource name "${r.name}"`, resourceId: r.id });
+      }
+      if (r.type === 'container' && !r.image) {
+        issues.push({ level: 'warning', message: `Container "${r.name || '(unnamed)'}" needs a Docker image`, resourceId: r.id });
+      }
+      const hasRefsTo = r.references.length > 0 || r.waitFor.length > 0;
+      const hasRefsFrom = resources.some(other => other.references.includes(r.id) || other.waitFor.includes(r.id));
+      if (!hasRefsTo && !hasRefsFrom && resources.length > 1) {
+        issues.push({ level: 'warning', message: `"${r.name || '(unnamed)'}" isn't connected to anything`, resourceId: r.id });
+      }
+      const isApp = r.type === 'project' || r.type === 'npmapp' || r.type === 'pythonapp';
+      const hasInfraRef = r.references.some(refId => {
+        const target = resources.find(x => x.id === refId);
+        return target && ['postgres', 'redis', 'sqlserver', 'mongodb', 'rabbitmq', 'kafka'].includes(target.type);
+      });
+      if (isApp && !hasInfraRef && resources.some(x => ['postgres', 'redis', 'sqlserver', 'mongodb'].includes(x.type))) {
+        issues.push({ level: 'info', message: `Consider adding a database reference to "${r.name}"`, resourceId: r.id });
+      }
+    }
+    return issues;
+  }, [resources]);
+
+  // SVG connection overlay: compute positions
+  useEffect(() => {
+    const container = canvasContainerRef.current;
+    if (!container) return;
+
+    const updatePositions = () => {
+      const positions = new Map<string, DOMRect>();
+      const containerRect = container.getBoundingClientRect();
+      for (const r of resources) {
+        const el = container.querySelector(`[data-resource-id="${r.id}"]`);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          positions.set(r.id, new DOMRect(
+            rect.left - containerRect.left,
+            rect.top - containerRect.top,
+            rect.width,
+            rect.height,
+          ));
+        }
+      }
+      setCardPositions(positions);
+
+      const lines: { fromId: string; toId: string; type: 'reference' | 'waitFor' }[] = [];
+      for (const r of resources) {
+        for (const refId of r.references) {
+          lines.push({ fromId: r.id, toId: refId, type: 'reference' });
+        }
+        for (const wfId of r.waitFor) {
+          if (!r.references.includes(wfId)) {
+            lines.push({ fromId: r.id, toId: wfId, type: 'waitFor' });
+          }
+        }
+      }
+      setConnectionLines(lines);
+    };
+
+    updatePositions();
+    const observer = new ResizeObserver(updatePositions);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [resources]);
+
+  // Track mouse for connect mode line
+  useEffect(() => {
+    if (!connectingFrom || !canvasContainerRef.current) {
+      setMousePos(null);
+      return;
+    }
+    const container = canvasContainerRef.current;
+    const handler = (e: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    };
+    container.addEventListener('mousemove', handler);
+    return () => container.removeEventListener('mousemove', handler);
+  }, [connectingFrom]);
 
   return (
     <Box maxW="1600px" mx="auto" px={{ base: '4', md: '6' }} py="6" data-testid="playground-page">
@@ -971,6 +1214,21 @@ export default function PlaygroundPage() {
               {ex.name}
             </Button>
           ))}
+          <Button size="sm" variant="outline" colorPalette="purple" onClick={undo} disabled={!canUndo}
+            data-testid="undo-btn" aria-label="Undo"
+          >
+            <TbArrowBackUp /> Undo
+          </Button>
+          <Button size="sm" variant="outline" colorPalette="purple" onClick={redo} disabled={!canRedo}
+            data-testid="redo-btn" aria-label="Redo"
+          >
+            <TbArrowForwardUp /> Redo
+          </Button>
+          <Button size="sm" variant="outline" colorPalette={shareCopied ? 'green' : 'purple'}
+            onClick={shareState} data-testid="share-btn" aria-label="Share playground"
+          >
+            <TbShare /> {shareCopied ? 'Link copied!' : 'Share'}
+          </Button>
           <Button size="sm" variant="outline" colorPalette="red" onClick={reset} data-testid="reset-btn">
             <TbRefresh /> Reset
           </Button>
@@ -1051,30 +1309,90 @@ export default function PlaygroundPage() {
               </Card.Body>
             </Card.Root>
           ) : (
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} gap="5" data-testid="canvas-resources">
-              {resources.map((resource) => {
-                const tmpl = findTemplate(resource.type);
-                const isConnecting = connectingFrom === resource.id;
-                const isTarget = connectingFrom !== null && connectingFrom !== resource.id;
+            <Box position="relative" ref={canvasContainerRef}>
+              {/* SVG connection overlay */}
+              <svg
+                style={{
+                  position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                  pointerEvents: 'none', zIndex: 1,
+                }}
+                data-testid="connection-overlay"
+              >
+                <defs>
+                  <marker id="arrow-ref" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6" fill="#7C3AED" />
+                  </marker>
+                  <marker id="arrow-wf" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6" fill="#A78BFA" />
+                  </marker>
+                </defs>
+                {connectionLines.map((line, i) => {
+                  const fromRect = cardPositions.get(line.fromId);
+                  const toRect = cardPositions.get(line.toId);
+                  if (!fromRect || !toRect) return null;
+                  const x1 = fromRect.left + fromRect.width / 2;
+                  const y1 = fromRect.top + fromRect.height / 2;
+                  const x2 = toRect.left + toRect.width / 2;
+                  const y2 = toRect.top + toRect.height / 2;
+                  const cx = (x1 + x2) / 2;
+                  const cy = (y1 + y2) / 2 - 30;
+                  const isRef = line.type === 'reference';
+                  return (
+                    <path
+                      key={`${line.fromId}-${line.toId}-${line.type}-${i}`}
+                      d={`M${x1},${y1} Q${cx},${cy} ${x2},${y2}`}
+                      fill="none"
+                      stroke={isRef ? '#7C3AED' : '#A78BFA'}
+                      strokeWidth={isRef ? 2 : 1.5}
+                      strokeDasharray={isRef ? 'none' : '6,4'}
+                      markerEnd={isRef ? 'url(#arrow-ref)' : 'url(#arrow-wf)'}
+                      opacity={0.7}
+                    />
+                  );
+                })}
+                {connectingFrom && mousePos && (() => {
+                  const fromRect = cardPositions.get(connectingFrom);
+                  if (!fromRect) return null;
+                  const x1 = fromRect.left + fromRect.width / 2;
+                  const y1 = fromRect.top + fromRect.height / 2;
+                  return (
+                    <line
+                      x1={x1} y1={y1} x2={mousePos.x} y2={mousePos.y}
+                      stroke="#FFD700" strokeWidth={2} strokeDasharray="4,4" opacity={0.8}
+                    />
+                  );
+                })()}
+              </svg>
 
-                return (
-                  <Card.Root
-                    key={resource.id} variant="outline" {...retroCardProps}
-                    borderColor={isConnecting ? 'game.xpGold' : isTarget ? 'aspire.600' : 'game.pixelBorder'}
-                    role="article" aria-label={`${tmpl.label}: ${resource.name}`}
-                    css={isConnecting ? {
-                      animation: 'pulse 1s ease-in-out infinite',
-                      '@keyframes pulse': {
-                        '0%, 100%': { boxShadow: '4px 4px 0 #FFD700' },
-                        '50%': { boxShadow: '4px 4px 0 #FFD700, 0 0 12px rgba(255, 215, 0, 0.4)' },
-                      },
-                    } : isTarget ? {
-                      cursor: 'pointer', transition: 'all 0.15s',
-                      '&:hover': { borderColor: '#FFD700', transform: 'scale(1.02)' },
-                    } : undefined}
-                    onClick={isTarget ? () => handleConnect(resource.id) : undefined}
-                    data-testid={`resource-card-${resource.name}`}
-                  >
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} gap="5" data-testid="canvas-resources">
+                {resources.map((resource) => {
+                  const tmpl = findTemplate(resource.type);
+                  const isConnecting = connectingFrom === resource.id;
+                  const isTarget = connectingFrom !== null && connectingFrom !== resource.id;
+                  const isHighlighted = highlightedResource === resource.id;
+
+                  return (
+                    <Card.Root
+                      key={resource.id} variant="outline" {...retroCardProps}
+                      borderColor={isHighlighted ? '#FF6B6B' : isConnecting ? 'game.xpGold' : isTarget ? 'aspire.600' : 'game.pixelBorder'}
+                      role="article" aria-label={`${tmpl.label}: ${resource.name}`}
+                      data-resource-id={resource.id}
+                      css={isConnecting ? {
+                        animation: 'pulse 1s ease-in-out infinite',
+                        '@keyframes pulse': {
+                          '0%, 100%': { boxShadow: '4px 4px 0 #FFD700' },
+                          '50%': { boxShadow: '4px 4px 0 #FFD700, 0 0 12px rgba(255, 215, 0, 0.4)' },
+                        },
+                      } : isHighlighted ? {
+                        boxShadow: '0 0 12px rgba(255, 107, 107, 0.5)',
+                        transition: 'all 0.3s',
+                      } : isTarget ? {
+                        cursor: 'pointer', transition: 'all 0.15s',
+                        '&:hover': { borderColor: '#FFD700', transform: 'scale(1.02)' },
+                      } : undefined}
+                      onClick={isTarget ? () => handleConnect(resource.id) : undefined}
+                      data-testid={`resource-card-${resource.name}`}
+                    >
                     <Card.Body p="4" display="flex" flexDirection="column" gap="3">
                       {/* Header */}
                       <Flex justify="space-between" align="center">
@@ -1318,6 +1636,46 @@ export default function PlaygroundPage() {
                 );
               })}
             </SimpleGrid>
+          </Box>
+          )}
+
+          {/* Validation panel */}
+          {validationIssues.length > 0 && resources.length > 0 && (
+            <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg" mt="5" data-testid="validation-panel">
+              <Card.Body p="4">
+                <Text {...pixelFontProps} fontSize="2xs" color="aspire.300" mb="3">
+                  ⚡ Validation ({validationIssues.length})
+                </Text>
+                <Box
+                  bg="#0D0B1A" borderRadius="sm" p="3" fontFamily="mono" fontSize="12px"
+                  border="1px solid" borderColor="dark.border"
+                  maxH="200px" overflowY="auto"
+                >
+                  {validationIssues.map((issue, i) => {
+                    const icon = issue.level === 'error' ? '❌' : issue.level === 'warning' ? '⚠️' : 'ℹ️';
+                    const color = issue.level === 'error' ? 'red.400' : issue.level === 'warning' ? 'yellow.400' : 'blue.300';
+                    return (
+                      <Text
+                        key={i} fontSize="xs" color={color} mb="1"
+                        cursor={issue.resourceId ? 'pointer' : undefined}
+                        _hover={issue.resourceId ? { textDecoration: 'underline' } : undefined}
+                        data-testid={`validation-issue-${i}`}
+                        onClick={() => {
+                          if (issue.resourceId) {
+                            setHighlightedResource(issue.resourceId);
+                            setTimeout(() => setHighlightedResource(null), 2000);
+                            const el = canvasContainerRef.current?.querySelector(`[data-resource-id="${issue.resourceId}"]`);
+                            el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }
+                        }}
+                      >
+                        {icon} {issue.message}
+                      </Text>
+                    );
+                  })}
+                </Box>
+              </Card.Body>
+            </Card.Root>
           )}
         </Tabs.Content>
 
