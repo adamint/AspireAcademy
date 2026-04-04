@@ -144,13 +144,13 @@ export default function CertificatesPage() {
             <Flex align="center" gap={2}>
               <Text fontSize="24px">👑</Text>
               <VStack align="flex-start" gap={0}>
-                <Text {...pixelFontProps} fontSize="sm" color="game.xpGold">Master Certificate</Text>
+                <Text {...pixelFontProps} fontSize="sm" color="game.gold">Master Certificate</Text>
                 <Text fontSize="xs" color="dark.muted">Full Curriculum Mastery</Text>
               </VStack>
             </Flex>
             <Flex gap={2}>
               <Button
-                size="sm" variant="outline" borderColor="game.xpGold" color="game.xpGold"
+                size="sm" variant="outline" borderColor="game.xpGold" color="game.gold"
                 _hover={{ bg: 'rgba(255, 215, 0, 0.1)' }}
                 onClick={() => setViewCert(buildMasterCertData(data))}
               >

@@ -37,19 +37,34 @@ const config = defineConfig({
       colors: {
         // Page-level backgrounds and text
         dark: {
-          bg: { value: { base: '#F5F0FF', _dark: '#0D0B1A' } },
+          bg: { value: { base: '#FAFAF8', _dark: '#0D0B1A' } },
           card: { value: { base: '#FFFFFF', _dark: '#1A1630' } },
           sidebar: { value: { base: '#F0ECF5', _dark: '#0A0818' } },
-          surface: { value: { base: '#EDE7F6', _dark: '#151224' } },
+          surface: { value: { base: '#F3F1EE', _dark: '#151224' } },
           text: { value: { base: '#1A0B2E', _dark: '#E8E0F0' } },
-          muted: { value: { base: '#6B5B95', _dark: '#9B93B0' } },
-          border: { value: { base: '#C4B5E0', _dark: '#2B1260' } },
+          muted: { value: { base: '#5C5470', _dark: '#9B93B0' } },
+          border: { value: { base: '#B0A0D0', _dark: '#2B1260' } },
+        },
+        // Aspire purple semantic tokens — darker in light mode for WCAG AA contrast
+        aspire: {
+          accent: { value: { base: '#5B3FA0', _dark: '#B5B7E7' } },
+          heading: { value: { base: '#4A3090', _dark: '#9185D1' } },
+        },
+        // Accent colors for visual variety across the app
+        accent: {
+          teal: { value: { base: '#0D9488', _dark: '#2DD4BF' } },
+          amber: { value: { base: '#D97706', _dark: '#FBBF24' } },
+          rose: { value: { base: '#E11D48', _dark: '#FB7185' } },
+          emerald: { value: { base: '#059669', _dark: '#34D399' } },
+          sky: { value: { base: '#0284C7', _dark: '#38BDF8' } },
+          orange: { value: { base: '#EA580C', _dark: '#FB923C' } },
         },
         // Game UI tokens
         game: {
           pixelBorder: { value: { base: '#9B8BBF', _dark: '#2B1260' } },
           pixelShadow: { value: { base: '#C4B5D9', _dark: '#2B1260' } },
           retroBg: { value: { base: '#FFFFFF', _dark: '#1A0B2E' } },
+          gold: { value: { base: '#B8860B', _dark: '#FFD700' } },
         },
         // Semantic aliases for content area hover/highlight
         content: {

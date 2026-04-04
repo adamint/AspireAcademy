@@ -85,7 +85,7 @@ export default function ChallengeButton({ friendId, friendName }: ChallengeButto
                     borderRadius="sm"
                     w="100%"
                   >
-                    <Text fontSize="xs" color="aspire.400">
+                    <Text fontSize="xs" color="aspire.accent">
                       Both players earn <strong>bonus XP</strong> for completing lessons
                       during an active challenge!
                     </Text>

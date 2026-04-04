@@ -23,10 +23,10 @@ export default function NotFoundPage() {
         w="100%"
         textAlign="center"
       >
-        <Heading {...pixelFontProps} fontSize="xl" color="game.xpGold" mb="4">
+        <Heading {...pixelFontProps} fontSize="xl" color="game.gold" mb="4">
           404
         </Heading>
-        <Text {...pixelFontProps} fontSize="xs" color="aspire.400" mb="2">
+        <Text {...pixelFontProps} fontSize="xs" color="aspire.accent" mb="2">
           Page Not Found
         </Text>
         <Text fontSize="sm" color="dark.muted" mb="6">

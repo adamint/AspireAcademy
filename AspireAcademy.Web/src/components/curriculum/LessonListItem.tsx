@@ -62,7 +62,7 @@ export default function LessonListItem({ lesson }: LessonListItemProps) {
       case ProgressStatus.Locked:
         return 'game.locked';
       default:
-        return 'aspire.400';
+        return 'aspire.accent';
     }
   };
 

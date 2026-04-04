@@ -130,7 +130,7 @@ function VersionCard({
               borderColor="aspire.600"
               borderRadius="sm"
               fontSize="xs"
-              color="aspire.400"
+              color="aspire.accent"
               {...pixelFontProps}
               lineHeight="1.6"
             >

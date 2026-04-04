@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Flex, Text, Heading, Button, SimpleGrid, Card, Badge } from '@chakra-ui/react';
+import { Box, Flex, Text, Heading, Button, SimpleGrid, Card, Badge, IconButton } from '@chakra-ui/react';
+import { FiSun, FiMoon, FiGithub } from 'react-icons/fi';
 import { useAuthStore } from '../store/authStore';
+import { useColorMode } from '../hooks/useColorMode';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import api from '../services/apiClient';
 import type { World } from '../types/curriculum';
@@ -32,9 +34,10 @@ const HOW_IT_WORKS = [
 /* ───────────────────────── CSS keyframes ───────────────────────── */
 
 const KEYFRAMES = `
-@keyframes glow-pulse {
-  0%, 100% { text-shadow: 0 0 10px rgba(107,79,187,0.6), 0 0 30px rgba(107,79,187,0.3); }
-  50%      { text-shadow: 0 0 20px rgba(107,79,187,0.9), 0 0 60px rgba(107,79,187,0.5), 0 0 80px rgba(107,79,187,0.2); }
+@keyframes rainbow-glow {
+  0%,100% { text-shadow: 0 0 15px rgba(107,79,187,0.6), 0 0 40px rgba(107,79,187,0.2); }
+  33%     { text-shadow: 0 0 15px rgba(45,212,191,0.6), 0 0 40px rgba(45,212,191,0.2); }
+  66%     { text-shadow: 0 0 15px rgba(251,191,36,0.6), 0 0 40px rgba(251,191,36,0.2); }
 }
 @keyframes typewriter-cursor { 0%,100%{opacity:1} 50%{opacity:0} }
 @keyframes float-node {
@@ -76,7 +79,22 @@ function NetworkCanvas() {
     if (!ctx) return;
 
     let animId = 0;
-    const nodes: { x: number; y: number; vx: number; vy: number; r: number }[] = [];
+    // Jewel-tone particle palette
+    const PARTICLE_COLORS = [
+      'rgba(107,79,187,0.5)',   // purple
+      'rgba(45,212,191,0.45)',  // teal
+      'rgba(251,191,36,0.4)',   // amber
+      'rgba(251,113,133,0.4)',  // rose
+      'rgba(52,211,153,0.4)',   // emerald
+      'rgba(56,189,248,0.35)',  // sky
+    ];
+    const LINE_COLORS = [
+      [107,79,187],   // purple
+      [45,212,191],   // teal
+      [251,191,36],   // amber
+      [52,211,153],   // emerald
+    ];
+    const nodes: { x: number; y: number; vx: number; vy: number; r: number; color: string; lineColor: number[] }[] = [];
     const NODE_COUNT = 40;
     const CONNECT_DIST = 140;
 
@@ -92,12 +110,15 @@ function NetworkCanvas() {
       const w = canvas!.offsetWidth;
       const h = canvas!.offsetHeight;
       for (let i = 0; i < NODE_COUNT; i++) {
+        const colorIdx = Math.floor(Math.random() * PARTICLE_COLORS.length);
         nodes.push({
           x: Math.random() * w,
           y: Math.random() * h,
           vx: (Math.random() - 0.5) * 0.4,
           vy: (Math.random() - 0.5) * 0.4,
           r: Math.random() * 2 + 1.5,
+          color: PARTICLE_COLORS[colorIdx],
+          lineColor: LINE_COLORS[colorIdx % LINE_COLORS.length],
         });
       }
     }
@@ -116,7 +137,6 @@ function NetworkCanvas() {
       }
 
       // Draw connections
-      ctx!.strokeStyle = 'rgba(107,79,187,0.15)';
       ctx!.lineWidth = 1;
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
@@ -124,8 +144,9 @@ function NetworkCanvas() {
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECT_DIST) {
-            const alpha = 0.15 * (1 - dist / CONNECT_DIST);
-            ctx!.strokeStyle = `rgba(107,79,187,${alpha})`;
+            const alpha = 0.12 * (1 - dist / CONNECT_DIST);
+            const c = nodes[i].lineColor;
+            ctx!.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`;
             ctx!.beginPath();
             ctx!.moveTo(nodes[i].x, nodes[i].y);
             ctx!.lineTo(nodes[j].x, nodes[j].y);
@@ -136,7 +157,7 @@ function NetworkCanvas() {
 
       // Draw nodes
       for (const n of nodes) {
-        ctx!.fillStyle = 'rgba(107,79,187,0.5)';
+        ctx!.fillStyle = n.color;
         ctx!.beginPath();
         ctx!.arc(n.x, n.y, n.r, 0, Math.PI * 2);
         ctx!.fill();
@@ -202,13 +223,13 @@ function useTypewriter(text: string, speed = 60) {
 
 /* ─────────────────── Count-up (immediate) ──────────────────── */
 
-function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
+function CountUp({ target, suffix = '', color }: { target: number; suffix?: string; color?: string }) {
   return (
     <Text
       as="span"
       {...pixelFontProps}
       fontSize={{ base: '24px', md: '36px' }}
-      color="game.xpGold"
+      color={color ?? 'game.gold'}
     >
       {target < 0 ? '∞' : target}
       {suffix}
@@ -221,6 +242,7 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
 export default function HomePage() {
   useEffect(() => { document.title = 'Aspire Learn'; }, []);
   const navigate = useNavigate();
+  const { colorMode, toggleColorMode } = useColorMode();
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const isLoggedIn = !!token;
@@ -296,7 +318,7 @@ export default function HomePage() {
               cursor="pointer"
               bg="transparent"
               border="none"
-              _hover={{ color: 'game.xpGold' }}
+              _hover={{ color: 'game.gold' }}
               onClick={() => scrollTo('worlds')}
             >
               Worlds
@@ -309,7 +331,7 @@ export default function HomePage() {
               cursor="pointer"
               bg="transparent"
               border="none"
-              _hover={{ color: 'game.xpGold' }}
+              _hover={{ color: 'game.gold' }}
               onClick={() => scrollTo('how-it-works')}
             >
               How It Works
@@ -320,7 +342,7 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Text fontSize="sm" color="dark.text" cursor="pointer" _hover={{ color: 'game.xpGold' }}>
+                <Text fontSize="sm" color="dark.text" cursor="pointer" _hover={{ color: 'game.gold' }}>
                   Docs
                 </Text>
               </a>
@@ -331,11 +353,27 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Text fontSize="sm" color="dark.text" cursor="pointer" _hover={{ color: 'game.xpGold' }}>
-                  GitHub
-                </Text>
+                <Flex align="center" gap="1.5" cursor="pointer" _hover={{ color: 'game.gold' }}>
+                  <FiGithub size={14} color="currentColor" />
+                  <Text fontSize="sm" color="dark.text">
+                    GitHub
+                  </Text>
+                </Flex>
               </a>
             </Box>
+
+            {/* Theme toggle */}
+            <IconButton
+              aria-label="Toggle color mode"
+              title={colorMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              variant="ghost"
+              size="sm"
+              color="dark.text"
+              _hover={{ bg: 'content.hover' }}
+              onClick={toggleColorMode}
+            >
+              {colorMode === 'dark' ? <FiSun /> : <FiMoon />}
+            </IconButton>
 
             {isLoggedIn ? (
               <Button
@@ -368,6 +406,15 @@ export default function HomePage() {
         {/* ═══════════════════ HERO ═══════════════════ */}
         <Box id="hero" position="relative" minH={{ base: '70vh', md: '75vh' }} overflow="hidden">
           <NetworkCanvas />
+          {/* Subtle multi-color gradient overlay */}
+          <Box
+            position="absolute"
+            inset="0"
+            background="linear-gradient(135deg, rgba(107,79,187,0.12), rgba(45,212,191,0.08), rgba(251,191,36,0.04))"
+            pointerEvents="none"
+            zIndex={0}
+            aria-hidden="true"
+          />
 
           <Flex
             position="relative"
@@ -391,7 +438,7 @@ export default function HomePage() {
                 py="3"
                 mb="6"
               >
-                <Text {...pixelFontProps} fontSize={{ base: '10px', md: '12px' }} color="game.xpGold">
+                <Text {...pixelFontProps} fontSize={{ base: '10px', md: '12px' }} color="game.gold">
                   Welcome back, {user.displayName || user.username}!
                 </Text>
                 <Text fontSize="sm" color="dark.muted" mt="1">
@@ -408,7 +455,7 @@ export default function HomePage() {
               fontSize={{ base: '28px', sm: '36px', md: '56px', lg: '64px' }}
               color="aspire.600"
               lineHeight="1.3"
-              style={{ animation: 'glow-pulse 3s ease-in-out infinite' }}
+              style={{ animation: 'rainbow-glow 4s ease-in-out infinite' }}
             >
               ASPIRE
               <br />
@@ -481,7 +528,7 @@ export default function HomePage() {
                 data-testid="cta-browse-curriculum"
                 size="lg"
                 bg="transparent"
-                color="aspire.400"
+                color="aspire.accent"
                 {...pixelFontProps}
                 fontSize={{ base: '11px', md: '13px' }}
                 px="8"
@@ -531,10 +578,10 @@ export default function HomePage() {
           wrap="wrap"
         >
           {[
-            { icon: '🎮', label: 'Playground', to: '/playground' },
-            { icon: '🖼️', label: 'Gallery', to: '/gallery' },
-            { icon: '🗺️', label: 'Concept Map', to: '/concept-map' },
-            { icon: '📚', label: 'Curriculum', to: '/dashboard' },
+            { icon: '🎮', label: 'Playground', to: '/playground', accent: '#2DD4BF', accentBg: 'rgba(45,212,191,0.1)', accentBorder: 'rgba(45,212,191,0.3)', hoverBg: 'rgba(45,212,191,0.2)' },
+            { icon: '🖼️', label: 'Gallery', to: '/gallery', accent: '#FBBF24', accentBg: 'rgba(251,191,36,0.1)', accentBorder: 'rgba(251,191,36,0.3)', hoverBg: 'rgba(251,191,36,0.2)' },
+            { icon: '🗺️', label: 'Concept Map', to: '/concept-map', accent: '#34D399', accentBg: 'rgba(52,211,153,0.1)', accentBorder: 'rgba(52,211,153,0.3)', hoverBg: 'rgba(52,211,153,0.2)' },
+            { icon: '📚', label: 'Curriculum', to: '/dashboard', accent: '#38BDF8', accentBg: 'rgba(56,189,248,0.1)', accentBorder: 'rgba(56,189,248,0.3)', hoverBg: 'rgba(56,189,248,0.2)' },
           ].map((link) => (
             <Flex
               key={link.label}
@@ -543,23 +590,24 @@ export default function HomePage() {
               px="4"
               py="2"
               borderRadius="full"
-              bg="rgba(107,79,187,0.1)"
-              border="1px solid rgba(107,79,187,0.25)"
+              bg={link.accentBg}
+              border="1px solid"
+              borderColor={link.accentBorder}
               cursor="pointer"
               transition="all 0.25s ease"
               role="link"
               tabIndex={0}
               _hover={{
-                bg: 'rgba(107,79,187,0.25)',
-                borderColor: 'aspire.400',
-                boxShadow: '0 0 16px rgba(107,79,187,0.3)',
+                bg: link.hoverBg,
+                borderColor: link.accent,
+                boxShadow: `0 0 16px ${link.accentBorder}`,
                 transform: 'translateY(-1px)',
               }}
               onClick={() => navigate(link.to)}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(link.to); } }}
             >
               <Text fontSize="sm">{link.icon}</Text>
-              <Text fontSize="xs" color="aspire.300" fontWeight="bold" letterSpacing="wide">
+              <Text fontSize="xs" color={link.accent} fontWeight="bold" letterSpacing="wide">
                 {link.label}
               </Text>
             </Flex>
@@ -572,7 +620,7 @@ export default function HomePage() {
               as="h2"
               fontSize={{ base: 'xl', md: '2xl' }}
               textAlign="center"
-              color="aspire.400"
+              color="aspire.accent"
               mb="3"
             >
               Why Aspire?
@@ -590,6 +638,8 @@ export default function HomePage() {
                   desc: 'Define services, databases, and their relationships in code. One readable file replaces Docker Compose, env scripts, and tribal knowledge.',
                   linkLabel: 'Try it → Playground',
                   linkTo: '/playground',
+                  accent: '#2DD4BF',
+                  accentBg: 'rgba(45,212,191,0.12)',
                 },
                 {
                   icon: '▶️',
@@ -597,6 +647,8 @@ export default function HomePage() {
                   desc: '\u003Ccode\u003Easpire run\u003C/code\u003E starts containers, waits for health checks, injects connection strings, and opens a dashboard. New developer? Clone, run, done.',
                   linkLabel: 'See how → Gallery',
                   linkTo: '/gallery',
+                  accent: '#FBBF24',
+                  accentBg: 'rgba(251,191,36,0.12)',
                 },
                 {
                   icon: '📡',
@@ -604,6 +656,8 @@ export default function HomePage() {
                   desc: 'Real-time logs, distributed traces, health checks, and custom commands — seed data, flush caches, run migrations — all from one dashboard.',
                   linkLabel: 'Learn more → Dashboard Lesson',
                   linkTo: '/lessons/1.1.2',
+                  accent: '#FB7185',
+                  accentBg: 'rgba(251,113,133,0.12)',
                 },
                 {
                   icon: '🚀',
@@ -611,47 +665,65 @@ export default function HomePage() {
                   desc: 'Your dev topology compiles to Docker Compose, Kubernetes Helm charts, or Azure Bicep. No rewrites. Pick your target when you\'re ready.',
                   linkLabel: 'Explore → Concept Map',
                   linkTo: '/concept-map',
+                  accent: '#34D399',
+                  accentBg: 'rgba(52,211,153,0.12)',
                 },
               ].map((card) => (
                 <Box
                   key={card.title}
-                  border="2px solid"
-                  borderColor="aspire.600"
                   borderRadius="md"
                   position="relative"
                   overflow="hidden"
                   bg="dark.card"
                   p="5"
+                  pl="7"
                   cursor="pointer"
                   role="link"
                   tabIndex={0}
+                  borderLeft="4px solid"
+                  borderLeftColor={card.accent}
+                  border="2px solid"
+                  borderColor="dark.border"
+                  css={{ borderLeftWidth: '4px', borderLeftColor: card.accent }}
                   _before={{
                     content: '""',
                     position: 'absolute',
                     inset: '-1px',
-                    background: 'linear-gradient(135deg, rgba(107,79,187,0.3), transparent, rgba(107,79,187,0.15))',
+                    background: `linear-gradient(135deg, ${card.accentBg}, transparent)`,
                     borderRadius: 'md',
                     zIndex: 0,
                     pointerEvents: 'none',
                   }}
                   _hover={{
                     transform: 'translateY(-4px)',
-                    borderColor: 'aspire.400',
-                    boxShadow: '0 8px 32px rgba(107,79,187,0.3)',
+                    borderColor: card.accent,
+                    boxShadow: `0 8px 32px ${card.accentBg}`,
                   }}
                   transition="all 0.3s ease"
                   onClick={() => navigate(card.linkTo)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(card.linkTo); } }}
                 >
                   <Box position="relative" zIndex={1}>
-                    <Text fontSize="2xl" mb="2">{card.icon}</Text>
-                    <Text fontWeight="bold" color="aspire.300" mb="1">{card.title}</Text>
+                    <Flex align="center" gap="3" mb="2">
+                      <Flex
+                        align="center"
+                        justify="center"
+                        w="36px"
+                        h="36px"
+                        borderRadius="md"
+                        bg={card.accentBg}
+                        flexShrink={0}
+                      >
+                        <Text fontSize="xl">{card.icon}</Text>
+                      </Flex>
+                      <Text fontWeight="bold" color="dark.text">{card.title}</Text>
+                    </Flex>
                     <Text fontSize="sm" color="dark.muted" lineHeight="1.6" mb="3"
                       dangerouslySetInnerHTML={{ __html: card.desc }}
                     />
                     <Text
                       fontSize="xs"
-                      color="aspire.400"
+                      color={card.accent}
                       cursor="pointer"
                       _hover={{ textDecoration: 'underline' }}
                       onClick={(e) => { e.stopPropagation(); navigate(card.linkTo); }}
@@ -673,7 +745,15 @@ export default function HomePage() {
               maxW="900px"
               mx="auto"
             >
-              {stats.map((s, i) => (
+              {stats.map((s, i) => {
+                const statColors = ['#38BDF8', '#34D399', '#FBBF24', '#FB7185'];
+                const statGlows = [
+                  'rgba(56,189,248,0.4)',
+                  'rgba(52,211,153,0.4)',
+                  'rgba(251,191,36,0.4)',
+                  'rgba(251,113,133,0.4)',
+                ];
+                return (
                 <Flex
                   key={s.label}
                   direction="column"
@@ -685,14 +765,14 @@ export default function HomePage() {
                   transition="all 0.3s ease"
                   _hover={{
                     transform: 'scale(1.06)',
-                    boxShadow: '0 0 20px rgba(107,79,187,0.4), 4px 4px 0 #2B1260',
+                    boxShadow: `0 0 20px ${statGlows[i]}, 4px 4px 0 #2B1260`,
                   }}
                   style={{
                     animation: `card-glow 4s ease-in-out ${i * 0.5}s infinite`,
                   }}
                 >
                   <Box style={{ animation: `shimmer 3s ease-in-out ${i * 0.7}s infinite` }}>
-                    <CountUp target={s.num} />
+                    <CountUp target={s.num} color={statColors[i]} />
                   </Box>
                   <Text
                     {...pixelFontProps}
@@ -703,7 +783,8 @@ export default function HomePage() {
                     {s.label}
                   </Text>
                 </Flex>
-              ))}
+                );
+              })}
             </SimpleGrid>
         </Box>
 
@@ -715,7 +796,7 @@ export default function HomePage() {
                 {...pixelFontProps}
                 fontSize={{ base: '16px', md: '22px' }}
                 textAlign="center"
-                color="aspire.400"
+                color="aspire.accent"
                 mb="3"
               >
                 Built for Your Role
@@ -741,6 +822,8 @@ export default function HomePage() {
                     transition="all 0.25s"
                     role="link"
                     tabIndex={0}
+                    borderTop="3px solid"
+                    borderTopColor={p.color}
                     _hover={{
                       transform: 'scale(1.05) translateY(-4px)',
                       borderColor: p.color,
@@ -748,7 +831,18 @@ export default function HomePage() {
                     onClick={() => navigate(`/personas/${p.id}`)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/personas/${p.id}`); } }}
                   >
-                    <Text fontSize="36px" mb="2">{p.icon}</Text>
+                    <Flex
+                      align="center"
+                      justify="center"
+                      w="52px"
+                      h="52px"
+                      mx="auto"
+                      mb="2"
+                      borderRadius="lg"
+                      bg={`${p.color}20`}
+                    >
+                      <Text fontSize="28px">{p.icon}</Text>
+                    </Flex>
                     <Text
                       {...pixelFontProps}
                       fontSize={{ base: '9px', md: '10px' }}
@@ -781,7 +875,7 @@ export default function HomePage() {
                   size="sm"
                   variant="outline"
                   borderColor="aspire.600"
-                  color="aspire.400"
+                  color="aspire.accent"
                   {...pixelFontProps}
                   fontSize="10px"
                   _hover={{ bg: 'rgba(107,79,187,0.15)' }}
@@ -801,7 +895,7 @@ export default function HomePage() {
               {...pixelFontProps}
               fontSize={{ base: '16px', md: '22px' }}
               textAlign="center"
-              color="aspire.400"
+              color="aspire.accent"
               mb="3"
             >
               🗺️ Choose Your World
@@ -817,7 +911,10 @@ export default function HomePage() {
             maxW="1000px"
             mx="auto"
           >
-            {(worlds ?? []).map((w, i) => (
+            {(worlds ?? []).map((w, i) => {
+              const worldAccents = ['#2DD4BF', '#FBBF24', '#FB7185', '#34D399', '#38BDF8', '#FB923C', '#A78BFA', '#F472B6'];
+              const accent = worldAccents[i % worldAccents.length];
+              return (
                 <Card.Root
                   {...retroCardProps}
                   bg="dark.card"
@@ -829,7 +926,8 @@ export default function HomePage() {
                   tabIndex={0}
                   _hover={{
                     transform: 'scale(1.05) translateY(-4px)',
-                    borderColor: 'aspire.600',
+                    borderColor: accent,
+                    boxShadow: `0 0 20px ${accent}33, 4px 4px 0 #2B1260`,
                   }}
                   style={{
                     animation: `card-glow 4s ease-in-out infinite, slide-up-fade 0.6s ease-out ${i * 0.08}s both`,
@@ -841,7 +939,7 @@ export default function HomePage() {
                   <Text
                     {...pixelFontProps}
                     fontSize={{ base: '8px', md: '10px' }}
-                    color="aspire.300"
+                    color={accent}
                     mb="2"
                   >
                     {w.name}
@@ -850,7 +948,8 @@ export default function HomePage() {
                     {w.description}
                   </Text>
                 </Card.Root>
-            ))}
+              );
+            })}
           </SimpleGrid>
         </Box>
 
@@ -862,7 +961,7 @@ export default function HomePage() {
               {...pixelFontProps}
               fontSize={{ base: '16px', md: '22px' }}
               textAlign="center"
-              color="aspire.400"
+              color="aspire.accent"
               mb="12"
             >
               How It Works
@@ -878,21 +977,25 @@ export default function HomePage() {
               right="16%"
               h="4px"
               borderRadius="full"
-              background="linear-gradient(90deg, rgba(107,79,187,0.15), rgba(107,79,187,0.5), rgba(255,215,0,0.4), rgba(107,79,187,0.5), rgba(107,79,187,0.15))"
+              background="linear-gradient(90deg, rgba(45,212,191,0.2), rgba(45,212,191,0.6), rgba(251,191,36,0.6), rgba(52,211,153,0.6), rgba(52,211,153,0.2))"
               zIndex={0}
             />
 
             <SimpleGrid columns={{ base: 1, md: 3 }} gap="8" position="relative" zIndex={1}>
-              {HOW_IT_WORKS.map((item, i) => (
+              {HOW_IT_WORKS.map((item, i) => {
+                const stepColors = ['#2DD4BF', '#FBBF24', '#34D399'];
+                const stepBgs = ['rgba(45,212,191,0.15)', 'rgba(251,191,36,0.15)', 'rgba(52,211,153,0.15)'];
+                const stepBorderColors = ['#2DD4BF', '#FBBF24', '#34D399'];
+                return (
                 <Flex key={item.step} direction="column" align="center" textAlign="center" gap="3">
                   <Flex
                     align="center"
                     justify="center"
                     w="72px"
                     h="72px"
-                    bg="rgba(107,79,187,0.2)"
+                    bg={stepBgs[i]}
                     border="2px solid"
-                    borderColor="aspire.600"
+                    borderColor={stepBorderColors[i]}
                     borderRadius="md"
                     transition="all 0.3s ease"
                     _hover={{
@@ -900,9 +1003,9 @@ export default function HomePage() {
                       borderColor: 'game.xpGold',
                     }}
                   >
-                    <Text {...pixelFontProps} fontSize="24px" color="game.xpGold">{item.step}</Text>
+                    <Text {...pixelFontProps} fontSize="24px" color={stepColors[i]}>{item.step}</Text>
                   </Flex>
-                  <Text {...pixelFontProps} fontSize="14px" color="game.xpGold">
+                  <Text {...pixelFontProps} fontSize="14px" color={stepColors[i]}>
                     {item.title}
                   </Text>
                   <Text fontSize="sm" color="dark.muted" maxW="240px">
@@ -913,14 +1016,15 @@ export default function HomePage() {
                       display={{ base: 'block', md: 'none' }}
                       {...pixelFontProps}
                       fontSize="18px"
-                      color="aspire.600"
+                      color={stepColors[i]}
                       mt="2"
                     >
                       ▼
                     </Text>
                   )}
                 </Flex>
-              ))}
+                );
+              })}
             </SimpleGrid>
           </Box>
         </Box>
@@ -933,7 +1037,7 @@ export default function HomePage() {
           bg="dark.surface"
           textAlign="center"
         >
-            <Text {...pixelFontProps} fontSize={{ base: '14px', md: '20px' }} color="aspire.400" mb="4">
+            <Text {...pixelFontProps} fontSize={{ base: '14px', md: '20px' }} color="aspire.accent" mb="4">
               Ready to make your services work as one?
             </Text>
             <Text color="dark.muted" mb="8" maxW="500px" mx="auto">
@@ -986,7 +1090,7 @@ export default function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Text fontSize="xs" color="dark.muted" _hover={{ color: 'aspire.400' }}>
+              <Text fontSize="xs" color="dark.muted" _hover={{ color: 'aspire.accent' }}>
                 Aspire Docs
               </Text>
             </a>
@@ -995,9 +1099,12 @@ export default function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Text fontSize="xs" color="dark.muted" _hover={{ color: 'aspire.400' }}>
-                GitHub
-              </Text>
+              <Flex align="center" gap="1.5" _hover={{ color: 'aspire.accent' }}>
+                <FiGithub size={14} />
+                <Text fontSize="xs" color="dark.muted">
+                  GitHub
+                </Text>
+              </Flex>
             </a>
           </Flex>
         </Flex>

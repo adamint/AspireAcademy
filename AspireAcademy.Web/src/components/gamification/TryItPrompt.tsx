@@ -41,7 +41,7 @@ export default function TryItPrompt({ lessonTitle }: TryItPromptProps) {
       </Text>
 
       <Flex gap={2} flexWrap="wrap" align="center">
-        <Text fontSize="xs" color="aspire.400">Run:</Text>
+        <Text fontSize="xs" color="aspire.accent">Run:</Text>
         <Box
           bg="dark.surface"
           px={3}
@@ -50,7 +50,7 @@ export default function TryItPrompt({ lessonTitle }: TryItPromptProps) {
           border="1px solid"
           borderColor="dark.border"
         >
-          <Text fontSize="xs" fontFamily="mono" color="game.xpGold">
+          <Text fontSize="xs" fontFamily="mono" color="game.gold">
             aspire new
           </Text>
         </Box>

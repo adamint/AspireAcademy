@@ -116,7 +116,7 @@ export default function ModulePage() {
         align="center"
         gap="1"
         cursor="pointer"
-        color="aspire.400"
+        color="aspire.accent"
         fontSize="sm"
         bg="transparent"
         border="none"
@@ -166,7 +166,7 @@ export default function ModulePage() {
               </Badge>
             </Flex>
 
-            <Text fontSize="xs" color="aspire.400" mt="2">
+            <Text fontSize="xs" color="aspire.accent" mt="2">
               {world.completedLessons} / {world.totalLessons} lessons complete
               {world.skippedLessons > 0 && `, ${world.skippedLessons} skipped`}
             </Text>

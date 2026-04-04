@@ -196,12 +196,12 @@ export default function ActivityHeatmap({ userId, compact = false }: ActivityHea
             </Text>
           </Flex>
           <Flex align="center" gap={1}>
-            <Text {...pixelFontProps} fontSize="10px" color="aspire.400" data-testid="longest-streak">
+            <Text {...pixelFontProps} fontSize="10px" color="aspire.accent" data-testid="longest-streak">
               🏆 {longestStreak} longest
             </Text>
           </Flex>
           <Flex align="center" gap={1}>
-            <Text {...pixelFontProps} fontSize="10px" color="game.xpGold" data-testid="total-active-days">
+            <Text {...pixelFontProps} fontSize="10px" color="game.gold" data-testid="total-active-days">
               ⭐ {totalActiveDays} active days
             </Text>
           </Flex>

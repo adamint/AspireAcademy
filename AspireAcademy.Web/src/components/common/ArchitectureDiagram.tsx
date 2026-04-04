@@ -111,7 +111,7 @@ export default function ArchitectureDiagram({
           align="center"
           gap="2"
         >
-          <Text fontSize="xs" color="aspire.400" fontWeight="bold" textTransform="uppercase" letterSpacing="wider">
+          <Text fontSize="xs" color="aspire.accent" fontWeight="bold" textTransform="uppercase" letterSpacing="wider">
             Architecture
           </Text>
           <Text fontSize="xs" color="dark.text" fontWeight="500">

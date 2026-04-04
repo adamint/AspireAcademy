@@ -121,7 +121,7 @@ export default function AchievementToast() {
             >
               <Text fontSize="2xl" lineHeight="1">{current.icon}</Text>
               <Box>
-                <Text {...pixelFontProps} fontSize="8px" color="game.xpGold" mb={1}>
+                <Text {...pixelFontProps} fontSize="8px" color="game.gold" mb={1}>
                   🏆 Achievement Unlocked!
                 </Text>
                 <Text {...pixelFontProps} fontSize="10px" color="dark.text" lineHeight="1.4">

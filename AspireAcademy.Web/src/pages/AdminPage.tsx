@@ -157,11 +157,11 @@ export default function AdminPage() {
         <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="4">
           <StatCard icon={<FiUsers size={20} />} label="Total Users" value={stats.totalUsers} color="aspire.500" />
           <StatCard icon={<FiActivity size={20} />} label="Lessons Completed" value={stats.totalLessonsCompleted} color="game.success" />
-          <StatCard icon={<FiStar size={20} />} label="Total XP Earned" value={stats.totalXpEarned} color="game.xpGold" />
+          <StatCard icon={<FiStar size={20} />} label="Total XP Earned" value={stats.totalXpEarned} color="game.gold" />
           <StatCard icon={<FiZap size={20} />} label="Active Users (7d)" value={stats.activeUsers} color="game.streak" />
-          <StatCard icon={<FiGlobe size={20} />} label="Worlds" value={stats.worldsCount} color="aspire.400" />
-          <StatCard icon={<FiLayers size={20} />} label="Modules" value={stats.modulesCount} color="aspire.400" />
-          <StatCard icon={<FiBookOpen size={20} />} label="Lessons" value={stats.lessonsCount} color="aspire.400" />
+          <StatCard icon={<FiGlobe size={20} />} label="Worlds" value={stats.worldsCount} color="aspire.accent" />
+          <StatCard icon={<FiLayers size={20} />} label="Modules" value={stats.modulesCount} color="aspire.accent" />
+          <StatCard icon={<FiBookOpen size={20} />} label="Lessons" value={stats.lessonsCount} color="aspire.accent" />
         </SimpleGrid>
       ) : null}
 
@@ -240,13 +240,13 @@ export default function AdminPage() {
                 <Table.Root size="sm">
                   <Table.Header>
                     <Table.Row>
-                      <Table.ColumnHeader color="aspire.400" fontSize="xs">Username</Table.ColumnHeader>
-                      <Table.ColumnHeader color="aspire.400" fontSize="xs">Email</Table.ColumnHeader>
-                      <Table.ColumnHeader color="aspire.400" fontSize="xs">Level</Table.ColumnHeader>
-                      <Table.ColumnHeader color="aspire.400" fontSize="xs">XP</Table.ColumnHeader>
-                      <Table.ColumnHeader color="aspire.400" fontSize="xs">Last Login</Table.ColumnHeader>
-                      <Table.ColumnHeader color="aspire.400" fontSize="xs">Joined</Table.ColumnHeader>
-                      <Table.ColumnHeader color="aspire.400" fontSize="xs"></Table.ColumnHeader>
+                      <Table.ColumnHeader color="aspire.accent" fontSize="xs">Username</Table.ColumnHeader>
+                      <Table.ColumnHeader color="aspire.accent" fontSize="xs">Email</Table.ColumnHeader>
+                      <Table.ColumnHeader color="aspire.accent" fontSize="xs">Level</Table.ColumnHeader>
+                      <Table.ColumnHeader color="aspire.accent" fontSize="xs">XP</Table.ColumnHeader>
+                      <Table.ColumnHeader color="aspire.accent" fontSize="xs">Last Login</Table.ColumnHeader>
+                      <Table.ColumnHeader color="aspire.accent" fontSize="xs">Joined</Table.ColumnHeader>
+                      <Table.ColumnHeader color="aspire.accent" fontSize="xs"></Table.ColumnHeader>
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
@@ -264,7 +264,7 @@ export default function AdminPage() {
                           </Badge>
                         </Table.Cell>
                         <Table.Cell>
-                          <Text fontSize="xs" color="game.xpGold" fontWeight="600">
+                          <Text fontSize="xs" color="game.gold" fontWeight="600">
                             {user.totalXp.toLocaleString()} XP
                           </Text>
                         </Table.Cell>

@@ -151,7 +151,7 @@ export default function AchievementsPage() {
                     {ach.isUnlocked ? ach.name : '???'}
                   </Text>
                   {ach.isUnlocked && (
-                    <Text fontSize="xs" color="game.xpGold">+{ach.xpReward} XP</Text>
+                    <Text fontSize="xs" color="game.gold">+{ach.xpReward} XP</Text>
                   )}
                   {ach.isUnlocked && ach.unlockedAt && (
                     <Text fontSize="2xs" color="dark.muted">
@@ -189,7 +189,7 @@ export default function AchievementsPage() {
                       {selected?.rarity}
                     </Text>
                   </Text>
-                  <Text fontSize="sm" color="game.xpGold" fontWeight="bold">
+                  <Text fontSize="sm" color="game.gold" fontWeight="bold">
                     +{selected?.xpReward} XP
                   </Text>
                 </Flex>

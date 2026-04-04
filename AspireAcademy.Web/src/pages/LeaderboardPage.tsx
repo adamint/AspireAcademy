@@ -182,7 +182,7 @@ export default function LeaderboardPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           color="dark.muted"
-                          _hover={{ color: 'aspire.400' }}
+                          _hover={{ color: 'aspire.accent' }}
                           display="inline-flex"
                           aria-label={`${entry.gitHubUsername} on GitHub`}
                           onClick={(e) => e.stopPropagation()}
@@ -203,7 +203,7 @@ export default function LeaderboardPage() {
 
                   {/* XP */}
                   <Box textAlign="right" flexShrink={0} minW="80px">
-                    <Text {...pixelFontProps} fontSize="11px" fontWeight="bold" color="game.xpGold">
+                    <Text {...pixelFontProps} fontSize="11px" fontWeight="bold" color="game.gold">
                       {entry.xp.toLocaleString()} XP
                     </Text>
                   </Box>

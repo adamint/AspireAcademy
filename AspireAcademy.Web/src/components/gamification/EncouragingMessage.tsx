@@ -92,12 +92,12 @@ export default function EncouragingMessage({ xpEarned }: EncouragingMessageProps
         borderColor="aspire.600"
         data-testid="encouraging-message"
       >
-        <Text {...pixelFontProps} fontSize="xs" color="game.xpGold" mb={1}>
+        <Text {...pixelFontProps} fontSize="xs" color="game.gold" mb={1}>
           {message}
         </Text>
         {xpEarned !== undefined && xpEarned > 0 && (
           <Flex align="center" justify="center" gap="2">
-            <Text fontSize="xs" color="aspire.400">
+            <Text fontSize="xs" color="aspire.accent">
               Keep learning to master Aspire!
             </Text>
           </Flex>

@@ -237,7 +237,7 @@ export default function LessonPage() {
         align="center"
         gap="1"
         cursor="pointer"
-        color="aspire.400"
+        color="aspire.accent"
         fontSize="sm"
         bg="transparent"
         border="none"
@@ -260,7 +260,7 @@ export default function LessonPage() {
         <Badge colorPalette="purple" variant="outline">
           {typeInfo}
         </Badge>
-        <Flex align="center" gap="1" color="aspire.400">
+        <Flex align="center" gap="1" color="aspire.accent">
           <FiClock size={14} />
           <Text fontSize="xs">~{lesson.estimatedMinutes} min</Text>
         </Flex>

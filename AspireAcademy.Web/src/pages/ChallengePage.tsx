@@ -457,7 +457,7 @@ export default function ChallengePage() {
               <Text
                 {...pixelFontProps}
                 fontSize="lg"
-                color="game.xpGold"
+                color="game.gold"
                 mb={4}
                 css={{
                   animation: 'pulse 2s ease-in-out infinite',

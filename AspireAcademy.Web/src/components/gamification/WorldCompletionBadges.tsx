@@ -57,7 +57,7 @@ export default function WorldCompletionBadges({ worlds }: WorldCompletionBadgesP
                   <Text
                     {...pixelFontProps}
                     fontSize="8px"
-                    color={isComplete ? 'game.xpGold' : 'dark.muted'}
+                    color={isComplete ? 'game.gold' : 'dark.muted'}
                     mt={1}
                   >
                     {Math.round(world.completionPercentage)}%

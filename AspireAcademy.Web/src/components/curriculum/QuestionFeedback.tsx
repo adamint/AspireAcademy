@@ -51,7 +51,7 @@ export default function QuestionFeedback({
         <Text
           {...pixelFontProps}
           fontSize="xs"
-          color={isCorrect ? 'game.xpGold' : 'red.300'}
+          color={isCorrect ? 'game.gold' : 'red.300'}
         >
           {isCorrect ? `+${pointsAwarded} pts` : '0 pts'}
         </Text>

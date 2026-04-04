@@ -37,21 +37,21 @@ export default function LevelUpModal() {
         gap={4}
         position="relative"
       >
-        <Box fontSize="64px" color="game.xpGold" aria-hidden="true">
+        <Box fontSize="64px" color="game.gold" aria-hidden="true">
           <FiStar />
         </Box>
 
-        <Text id="levelup-title" {...pixelFontProps} fontSize="2xl" color="game.xpGold">
+        <Text id="levelup-title" {...pixelFontProps} fontSize="2xl" color="game.gold">
           LEVEL UP!
         </Text>
 
-        <Text {...pixelFontProps} fontSize="xl" color="game.xpGold">
+        <Text {...pixelFontProps} fontSize="xl" color="game.gold">
           Level {pendingLevelUp.newLevel}
         </Text>
 
         <Text color="dark.text" fontSize="md">
           {pendingLevelUp.previousRank !== pendingLevelUp.newRank ? (
-            <>New Rank: <Text as="span" fontWeight="bold" color="game.xpGold">{pendingLevelUp.newRank}</Text></>
+            <>New Rank: <Text as="span" fontWeight="bold" color="game.gold">{pendingLevelUp.newRank}</Text></>
           ) : (
             <>Rank: <Text as="span" fontWeight="bold">{pendingLevelUp.newRank}</Text></>
           )}
@@ -59,7 +59,7 @@ export default function LevelUpModal() {
 
         {unlockedItems && unlockedItems.length > 0 && (
           <VStack gap={1} w="100%">
-            <Text {...pixelFontProps} fontSize="xs" color="game.xpGold">Unlocked:</Text>
+            <Text {...pixelFontProps} fontSize="xs" color="game.gold">Unlocked:</Text>
             {unlockedItems.map((item, i) => (
               <Text key={i} fontSize="sm" color="dark.text">
                 {item.name} ({item.type})

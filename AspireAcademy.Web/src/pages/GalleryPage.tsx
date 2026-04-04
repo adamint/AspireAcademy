@@ -466,7 +466,7 @@ function FileBrowser({ files }: { files: ProjectFile[] }) {
             {folder && (
               <Text
                 fontSize="9px"
-                color="aspire.400"
+                color="aspire.accent"
                 fontWeight="bold"
                 px="1"
                 mb="1"
@@ -487,7 +487,7 @@ function FileBrowser({ files }: { files: ProjectFile[] }) {
                   cursor="pointer"
                   borderRadius="sm"
                   bg={isSelected ? 'aspire.200' : 'transparent'}
-                  color={isSelected ? 'aspire.400' : 'dark.muted'}
+                  color={isSelected ? 'aspire.accent' : 'dark.muted'}
                   _hover={{ bg: isSelected ? 'aspire.200' : 'dark.card' }}
                   role="button"
                   tabIndex={0}
@@ -642,7 +642,7 @@ function GalleryCard({
                 key={concept}
                 fontSize="2xs"
                 bg="aspire.100"
-                color="aspire.400"
+                color="aspire.accent"
                 px="2"
                 py="0.5"
                 {...pixelFontProps}
@@ -823,7 +823,7 @@ function GalleryDetail({
                 key={concept}
                 fontSize="8px"
                 bg="aspire.100"
-                color="aspire.400"
+                color="aspire.accent"
                 px="3"
                 py="1"
                 cursor="pointer"
@@ -844,7 +844,7 @@ function GalleryDetail({
               key={concept}
               fontSize="8px"
               bg="aspire.100"
-              color="aspire.400"
+              color="aspire.accent"
               px="3"
               py="1"
               {...pixelFontProps}
@@ -861,7 +861,7 @@ function GalleryDetail({
           size="sm"
           bg="aspire.300"
           color="aspire.500"
-          _hover={{ bg: 'aspire.400', color: 'white' }}
+          _hover={{ bg: 'aspire.accent', color: 'white' }}
           onClick={handleOpenInPlayground}
           {...pixelFontProps}
           fontSize="10px"
@@ -894,7 +894,7 @@ function GalleryDetail({
                         variant="ghost"
                         size="xs"
                         fontSize="xs"
-                        color="aspire.400"
+                        color="aspire.accent"
                         mt="1"
                         px="0"
                         h="auto"
@@ -937,7 +937,7 @@ function GalleryDetail({
                   variant="ghost"
                   size="xs"
                   fontSize="xs"
-                  color="aspire.400"
+                  color="aspire.accent"
                   ml="1"
                   px="0"
                   h="auto"
@@ -973,7 +973,7 @@ function GalleryDetail({
             py="2"
             {...pixelFontProps}
             color="dark.muted"
-            _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            _selected={{ bg: 'aspire.200', color: 'aspire.accent' }}
             borderRadius="sm"
           >
             Diagram
@@ -985,7 +985,7 @@ function GalleryDetail({
             py="2"
             {...pixelFontProps}
             color="dark.muted"
-            _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            _selected={{ bg: 'aspire.200', color: 'aspire.accent' }}
             borderRadius="sm"
           >
             AppHost Code
@@ -997,7 +997,7 @@ function GalleryDetail({
             py="2"
             {...pixelFontProps}
             color="dark.muted"
-            _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            _selected={{ bg: 'aspire.200', color: 'aspire.accent' }}
             borderRadius="sm"
           >
             Project Files
@@ -1009,7 +1009,7 @@ function GalleryDetail({
             py="2"
             {...pixelFontProps}
             color="dark.muted"
-            _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            _selected={{ bg: 'aspire.200', color: 'aspire.accent' }}
             borderRadius="sm"
           >
             Deep Dive
@@ -1137,7 +1137,7 @@ function GalleryDetail({
                         _hover={{ bg: 'dark.card' }}
                       >
                         <Flex align="center" justify="space-between">
-                          <Text fontSize="xs" color="aspire.400" fontWeight="bold" {...pixelFontProps}>
+                          <Text fontSize="xs" color="aspire.accent" fontWeight="bold" {...pixelFontProps}>
                             {pattern.name}
                           </Text>
                           <Text fontSize="xs" color="dark.muted">
@@ -1172,7 +1172,7 @@ function GalleryDetail({
                       border="1px solid"
                       borderColor="dark.border"
                     >
-                      <Text color="game.xpGold" fontSize="sm">⭐</Text>
+                      <Text color="game.gold" fontSize="sm">⭐</Text>
                       <Text fontSize="xs" color="dark.text">{concept}</Text>
                     </Flex>
                   ))}
@@ -1243,7 +1243,7 @@ function GalleryDetail({
                             <Text color="aspire.500">→</Text>
                             <Text color="dark.text">{toSvc?.name.replace('\n', ' ')}</Text>
                             {conn.label && (
-                              <Badge fontSize="2xs" bg="aspire.100" color="aspire.400" px="1.5" ml="auto">
+                              <Badge fontSize="2xs" bg="aspire.100" color="aspire.accent" px="1.5" ml="auto">
                                 {conn.label}
                               </Badge>
                             )}
@@ -1275,7 +1275,7 @@ function GalleryDetail({
             <Box>
               <Text
                 fontSize="10px"
-                color="game.xpGold"
+                color="game.gold"
                 fontWeight="bold"
                 {...pixelFontProps}
                 mb="1"
@@ -1435,7 +1435,7 @@ export default function GalleryPage() {
               variant="ghost"
               onClick={() => setActiveCategory(cat.value)}
               bg={isActive ? 'aspire.200' : 'transparent'}
-              color={isActive ? 'aspire.400' : 'dark.muted'}
+              color={isActive ? 'aspire.accent' : 'dark.muted'}
               _hover={{ bg: isActive ? 'aspire.200' : 'dark.card' }}
               {...pixelFontProps}
               fontSize="9px"

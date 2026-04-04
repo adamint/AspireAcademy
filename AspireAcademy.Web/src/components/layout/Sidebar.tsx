@@ -60,7 +60,7 @@ function SideNavLink({
           py="2"
           borderRadius="md"
           fontSize="sm"
-          color={isActive ? 'game.xpGold' : 'dark.text'}
+          color={isActive ? 'game.gold' : 'dark.text'}
           bg={isActive ? 'content.hover' : 'transparent'}
           fontWeight={isActive ? '600' : '400'}
           _hover={{ bg: 'content.hover', color: 'dark.text' }}

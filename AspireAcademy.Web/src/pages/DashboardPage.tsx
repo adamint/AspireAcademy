@@ -95,7 +95,7 @@ export default function DashboardPage() {
                 <Text fontSize="md" color="dark.text" fontWeight="semibold" mb="1">
                   🔐 Sign up to track your progress
                 </Text>
-                <Text fontSize="sm" color="aspire.400">
+                <Text fontSize="sm" color="aspire.accent">
                   Create a free account to earn XP, complete lessons, and unlock achievements.
                 </Text>
               </Box>
@@ -126,7 +126,7 @@ export default function DashboardPage() {
                 </Text>
                 <Text fontSize="lg">{rankEmojis[stats.rank] ?? '🌟'}</Text>
               </Flex>
-              <Text fontSize="xs" color="aspire.400" mt="1">
+              <Text fontSize="xs" color="aspire.accent" mt="1">
                 {formatRank(stats.rank)}
               </Text>
             </Card.Body>
@@ -153,10 +153,10 @@ export default function DashboardPage() {
               <Text fontSize="xs" color="aspire.300" mb="2">
                 Weekly XP
               </Text>
-              <Text {...pixelFontProps} fontSize="sm" color="game.xpGold">
+              <Text {...pixelFontProps} fontSize="sm" color="game.gold">
                 {stats.weeklyXp} XP
               </Text>
-              <Text fontSize="xs" color="aspire.400" mt="1">
+              <Text fontSize="xs" color="aspire.accent" mt="1">
                 this week
               </Text>
             </Card.Body>
@@ -222,7 +222,7 @@ export default function DashboardPage() {
                 <Text fontSize="md" color="dark.text" fontWeight="semibold" mb="1">
                   {xpData.nextLesson.title}
                 </Text>
-                <Text fontSize="sm" color="aspire.400">
+                <Text fontSize="sm" color="aspire.accent">
                   {xpData.nextLesson.moduleName}
                 </Text>
               </Box>
@@ -330,7 +330,7 @@ export default function DashboardPage() {
                     <Text fontSize="sm">{event.description}</Text>
                   </Flex>
                   <Flex align="center" gap="3">
-                    <Text fontSize="xs" color="aspire.400">
+                    <Text fontSize="xs" color="aspire.accent">
                       {formatTimeAgo(event.createdAt)}
                     </Text>
                     <Badge

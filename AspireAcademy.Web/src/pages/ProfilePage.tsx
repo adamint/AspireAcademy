@@ -208,7 +208,7 @@ export default function ProfilePage() {
             <Badge {...pixelFontProps} fontSize="8px" colorPalette="purple" variant="solid">
               {profile.currentRank}
             </Badge>
-            <Text {...pixelFontProps} fontSize="10px" color="game.xpGold">
+            <Text {...pixelFontProps} fontSize="10px" color="game.gold">
               Level {profile.currentLevel}
             </Text>
           </Flex>
@@ -225,7 +225,7 @@ export default function ProfilePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 fontSize="sm"
-                color="aspire.400"
+                color="aspire.accent"
                 _hover={{ color: 'aspire.300', textDecoration: 'underline' }}
               >
                 {profile.gitHubUsername}
@@ -308,25 +308,25 @@ export default function ProfilePage() {
       {/* Stat Cards */}
       <SimpleGrid data-testid="profile-stats" columns={{ base: 2, md: 4 }} gap={4}>
         <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
-          <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
+          <Text {...pixelFontProps} fontSize="lg" color="game.gold" fontWeight="bold">
             {profile.totalXp.toLocaleString()}
           </Text>
           <Text fontSize="xs" color="dark.muted" mt={1}>Total XP</Text>
         </Box>
         <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
-          <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
+          <Text {...pixelFontProps} fontSize="lg" color="game.gold" fontWeight="bold">
             {profile.completedLessons}/{profile.totalLessons}
           </Text>
           <Text fontSize="xs" color="dark.muted" mt={1}>Lessons</Text>
         </Box>
         <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
-          <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
+          <Text {...pixelFontProps} fontSize="lg" color="game.gold" fontWeight="bold">
             {profile.achievementCount}
           </Text>
           <Text fontSize="xs" color="dark.muted" mt={1}>Achievements</Text>
         </Box>
         <Box {...retroCardProps} p={4} textAlign="center" bg="dark.card">
-          <Text {...pixelFontProps} fontSize="lg" color="game.xpGold" fontWeight="bold">
+          <Text {...pixelFontProps} fontSize="lg" color="game.gold" fontWeight="bold">
             {profile.loginStreakDays}🔥
           </Text>
           <Text fontSize="xs" color="dark.muted" mt={1}>Day Streak</Text>

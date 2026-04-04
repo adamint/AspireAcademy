@@ -1282,14 +1282,14 @@ export default function PlaygroundPage() {
         >
           <Tabs.Trigger value="canvas"
             fontSize="10px" px="5" py="2" {...pixelFontProps}
-            color="dark.muted" _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            color="dark.muted" _selected={{ bg: 'aspire.200', color: 'aspire.accent' }}
             borderRadius="sm"
           >
             Canvas ({resources.length})
           </Tabs.Trigger>
           <Tabs.Trigger value="code"
             fontSize="10px" px="5" py="2" {...pixelFontProps}
-            color="dark.muted" _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+            color="dark.muted" _selected={{ bg: 'aspire.200', color: 'aspire.accent' }}
             borderRadius="sm"
           >
             Code
@@ -1713,7 +1713,7 @@ export default function PlaygroundPage() {
                       <Tabs.Trigger key={lang.id} value={lang.id}
                         fontSize="10px" px="3" py="1.5" {...pixelFontProps}
                         color="dark.muted"
-                        _selected={{ bg: 'aspire.200', color: 'aspire.400' }}
+                        _selected={{ bg: 'aspire.200', color: 'aspire.accent' }}
                         borderRadius="sm" data-testid={`lang-tab-${lang.id}`}
                       >
                         {lang.icon} {lang.label}
@@ -1821,7 +1821,7 @@ export default function PlaygroundPage() {
                         </Flex>
                         {scaffold.files.map((file) => (
                           <Box key={file.path} mb="3">
-                            <Text fontSize="2xs" color="aspire.400" mb="1" fontFamily="mono">📄 {file.path}</Text>
+                            <Text fontSize="2xs" color="aspire.accent" mb="1" fontFamily="mono">📄 {file.path}</Text>
                             <Box borderRadius="sm" overflow="auto" maxH="200px"
                               css={{ '& pre': { margin: 0, borderRadius: '4px', fontSize: '11px !important' } }}
                             >

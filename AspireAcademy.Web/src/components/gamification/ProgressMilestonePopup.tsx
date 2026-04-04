@@ -137,7 +137,7 @@ export default function ProgressMilestonePopup({ worlds }: ProgressMilestonePopu
           onKeyDown={(e) => { if (e.key === 'Escape') handleDismiss(); }}
         >
           <Text fontSize="48px" mb={2} aria-hidden="true">{info.emoji}</Text>
-          <Text id="milestone-title" {...pixelFontProps} fontSize="sm" color="game.xpGold" mb={2}>
+          <Text id="milestone-title" {...pixelFontProps} fontSize="sm" color="game.gold" mb={2}>
             {info.title}
           </Text>
           <Text fontSize="sm" color="dark.muted" mb={2}>
@@ -183,7 +183,7 @@ export default function ProgressMilestonePopup({ worlds }: ProgressMilestonePopu
             >
               <Flex align="center" gap={2} mb={1}>
                 <Text fontSize="sm">🌍</Text>
-                <Text {...pixelFontProps} fontSize="2xs" color="aspire.400">
+                <Text {...pixelFontProps} fontSize="2xs" color="aspire.accent">
                   In the real world...
                 </Text>
               </Flex>

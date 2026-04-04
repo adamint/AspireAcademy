@@ -230,7 +230,7 @@ export default function SkillRadar({ skills, size = 300 }: SkillRadarProps) {
                 transition="width 0.5s ease"
               />
             </Box>
-            <Text {...pixelFontProps} fontSize="9px" color="game.xpGold" minW="40px">
+            <Text {...pixelFontProps} fontSize="9px" color="game.gold" minW="40px">
               {skill.score}%
             </Text>
           </Flex>

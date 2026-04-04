@@ -65,7 +65,7 @@ export default function QuizResults({
           gap={4}
           mb={4}
         >
-          <Text {...pixelFontProps} fontSize="2xl" color="game.xpGold">
+          <Text {...pixelFontProps} fontSize="2xl" color="game.gold">
             {score}/{maxScore} ({percentage}%)
           </Text>
           <Box
@@ -100,7 +100,7 @@ export default function QuizResults({
             <Text
               {...pixelFontProps}
               fontSize="md"
-              color="game.xpGold"
+              color="game.gold"
               css={{
                 animation: 'pulse 2s ease-in-out infinite',
                 '@keyframes pulse': {

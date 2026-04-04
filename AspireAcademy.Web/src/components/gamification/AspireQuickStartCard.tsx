@@ -34,7 +34,7 @@ export default function AspireQuickStartCard() {
 
       {/* Install command */}
       <Box mb={2}>
-        <Text fontSize="2xs" color="aspire.400" mb={1}>Install the Aspire CLI:</Text>
+        <Text fontSize="2xs" color="aspire.accent" mb={1}>Install the Aspire CLI:</Text>
         <Flex
           bg="dark.surface"
           p={2}
@@ -45,13 +45,13 @@ export default function AspireQuickStartCard() {
           justify="space-between"
           gap={2}
         >
-          <Text fontSize="xs" fontFamily="mono" color="game.xpGold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+          <Text fontSize="xs" fontFamily="mono" color="game.gold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
             curl -sSL https://aspire.dev/install.sh | bash
           </Text>
           <Button
             size="xs"
             variant="ghost"
-            color="aspire.400"
+            color="aspire.accent"
             onClick={() => handleCopy('curl -sSL https://aspire.dev/install.sh | bash', 'install')}
             flexShrink={0}
             title="Copy install command"
@@ -64,7 +64,7 @@ export default function AspireQuickStartCard() {
 
       {/* New project command */}
       <Box mb={3}>
-        <Text fontSize="2xs" color="aspire.400" mb={1}>Create a project:</Text>
+        <Text fontSize="2xs" color="aspire.accent" mb={1}>Create a project:</Text>
         <Flex
           bg="dark.surface"
           p={2}
@@ -75,13 +75,13 @@ export default function AspireQuickStartCard() {
           justify="space-between"
           gap={2}
         >
-          <Text fontSize="xs" fontFamily="mono" color="game.xpGold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+          <Text fontSize="xs" fontFamily="mono" color="game.gold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
             aspire new
           </Text>
           <Button
             size="xs"
             variant="ghost"
-            color="aspire.400"
+            color="aspire.accent"
             onClick={() => handleCopy('aspire new', 'new')}
             flexShrink={0}
             title="Copy new project command"

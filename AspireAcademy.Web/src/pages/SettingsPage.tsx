@@ -265,7 +265,7 @@ export default function SettingsPage() {
               size="xs"
               variant="outline"
               borderColor="aspire.600"
-              color="aspire.400"
+              color="aspire.accent"
               _hover={{ bg: 'aspire.200' }}
               fontSize="xs"
               onClick={() => {

@@ -379,7 +379,7 @@ export default function QuizPage() {
             {...retroCardProps}
             {...pixelFontProps}
             fontSize="xs"
-            color="game.xpGold"
+            color="game.gold"
           >
             Score: {runningScore}/{maxScore}
           </Box>

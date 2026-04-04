@@ -66,7 +66,7 @@ export default function WorldCard({ world }: WorldCardProps) {
             <Text fontWeight="semibold" fontSize="md" truncate>
               {world.name}
             </Text>
-            <Text {...pixelFontProps} fontSize="2xs" color="aspire.400">
+            <Text {...pixelFontProps} fontSize="2xs" color="aspire.accent">
               World {world.sortOrder}
             </Text>
           </Box>
