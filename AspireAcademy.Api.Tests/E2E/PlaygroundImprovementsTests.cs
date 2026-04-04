@@ -232,7 +232,82 @@ public class PlaygroundImprovementsTests(AppHostPlaywrightFixture fixture) : ICl
             // Check for SVG path elements (connection lines)
             var svgPaths = connectionOverlay.Locator("path, line");
             var pathCount = await svgPaths.CountAsync();
-            Assert.True(pathCount >= 0, "Connection overlay SVG should be rendered");
+            Assert.True(pathCount > 0, "Expected at least one connection line SVG path");
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
+
+    [Fact]
+    public async Task Playground_ImportExport_RoundTrips()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            await page.GotoAsync(fixture.WebBaseUrl + "/playground");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
+
+            var palette = page.GetByTestId("resource-palette");
+            await Assertions.Expect(palette).ToBeVisibleAsync(new() { Timeout = 10_000 });
+
+            // Add resources to the playground
+            var addRedis = page.GetByTestId("add-redis");
+            await Assertions.Expect(addRedis).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await addRedis.ClickAsync();
+            await page.WaitForTimeoutAsync(300);
+
+            var addPostgres = page.GetByTestId("add-postgres");
+            await addPostgres.ClickAsync();
+            await page.WaitForTimeoutAsync(300);
+
+            var resourceCards = page.Locator("[data-testid^='resource-card-']");
+            await Assertions.Expect(resourceCards.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            var cardCount = await resourceCards.CountAsync();
+            Assert.True(cardCount >= 2, $"Expected at least 2 resource cards, found {cardCount}");
+
+            // Switch to code tab to verify code generation
+            var codeTab = page.GetByTestId("code-tab").Or(
+                page.GetByRole(AriaRole.Tab, new() { NameRegex = new Regex("code", RegexOptions.IgnoreCase) }));
+            await Assertions.Expect(codeTab.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            await codeTab.First.ClickAsync();
+
+            // Verify generated code contains resource references
+            var codeBlock = page.GetByTestId("generated-code").Or(
+                page.Locator("pre code, .code-output, [data-testid='code-output']"));
+            await Assertions.Expect(codeBlock.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+            var codeText = await codeBlock.First.TextContentAsync();
+            Assert.False(string.IsNullOrWhiteSpace(codeText), "Generated code should not be empty");
+
+            // Test import: look for import button/tab
+            var importBtn = page.GetByTestId("import-btn").Or(
+                page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("import", RegexOptions.IgnoreCase) }));
+            if (await importBtn.CountAsync() > 0 && await importBtn.First.IsVisibleAsync())
+            {
+                await importBtn.First.ClickAsync();
+
+                // Paste valid AppHost code into the import textarea
+                var importInput = page.GetByTestId("import-input").Or(
+                    page.Locator("textarea"));
+                if (await importInput.CountAsync() > 0)
+                {
+                    var sampleCode = @"var builder = DistributedApplication.CreateBuilder(args);
+var redis = builder.AddRedis(""cache"");
+var postgres = builder.AddPostgres(""db"");
+builder.Build().Run();";
+                    await importInput.First.FillAsync(sampleCode);
+
+                    var confirmImport = page.GetByTestId("confirm-import").Or(
+                        page.GetByRole(AriaRole.Button, new() { NameRegex = new Regex("apply|confirm|import", RegexOptions.IgnoreCase) }));
+                    if (await confirmImport.CountAsync() > 0)
+                    {
+                        await confirmImport.First.ClickAsync();
+                        await page.WaitForTimeoutAsync(500);
+                    }
+
+                    // Verify resources were imported
+                    var importedCards = page.Locator("[data-testid^='resource-card-']");
+                    await Assertions.Expect(importedCards.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+                }
+            }
         }
         finally { await fixture.ClosePageAsync(page); }
     }

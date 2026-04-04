@@ -129,6 +129,35 @@ public class GalleryImprovementsTests(AppHostPlaywrightFixture fixture) : IClass
     }
 
     [Fact]
+    public async Task Gallery_Search_NoResults_ShowsEmptyState()
+    {
+        var page = await fixture.NewPageAsync();
+        try
+        {
+            await page.GotoAsync(fixture.WebBaseUrl + "/gallery");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 15_000 });
+
+            var searchInput = page.GetByTestId("gallery-search");
+            await Assertions.Expect(searchInput).ToBeVisibleAsync(new() { Timeout = 10_000 });
+
+            // Search for a nonsense string that won't match anything
+            await searchInput.FillAsync("zzxxyy_nonexistent_9999");
+            await page.WaitForTimeoutAsync(500);
+
+            // Verify empty state message appears
+            var emptyState = page.GetByTestId("gallery-empty-state").Or(
+                page.GetByText(new Regex("no results|no architectures|nothing found|no matches", RegexOptions.IgnoreCase)));
+            await Assertions.Expect(emptyState.First).ToBeVisibleAsync(new() { Timeout = 10_000 });
+
+            // Verify no gallery cards are shown
+            var cards = page.Locator("[data-testid*='arch-'], .gallery-card, .architecture-card");
+            var cardCount = await cards.CountAsync();
+            Assert.Equal(0, cardCount);
+        }
+        finally { await fixture.ClosePageAsync(page); }
+    }
+
+    [Fact]
     public async Task Gallery_PlaygroundBridge_NavigatesToPlayground()
     {
         var page = await fixture.NewPageAsync();
