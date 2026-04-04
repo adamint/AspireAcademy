@@ -66,7 +66,10 @@
       "layer": "core",
       "description": "The entry point: DistributedApplication.CreateBuilder() sets up the app model.",
       "lessonId": "2.1.1",
-      "emoji": "🌐"
+      "emoji": "🌐",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "PostgreSQL",
@@ -74,7 +77,10 @@
       "layer": "resource",
       "description": "Add a PostgreSQL server with AddPostgres() and databases with AddDatabase().",
       "lessonId": "4.1.1",
-      "emoji": "🐘"
+      "emoji": "🐘",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "Redis",
@@ -82,7 +88,10 @@
       "layer": "resource",
       "description": "Add a Redis cache with AddRedis() — blazing-fast in-memory data store.",
       "lessonId": "4.2.1",
-      "emoji": "⚡"
+      "emoji": "⚡",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "SQLServer",
@@ -90,7 +99,10 @@
       "layer": "resource",
       "description": "Add SQL Server with AddSqlServer() and databases for relational workloads.",
       "lessonId": "4.1.2",
-      "emoji": "🗄️"
+      "emoji": "🗄️",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "MongoDB",
@@ -98,7 +110,10 @@
       "layer": "resource",
       "description": "Add MongoDB with AddMongoDB() for document-based data storage.",
       "lessonId": "4.1.3",
-      "emoji": "🍃"
+      "emoji": "🍃",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "RabbitMQ",
@@ -106,7 +121,10 @@
       "layer": "resource",
       "description": "Add RabbitMQ with AddRabbitMQ() for message broker communication.",
       "lessonId": "4.3.1",
-      "emoji": "🐇"
+      "emoji": "🐇",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "Kafka",
@@ -114,7 +132,10 @@
       "layer": "resource",
       "description": "Add Apache Kafka with AddKafka() for event streaming.",
       "lessonId": "4.3.2",
-      "emoji": "📨"
+      "emoji": "📨",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "Container",
@@ -122,7 +143,10 @@
       "layer": "resource",
       "description": "Add any container with AddContainer(name, image) — Docker images as resources.",
       "lessonId": "2.3.1",
-      "emoji": "🐳"
+      "emoji": "🐳",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "Project",
@@ -130,7 +154,10 @@
       "layer": "resource",
       "description": "Add .NET projects with AddProject<T>() — the most common resource type.",
       "lessonId": "2.1.1",
-      "emoji": "📁"
+      "emoji": "📁",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "Parameter",
@@ -138,7 +165,10 @@
       "layer": "resource",
       "description": "Define configurable values with AddParameter() for secrets and settings.",
       "lessonId": "3.4.1",
-      "emoji": "🔑"
+      "emoji": "🔑",
+      "prerequisites": [
+        "WithEnvironment"
+      ]
     },
     {
       "id": "ConnectionString",
@@ -146,7 +176,10 @@
       "layer": "resource",
       "description": "Reference external resources with AddConnectionString() for pre-existing services.",
       "lessonId": "3.4.2",
-      "emoji": "🔗"
+      "emoji": "🔗",
+      "prerequisites": [
+        "WithEnvironment"
+      ]
     },
     {
       "id": "WithReference",
@@ -154,7 +187,10 @@
       "layer": "config",
       "description": "Wire services together — injects connection strings or endpoint references.",
       "lessonId": "3.1.1",
-      "emoji": "🔌"
+      "emoji": "🔌",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "WaitFor",
@@ -162,7 +198,10 @@
       "layer": "config",
       "description": "Control startup order — wait for dependencies to be healthy before starting.",
       "lessonId": "4.2.1",
-      "emoji": "⏳"
+      "emoji": "⏳",
+      "prerequisites": [
+        "WithReference"
+      ]
     },
     {
       "id": "WithEnvironment",
@@ -170,7 +209,10 @@
       "layer": "config",
       "description": "Set environment variables with static strings, expressions, or callbacks.",
       "lessonId": "2.2.3",
-      "emoji": "🌿"
+      "emoji": "🌿",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "WithEndpoint",
@@ -178,7 +220,10 @@
       "layer": "config",
       "description": "Define custom endpoints with full protocol control and named endpoints.",
       "lessonId": "4.3.1",
-      "emoji": "🎯"
+      "emoji": "🎯",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "WithDataVolume",
@@ -186,7 +231,10 @@
       "layer": "config",
       "description": "Attach persistent volumes to containers for data that survives restarts.",
       "lessonId": "2.3.2",
-      "emoji": "💾"
+      "emoji": "💾",
+      "prerequisites": [
+        "Container"
+      ]
     },
     {
       "id": "WithArgs",
@@ -194,7 +242,10 @@
       "layer": "config",
       "description": "Pass CLI arguments, scale with replicas, and expose external endpoints.",
       "lessonId": "2.1.3",
-      "emoji": "📝"
+      "emoji": "📝",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "ServiceDefaults",
@@ -202,7 +253,10 @@
       "layer": "infra",
       "description": "Shared project that configures OpenTelemetry, health checks, and resilience.",
       "lessonId": "6.3.1",
-      "emoji": "🛡️"
+      "emoji": "🛡️",
+      "prerequisites": [
+        "DistributedApplication"
+      ]
     },
     {
       "id": "OpenTelemetry",
@@ -210,7 +264,10 @@
       "layer": "infra",
       "description": "Distributed tracing, structured logging, and metrics with OTLP export.",
       "lessonId": "5.4.1",
-      "emoji": "📊"
+      "emoji": "📊",
+      "prerequisites": [
+        "ServiceDefaults"
+      ]
     },
     {
       "id": "HealthChecks",
@@ -218,7 +275,10 @@
       "layer": "infra",
       "description": "IHealthCheck registration and monitoring — how Aspire knows your services are ready.",
       "lessonId": "5.5.1",
-      "emoji": "❤️"
+      "emoji": "❤️",
+      "prerequisites": [
+        "DistributedApplication"
+      ]
     },
     {
       "id": "Resilience",
@@ -226,7 +286,10 @@
       "layer": "infra",
       "description": "Retry policies, circuit breakers, and timeout strategies for robust services.",
       "lessonId": "6.3.3",
-      "emoji": "🔄"
+      "emoji": "🔄",
+      "prerequisites": [
+        "ServiceDefaults"
+      ]
     },
     {
       "id": "ServiceDiscovery",
@@ -234,7 +297,10 @@
       "layer": "infra",
       "description": "How services find each other at runtime — HttpClient integration and config-based resolution.",
       "lessonId": "3.2.1",
-      "emoji": "🔍"
+      "emoji": "🔍",
+      "prerequisites": [
+        "DistributedApplication"
+      ]
     },
     {
       "id": "DockerCompose",
@@ -242,7 +308,10 @@
       "layer": "deploy",
       "description": "Generate docker-compose.yaml from the Aspire app model.",
       "lessonId": "6.3.1",
-      "emoji": "🐋"
+      "emoji": "🐋",
+      "prerequisites": [
+        "DistributedApplication"
+      ]
     },
     {
       "id": "Kubernetes",
@@ -250,7 +319,10 @@
       "layer": "deploy",
       "description": "Generate Kubernetes manifests and Helm charts from the Aspire app model.",
       "lessonId": "10.3.2",
-      "emoji": "☸️"
+      "emoji": "☸️",
+      "prerequisites": [
+        "DockerCompose"
+      ]
     },
     {
       "id": "PublishAs",
@@ -258,7 +330,10 @@
       "layer": "deploy",
       "description": "Per-resource publishing customization — PublishAsDockerComposeService, PublishAsKubernetesService.",
       "lessonId": "6.3.2",
-      "emoji": "📤"
+      "emoji": "📤",
+      "prerequisites": [
+        "DockerCompose"
+      ]
     },
     {
       "id": "CSharpApps",
@@ -266,7 +341,10 @@
       "layer": "polyglot",
       "description": "Add C# apps by path with AddCSharpApp() — an alternative to project references.",
       "lessonId": "2.2.1",
-      "emoji": "🟣"
+      "emoji": "🟣",
+      "prerequisites": [
+        "AppHost"
+      ]
     },
     {
       "id": "NodeJS",
@@ -274,7 +352,10 @@
       "layer": "polyglot",
       "description": "Run Node.js scripts as resources with AddNodeApp().",
       "lessonId": "3.3.1",
-      "emoji": "🟢"
+      "emoji": "🟢",
+      "prerequisites": [
+        "DistributedApplication"
+      ]
     },
     {
       "id": "Python",
@@ -282,7 +363,10 @@
       "layer": "polyglot",
       "description": "Run Python scripts and ASGI apps with AddPythonApp() and AddUvicornApp().",
       "lessonId": "3.3.2",
-      "emoji": "🐍"
+      "emoji": "🐍",
+      "prerequisites": [
+        "DistributedApplication"
+      ]
     },
     {
       "id": "Vite",
@@ -290,7 +374,10 @@
       "layer": "polyglot",
       "description": "Vite-based frontends with AddViteApp() and dev server integration.",
       "lessonId": "3.3.1",
-      "emoji": "⚡"
+      "emoji": "⚡",
+      "prerequisites": [
+        "NodeJS"
+      ]
     }
   ]
 }
