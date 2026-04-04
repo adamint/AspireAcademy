@@ -298,6 +298,12 @@ public static class ChallengeEndpoints
             return Results.NotFound(new ErrorResponse("Lesson not found"));
         }
 
+        // Security: verify the lesson is unlocked before allowing skip or revealing solutions
+        if (!await EndpointHelpers.IsLessonUnlockedAsync(db, userId, lesson))
+        {
+            return Results.Json(new ErrorResponse("Lesson is locked."), statusCode: 403);
+        }
+
         if (lesson.CodeChallenges.Count == 0)
         {
             return Results.BadRequest(new ErrorResponse("Lesson has no challenge steps"));

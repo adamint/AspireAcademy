@@ -93,7 +93,18 @@ public static partial class AuthEndpoints
 
         db.Users.Add(user);
         db.UserXp.Add(userXp);
-        await db.SaveChangesAsync();
+
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            // Race condition: another request inserted the same username/email between
+            // our check and insert. Return the same conflict response to stay consistent.
+            s_logger.LogInformation("Register failed: concurrent duplicate for {Username}/{Email}", request.Username, request.Email);
+            return Results.Conflict(new ErrorResponse("Username or email is already taken."));
+        }
 
         AcademyMetrics.UsersRegistered.Add(1);
         s_logger.LogInformation("Register succeeded for UserId={UserId}, Username={Username}", user.Id, user.Username);

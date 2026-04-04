@@ -57,7 +57,6 @@ public static class SettingsEndpoints
         }
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-        user.LastLoginAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
 
         s_logger.LogInformation("Password changed successfully for UserId={UserId}", userId);

@@ -210,7 +210,30 @@ public static class SocialEndpoints
             }
 
             dbUser.Bio = request.Bio is not null ? SocialHelpers.SanitizeText(request.Bio.Trim()) : null;
-            dbUser.GitHubUsername = request.GitHubUsername?.Trim();
+
+            // Validate GitHub username: max 39 chars, alphanumeric/hyphens, no leading/trailing hyphen
+            if (request.GitHubUsername is not null)
+            {
+                var gh = request.GitHubUsername.Trim();
+                if (gh.Length > 0)
+                {
+                    if (gh.Length > 39 || gh.StartsWith('-') || gh.EndsWith('-') ||
+                        !System.Text.RegularExpressions.Regex.IsMatch(gh, @"^[a-zA-Z0-9-]+$"))
+                    {
+                        return Results.BadRequest(new ErrorResponse(
+                            "GitHub username must be 1-39 characters, alphanumeric or hyphens, and cannot start or end with a hyphen."));
+                    }
+                    dbUser.GitHubUsername = gh;
+                }
+                else
+                {
+                    dbUser.GitHubUsername = null;
+                }
+            }
+            else
+            {
+                dbUser.GitHubUsername = null;
+            }
 
             await db.SaveChangesAsync();
 

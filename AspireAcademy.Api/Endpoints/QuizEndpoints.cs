@@ -79,6 +79,18 @@ public static class QuizEndpoints
     {
         var userId = EndpointHelpers.GetUserId(user);
 
+        // Security: verify the lesson is unlocked before grading
+        var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(l => l.Id == lessonId);
+        if (lesson is null)
+        {
+            return Results.NotFound(new ErrorResponse("Lesson not found"));
+        }
+
+        if (!await EndpointHelpers.IsLessonUnlockedAsync(db, userId, lesson))
+        {
+            return Results.Json(new ErrorResponse("Lesson is locked."), statusCode: 403);
+        }
+
         var question = await db.QuizQuestions
             .FirstOrDefaultAsync(q => q.Id == request.QuestionId && q.LessonId == lessonId);
 

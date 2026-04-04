@@ -9,6 +9,10 @@ namespace AspireAcademy.Api.Services;
 public sealed class InMemoryRateLimiter
 {
     private readonly ConcurrentDictionary<string, List<DateTime>> _windows = new();
+    private int _callCount;
+
+    // Purge stale keys every N calls to prevent unbounded memory growth
+    private const int CleanupInterval = 100;
 
     /// <summary>
     /// Returns true if the request is allowed, false if rate-limited.
@@ -17,6 +21,22 @@ public sealed class InMemoryRateLimiter
     {
         var now = DateTime.UtcNow;
         var cutoff = now - window;
+
+        // Periodic cleanup: remove dictionary entries whose timestamps are all expired
+        if (Interlocked.Increment(ref _callCount) % CleanupInterval == 0)
+        {
+            foreach (var kvp in _windows)
+            {
+                lock (kvp.Value)
+                {
+                    kvp.Value.RemoveAll(t => t < cutoff);
+                    if (kvp.Value.Count == 0)
+                    {
+                        _windows.TryRemove(kvp.Key, out _);
+                    }
+                }
+            }
+        }
 
         var timestamps = _windows.GetOrAdd(key, _ => new List<DateTime>());
 

@@ -44,9 +44,9 @@ public static class AdminEndpoints
         new("admin", s_adminPassword, "admin@aspireacademy.dev", "Admin user with full access to /admin panel"),
     ];
 
-    private static IResult GetSeededCredentials(ClaimsPrincipal principal, HttpRequest request, IWebHostEnvironment env)
+    private static async Task<IResult> GetSeededCredentials(ClaimsPrincipal principal, HttpRequest request, IWebHostEnvironment env)
     {
-        if (!IsAdmin(principal, request))
+        if (!await IsAdminAsync(principal, request))
         {
             return Forbidden();
         }
@@ -60,13 +60,20 @@ public static class AdminEndpoints
     private static IResult Forbidden() =>
         Results.Json(new ErrorResponse("Admin access required."), statusCode: 403);
 
-    private static bool IsAdmin(ClaimsPrincipal principal, HttpRequest request)
+    private static async Task<bool> IsAdminAsync(ClaimsPrincipal principal, HttpRequest request)
     {
-        // JWT-based admin check
-        var username = principal.FindFirstValue(ClaimTypes.Name);
-        if (string.Equals(username, "admin", StringComparison.OrdinalIgnoreCase))
+        // Security: Verify admin by resolving the user from the DB using the JWT user ID,
+        // not just the username claim. This prevents privilege escalation if claims are spoofed.
+        var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim is not null && Guid.TryParse(userIdClaim, out var userId))
         {
-            return true;
+            var db = request.HttpContext.RequestServices.GetRequiredService<AcademyDbContext>();
+            var user = await db.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
+            if (user is not null && string.Equals(user.Username, "admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
         }
 
         // Internal AppHost command bypass (for Aspire Dashboard commands)
@@ -88,7 +95,7 @@ public static class AdminEndpoints
         AcademyDbContext db,
         ILogger<AcademyDbContext> logger)
     {
-        if (!IsAdmin(principal, request))
+        if (!await IsAdminAsync(principal, request))
         {
             return Forbidden();
         }
@@ -122,7 +129,7 @@ public static class AdminEndpoints
         IServiceProvider services,
         ILogger<CurriculumLoader> logger)
     {
-        if (!IsAdmin(principal, request))
+        if (!await IsAdminAsync(principal, request))
         {
             return Forbidden();
         }
@@ -145,7 +152,7 @@ public static class AdminEndpoints
         IWebHostEnvironment env,
         ILogger<AcademyDbContext> logger)
     {
-        if (!IsAdmin(principal, request))
+        if (!await IsAdminAsync(principal, request))
         {
             return Forbidden();
         }
@@ -177,7 +184,7 @@ public static class AdminEndpoints
         int pageSize = 20,
         string? search = null)
     {
-        if (!IsAdmin(principal, request))
+        if (!await IsAdminAsync(principal, request))
         {
             return Forbidden();
         }
@@ -224,7 +231,7 @@ public static class AdminEndpoints
         AcademyDbContext db,
         ILogger<AcademyDbContext> logger)
     {
-        if (!IsAdmin(principal, request))
+        if (!await IsAdminAsync(principal, request))
         {
             return Forbidden();
         }
@@ -252,7 +259,7 @@ public static class AdminEndpoints
         IWebHostEnvironment env,
         ILogger<AcademyDbContext> logger)
     {
-        if (!IsAdmin(principal, request))
+        if (!await IsAdminAsync(principal, request))
         {
             return Forbidden();
         }

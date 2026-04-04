@@ -467,8 +467,9 @@ public static class CurriculumEndpoints
 
     // --- Unlock Logic ---
 
-    // Worlds are always unlocked — users can access the first lesson in every world
-    // since lesson-level unlock only checks UnlockAfterLessonId, not world/module state.
+    // Intentionally returns true: worlds are always accessible so users can explore freely.
+    // Lesson-level gating via UnlockAfterLessonId provides the actual progression gate,
+    // so world-level locking would be redundant and frustrating for learners.
     private static bool IsWorldUnlocked(
         World world,
         Dictionary<string, List<Module>> modulesByWorld,
