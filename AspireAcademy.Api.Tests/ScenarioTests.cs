@@ -265,7 +265,7 @@ public class ScenarioTests : TestFixture
     public async Task AdminStats_AdminUser_Returns200()
     {
         // Verify admin access works with the admin username
-        using var adminClient = CreateAuthenticatedClient(TestUserId, "admin");
+        using var adminClient = CreateAuthenticatedClient(AdminUserId, "admin");
 
         var response = await adminClient.GetAsync("/api/admin/stats");
 

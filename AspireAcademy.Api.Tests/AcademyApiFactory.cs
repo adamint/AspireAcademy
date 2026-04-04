@@ -93,6 +93,7 @@ public abstract class TestFixture : IAsyncLifetime, IDisposable
 
     // Well-known test data IDs
     protected static readonly Guid TestUserId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+    protected static readonly Guid AdminUserId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab");
     protected const string TestUsername = "testuser";
     protected const string TestEmail = "test@example.com";
     protected const string TestPassword = "Password1";
@@ -321,6 +322,20 @@ public abstract class TestFixture : IAsyncLifetime, IDisposable
             LoginStreakDays = 0
         };
         db.Users.Add(user);
+
+        // Admin user for admin endpoint tests
+        var adminUser = new User
+        {
+            Id = AdminUserId,
+            Username = "admin",
+            Email = "admin@aspireacademy.dev",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(TestPassword),
+            DisplayName = "Admin",
+            Bio = "Admin user",
+            CreatedAt = DateTime.UtcNow,
+            LoginStreakDays = 0
+        };
+        db.Users.Add(adminUser);
 
         db.UserXp.Add(new UserXp
         {

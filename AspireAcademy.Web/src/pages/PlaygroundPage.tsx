@@ -1184,9 +1184,9 @@ export default function PlaygroundPage() {
   }, [resources]);
 
   // Track mouse for connect mode line
+  const mousePosNeeded = !!connectingFrom;
   useEffect(() => {
-    if (!connectingFrom || !canvasContainerRef.current) {
-      setMousePos(null);
+    if (!mousePosNeeded || !canvasContainerRef.current) {
       return;
     }
     const container = canvasContainerRef.current;
@@ -1195,8 +1195,11 @@ export default function PlaygroundPage() {
       setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     };
     container.addEventListener('mousemove', handler);
-    return () => container.removeEventListener('mousemove', handler);
-  }, [connectingFrom]);
+    return () => {
+      container.removeEventListener('mousemove', handler);
+      setMousePos(null);
+    };
+  }, [mousePosNeeded]);
 
   return (
     <Box maxW="1600px" mx="auto" px={{ base: '4', md: '6' }} py="6" data-testid="playground-page">

@@ -15,7 +15,7 @@ public class AdminEndpointsTests : TestFixture
     [Fact]
     public async Task GetStats_AsAdmin_ReturnsStatsWithCorrectShape()
     {
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
+        using var client = CreateAuthenticatedClient(AdminUserId, "admin");
 
         var response = await client.GetAsync("/api/admin/stats");
 
@@ -32,7 +32,7 @@ public class AdminEndpointsTests : TestFixture
     [Fact]
     public async Task GetUsers_AsAdmin_ReturnsPaginatedList()
     {
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
+        using var client = CreateAuthenticatedClient(AdminUserId, "admin");
 
         var response = await client.GetAsync("/api/admin/users?page=1&pageSize=10");
 
@@ -46,7 +46,7 @@ public class AdminEndpointsTests : TestFixture
     [Fact]
     public async Task GetUsers_WithSearch_FiltersResults()
     {
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
+        using var client = CreateAuthenticatedClient(AdminUserId, "admin");
 
         var response = await client.GetAsync("/api/admin/users?search=testuser");
 
@@ -64,7 +64,7 @@ public class AdminEndpointsTests : TestFixture
         var disposableId = Guid.Parse("77777777-7777-7777-7777-777777777777");
         await SeedUser(disposableId, "disposable");
 
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
+        using var client = CreateAuthenticatedClient(AdminUserId, "admin");
 
         var response = await client.DeleteAsync($"/api/admin/users/{disposableId}");
 
@@ -74,7 +74,7 @@ public class AdminEndpointsTests : TestFixture
     [Fact]
     public async Task DeleteUser_AsAdmin_NonexistentUser_Returns404()
     {
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
+        using var client = CreateAuthenticatedClient(AdminUserId, "admin");
 
         var response = await client.DeleteAsync($"/api/admin/users/{Guid.NewGuid()}");
 
@@ -96,7 +96,7 @@ public class AdminEndpointsTests : TestFixture
     [Fact]
     public async Task SeedTestData_AsAdmin_Creates_TestUser()
     {
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
+        using var client = CreateAuthenticatedClient(AdminUserId, "admin");
 
         // "testuser" already exists from fixture seeding, so should get Conflict
         var response = await client.PostAsync("/api/admin/seed-test-data", null);
@@ -109,7 +109,7 @@ public class AdminEndpointsTests : TestFixture
     [Fact]
     public async Task GetSeededCredentials_AsAdmin_ReturnsCredentials()
     {
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
+        using var client = CreateAuthenticatedClient(AdminUserId, "admin");
 
         var response = await client.GetAsync("/api/admin/seeded-credentials");
 
@@ -133,7 +133,7 @@ public class AdminEndpointsTests : TestFixture
     [Fact]
     public async Task ReloadCurriculum_AsAdmin_Succeeds()
     {
-        using var client = CreateAuthenticatedClient(TestUserId, "admin");
+        using var client = CreateAuthenticatedClient(AdminUserId, "admin");
 
         var response = await client.PostAsync("/api/admin/reload-curriculum", null);
 
