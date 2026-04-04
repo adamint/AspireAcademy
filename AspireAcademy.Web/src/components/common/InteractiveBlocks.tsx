@@ -367,16 +367,24 @@ const lineColors: Record<string, string> = {
   output: '#d4d4d8',
 };
 
-export function TerminalSimulation({ data }: { data: TerminalData }) {
+export function TerminalSimulation({ data }: { data: TerminalData & Record<string, unknown> }) {
+  // Support alternative { command, output } format by converting to lines
+  const lines: TerminalLine[] = data.lines ?? (
+    (data as Record<string, unknown>).command ? [
+      { text: `${(data as Record<string, unknown>).command}`, type: 'command' as const },
+      ...((data as Record<string, unknown>).output ? [{ text: String((data as Record<string, unknown>).output), type: 'output' as const }] : [])
+    ] : [{ text: 'No terminal content available', type: 'output' as const }]
+  );
+
   const [visibleLines, setVisibleLines] = useState(0);
   const [started, setStarted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!started) return;
-    if (visibleLines >= data.lines.length) return;
+    if (visibleLines >= lines.length) return;
 
-    const delay = data.lines[visibleLines]?.delay ?? 400;
+    const delay = lines[visibleLines]?.delay ?? 400;
     const timer = setTimeout(() => {
       setVisibleLines((v) => v + 1);
       // Auto-scroll to bottom
@@ -386,7 +394,7 @@ export function TerminalSimulation({ data }: { data: TerminalData }) {
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [started, visibleLines, data.lines]);
+  }, [started, visibleLines, lines]);
 
   return (
     <Box
@@ -441,7 +449,7 @@ export function TerminalSimulation({ data }: { data: TerminalData }) {
             <Text fontSize="sm" fontWeight="600">▶ Run</Text>
           </Flex>
         ) : (
-          data.lines.slice(0, visibleLines).map((line, i) => (
+          lines.slice(0, visibleLines).map((line, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: -5 }}
@@ -457,7 +465,7 @@ export function TerminalSimulation({ data }: { data: TerminalData }) {
             </motion.div>
           ))
         )}
-        {started && visibleLines < data.lines.length && (
+        {started && visibleLines < lines.length && (
           <Text color="#a78bfa" display="inline">
             <motion.span
               animate={{ opacity: [1, 0] }}

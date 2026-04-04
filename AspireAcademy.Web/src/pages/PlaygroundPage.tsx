@@ -851,41 +851,53 @@ export default function PlaygroundPage() {
   const [showImport, setShowImport] = useState(false);
   const [highlightedResource, setHighlightedResource] = useState<string | null>(null);
 
-  // Undo/redo history
+  // Undo/redo history — uses refs for index/history to avoid stale closures
   const MAX_HISTORY = 50;
-  const [history, setHistory] = useState<PlaygroundResource[][]>([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
+  const historyRef = useRef<PlaygroundResource[][]>([]);
+  const historyIndexRef = useRef(-1);
+  const isUndoRedoRef = useRef(false);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
 
-  const pushHistory = useCallback((currentResources: PlaygroundResource[]) => {
-    setHistory(prev => {
-      const truncated = prev.slice(0, historyIndex + 1);
-      const next = [...truncated, currentResources.map(r => ({ ...r, envVars: [...r.envVars], databases: [...r.databases], references: [...r.references], waitFor: [...r.waitFor] }))];
-      if (next.length > MAX_HISTORY) next.shift();
-      return next;
-    });
-    setHistoryIndex(prev => Math.min(prev + 1, MAX_HISTORY - 1));
-  }, [historyIndex]);
+  const snapshotResources = useCallback((res: PlaygroundResource[]) =>
+    res.map(r => ({ ...r, envVars: [...r.envVars], databases: [...r.databases], references: [...r.references], waitFor: [...r.waitFor] })), []);
+
+  // Auto-push to history whenever resources change (skip if triggered by undo/redo)
+  useEffect(() => {
+    if (isUndoRedoRef.current) {
+      isUndoRedoRef.current = false;
+      return;
+    }
+    const h = historyRef.current;
+    const idx = historyIndexRef.current;
+    const truncated = h.slice(0, idx + 1);
+    truncated.push(snapshotResources(resources));
+    if (truncated.length > MAX_HISTORY) truncated.shift();
+    historyRef.current = truncated;
+    historyIndexRef.current = truncated.length - 1;
+    setCanUndo(truncated.length > 1);
+    setCanRedo(false);
+  }, [resources, snapshotResources]);
 
   const undo = useCallback(() => {
-    if (historyIndex < 0) return;
-    const target = history[historyIndex];
-    if (target) {
-      setResources(target);
-      setHistoryIndex(prev => prev - 1);
-    }
-  }, [history, historyIndex]);
+    if (historyIndexRef.current <= 0) return;
+    isUndoRedoRef.current = true;
+    historyIndexRef.current--;
+    const target = historyRef.current[historyIndexRef.current];
+    if (target) setResources(snapshotResources(target));
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(historyIndexRef.current < historyRef.current.length - 1);
+  }, [snapshotResources]);
 
   const redo = useCallback(() => {
-    if (historyIndex + 1 >= history.length) return;
-    const target = history[historyIndex + 1];
-    if (target) {
-      setResources(target);
-      setHistoryIndex(prev => prev + 1);
-    }
-  }, [history, historyIndex]);
-
-  const canUndo = historyIndex >= 0;
-  const canRedo = historyIndex + 1 < history.length;
+    if (historyIndexRef.current >= historyRef.current.length - 1) return;
+    isUndoRedoRef.current = true;
+    historyIndexRef.current++;
+    const target = historyRef.current[historyIndexRef.current];
+    if (target) setResources(snapshotResources(target));
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(historyIndexRef.current < historyRef.current.length - 1);
+  }, [snapshotResources]);
 
   // Keyboard shortcuts for undo/redo
   useEffect(() => {
@@ -925,7 +937,6 @@ export default function PlaygroundPage() {
     let name = tmpl.defaultName;
     const existing = resources.filter((r) => r.type === type);
     if (existing.length > 0) name = `${tmpl.defaultName}${existing.length + 1}`;
-    pushHistory(resources);
     setResources((prev) => [...prev, makeResource({
       id: makeId(),
       type,
@@ -934,15 +945,13 @@ export default function PlaygroundPage() {
       scriptPath: type === 'pythonapp' ? 'main:app' : '',
       projectPath: type === 'npmapp' || type === 'pythonapp' ? `../${name}` : '',
     })]);
-  }, [resources, pushHistory]);
+  }, [resources]);
 
   const updateResource = useCallback((id: string, updates: Partial<PlaygroundResource>) => {
-    pushHistory(resources);
     setResources((prev) => prev.map((r) => r.id === id ? { ...r, ...updates } : r));
-  }, [resources, pushHistory]);
+  }, []);
 
   const removeResource = useCallback((id: string) => {
-    pushHistory(resources);
     setResources((prev) =>
       prev.filter((r) => r.id !== id).map((r) => ({
         ...r,
@@ -951,10 +960,9 @@ export default function PlaygroundPage() {
       })),
     );
     if (connectingFrom === id) setConnectingFrom(null);
-  }, [connectingFrom, resources, pushHistory]);
+  }, [connectingFrom]);
 
   const toggleReference = useCallback((fromId: string, toId: string) => {
-    pushHistory(resources);
     setResources((prev) => prev.map((r) => {
       if (r.id !== fromId) return r;
       const hasRef = r.references.includes(toId);
@@ -963,32 +971,29 @@ export default function PlaygroundPage() {
         references: hasRef ? r.references.filter((x) => x !== toId) : [...r.references, toId],
       };
     }));
-  }, [resources, pushHistory]);
+  }, []);
 
   const toggleWaitFor = useCallback((fromId: string, toId: string) => {
-    pushHistory(resources);
     setResources((prev) => prev.map((r) => {
       if (r.id !== fromId) return r;
       const has = r.waitFor.includes(toId);
       return { ...r, waitFor: has ? r.waitFor.filter((x) => x !== toId) : [...r.waitFor, toId] };
     }));
-  }, [resources, pushHistory]);
+  }, []);
 
   const addDatabase = useCallback((id: string) => {
-    pushHistory(resources);
     setResources((prev) => prev.map((r) => {
       if (r.id !== id) return r;
       return { ...r, databases: [...r.databases, `db${r.databases.length + 1}`] };
     }));
-  }, [resources, pushHistory]);
+  }, []);
 
   const removeDatabase = useCallback((id: string, dbIndex: number) => {
-    pushHistory(resources);
     setResources((prev) => prev.map((r) => {
       if (r.id !== id) return r;
       return { ...r, databases: r.databases.filter((_, i) => i !== dbIndex) };
     }));
-  }, [resources, pushHistory]);
+  }, []);
 
   const updateDatabase = useCallback((id: string, dbIndex: number, value: string) => {
     setResources((prev) => prev.map((r) => {
@@ -1031,16 +1036,14 @@ export default function PlaygroundPage() {
   }, [generatedCode]);
 
   const reset = useCallback(() => {
-    pushHistory(resources);
     setResources([]);
     setConnectingFrom(null);
-  }, [resources, pushHistory]);
+  }, []);
 
   const loadExample = useCallback((example: Example) => {
-    pushHistory(resources);
     setResources(example.resources.map((r) => ({ ...r })));
     setConnectingFrom(null);
-  }, [resources, pushHistory]);
+  }, []);
 
   const handleConnect = useCallback((resourceId: string) => {
     if (connectingFrom === null) setConnectingFrom(resourceId);
@@ -1083,13 +1086,12 @@ export default function PlaygroundPage() {
   const handleImport = useCallback(() => {
     const parsed = parseAppHostCode(importText);
     if (parsed.length > 0) {
-      pushHistory(resources);
       setResources(parsed);
       setShowImport(false);
       setImportText('');
       setActiveTab('canvas');
     }
-  }, [importText, resources, pushHistory]);
+  }, [importText]);
 
   // Share via URL
   const shareState = useCallback(async () => {
