@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -28,6 +28,7 @@ import ActivityHeatmap from '../components/ActivityHeatmap';
 import type { World, XpResponse } from '../types/curriculum';
 
 export default function DashboardPage() {
+  useEffect(() => { document.title = 'Dashboard | Aspire Learn'; }, []);
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);

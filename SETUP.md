@@ -2,9 +2,9 @@
 
 ## Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) or later
+- [.NET 11 SDK](https://dotnet.microsoft.com/download/dotnet/11.0) or later
 - [Node.js 22+](https://nodejs.org/) (for the React frontend)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for PostgreSQL, Redis, and CodeRunner containers)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for PostgreSQL)
 - [Aspire CLI](https://learn.microsoft.com/dotnet/aspire/fundamentals/setup-tooling) — install via `curl -sSL https://aspire.dev/install.sh | bash` (macOS/Linux) or `irm https://aspire.dev/install.ps1 | iex` (Windows)
 
 ## Required Configuration
@@ -34,19 +34,10 @@ The AppHost generates a random JWT signing key each dev session automatically. N
 
 For deployment, `aspire deploy` prompts for a persistent key that gets stored as an ACA secret.
 
-### 3. PostgreSQL & Redis (Auto-configured)
+### 3. PostgreSQL (Auto-configured)
 
-These are managed by Aspire — no manual configuration needed. The AppHost starts containers automatically:
+Managed by Aspire — no manual configuration needed. The AppHost starts the container automatically:
 - **PostgreSQL** — data persisted in Docker volume `aspire-learn-pgdata`
-- **Redis** — ephemeral (leaderboard data resets on container restart)
-
-### 4. CodeRunner (Auto-configured)
-
-Built from the Dockerfile in `AspireAcademy.CodeRunner/`. No configuration needed. Container limits:
-- Memory: 512 MB
-- PIDs: 50
-- CPU: 1 core
-- Filesystem: read-only (tmpfs at /tmp, 100 MB)
 
 ## Running the App
 
@@ -92,7 +83,6 @@ AspireAcademy/
 │       ├── content/world-{1-6}/        # Lesson prose (158 markdown files)
 │       ├── quizzes/                    # Quiz questions (18 YAML files)
 │       └── challenges/                 # Code challenges (30 YAML files)
-├── AspireAcademy.CodeRunner/           # Sandboxed code execution (Docker)
 ├── AspireAcademy.ServiceDefaults/      # OpenTelemetry, health checks, resilience
 ├── AspireAcademy.Api.Tests/            # API integration tests
 └── AspireAcademy.Web/                  # React frontend (Chakra UI)

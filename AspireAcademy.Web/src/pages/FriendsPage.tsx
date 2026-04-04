@@ -24,6 +24,7 @@ interface FriendsData {
 }
 
 export default function FriendsPage() {
+  useEffect(() => { document.title = 'Friends | Aspire Learn'; }, []);
   const queryClient = useQueryClient();
   const currentUser = useAuthStore((s) => s.user);
   const [tab, setTab] = useState<string>('friends');

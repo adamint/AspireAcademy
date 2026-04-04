@@ -46,6 +46,7 @@ function SavedIndicator({ visible }: { visible: boolean }) {
 }
 
 export default function SettingsPage() {
+  useEffect(() => { document.title = 'Settings | Aspire Learn'; }, []);
   const { colorMode, setColorMode } = useColorMode();
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);

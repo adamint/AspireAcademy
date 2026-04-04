@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Box, Flex, Text, Input, Button, Spinner, chakra } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -9,6 +9,7 @@ import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import type { AuthResponse } from '../types';
 
 export default function LoginPage() {
+  useEffect(() => { document.title = 'Log In | Aspire Learn'; }, []);
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
   const syncFromServer = useGamificationStore((s) => s.syncFromServer);

@@ -94,6 +94,7 @@ const goldGradient = 'linear-gradient(135deg, #1a1500 0%, #2a2000 50%, #1a1500 1
 // ── Component ──
 
 export default function WeeklyChallengePage() {
+  useEffect(() => { document.title = 'Weekly Challenge | Aspire Learn'; }, []);
   const navigate = useNavigate();
   const currentUser = useAuthStore((s) => s.user);
   const [countdown, setCountdown] = useState('');

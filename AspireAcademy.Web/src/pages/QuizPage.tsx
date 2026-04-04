@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -82,6 +82,7 @@ interface QuizSubmitResponse {
 // ── Component ────────────────────────────────────────
 
 export default function QuizPage() {
+  useEffect(() => { document.title = 'Quiz | Aspire Learn'; }, []);
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();

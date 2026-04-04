@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   Box, Flex, Text, Button, Skeleton, SimpleGrid, VStack, Tabs, Tooltip, Dialog,
@@ -27,6 +27,7 @@ type Category = 'All' | 'Milestone' | 'Mastery' | 'Streak' | 'Speed' | 'Perfecti
 const categories: Category[] = ['All', 'Milestone', 'Mastery', 'Streak', 'Speed', 'Perfection', 'Completion'];
 
 export default function AchievementsPage() {
+  useEffect(() => { document.title = 'Achievements | Aspire Learn'; }, []);
   const [category, setCategory] = useState<string>('All');
   const [selected, setSelected] = useState<AchievementItem | null>(null);
   const navigate = useNavigate();

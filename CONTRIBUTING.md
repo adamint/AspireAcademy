@@ -55,7 +55,7 @@ AspireAcademy/
 │       ├── pages/                      # Route pages
 │       ├── components/                 # Shared components
 │       ├── store/                      # Zustand state stores
-│       └── api/                        # API client layer
+│       └── services/                   # API client layer (apiClient.ts)
 ├── AspireAcademy.Api.Tests/            # Backend tests (xUnit)
 │   ├── *EndpointsTests.cs              # API endpoint integration tests
 │   ├── *ServiceTests.cs                # Service unit tests

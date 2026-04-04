@@ -5,7 +5,7 @@ import {
   Dialog, Input, Textarea, Tooltip, Field, Spinner, chakra,
 } from '@chakra-ui/react';
 import { FiEdit2, FiUserPlus, FiUserMinus, FiRefreshCw, FiX, FiGithub, FiAward } from 'react-icons/fi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/apiClient';
 import { useAuthStore, type User } from '../store/authStore';
@@ -37,6 +37,7 @@ interface SkillData {
 }
 
 export default function ProfilePage() {
+  useEffect(() => { document.title = 'Profile | Aspire Learn'; }, []);
   const { userId } = useParams<{ userId: string }>();
   const currentUser = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
 import { retroCardProps, pixelFontProps } from '../theme/aspireTheme';
 import { changelog } from '../data/changelog';
@@ -176,6 +176,7 @@ function VersionCard({
 }
 
 export default function WhatsNewPage() {
+  useEffect(() => { document.title = "What's New | Aspire Learn"; }, []);
   return (
     <>
       <style>{fadeInKeyframes}</style>

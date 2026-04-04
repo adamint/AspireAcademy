@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -1320,6 +1320,7 @@ function ServiceLegend() {
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function GalleryPage() {
+  useEffect(() => { document.title = 'Gallery | Aspire Learn'; }, []);
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<string>('all');

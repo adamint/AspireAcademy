@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Flex, Text, Badge, Skeleton, VStack, Tabs, Button, chakra } from '@chakra-ui/react';
 import { FiGithub } from 'react-icons/fi';
@@ -40,6 +40,7 @@ function formatRank(rank: string): string {
 }
 
 export default function LeaderboardPage() {
+  useEffect(() => { document.title = 'Leaderboard | Aspire Learn'; }, []);
   const [tab, setTab] = useState<LeaderboardTab>('weekly');
   const currentUser = useAuthStore((s) => s.user);
   const { token } = useAuthStore();

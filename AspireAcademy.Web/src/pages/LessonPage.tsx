@@ -35,6 +35,7 @@ const lessonTypeLabel: Record<string, string> = {
 
 export default function LessonPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const syncFromServer = useGamificationStore((s) => s.syncFromServer);
@@ -68,6 +69,10 @@ export default function LessonPage() {
     }),
     enabled: !!lessonId,
   });
+
+  useEffect(() => {
+    document.title = lesson ? `${lesson.title} | Aspire Learn` : 'Aspire Learn';
+  }, [lesson]);
 
   const completeMutation = useMutation<CompleteResponse, Error>({
     mutationFn: () =>

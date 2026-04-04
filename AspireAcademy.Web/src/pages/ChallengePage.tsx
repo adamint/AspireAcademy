@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -101,12 +101,6 @@ interface SubmitApiResponse {
   };
 }
 
-// AI tutor feature hidden while not working
-// interface AiMessage {
-//   role: 'user' | 'assistant';
-//   content: string;
-// }
-
 // ── Test case icon helper ────────────────────────────
 
 function testIcon(status: string) {
@@ -120,6 +114,7 @@ function testIcon(status: string) {
 // ── Component ────────────────────────────────────────
 
 export default function ChallengePage() {
+  useEffect(() => { document.title = 'Challenge | Aspire Learn'; }, []);
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -141,12 +136,6 @@ export default function ChallengePage() {
 
   // Hints
   const [revealedHints, setRevealedHints] = useState(0);
-
-  // AI sidebar (hidden while not working)
-  // const [aiOpen, setAiOpen] = useState(false);
-  // const [aiMessages, setAiMessages] = useState<AiMessage[]>([]);
-  // const [aiInput, setAiInput] = useState('');
-  // const [aiLoading, setAiLoading] = useState(false);
 
   // Success / Failure
   const [showSuccess, setShowSuccess] = useState(false);

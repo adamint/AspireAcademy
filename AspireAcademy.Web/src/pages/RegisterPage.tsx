@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Box, Flex, Text, Input, Button, Spinner, Card, chakra } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -26,6 +26,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 export default function RegisterPage() {
+  useEffect(() => { document.title = 'Sign Up | Aspire Learn'; }, []);
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
   const updateUser = useAuthStore((s) => s.updateUser);

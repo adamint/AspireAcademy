@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -9,6 +10,7 @@ import api from '../services/apiClient';
 import type { PersonaSummary } from '../types';
 
 export default function PersonaHubPage() {
+  useEffect(() => { document.title = 'Learning Tracks | Aspire Learn'; }, []);
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
 

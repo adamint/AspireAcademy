@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -24,6 +24,10 @@ export default function PersonaDetailPage() {
     queryFn: () => api.get(`/personas/${personaId}`).then((r) => r.data),
     enabled: !!personaId,
   });
+
+  useEffect(() => {
+    document.title = persona ? `${persona.name} | Aspire Learn` : 'Aspire Learn';
+  }, [persona]);
 
   const selectMutation = useMutation({
     mutationFn: (id: string | null) =>

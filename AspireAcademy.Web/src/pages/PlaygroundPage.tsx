@@ -832,6 +832,7 @@ function decodeState(hash: string): PlaygroundResource[] | null {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function PlaygroundPage() {
+  useEffect(() => { document.title = 'Playground | Aspire Learn'; }, []);
   // Load initial resources from URL hash (priority) or localStorage
   const [resources, setResources] = useState<PlaygroundResource[]>(() => {
     const hash = window.location.hash.slice(1);

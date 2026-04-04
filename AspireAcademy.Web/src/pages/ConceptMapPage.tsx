@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Flex, Text, Input, Heading, SimpleGrid, Button } from '@chakra-ui/react';
@@ -63,6 +63,7 @@ function isLessonLocked(lessonId: string, worlds: World[]): boolean {
 // ── Component ──
 
 export default function ConceptMapPage() {
+  useEffect(() => { document.title = 'Concept Map | Aspire Learn'; }, []);
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
 

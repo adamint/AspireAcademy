@@ -219,6 +219,7 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
 /* ═══════════════════════ MAIN COMPONENT ═══════════════════════ */
 
 export default function HomePage() {
+  useEffect(() => { document.title = 'Aspire Learn'; }, []);
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
@@ -251,7 +252,7 @@ export default function HomePage() {
       <Box
         data-testid="home-page"
         bg="dark.bg"
-        color="#E8E0F0"
+        color="dark.text"
         minH="100vh"
         overflowX="hidden"
         position="relative"
@@ -266,9 +267,10 @@ export default function HomePage() {
           align="center"
           h="56px"
           px="5"
-          bg="rgba(10,8,24,0.92)"
+          bg="dark.sidebar"
           backdropFilter="blur(10px)"
-          borderBottom="2px solid #2B1260"
+          borderBottom="2px solid"
+          borderColor="game.pixelBorder"
         >
           <Text
             {...pixelFontProps}
@@ -290,7 +292,7 @@ export default function HomePage() {
               as="button"
               display={{ base: 'none', md: 'block' }}
               fontSize="sm"
-              color="whiteAlpha.800"
+              color="dark.text"
               cursor="pointer"
               bg="transparent"
               border="none"
@@ -303,7 +305,7 @@ export default function HomePage() {
               as="button"
               display={{ base: 'none', md: 'block' }}
               fontSize="sm"
-              color="whiteAlpha.800"
+              color="dark.text"
               cursor="pointer"
               bg="transparent"
               border="none"
@@ -318,7 +320,7 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Text fontSize="sm" color="whiteAlpha.800" cursor="pointer" _hover={{ color: 'game.xpGold' }}>
+                <Text fontSize="sm" color="dark.text" cursor="pointer" _hover={{ color: 'game.xpGold' }}>
                   Docs
                 </Text>
               </a>
@@ -329,7 +331,7 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Text fontSize="sm" color="whiteAlpha.800" cursor="pointer" _hover={{ color: 'game.xpGold' }}>
+                <Text fontSize="sm" color="dark.text" cursor="pointer" _hover={{ color: 'game.xpGold' }}>
                   GitHub
                 </Text>
               </a>
@@ -384,7 +386,7 @@ export default function HomePage() {
               <Box
                 data-testid="welcome-back"
                 {...retroCardProps}
-                bg="rgba(26,11,46,0.85)"
+                bg="dark.card"
                 px="6"
                 py="3"
                 mb="6"
@@ -392,7 +394,7 @@ export default function HomePage() {
                 <Text {...pixelFontProps} fontSize={{ base: '10px', md: '12px' }} color="game.xpGold">
                   Welcome back, {user.displayName || user.username}!
                 </Text>
-                <Text fontSize="sm" color="whiteAlpha.700" mt="1">
+                <Text fontSize="sm" color="dark.muted" mt="1">
                   Continue your journey where you left off
                 </Text>
               </Box>
@@ -417,7 +419,7 @@ export default function HomePage() {
             <Box h="28px" data-testid="hero-tagline">
               <Text
                 fontSize={{ base: 'md', md: 'xl' }}
-                color="whiteAlpha.800"
+                color="dark.text"
                 letterSpacing="wide"
               >
                 {tagline.displayed}
@@ -438,7 +440,7 @@ export default function HomePage() {
             <Text
               maxW="520px"
               fontSize={{ base: 'sm', md: 'md' }}
-              color="whiteAlpha.600"
+              color="dark.muted"
               lineHeight="1.7"
               mt="2"
             >
@@ -503,7 +505,7 @@ export default function HomePage() {
             <Text
               mt="10"
               fontSize="xs"
-              color="whiteAlpha.500"
+              color="dark.muted"
               style={{ animation: 'float-node 2s ease-in-out infinite' }}
               cursor="pointer"
               role="button"
@@ -523,7 +525,7 @@ export default function HomePage() {
           gap={{ base: '3', md: '6' }}
           py="4"
           px="4"
-          bg="rgba(21,18,36,0.85)"
+          bg="dark.surface"
           borderTop="1px solid rgba(107,79,187,0.2)"
           borderBottom="1px solid rgba(107,79,187,0.2)"
           wrap="wrap"
@@ -575,7 +577,7 @@ export default function HomePage() {
             >
               Why Aspire?
             </Heading>
-            <Text textAlign="center" color="whiteAlpha.700" mb="10" maxW="700px" mx="auto" lineHeight="1.7">
+            <Text textAlign="center" color="dark.muted" mb="10" maxW="700px" mx="auto" lineHeight="1.7">
               Every team that splits into services inherits the same problems: wiring connection strings,
               coordinating startup, reading four log files to debug one request, maintaining separate configs
               per environment.
@@ -618,7 +620,7 @@ export default function HomePage() {
                   borderRadius="md"
                   position="relative"
                   overflow="hidden"
-                  bg="rgba(26,11,46,0.6)"
+                  bg="dark.card"
                   p="5"
                   cursor="pointer"
                   role="link"
@@ -644,7 +646,7 @@ export default function HomePage() {
                   <Box position="relative" zIndex={1}>
                     <Text fontSize="2xl" mb="2">{card.icon}</Text>
                     <Text fontWeight="bold" color="aspire.300" mb="1">{card.title}</Text>
-                    <Text fontSize="sm" color="whiteAlpha.700" lineHeight="1.6" mb="3"
+                    <Text fontSize="sm" color="dark.muted" lineHeight="1.6" mb="3"
                       dangerouslySetInnerHTML={{ __html: card.desc }}
                     />
                     <Text
@@ -678,7 +680,7 @@ export default function HomePage() {
                   align="center"
                   gap="2"
                   {...retroCardProps}
-                  bg="rgba(26,11,46,0.6)"
+                  bg="dark.card"
                   p="6"
                   transition="all 0.3s ease"
                   _hover={{
@@ -695,7 +697,7 @@ export default function HomePage() {
                   <Text
                     {...pixelFontProps}
                     fontSize={{ base: '8px', md: '10px' }}
-                    color="whiteAlpha.700"
+                    color="dark.muted"
                     textTransform="uppercase"
                   >
                     {s.label}
@@ -718,7 +720,7 @@ export default function HomePage() {
               >
                 Built for Your Role
               </Heading>
-              <Text textAlign="center" color="whiteAlpha.600" mb="10" maxW="600px" mx="auto">
+              <Text textAlign="center" color="dark.muted" mb="10" maxW="600px" mx="auto">
                 Whether you're a DevOps engineer, a C# developer, a JS/TS developer, or leading a polyglot team —
                 we've got a personalized path for you
               </Text>
@@ -732,7 +734,7 @@ export default function HomePage() {
               {(personas ?? []).map(p => (
                   <Card.Root
                     {...retroCardProps}
-                    bg="rgba(26,11,46,0.7)"
+                    bg="dark.card"
                     p="5"
                     textAlign="center"
                     cursor="pointer"
@@ -755,7 +757,7 @@ export default function HomePage() {
                     >
                       {p.name}
                     </Text>
-                    <Text fontSize="xs" color="whiteAlpha.600" lineHeight="1.5" mb="3">
+                    <Text fontSize="xs" color="dark.muted" lineHeight="1.5" mb="3">
                       {p.description.length > 80 ? p.description.slice(0, 80) + '…' : p.description}
                     </Text>
                     <Flex wrap="wrap" justify="center" gap="1">
@@ -804,7 +806,7 @@ export default function HomePage() {
             >
               🗺️ Choose Your World
             </Heading>
-            <Text textAlign="center" color="whiteAlpha.600" mb="10" maxW="600px" mx="auto">
+            <Text textAlign="center" color="dark.muted" mb="10" maxW="600px" mx="auto">
               {worlds ? `${worlds.length} themed worlds` : 'Themed worlds'} take you from cloud fundamentals to production-ready distributed apps
             </Text>
 
@@ -818,7 +820,7 @@ export default function HomePage() {
             {(worlds ?? []).map((w, i) => (
                 <Card.Root
                   {...retroCardProps}
-                  bg="rgba(26,11,46,0.7)"
+                  bg="dark.card"
                   p="5"
                   textAlign="center"
                   cursor="pointer"
@@ -844,7 +846,7 @@ export default function HomePage() {
                   >
                     {w.name}
                   </Text>
-                  <Text fontSize="xs" color="whiteAlpha.600" lineHeight="1.5">
+                  <Text fontSize="xs" color="dark.muted" lineHeight="1.5">
                     {w.description}
                   </Text>
                 </Card.Root>
@@ -903,7 +905,7 @@ export default function HomePage() {
                   <Text {...pixelFontProps} fontSize="14px" color="game.xpGold">
                     {item.title}
                   </Text>
-                  <Text fontSize="sm" color="whiteAlpha.700" maxW="240px">
+                  <Text fontSize="sm" color="dark.muted" maxW="240px">
                     {item.desc}
                   </Text>
                   {i < HOW_IT_WORKS.length - 1 && (
@@ -934,7 +936,7 @@ export default function HomePage() {
             <Text {...pixelFontProps} fontSize={{ base: '14px', md: '20px' }} color="aspire.400" mb="4">
               Ready to make your services work as one?
             </Text>
-            <Text color="whiteAlpha.600" mb="8" maxW="500px" mx="auto">
+            <Text color="dark.muted" mb="8" maxW="500px" mx="auto">
               From your first aspire run to deploying to production — learn the platform that makes
               distributed apps simple.
             </Text>
@@ -969,12 +971,13 @@ export default function HomePage() {
           gap="2"
           py="8"
           px="4"
-          borderTop="2px solid #2B1260"
+          borderTop="2px solid"
+          borderColor="game.pixelBorder"
         >
           <Text {...pixelFontProps} fontSize="10px" color="aspire.600">
             Aspire Learn
           </Text>
-          <Text fontSize="xs" color="whiteAlpha.400">
+          <Text fontSize="xs" color="dark.muted">
             Learn Aspire · Build distributed apps · Have fun doing it
           </Text>
           <Flex gap="4" mt="2">
@@ -983,7 +986,7 @@ export default function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Text fontSize="xs" color="whiteAlpha.500" _hover={{ color: 'aspire.400' }}>
+              <Text fontSize="xs" color="dark.muted" _hover={{ color: 'aspire.400' }}>
                 Aspire Docs
               </Text>
             </a>
@@ -992,7 +995,7 @@ export default function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Text fontSize="xs" color="whiteAlpha.500" _hover={{ color: 'aspire.400' }}>
+              <Text fontSize="xs" color="dark.muted" _hover={{ color: 'aspire.400' }}>
                 GitHub
               </Text>
             </a>
