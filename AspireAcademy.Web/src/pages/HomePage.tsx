@@ -489,28 +489,27 @@ export default function HomePage() {
         </Box>
 
         {/* ═══════════════════ WHY ASPIRE ═══════════════════ */}
-        <Box id="why-aspire" py={{ base: '10', md: '14' }} px="4">
+        <Box id="why-aspire" py={{ base: '10', md: '12' }} px={{ base: '4', md: '8' }}>
             <Heading
               as="h2"
               fontSize={{ base: 'xl', md: '2xl' }}
               textAlign="center"
               color="aspire.accent"
-              mb="3"
+              mb="2"
             >
               Why Aspire?
             </Heading>
-            <Text textAlign="center" color="dark.muted" mb="6" maxW="700px" mx="auto" lineHeight="1.7">
+            <Text textAlign="center" color="dark.muted" mb="6" maxW="600px" mx="auto" lineHeight="1.6" fontSize="sm">
               Every team that splits into services inherits the same problems: wiring connection strings,
-              coordinating startup, reading four log files to debug one request, maintaining separate configs
-              per environment.
+              coordinating startup, reading four log files to debug one request.
             </Text>
-            <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="4" maxW="1100px" mx="auto">
+            <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="4" maxW="1000px" mx="auto">
               {[
                 {
                   icon: '🏗️',
                   title: 'Declare your app, not your infrastructure',
                   desc: 'Define services, databases, and their relationships in code. One readable file replaces Docker Compose, env scripts, and tribal knowledge.',
-                  linkLabel: 'Try it → Playground',
+                  linkLabel: 'Try it →',
                   linkTo: '/playground',
                   accent: '#2DD4BF',
                   accentBg: 'rgba(45,212,191,0.12)',
@@ -519,16 +518,16 @@ export default function HomePage() {
                   icon: '▶️',
                   title: 'Start everything with one command',
                   desc: 'aspire run starts containers, waits for health checks, injects connection strings, and opens a dashboard. New developer? Clone, run, done.',
-                  linkLabel: 'See how → Gallery',
+                  linkLabel: 'See how →',
                   linkTo: '/gallery',
                   accent: '#FBBF24',
                   accentBg: 'rgba(251,191,36,0.12)',
                 },
                 {
                   icon: '📡',
-                  title: 'Manage and observe from a live dashboard',
+                  title: 'Observe from a live dashboard',
                   desc: 'Real-time logs, distributed traces, health checks, and custom commands — seed data, flush caches, run migrations — all from one dashboard.',
-                  linkLabel: 'Learn more → Dashboard Lesson',
+                  linkLabel: 'Learn more →',
                   linkTo: '/lessons/1.1.2',
                   accent: '#FB7185',
                   accentBg: 'rgba(251,113,133,0.12)',
@@ -537,7 +536,7 @@ export default function HomePage() {
                   icon: '🚀',
                   title: 'Ship the same app to any cloud',
                   desc: 'Your dev topology compiles to Docker Compose, Kubernetes Helm charts, or Azure Bicep. No rewrites. Pick your target when you\'re ready.',
-                  linkLabel: 'Explore → Concept Map',
+                  linkLabel: 'Explore →',
                   linkTo: '/concept-map',
                   accent: '#34D399',
                   accentBg: 'rgba(52,211,153,0.12)',
