@@ -518,7 +518,7 @@ export default function HomePage() {
                 {
                   icon: '▶️',
                   title: 'Start everything with one command',
-                  desc: '\u003Ccode\u003Easpire run\u003C/code\u003E starts containers, waits for health checks, injects connection strings, and opens a dashboard. New developer? Clone, run, done.',
+                  desc: 'aspire run starts containers, waits for health checks, injects connection strings, and opens a dashboard. New developer? Clone, run, done.',
                   linkLabel: 'See how → Gallery',
                   linkTo: '/gallery',
                   accent: '#FBBF24',
@@ -548,32 +548,36 @@ export default function HomePage() {
                   direction="column"
                   borderRadius="md"
                   bg="dark.card"
-                  p="4"
+                  p="5"
                   cursor="pointer"
                   role="link"
                   tabIndex={0}
                   border="1px solid"
                   borderColor="dark.border"
-                  css={{ borderTopWidth: '3px', borderTopColor: card.accent }}
+                  borderTop="3px solid"
+                  borderTopColor={card.accent}
+                  position="relative"
+                  overflow="hidden"
                   _hover={{
                     transform: 'translateY(-4px)',
                     borderColor: card.accent,
-                    boxShadow: `0 8px 32px ${card.accentBg}`,
+                    boxShadow: `0 8px 24px ${card.accentBg}`,
                   }}
                   transition="all 0.3s ease"
                   onClick={() => navigate(card.linkTo)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(card.linkTo); } }}
                 >
                   <Text fontSize="2xl" mb="2">{card.icon}</Text>
-                  <Text fontWeight="bold" fontSize="sm" color="dark.text" mb="2">{card.title}</Text>
-                  <Text fontSize="11px" color="dark.muted" lineHeight="1.6" flex="1"
-                    dangerouslySetInnerHTML={{ __html: card.desc }}
-                  />
+                  <Text fontWeight="bold" fontSize="13px" color={card.accent} mb="2">{card.title}</Text>
+                  <Text fontSize="12px" color="dark.muted" lineHeight="1.6" flex="1">
+                    {card.desc}
+                  </Text>
                   <Text
                     fontSize="10px"
                     color={card.accent}
                     cursor="pointer"
                     mt="3"
+                    {...pixelFontProps}
                     _hover={{ textDecoration: 'underline' }}
                     onClick={(e) => { e.stopPropagation(); navigate(card.linkTo); }}
                   >
@@ -751,12 +755,12 @@ export default function HomePage() {
                 <Box
                   key={w.id}
                   bg="dark.card"
-                  border="1px solid"
+                  border="2px solid"
                   borderColor={accent}
                   borderRadius="lg"
-                  p="3"
-                  minW="140px"
-                  maxW="140px"
+                  p="4"
+                  minW="165px"
+                  maxW="165px"
                   flexShrink={0}
                   textAlign="center"
                   cursor="pointer"
@@ -765,24 +769,22 @@ export default function HomePage() {
                   tabIndex={0}
                   _hover={{
                     transform: 'translateY(-4px)',
-                    boxShadow: `0 0 16px ${accent}33`,
+                    boxShadow: `0 4px 20px ${accent}33`,
                   }}
                   onClick={() => navigate(`/worlds/${w.id}`)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/worlds/${w.id}`); } }}
                 >
-                  <Text fontSize="24px" mb="1">{w.icon}</Text>
+                  <Text fontSize="28px" mb="2">{w.icon}</Text>
                   <Text
                     {...pixelFontProps}
                     fontSize="7px"
                     color={accent}
                     mb="1"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    whiteSpace="nowrap"
+                    lineHeight="1.4"
                   >
                     {w.name}
                   </Text>
-                  <Text fontSize="9px" color="dark.muted" lineHeight="1.3" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+                  <Text fontSize="10px" color="dark.muted" lineHeight="1.4" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
                     {w.description}
                   </Text>
                 </Box>
