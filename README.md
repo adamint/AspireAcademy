@@ -1,6 +1,6 @@
 # Aspire Academy
 
-**Master Aspire through play.** A gamified learning platform that teaches [Aspire](https://learn.microsoft.com/dotnet/aspire/get-started/aspire-overview) through interactive lessons, code challenges, quizzes, and an AI tutor.
+**Master Aspire through play.** A gamified learning platform that teaches [Aspire](https://aspire.dev/docs/get-started/aspire-overview) through interactive lessons, code challenges, quizzes, and an AI tutor.
 
 🎮 **[learnaspire.dev](https://learnaspire.dev)**
 

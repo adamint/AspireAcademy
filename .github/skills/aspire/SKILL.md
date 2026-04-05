@@ -89,7 +89,7 @@ aspire mcp call <resource> <tool> --input '{"key":"value"}'   # invoke a tool
 - Use `--isolated` when working in a worktree.
 - **Avoid persistent containers** early in development to prevent state management issues.
 - **Never install the Aspire workload** — it is obsolete.
-- Prefer `aspire.dev` and `learn.microsoft.com/dotnet/aspire` for official documentation.
+- Prefer `aspire.dev` for official documentation.
 
 ## Playwright CLI
 

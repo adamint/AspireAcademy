@@ -7,7 +7,7 @@
 - [.NET SDK](https://dotnet.microsoft.com/download) (see `global.json` or `.csproj` files for version)
 - [Node.js 22+](https://nodejs.org/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Aspire CLI](https://learn.microsoft.com/dotnet/aspire/fundamentals/setup-tooling): install via `curl -sSL https://aspire.dev/install.sh | bash` (macOS/Linux) or `irm https://aspire.dev/install.ps1 | iex` (Windows)
+- [Aspire CLI](https://aspire.dev/docs/get-started/setup-tooling): install via `curl -sSL https://aspire.dev/install.sh | bash` (macOS/Linux) or `irm https://aspire.dev/install.ps1 | iex` (Windows)
 
 ### Clone & Run
 
