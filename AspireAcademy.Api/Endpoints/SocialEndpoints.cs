@@ -474,7 +474,9 @@ public static class SocialEndpoints
         var isWeekly = scope == "weekly";
 
         var query = db.UserXp
-            .Join(db.Users, x => x.UserId, u => u.Id, (x, u) => new { u, x });
+            .Join(db.Users.Where(u => !u.IsDeleted), x => x.UserId, u => u.Id, (x, u) => new { u, x })
+            // Exclude E2E test users (auto-generated usernames with underscore + hex suffix)
+            .Where(ux => !ux.u.Username.Contains("_") || ux.u.Username == "admin" || ux.u.Username.Length < 15);
 
         var orderedQuery = isWeekly
             ? query.OrderByDescending(ux => ux.x.WeeklyXp)

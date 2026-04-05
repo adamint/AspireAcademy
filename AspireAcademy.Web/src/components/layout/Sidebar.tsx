@@ -288,10 +288,10 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <SideNavLink to="/weekly-challenge" icon={<Flex align="center" gap="0"><Box w="6px" h="6px" borderRadius="full" bg="#FB7185" mr="2" flexShrink={0} /><FiTarget size={16} /></Flex>} onClose={onClose}>
             Weekly Challenge
           </SideNavLink>
-          <SideNavLink to="/whats-new" icon={<FiStar size={16} />} onClose={onClose}>
+          <SideNavLink to="/whats-new" icon={<Flex align="center" gap="0"><Box w="6px" h="6px" borderRadius="full" bg="#FB923C" mr="2" flexShrink={0} /><FiStar size={16} /></Flex>} onClose={onClose}>
             What's New
           </SideNavLink>
-          <SideNavLink to="/personas" icon={<FiCompass size={16} />} onClose={onClose}>
+          <SideNavLink to="/personas" icon={<Flex align="center" gap="0"><Box w="6px" h="6px" borderRadius="full" bg="#A78BFA" mr="2" flexShrink={0} /><FiCompass size={16} /></Flex>} onClose={onClose}>
             Learning Tracks
           </SideNavLink>
         </Box>

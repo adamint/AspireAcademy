@@ -905,7 +905,6 @@ function GalleryDetail({
                         minW="auto"
                         _hover={{ color: 'aspire.500' }}
                         onClick={() => setShowFullOverview((v) => !v)}
-                        {...pixelFontProps}
                       >
                         {showFullOverview ? 'Show less ▲' : 'Show more ▼'}
                       </Button>
@@ -949,7 +948,6 @@ function GalleryDetail({
                   verticalAlign="baseline"
                   _hover={{ color: 'aspire.500' }}
                   onClick={() => setShowFullWhyAspire((v) => !v)}
-                  {...pixelFontProps}
                 >
                   {showFullWhyAspire ? 'less' : 'more'}
                 </Button>
