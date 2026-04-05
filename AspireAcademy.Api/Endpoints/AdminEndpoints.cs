@@ -36,7 +36,7 @@ public static class AdminEndpoints
 
     // Default test credentials — only exposed in Development/Testing environments
     private static readonly string s_testUserPassword = "TestPass1";
-    private static readonly string s_adminPassword = "AdminPass1!";
+    private static readonly string s_adminPassword = Environment.GetEnvironmentVariable("ADMIN_SEED_PASSWORD") ?? "AdminPass1!";
 
     private static List<SeededUserInfo> GetSeededCredentialsList() =>
     [
