@@ -270,6 +270,8 @@ jobs:
           Azure__Location: ${{ env.AZURE_LOCATION }}
           ConnectionStrings__openai: ${{ secrets.OPENAI_CONNECTION_STRING }}
           Parameters__jwt-key: ${{ secrets.JWT_KEY }}
+          Parameters__customDomain: learnaspire.dev
+          Parameters__certificateName: ${{ secrets.ACA_CERT_NAME }}
         run: aspire deploy --non-interactive --clear-cache
         timeout-minutes: 20
 
@@ -288,17 +290,17 @@ jobs:
       - name: Smoke test
         if: steps.url.outputs.url != ''
         run: |
-          echo "Running smoke test against ${{ steps.url.outputs.url }}..."
+          echo "Running smoke test against https://learnaspire.dev..."
           for i in {1..5}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ steps.url.outputs.url }}/health" --max-time 15 || echo "000")
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://learnaspire.dev/health" --max-time 15 || echo "000")
             if [[ "$STATUS" == "200" ]]; then
-              echo "✓ Health check passed (attempt $i)"
+              echo "✓ Health check passed on learnaspire.dev (attempt $i)"
               exit 0
             fi
             echo "  Attempt $i: got $STATUS, retrying in 15s..."
             sleep 15
           done
-          echo "::warning::Smoke test did not get 200 from /health after 5 attempts"
+          echo "::warning::Smoke test did not get 200 from learnaspire.dev/health after 5 attempts"
 
       - name: Update GitHub Release with deploy info
         if: startsWith(github.ref, 'refs/tags/v') && steps.url.outputs.url != ''

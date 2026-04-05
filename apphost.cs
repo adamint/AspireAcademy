@@ -2,7 +2,7 @@
 #:package Aspire.Hosting.Azure.PostgreSQL@13.*
 #:package Aspire.Hosting.Azure.AppContainers@13.*
 #:package Aspire.Hosting.JavaScript@13.*
-#:property NoWarn=ASPIRECSHARPAPPS001
+#:property NoWarn=ASPIRECSHARPAPPS001;ASPIREACADOMAINS001
 
 #pragma warning disable ASPIREPUBLISHERS001  // Azure publishers are in preview
 
@@ -19,13 +19,21 @@ var postgresServer = builder.AddAzurePostgresFlexibleServer("postgres")
 var postgres = postgresServer.AddDatabase("academydb");
 var openai = builder.AddConnectionString("openai");
 
+// Custom domain parameters (used only during publish/deploy)
+var customDomain = builder.AddParameter("customDomain");
+var certificateName = builder.AddParameter("certificateName");
+
 // API backend
 var api = builder.AddCSharpApp("api", "./AspireAcademy.Api/")
     .WithReference(postgres)
     .WithReference(openai)
     .WaitFor(postgres)
     .WithHttpHealthCheck("/health")
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .PublishAsAzureContainerApp((infra, app) =>
+    {
+        app.ConfigureCustomDomain(customDomain, certificateName);
+    });
 
 if (builder.ExecutionContext.IsRunMode)
 {
