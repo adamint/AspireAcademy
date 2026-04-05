@@ -1112,11 +1112,55 @@ export default function PlaygroundPage() {
           >
             <TbShare /> {shareCopied ? 'Link copied!' : 'Share'}
           </Button>
+          <Button size="sm" variant={showImport ? 'solid' : 'outline'} colorPalette="purple"
+            onClick={() => setShowImport(!showImport)} data-testid="import-btn" aria-label="Import AppHost code"
+          >
+            <TbUpload /> Import
+          </Button>
           <Button size="sm" variant="outline" colorPalette="red" onClick={reset} data-testid="reset-btn">
             <TbRefresh /> Reset
           </Button>
         </Flex>
       </Flex>
+
+      {/* Import panel — shown below header when active */}
+      {showImport && (
+        <Box mb="4" p="4" bg="dark.surface" borderRadius="md" border="2px solid" borderColor="aspire.600">
+          <Flex justify="space-between" align="center" mb="2">
+            <Text {...pixelFontProps} fontSize="2xs" color="aspire.accent">📋 Import AppHost Code</Text>
+            <Button size="xs" variant="ghost" onClick={() => { setShowImport(false); setImportText(''); }}>✕</Button>
+          </Flex>
+          <Text fontSize="xs" color="dark.muted" mb="2">
+            Paste your C# AppHost Program.cs code below. All current resources will be replaced.
+          </Text>
+          <Textarea
+            size="sm" value={importText}
+            onChange={(e) => setImportText(e.target.value)}
+            placeholder={"var builder = DistributedApplication.CreateBuilder(args);\nvar postgres = builder.AddPostgres(\"pg\");\nvar api = builder.AddProject<Projects.Api>(\"api\")\n    .WithReference(postgres);\nbuilder.Build().Run();"}
+            rows={8}
+            fontFamily="mono" fontSize="12px"
+            bg="dark.bg" color="dark.text"
+            borderColor="dark.border"
+            aria-label="AppHost code to import"
+          />
+          <Flex gap="2" mt="3">
+            <Button size="sm" colorPalette="purple" onClick={handleImport}
+              disabled={!importText.trim()}
+            >
+              <TbUpload /> Import Resources
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => { setShowImport(false); setImportText(''); }}>
+              Cancel
+            </Button>
+          </Flex>
+        </Box>
+      )}
+
+      {importFeedback && (
+        <Box mb="3" p="2" bg={importFeedback.startsWith('No') ? 'red.950' : 'green.950'} borderRadius="sm" border="1px solid" borderColor={importFeedback.startsWith('No') ? 'red.700' : 'green.700'}>
+          <Text fontSize="xs" color={importFeedback.startsWith('No') ? 'red.300' : 'green.300'}>{importFeedback}</Text>
+        </Box>
+      )}
 
       {/* Resource Palette */}
       <Card.Root variant="outline" {...retroCardProps} bg="game.retroBg" mb="6" data-testid="resource-palette" role="region" aria-label="Resource palette">
@@ -1606,47 +1650,8 @@ export default function PlaygroundPage() {
                   >
                     <TbDownload /> Download
                   </Button>
-                  <Button size="xs" variant={showImport ? 'solid' : 'outline'} colorPalette="purple"
-                    onClick={() => setShowImport(!showImport)} aria-label="Import AppHost code"
-                  >
-                    <TbUpload /> Import
-                  </Button>
                 </Flex>
               </Flex>
-
-              {/* Import panel */}
-              {showImport && (
-                <Box mb="4" p="3" bg="dark.surface" borderRadius="sm" border="1px solid" borderColor="dark.border">
-                  <Text fontSize="xs" color="dark.muted" mb="2">
-                    Paste C# AppHost code to import resources:
-                  </Text>
-                  <Textarea
-                    size="sm" value={importText}
-                    onChange={(e) => setImportText(e.target.value)}
-                    placeholder="var builder = DistributedApplication.CreateBuilder(args);&#10;var postgres = builder.AddPostgres(&quot;pg&quot;);&#10;..."
-                    rows={6}
-                    fontFamily="mono" fontSize="12px"
-                    bg="#0D0B1A" color="dark.text"
-                    aria-label="AppHost code to import"
-                  />
-                  <Flex gap="2" mt="2">
-                    <Button size="xs" colorPalette="purple" onClick={handleImport}
-                      disabled={!importText.trim()}
-                    >
-                      Import Resources
-                    </Button>
-                    <Button size="xs" variant="ghost" onClick={() => { setShowImport(false); setImportText(''); }}>
-                      Cancel
-                    </Button>
-                  </Flex>
-                </Box>
-              )}
-
-              {importFeedback && (
-                <Box mb="3" p="2" bg={importFeedback.startsWith('No') ? 'red.950' : 'green.950'} borderRadius="sm" border="1px solid" borderColor={importFeedback.startsWith('No') ? 'red.700' : 'green.700'}>
-                  <Text fontSize="xs" color={importFeedback.startsWith('No') ? 'red.300' : 'green.300'}>{importFeedback}</Text>
-                </Box>
-              )}
 
               {/* Name warnings */}
               {nameWarnings.length > 0 && (
