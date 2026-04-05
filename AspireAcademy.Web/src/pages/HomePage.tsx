@@ -739,13 +739,10 @@ export default function HomePage() {
               {worlds ? `${worlds.length} themed worlds` : 'Themed worlds'} take you from cloud fundamentals to production-ready distributed apps
             </Text>
 
-          <Flex
+          <SimpleGrid
             data-testid="worlds-grid"
+            columns={{ base: 3, md: 4, lg: 7 }}
             gap="3"
-            overflowX="auto"
-            pb="2"
-            flexWrap="nowrap"
-            css={{ '&::-webkit-scrollbar': { height: '4px' }, '&::-webkit-scrollbar-thumb': { background: '#2B1260', borderRadius: '2px' } }}
           >
             {(worlds ?? []).map((w, i) => {
               const worldAccents = ['#2DD4BF', '#FBBF24', '#FB7185', '#34D399', '#38BDF8', '#FB923C', '#A78BFA', '#F472B6'];
@@ -758,9 +755,6 @@ export default function HomePage() {
                   borderColor={accent}
                   borderRadius="lg"
                   p="4"
-                  minW="165px"
-                  maxW="165px"
-                  flexShrink={0}
                   textAlign="center"
                   cursor="pointer"
                   transition="all 0.25s"
@@ -790,7 +784,7 @@ export default function HomePage() {
                 </Box>
               );
             })}
-          </Flex>
+          </SimpleGrid>
         </Box>
 
         {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
@@ -846,7 +840,7 @@ export default function HomePage() {
                       display={{ base: 'none', md: 'block' }}
                       {...pixelFontProps}
                       fontSize="22px"
-                      color="dark.border"
+                      color="dark.muted"
                       mx="2"
                       mt="-40px"
                     >
@@ -858,7 +852,7 @@ export default function HomePage() {
                       display={{ base: 'block', md: 'none' }}
                       {...pixelFontProps}
                       fontSize="18px"
-                      color="dark.border"
+                      color="dark.muted"
                       textAlign="center"
                     >
                       ▼

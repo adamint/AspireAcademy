@@ -11,7 +11,7 @@ import {
   Heading,
   Skeleton,
 } from '@chakra-ui/react';
-import { FiArrowLeft, FiArrowRight, FiClock, FiSkipForward, FiUsers } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight, FiClock, FiSkipForward } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { pixelFontProps } from '../theme/aspireTheme';
 import { LessonType, ProgressStatus } from '../constants';
@@ -61,14 +61,7 @@ export default function LessonPage() {
     enabled: !!lessonId,
   });
 
-  const { data: lessonStats } = useQuery<{ completionCount: number }>({
-    queryKey: ['lesson-stats', lessonId],
-    queryFn: () => api.get(`/lessons/${lessonId}/stats`).then((r) => r.data).catch((err) => {
-      console.error('[LessonPage] Failed to fetch lesson stats:', err);
-      throw err;
-    }),
-    enabled: !!lessonId,
-  });
+  
 
   useEffect(() => {
     document.title = lesson ? `${lesson.title} | Aspire Learn` : 'Aspire Learn';
@@ -269,15 +262,6 @@ export default function LessonPage() {
       <Heading as="h1" size="xl">
         {lesson.title}
       </Heading>
-
-      {lessonStats && lessonStats.completionCount > 0 && (
-        <Flex align="center" gap="1.5" data-testid="lesson-completion-count">
-          <FiUsers size={14} color="var(--chakra-colors-aspire-400)" />
-          <Text fontSize="sm" color="gray.400">
-            {lessonStats.completionCount.toLocaleString()} {lessonStats.completionCount === 1 ? 'learner' : 'learners'} completed
-          </Text>
-        </Flex>
-      )}
 
       {/* Locked preview banner */}
       {isLocked && (

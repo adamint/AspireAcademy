@@ -150,7 +150,7 @@ export default function AchievementsPage() {
 
                   <Text fontSize="40px" lineHeight="1" aria-hidden="true">{ach.icon}</Text>
                   <Text {...pixelFontProps} fontSize="8px" fontWeight="bold">
-                    {ach.isUnlocked ? ach.name : '???'}
+                    {ach.name}
                   </Text>
                   {ach.isUnlocked && (
                     <Text fontSize="xs" color="game.gold">+{ach.xpReward} XP</Text>

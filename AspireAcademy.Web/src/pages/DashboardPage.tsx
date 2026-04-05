@@ -204,8 +204,8 @@ export default function DashboardPage() {
         </Card.Root>
       )}
 
-      {/* Activity Heatmap (compact) */}
-      <ActivityHeatmap compact />
+      {/* Activity Heatmap (compact) — only for authenticated users */}
+      {isAuthenticated && <ActivityHeatmap compact />}
 
       {/* Continue Learning — prominent hero section */}
       {isAuthenticated && xpData?.nextLesson && (
