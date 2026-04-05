@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { parseAppHostCode, makeId, makeResource, type PlaygroundResource, type ResourceType, type CodeLanguage } from '../utils/appHostParser';
 import {
   Box,
   Flex,
@@ -51,46 +52,9 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type CodeLanguage = 'csharp' | 'typescript';
-
-type ResourceType =
-  | 'postgres'
-  | 'redis'
-  | 'sqlserver'
-  | 'mongodb'
-  | 'rabbitmq'
-  | 'kafka'
-  | 'project'
-  | 'container'
-  | 'npmapp'
-  | 'pythonapp'
-  | 'azurestorage'
-  | 'keyvault'
-  | 'parameter';
-
 interface EnvVar {
   key: string;
   value: string;
-}
-
-interface PlaygroundResource {
-  id: string;
-  type: ResourceType;
-  name: string;
-  databases: string[];
-  image: string;
-  references: string[];
-  waitFor: string[];
-  hasDataVolume: boolean;
-  hasExternalEndpoints: boolean;
-  ports: string;
-  envVars: EnvVar[];
-  isPersistent: boolean;
-  isSecret: boolean; // for parameter type
-  args: string; // for containers
-  scriptPath: string; // for python apps
-  projectPath: string; // for npm / python relative path
-  projectLanguage: CodeLanguage;
 }
 
 interface ResourceTemplate {
@@ -157,29 +121,7 @@ interface Example {
   resources: PlaygroundResource[];
 }
 
-function makeId(): string {
-  return `r-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function makeResource(overrides: Partial<PlaygroundResource> & { id: string; type: ResourceType; name: string }): PlaygroundResource {
-  return {
-    databases: [],
-    image: '',
-    references: [],
-    waitFor: [],
-    hasDataVolume: false,
-    hasExternalEndpoints: false,
-    ports: '',
-    envVars: [],
-    isPersistent: false,
-    isSecret: false,
-    args: '',
-    scriptPath: '',
-    projectPath: '',
-    projectLanguage: 'csharp',
-    ...overrides,
-  };
-}
+// makeId, makeResource, parseAppHostCode imported from ../utils/appHostParser
 
 function buildExamples(): Example[] {
   const ecomIds = { pg: makeId(), cache: makeId(), mq: makeId(), api: makeId(), web: makeId() };
@@ -672,162 +614,7 @@ function makeCSharpScaffold(name: string, refs: PlaygroundResource[]): ProjectSc
   ];
 }
 
-// ─── Import parser ───────────────────────────────────────────────────────────
-
-const METHOD_TO_TYPE: Record<string, ResourceType> = {
-  AddPostgres: 'postgres', AddRedis: 'redis', AddSqlServer: 'sqlserver',
-  AddMongoDB: 'mongodb', AddRabbitMQ: 'rabbitmq', AddKafka: 'kafka',
-  AddProject: 'project', AddCSharpApp: 'project',
-  AddContainer: 'container',
-  AddNpmApp: 'npmapp', AddViteApp: 'npmapp', AddJavaScriptApp: 'npmapp', AddNodeApp: 'npmapp',
-  AddPythonApp: 'pythonapp', AddUvicornApp: 'pythonapp', AddUvApp: 'pythonapp',
-  AddAzureStorage: 'azurestorage', AddAzureKeyVault: 'keyvault',
-  AddParameter: 'parameter', AddConnectionString: 'parameter',
-  AddYarp: 'container', AddElasticsearch: 'container',
-  AddMySql: 'container', AddOracle: 'container', AddNats: 'container',
-};
-
-function preprocessCode(code: string): string {
-  return code
-    .replace(/\/\/.*$/gm, '')
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/#(?:if|else|endif|pragma|region|endregion).*$/gm, '')
-    .replace(/\r\n/g, '\n');
-}
-
-function splitStatements(code: string): string[] {
-  const flat = code.replace(/\n/g, ' ').replace(/\s+/g, ' ');
-  return flat.split(';').map(s => s.trim()).filter(Boolean);
-}
-
-function parseAppHostCode(code: string): PlaygroundResource[] {
-  const resources: PlaygroundResource[] = [];
-  const varToId = new Map<string, string>();
-  // Map varName to the statement it was defined in (for attribute scanning)
-  const varToStmt = new Map<string, string>();
-
-  const cleaned = preprocessCode(code);
-  const statements = splitStatements(cleaned);
-
-  for (const stmt of statements) {
-    // Step 1: Extract builder.Add* resource declarations
-    const addMatch = stmt.match(
-      /(?:var|const|[A-Z]\w*)\s+(\w+)\s*=\s*builder\.(\w+)\s*(?:<[^>]+>)?\s*\(\s*"([^"]+)"(?:\s*,\s*(?:@?"([^"]*)"))?/
-    );
-    if (addMatch) {
-      const [, varName, method, name, secondArg] = addMatch;
-      const type = METHOD_TO_TYPE[method];
-      if (type) {
-        const id = makeId();
-        varToId.set(varName, id);
-        varToStmt.set(varName, stmt);
-
-        const r = makeResource({ id, type, name });
-        if (type === 'container' && secondArg) r.image = secondArg;
-        if ((type === 'npmapp' || type === 'pythonapp' || type === 'project') && secondArg) r.projectPath = secondArg;
-        if (type === 'parameter' && /secret\s*:\s*true/i.test(stmt)) r.isSecret = true;
-        resources.push(r);
-      }
-    }
-
-    // Step 2: Extract .AddDatabase() anywhere in the statement
-    const dbMatches = stmt.matchAll(/\.AddDatabase\s*\(\s*"([^"]+)"\s*\)/g);
-    for (const dbMatch of dbMatches) {
-      const dbName = dbMatch[1];
-      // The parent is the variable assigned in the same statement that contains
-      // the builder.Add* call, OR the variable whose chain this belongs to.
-      // First, try to find the builder.Add* parent in this statement.
-      const parentAddMatch = stmt.match(
-        /(?:var|const|[A-Z]\w*)\s+(\w+)\s*=\s*builder\.(\w+)/
-      );
-      if (parentAddMatch) {
-        // The database is chained onto the resource defined in this statement
-        const parentVar = parentAddMatch[1];
-        const parentId = varToId.get(parentVar);
-        if (parentId) {
-          const parent = resources.find(r => r.id === parentId);
-          if (parent && !parent.databases.includes(dbName)) parent.databases.push(dbName);
-        }
-      } else {
-        // The database call is on a standalone variable: varName.AddDatabase(...)
-        const standaloneMatch = stmt.match(/(\w+)\s*\.\s*AddDatabase/);
-        if (standaloneMatch) {
-          const parentId = varToId.get(standaloneMatch[1]);
-          if (parentId) {
-            const parent = resources.find(r => r.id === parentId);
-            if (parent && !parent.databases.includes(dbName)) parent.databases.push(dbName);
-          }
-        }
-      }
-    }
-
-    // Step 3: Also handle `var dbVar = parentVar.AddDatabase("name")` as a variable assignment
-    const dbAssignMatch = stmt.match(
-      /(?:var|const|[A-Z]\w*)\s+(\w+)\s*=\s*(\w+)(?:\.\w+\([^)]*\))*\.AddDatabase\s*\(\s*"([^"]+)"\s*\)/
-    );
-    if (dbAssignMatch) {
-      const [, dbVarName, , dbName] = dbAssignMatch;
-      // Find the database resource by name and map the variable to it
-      // The database itself isn't a separate PlaygroundResource — it's stored on the parent.
-      // But the variable might be referenced via .WithReference(dbVar), so we need to track it.
-      // Find which parent has this database
-      const parentForDb = resources.find(r => r.databases.includes(dbName));
-      if (parentForDb) {
-        varToId.set(dbVarName, parentForDb.id);
-        varToStmt.set(dbVarName, stmt);
-      }
-    }
-
-    // Step 4: Extract .WithReference() and .WaitFor() — find the consumer variable
-    const refMatches = [...stmt.matchAll(/\.(WithReference|WaitFor)\s*\(\s*(\w+)\s*\)/g)];
-    if (refMatches.length > 0) {
-      // Find the consumer: the variable being assigned in this statement
-      const consumerMatch = stmt.match(/(?:var|const|[A-Z]\w*)\s+(\w+)\s*=/);
-      const consumerVar = consumerMatch?.[1];
-      const consumerId = consumerVar ? varToId.get(consumerVar) : undefined;
-      const consumer = consumerId ? resources.find(r => r.id === consumerId) : undefined;
-
-      if (!consumer) {
-        // Try standalone: varName.WithReference(...)
-        const standaloneConsumer = stmt.match(/^(\w+)\s*\./);
-        if (standaloneConsumer) {
-          const scId = varToId.get(standaloneConsumer[1]);
-          const sc = scId ? resources.find(r => r.id === scId) : undefined;
-          if (sc) {
-            for (const rm of refMatches) {
-              const [, method, depVar] = rm;
-              const depId = varToId.get(depVar);
-              if (!depId) continue;
-              if (method === 'WithReference' && !sc.references.includes(depId)) sc.references.push(depId);
-              if (method === 'WaitFor' && !sc.waitFor.includes(depId)) sc.waitFor.push(depId);
-            }
-          }
-        }
-      } else {
-        for (const rm of refMatches) {
-          const [, method, depVar] = rm;
-          const depId = varToId.get(depVar);
-          if (!depId) continue;
-          if (method === 'WithReference' && !consumer.references.includes(depId)) consumer.references.push(depId);
-          if (method === 'WaitFor' && !consumer.waitFor.includes(depId)) consumer.waitFor.push(depId);
-        }
-      }
-    }
-  }
-
-  // Step 5: Scan statements for attribute methods (.WithDataVolume, .WithLifetime, etc.)
-  for (const r of resources) {
-    const varName = [...varToId.entries()].find(([, id]) => id === r.id)?.[0];
-    if (!varName) continue;
-    const stmt = varToStmt.get(varName) ?? '';
-    if (/\.WithDataVolume\b/.test(stmt)) r.hasDataVolume = true;
-    if (/\.WithLifetime\s*\(\s*ContainerLifetime\.Persistent\s*\)/.test(stmt)) r.isPersistent = true;
-    if (/\.WithExternalHttpEndpoints\b/.test(stmt)) r.hasExternalEndpoints = true;
-    if (/\.WithHttpEndpoint\b/.test(stmt)) r.hasExternalEndpoints = true;
-  }
-
-  return resources;
-}
+// Parser (parseAppHostCode, makeId, makeResource) imported from ../utils/appHostParser
 
 // ─── localStorage persistence ────────────────────────────────────────────────
 
